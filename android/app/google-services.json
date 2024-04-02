@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "827937887557",
+    "project_id": "larba-00",
+    "storage_bucket": "larba-00.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:827937887557:android:6889ba2c8b6f753aca1a2c",
+        "android_client_info": {
+          "package_name": "com.exino.larba_00"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "827937887557-a58h382j5etl5al3a916cv1but3q0gii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.exino.larba_00",
+            "certificate_hash": "8b900e53055252cd57ba0ae13b7c836bc953eefb"
+          }
+        },
+        {
+          "client_id": "827937887557-5dg0bhsqgr3q6ci0rhakv7r20g8i45qt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvDhz2rsgaoQDz9v26257yvYVlElIuql0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "827937887557-5dg0bhsqgr3q6ci0rhakv7r20g8i45qt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
