@@ -2,11 +2,13 @@ import 'package:flutter/services.dart';
 import 'package:larba_00/common/const/constants.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/presentation/view/asset/networkScreens/network_input_screen.dart';
+import 'package:larba_00/presentation/view/registMnemonic_screen.dart';
 
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/uihelper.dart';
+import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
@@ -28,7 +30,8 @@ class _CreatePassScreenState extends ConsumerState<CreatePassScreen> {
   @override
   void initState() {
     super.initState();
-    passInputController.map((e) => e.text = '');
+    passInputController[0].text = ref.read(loginProvider).inputPass[0];
+    passInputController[1].text = ref.read(loginProvider).inputPass[1];
     ref.read(loginProvider).emailStep = EmailSignUpStep.none;
   }
 
@@ -98,7 +101,7 @@ class _CreatePassScreenState extends ConsumerState<CreatePassScreen> {
               text: TR(context, '다음'),
               round: 0,
               onTap: () {
-                Navigator.of(context).pop(true);
+                Navigator.of(context).push(createAniRoute(SignUpTermsScreen()));
               },
             ) : DisabledButton(
               text: TR(context, '다음'),

@@ -1,5 +1,12 @@
+import 'dart:convert';
+
 import 'package:larba_00/common/const/constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:larba_00/common/const/utils/md5Helper.dart';
+import 'package:larba_00/common/rlp/hash.dart';
+import 'package:crypto/crypto.dart' as crypto;
+
+import 'convertHelper.dart';
 
 class UserHelper {
   static final UserHelper _singleton = UserHelper._internal();
@@ -9,8 +16,17 @@ class UserHelper {
   UserHelper._internal();
   var userKey = '';
   
-  setUserKey(String userKey) {
-    this.userKey = userKey;
+  setUserKey(String email) {
+    userKey = crypto.sha256.convert(utf8.encode(email)).toString();
+    LOG('---------> setUserKey : $email => $userKey');
+    return userKey;
+  }
+
+  checkWallet(String email) async {
+    var userKeyTmp = crypto.sha256.convert(utf8.encode(email)).toString();
+    var result = await get_mnemonic(userKeyTmp: userKeyTmp);
+    LOG('--> checkWallet : $userKeyTmp($email) => $result');
+    return result != 'NOT_MNEMONIC';
   }
 
   Future<void> setUser({
@@ -60,6 +76,7 @@ class UserHelper {
       await storage.write(key: USELOCALAUTH_KEY + userKey, value: localAuth);
 
     if (trash != '') await storage.write(key: TRASH_KEY + userKey, value: trash);
+
     if (registDate != '')
       await storage.write(key: REGISTDATE_KEY + userKey, value: registDate);
 
@@ -69,6 +86,7 @@ class UserHelper {
     if (rootKey != '') await storage.write(key: ROOT_KEY + userKey, value: rootKey);
 
     if (mnemonic != '') await storage.write(key: MNEMONIC_KEY + userKey, value: mnemonic);
+
     if (checkMnemonic != '')
       await storage.write(key: CHECK_MNEMONIC_KEY + userKey, value: checkMnemonic);
 
@@ -79,9 +97,9 @@ class UserHelper {
       await storage.write(key: NETWORKLIST_KEY + userKey, value: networkList);
   }
 
-  Future<String> get_userID() async {
+  Future<String> get_userID({String? userKeyTmp}) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
-    return await storage.read(key: USERID_KEY + userKey) ?? 'NOT_USERID';
+    return await storage.read(key: USERID_KEY + (userKeyTmp ?? userKey)) ?? 'NOT_USERID';
   }
 
   Future<String> get_uid() async {
@@ -154,14 +172,15 @@ class UserHelper {
     return await storage.read(key: ROOT_KEY + userKey) ?? 'NOT_ROOTKEY';
   }
 
-  Future<String> get_mnemonic() async {
+  Future<String> get_mnemonic({String? userKeyTmp}) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
-    return await storage.read(key: MNEMONIC_KEY + userKey) ?? 'NOT_MNEMONIC';
+    LOG('--> get_mnemonic : ${MNEMONIC_KEY + (userKeyTmp ?? userKey)}');
+    return await storage.read(key: MNEMONIC_KEY + (userKeyTmp ?? userKey)) ?? 'NOT_MNEMONIC';
   }
 
-  Future<String> get_check_mnemonic() async {
+  Future<String> get_check_mnemonic({String? userKeyTmp}) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
-    return await storage.read(key: CHECK_MNEMONIC_KEY + userKey) ?? 'NOT_CHECK_MNEMONIC';
+    return await storage.read(key: CHECK_MNEMONIC_KEY + (userKeyTmp ?? userKey)) ?? 'NOT_CHECK_MNEMONIC';
   }
 
   Future<String> get_addressList() async {

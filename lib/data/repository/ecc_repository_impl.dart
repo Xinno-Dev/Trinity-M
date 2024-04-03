@@ -21,6 +21,7 @@ class EccRepositoryImpl implements EccRepository {
   Future<bool> generateKeyPair(String pin, {String mnemonic = ''}) async {
     String encodeJson = '';
     UserHelper userHelper = UserHelper();
+    LOG('--> generateKeyPair : ${userHelper.userKey}');
 
     _eccManager = EccManager();
 
@@ -60,7 +61,6 @@ class EccRepositoryImpl implements EccRepository {
         keyPair: encResult,
         publicKey: publicKeyStr,
         hasMnemonic: true);
-
     addressList.add(newAddress);
 
     final addressListJson =
@@ -73,7 +73,6 @@ class EccRepositoryImpl implements EccRepository {
       return false;
     } else {
       userHelper.setUser(key: encResult); //최초로 사용되는 Key 저장
-
       AesManager aesManager = AesManager();
       String trashResult = await aesManager.encrypt(pin, publicKeyStr);
       userHelper.setUser(trash: trashResult);

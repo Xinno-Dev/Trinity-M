@@ -3,7 +3,9 @@ import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:larba_00/common/common_package.dart';
+import 'package:larba_00/common/const/utils/aesManager.dart';
 import 'package:larba_00/common/const/utils/uihelper.dart';
+import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/domain/model/app_start_model.dart';
 import 'package:larba_00/domain/model/login_model.dart';
 import 'package:larba_00/domain/model/mdl_check_model.dart';
@@ -65,7 +67,7 @@ class LoginProvider extends ChangeNotifier {
 
   var emailStep = EmailSignUpStep.none;
   var inputEmail = 'jubal2000@gmail.com'; // for test..
-  var inputPass = List.generate(2, (index) => '');
+  var inputPass = List.generate(2, (index) => 'testpass00');
 
   LoginProvider() {
   }
@@ -141,24 +143,42 @@ class LoginProvider extends ChangeNotifier {
 
   ////////////////////////////////////////////////////////////////////////
 
-  checkWalletPass(context, pass) {
-    // todo: open local wallet..
-    return true;
+  checkWalletPass(String passOrg) async {
+    try {
+      var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+      var mnemonicEnc = await UserHelper().get_mnemonic();
+      print('--> checkWalletPass : $inputEmail / $passOrg / $pass -> $mnemonicEnc');
+      if (mnemonicEnc != 'NOT_MNEMONIC') {
+        var result = await AesManager().decrypt(pass, mnemonicEnc);
+        print('--> checkWallet mnemonic : $result');
+        return result != 'fail';
+      }
+    } catch (e) {
+      print('--> checkWallet error : $e');
+    }
+    return false;
   }
 
-  createNewWallet(pass) async {
-    final EccUseCase _eccusecase = EccUseCaseImpl(EccRepositoryImpl());
-    var utf8List = utf8.encode(pass);
-    var shaConvert = crypto.sha256.convert(utf8List);
-    var generateKeyResult =
-        await _eccusecase.generateKeyPair(shaConvert.toString());
-    print('--> generateKeyResult : $generateKeyResult');
-    // set mnemonic check flag..
-    // LocalStorageManager.saveData(MNEMONIC_CHECK, '1');
-    return generateKeyResult;
+  // passOrg : 실제로 입력받은 패스워드 문자열..
+  createNewWallet(String passOrg, {String? email}) async {
+    UserHelper().setUserKey(email ?? inputEmail);
+    var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+    print('--> createNewWallet : ${email ?? inputEmail} / $passOrg -> $pass');
+    var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
+    var generateKeyResult = await eccImpl.generateKeyPair(pass);
+    if (generateKeyResult) {
+      // check create complete..
+      var result = await checkWalletPass(passOrg);
+      print('--> createNewWallet success : $result');
+      return result;
+    } else {
+      print('--> createNewWallet failed');
+    }
+    return false;
   }
 
   startWallet(context) {
+    // load local wallet..
     Navigator.of(context).push(createAniRoute(MainScreen()));
   }
 

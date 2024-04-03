@@ -27,7 +27,7 @@ class _InputEmailScreenState extends ConsumerState<InputEmailScreen> {
   @override
   void initState() {
     super.initState();
-    emailInputController.text = '';
+    emailInputController.text = ref.read(loginProvider).inputEmail;
     ref.read(loginProvider).emailStep = EmailSignUpStep.none;
   }
 

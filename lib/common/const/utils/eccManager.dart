@@ -115,6 +115,7 @@ class EccManager {
       String pin,
       {String mnemonic = ''}) async {
     if (mnemonic == '') mnemonic = bip39.generateMnemonic();
+    LOG('--> generateMnemonicKeypair : $pin / $mnemonic');
 
     final seed = bip39.mnemonicToSeed(mnemonic);
     final rootKey = bip32.BIP32.fromSeed(seed);
@@ -131,8 +132,7 @@ class EccManager {
     String encMnemonic = await aesManager.encrypt(pin, mnemonic);
     String encRootKey = await aesManager.encrypt(pin, rootKey.toBase58());
 
-    UserHelper userHelper = UserHelper();
-    userHelper.setUser(
+    UserHelper().setUser(
       mnemonic: encMnemonic,
       rootKey: encRootKey,
       checkMnemonic: mnemonic,

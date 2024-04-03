@@ -256,6 +256,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
     fToast = FToast();
     fToast.init(context);
     ref.read(loginProvider).checkLogin();
+
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       checkAppUpdate(context).then((result) {

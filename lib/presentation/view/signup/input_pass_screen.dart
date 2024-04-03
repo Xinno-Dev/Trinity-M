@@ -81,7 +81,7 @@ class _InputPassScreenState extends ConsumerState<InputPassScreen> {
                   margin: EdgeInsets.symmetric(horizontal: 40.w),
                   child: Column(
                     children: [
-                        _buildInputBox(),
+                      _buildInputBox(),
                     ],
                   )
                 ),
@@ -95,7 +95,7 @@ class _InputPassScreenState extends ConsumerState<InputPassScreen> {
               text: TR(context, '확인'),
               round: 0,
               onTap: () {
-                if (loginProv.checkWalletPass(context, inputPass)) {
+                if (loginProv.checkWalletPass(inputPass)) {
                   Navigator.of(context).pop(true);
                 }
               },

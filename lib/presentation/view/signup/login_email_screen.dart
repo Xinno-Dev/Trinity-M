@@ -39,8 +39,8 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
   @override
   void initState() {
     super.initState();
-    emailInputController.text = '';
-    passInputController.text = '';
+    emailInputController.text = ref.read(loginProvider).inputEmail;
+    passInputController.text = ref.read(loginProvider).inputPass.first;
   }
 
   @override
@@ -111,15 +111,19 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                         ? PrimaryButton(
                       text: TR(context, '다음'),
                       onTap: () {
-                        if (loginProv.checkWalletPass(context, emailInputController.text)) {
-                          Navigator.of(context).pop(true);
-                        } else {
-                          showConfirmDialog(context, '잘못된 계정/비밀번호 입니다.\n새지갑을 생성하시겠습니까?', okText: '만들기', cancelText: '취소').then((result) {
-                            if (BOL(result)) {
+                        loginProv.checkWalletPass(
+                          passInputController.text
+                        ).then((result) {
+                          if (result) {
+                            Navigator.of(context).pop(true);
+                          } else {
+                            showConfirmDialog(context, '잘못된 계정/비밀번호 입니다.\n새지갑을 생성하시겠습니까?', okText: '만들기', cancelText: '취소').then((result) {
+                              if (BOL(result)) {
 
-                            }
-                          });
-                        }
+                              }
+                            });
+                          }
+                        });
                       },
                     ) : DisabledButton(
                       text: TR(context, '다음'),

@@ -8,8 +8,11 @@ import 'package:larba_00/presentation/view/terms_detail_screen.dart';
 
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/uihelper.dart';
+import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
+import '../../../common/provider/login_provider.dart';
+import '../registMnemonic_screen.dart';
 
 class SignUpTermsScreen extends ConsumerStatefulWidget {
   const SignUpTermsScreen({super.key});
@@ -22,7 +25,7 @@ class SignUpTermsScreen extends ConsumerStatefulWidget {
 class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
   //
   List<String> title = [
-    'BYFFIN 이용약관',
+    'LARBA 이용약관',
     '개인정보처리방침',
   ];
   // '마케팅 활용 및 광고성 정보 수신 동의'];
@@ -171,7 +174,13 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                       text: TR(context, '다음'),
                       round: 0,
                       onTap: () {
-                        Navigator.of(context).pop(true);
+                        final userPass = ref.read(loginProvider).inputPass.first;
+                        ref.read(loginProvider).createNewWallet(userPass).then((result) {
+                          if (result) {
+                            Navigator.of(context).push(
+                                createAniRoute(RegistMnemonicScreen()));
+                          }
+                        });
                       },
                     ) : DisabledButton(
                       text: TR(context, '다음'),
