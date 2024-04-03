@@ -34,8 +34,8 @@ import '../../../common/const/widget/rounded_button.dart';
 import '../../../common/provider/temp_provider.dart';
 import '../../../services/localization_service.dart';
 import '../../../services/social_service.dart';
-import 'create_pass_screen.dart';
-import 'input_email_screen.dart';
+import 'signup_pass_screen.dart';
+import 'signup_email_screen.dart';
 import 'login_email_screen.dart';
 import 'signup_terms_screen.dart';
 import '../terms_screen.dart';
@@ -440,7 +440,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
             onTap: () {
               if (isSignUp) {
                 Navigator.of(context)
-                    .push(createAniRoute(InputEmailScreen()))
+                    .push(createAniRoute(SignUpEmailScreen()))
                     .then((email) {
                   if (STR(email).isNotEmpty) {
                     _startLogin(-1);

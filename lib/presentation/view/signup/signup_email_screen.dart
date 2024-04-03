@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/presentation/view/asset/networkScreens/network_input_screen.dart';
+import 'package:larba_00/presentation/view/signup/login_pass_screen.dart';
 
 import '../../../common/common_package.dart';
 import '../../../common/const/constants.dart';
@@ -9,18 +10,18 @@ import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
-import 'create_pass_screen.dart';
+import 'signup_pass_screen.dart';
 
-class InputEmailScreen extends ConsumerStatefulWidget {
-  const InputEmailScreen({Key? key, this.isSignUpMode = true}) : super(key: key);
-  static String get routeName => 'InputEmailScreen';
+class SignUpEmailScreen extends ConsumerStatefulWidget {
+  const SignUpEmailScreen({Key? key, this.isSignUpMode = true}) : super(key: key);
+  static String get routeName => 'signUpEmailScreen';
   final bool isSignUpMode;
 
   @override
-  ConsumerState createState() => _InputEmailScreenState();
+  ConsumerState createState() => _SignUpEmailScreenState();
 }
 
-class _InputEmailScreenState extends ConsumerState<InputEmailScreen> {
+class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
   final emailInputController = TextEditingController();
   final emailFocusNode = FocusNode();
 
@@ -40,9 +41,6 @@ class _InputEmailScreenState extends ConsumerState<InputEmailScreen> {
         backgroundColor: WHITE,
         appBar: AppBar(
           backgroundColor: WHITE,
-          leading: CustomBackButton(
-            onPressed: context.pop,
-          ),
           centerTitle: true,
           title: Text(
             TR(context, '이메일 등록'),
@@ -63,7 +61,7 @@ class _InputEmailScreenState extends ConsumerState<InputEmailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      TR(context, '이메일을\n입력해 주세요.'),
+                      TR(context, '이메일을\n등록해 주세요.'),
                       style: typo24bold150,
                     ),
                     SizedBox(height: 16.h),
@@ -128,7 +126,7 @@ class _InputEmailScreenState extends ConsumerState<InputEmailScreen> {
             round: 0,
             onTap: () {
               // todo: check email vf..
-              Navigator.of(context).push(createAniRoute(CreatePassScreen()));
+              Navigator.of(context).push(createAniRoute(SignUpPassScreen()));
             },
           ) : DisabledButton(
             text: TR(context, '다음'),

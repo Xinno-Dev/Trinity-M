@@ -14,11 +14,11 @@ import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
-import 'create_pass_screen.dart';
+import 'signup_pass_screen.dart';
 
 class LoginEmailScreen extends ConsumerStatefulWidget {
   const LoginEmailScreen({Key? key, this.isSignUpMode = true}) : super(key: key);
-  static String get routeName => 'LoginEmailScreen';
+  static String get routeName => 'loginEmailScreen';
   final bool isSignUpMode;
 
   @override

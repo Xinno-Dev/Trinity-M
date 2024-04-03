@@ -12,8 +12,8 @@ import 'package:larba_00/domain/model/mdl_check_model.dart';
 import 'package:larba_00/presentation/view/asset/asset_screen.dart';
 import 'package:larba_00/presentation/view/main_screen.dart';
 import 'package:larba_00/presentation/view/sign_password_screen.dart';
-import 'package:larba_00/presentation/view/signup/create_pass_screen.dart';
-import 'package:larba_00/presentation/view/signup/input_email_screen.dart';
+import 'package:larba_00/presentation/view/signup/signup_pass_screen.dart';
+import 'package:larba_00/presentation/view/signup/signup_email_screen.dart';
 import 'package:larba_00/presentation/view/signup/signup_terms_screen.dart';
 import 'package:larba_00/services/social_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,12 +23,15 @@ import 'package:web3dart/credentials.dart';
 import 'package:crypto/crypto.dart' as crypto;
 
 import '../../data/repository/ecc_repository_impl.dart';
+import '../../domain/model/ecckeypair.dart';
 import '../../domain/usecase/ecc_usecase.dart';
 import '../../domain/usecase/ecc_usecase_impl.dart';
 import '../../services/firebase_api_service.dart';
 import '../../services/larba_api_service.dart';
 import '../const/utils/convertHelper.dart';
+import '../const/utils/eccManager.dart';
 import '../const/utils/localStorageHelper.dart';
+import '../const/widget/dialog_utils.dart';
 
 enum LoginType {
   kakao,
@@ -54,6 +57,12 @@ enum EmailSignUpStep {
   complete;
 }
 
+enum NickCheckStep {
+  none,
+  ready,
+  complete;
+}
+
 final testEmail = 'jubal2000@gmail.com';
 
 final loginProvider = ChangeNotifierProvider<LoginProvider>((_) {
@@ -66,8 +75,10 @@ class LoginProvider extends ChangeNotifier {
   bool isSignUpMode = false;
 
   var emailStep = EmailSignUpStep.none;
+  var nickStep  = NickCheckStep.none;
   var inputEmail = 'jubal2000@gmail.com'; // for test..
   var inputPass = List.generate(2, (index) => 'testpass00');
+  var inputNick = 'jubal2000';
 
   LoginProvider() {
   }
@@ -116,7 +127,7 @@ class LoginProvider extends ChangeNotifier {
     }
     // todo: check signup user..
     if (!isLogin) {
-      Navigator.of(context).push(createAniRoute(CreatePassScreen()));
+      Navigator.of(context).push(createAniRoute(SignUpPassScreen()));
       return false;
     }
     startWallet(context);
@@ -186,6 +197,43 @@ class LoginProvider extends ChangeNotifier {
     Navigator.of(context).push(createAniRoute(MainScreen()));
   }
 
+  Future<EccKeyPair> getPrivateKey(String passOrg) async {
+    var keyData = await UserHelper().get_key();
+    var pass    = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+    var keyStr  = await AesManager().decrypt(pass, keyData);
+    var keyJson = EccKeyPair.fromJson(jsonDecode(keyStr));
+    return keyJson;
+  }
+
+  createSign(String passOrg, String msg) async {
+    try {
+      var privateKey = await getPrivateKey(passOrg);
+      var signature  = await EccManager().signingEx(privateKey.d, msg);
+      LOG('---> createSign : $signature <= $msg');
+      return signature;
+    } catch (e) {
+      LOG('--> createSign error : ${e.toString()}');
+    }
+    return null;
+  }
+
+  createSignedMsg(String passOrg) async {
+    var address = await UserHelper().get_address();
+    var vfCode = 'vfCode-test-0000';
+    var vfCodeEnc = crypto.sha256.convert(utf8.encode(vfCode));
+    var msg = '$inputEmail$inputNick$address$vfCodeEnc';
+    final sign = await createSign(passOrg, msg);
+    if (sign != null) {
+      return {
+        'email': inputEmail,
+        'nickId': inputNick,
+        'address': address,
+        'sig': sign,
+        'verifyCode': vfCodeEnc
+      };
+    }
+  }
+
   ////////////////////////////////////////////////////////////////////////
 
   get isEmailSendReady {
@@ -202,6 +250,14 @@ class LoginProvider extends ChangeNotifier {
 
   get isPassCheckDone {
     return inputPass[0] == inputPass[1];
+  }
+
+  get isNickCheckReady {
+    return nickStep == NickCheckStep.ready;
+  }
+
+  get isNickCheckDone {
+    return nickStep == NickCheckStep.complete;
   }
 
   emailInput(email) {
@@ -226,6 +282,26 @@ class LoginProvider extends ChangeNotifier {
         LarbaApiService().sendEmailVfCode(inputEmail, vfCode!);
         notifyListeners();
       }
+    });
+  }
+
+  checkNickId() {
+    // todo: nickname duplicate check API..
+    // inputNick
+    return true;
+  }
+
+  createNewUser(context) {
+    final userPass = inputPass.first;
+    showLoadingDialog(context, '회원 등록중입니다...');
+    createNewWallet(userPass).then((result) {
+      if (result) {
+        // TODO: create user API..
+        // loginProv.createSignedMsg(userPass).then((signMsg) {
+        //   LOG('--> signMsg : $signMsg');
+        // });
+      }
+      hideLoadingDialog();
     });
   }
 

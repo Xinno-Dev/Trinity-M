@@ -330,8 +330,7 @@ class MdlRpcService {
       String msg,
       ) async {
     try {
-      final eccManager = EccManager();
-      var signature = await eccManager.signingEx(privateKey, msg);
+      var signature = await EccManager().signingEx(privateKey, msg);
       LOG('---> getSignature : $signature <= $privateKey');
       return signature;
     } catch (e) {

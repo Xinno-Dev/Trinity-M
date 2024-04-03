@@ -12,15 +12,15 @@ import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import 'signup_terms_screen.dart';
 
-class InputPassScreen extends ConsumerStatefulWidget {
-  const InputPassScreen({Key? key}) : super(key: key);
-  static String get routeName => 'InputPassScreen';
+class LoginPassScreen extends ConsumerStatefulWidget {
+  const LoginPassScreen({Key? key}) : super(key: key);
+  static String get routeName => 'loginPassScreen';
 
   @override
-  ConsumerState createState() => _InputPassScreenState();
+  ConsumerState createState() => _LoginPassScreenState();
 }
 
-class _InputPassScreenState extends ConsumerState<InputPassScreen> {
+class _LoginPassScreenState extends ConsumerState<LoginPassScreen> {
   final passInputController = TextEditingController();
   var inputPass = '';
 
@@ -39,9 +39,6 @@ class _InputPassScreenState extends ConsumerState<InputPassScreen> {
           backgroundColor: WHITE,
           appBar: AppBar(
             backgroundColor: WHITE,
-            leading: CustomBackButton(
-              onPressed: context.pop,
-            ),
             centerTitle: true,
             title: Text(
               TR(context, '비밀번호 입력'),

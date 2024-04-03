@@ -14,16 +14,16 @@ import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import 'signup_terms_screen.dart';
 
-class CreatePassScreen extends ConsumerStatefulWidget {
-  const CreatePassScreen({Key? key, this.isSignUpMode = true}) : super(key: key);
-  static String get routeName => 'CreatePassScreen';
+class SignUpPassScreen extends ConsumerStatefulWidget {
+  const SignUpPassScreen({Key? key, this.isSignUpMode = true}) : super(key: key);
+  static String get routeName => 'signUpPassScreen';
   final bool isSignUpMode;
 
   @override
-  ConsumerState createState() => _CreatePassScreenState();
+  ConsumerState createState() => _SignUpPassScreenState();
 }
 
-class _CreatePassScreenState extends ConsumerState<CreatePassScreen> {
+class _SignUpPassScreenState extends ConsumerState<SignUpPassScreen> {
   final passInputController = List.generate(2, (index) => TextEditingController());
   var inputPass = List.generate(2, (index) => '');
 
@@ -44,9 +44,6 @@ class _CreatePassScreenState extends ConsumerState<CreatePassScreen> {
           backgroundColor: WHITE,
           appBar: AppBar(
             backgroundColor: WHITE,
-            leading: CustomBackButton(
-              onPressed: context.pop,
-            ),
             centerTitle: true,
             title: Text(
               TR(context, '비밀번호 등록'),
