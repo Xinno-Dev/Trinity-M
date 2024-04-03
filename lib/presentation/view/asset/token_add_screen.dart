@@ -14,6 +14,7 @@ import '../../../common/const/utils/uihelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../common/provider/coin_provider.dart';
+import '../../../common/provider/language_provider.dart';
 import '../../../domain/model/network_model.dart';
 import '../../../services/json_rpc_service.dart';
 
@@ -287,7 +288,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
       builder: (BuildContext context) =>
         AlertDialog(
           content: Text(
-            ref.read(languageProvider).getLocale!.languageCode == 'ko' ?
+            ref.read(languageProvider).isKor ?
             TR(context, '\'$tokenName\' 토큰을\n추가하시겠습니까?') :
             TR(context, 'Would you like to\nadd a \'$tokenName\' token?'),
             style: typo16dialog, textAlign: TextAlign.center),
@@ -334,7 +335,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
       builder: (BuildContext context) =>
         AlertDialog(
           content: Text(
-            ref.read(languageProvider).getLocale!.languageCode == 'ko' ?
+            ref.read(languageProvider).isKor ?
             TR(context, '토큰 추가 기능은 리고 메인 네트워크에서\n발행된 토큰(REP-20) 만 지원됩니다.') :
             TR(context, 'The token addition feature only supports tokens\n(REP-20) issued on the Rigo main network.'),
             style: typo12dialog, textAlign: TextAlign.center),

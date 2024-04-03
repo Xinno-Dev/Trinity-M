@@ -1,4 +1,5 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
@@ -9,6 +10,7 @@ import '../../../common/common_package.dart';
 import '../../../common/const/constants.dart';
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
+import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
@@ -111,6 +113,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                         ? PrimaryButton(
                       text: TR(context, '다음'),
                       onTap: () {
+                        UserHelper().setUserKey(emailInputController.text);
                         loginProv.checkWalletPass(
                           passInputController.text
                         ).then((result) {

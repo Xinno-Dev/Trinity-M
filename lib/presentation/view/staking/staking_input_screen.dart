@@ -19,6 +19,7 @@ import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/custom_toast.dart';
 import '../../../common/const/widget/detail_row.dart';
 import '../../../common/const/widget/gray_5_round_container.dart';
+import '../../../common/provider/language_provider.dart';
 import '../../../common/provider/network_provider.dart';
 import '../../../common/provider/stakes_data.dart';
 import '../../../common/style/outlineInputBorder.dart';
@@ -399,7 +400,7 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                           height: 16,
                         ),
                         CustomCheckbox(
-                          title: ref.read(languageProvider).getLocale!.languageCode == 'ko' ?
+                          title: ref.read(languageProvider).isKor ?
                             '${TR(context, typeText)}의 위험을 이해하고 진행합니다.' :
                             'Understand the risks of ${TR(context, typeText)} and proceed.',
                           checked: agree_2,

@@ -143,10 +143,14 @@ class LoginProvider extends ChangeNotifier {
 
   ////////////////////////////////////////////////////////////////////////
 
-  checkWalletPass(String passOrg) async {
+  checkWalletPass(String passOrg, {String? email}) async {
     try {
+      String? userKey;
+      if (STR(email).isNotEmpty) {
+        userKey = crypto.sha256.convert(utf8.encode(email!)).toString();
+      }
       var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
-      var mnemonicEnc = await UserHelper().get_mnemonic();
+      var mnemonicEnc = await UserHelper().get_mnemonic(userKeyTmp: userKey);
       print('--> checkWalletPass : $inputEmail / $passOrg / $pass -> $mnemonicEnc');
       if (mnemonicEnc != 'NOT_MNEMONIC') {
         var result = await AesManager().decrypt(pass, mnemonicEnc);

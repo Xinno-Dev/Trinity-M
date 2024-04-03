@@ -4,10 +4,6 @@ import '../../../services/localization_service.dart';
 import '../../common_package.dart';
 import '../../provider/language_provider.dart';
 
-final languageProvider = ChangeNotifierProvider<LanguageProvider>((_) {
-  return LanguageProvider();
-});
-
 class LanguageHelper {
   convertLangNameToLocale(String langNameToConvert) {
     Locale convertedLocale;

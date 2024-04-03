@@ -21,6 +21,7 @@ import '../../../../common/const/widget/back_button.dart';
 import '../../../../common/const/widget/custom_text_edit.dart';
 import '../../../../common/const/widget/primary_button.dart';
 import '../../../../common/provider/coin_provider.dart';
+import '../../../../common/provider/language_provider.dart';
 import '../../../../common/provider/network_provider.dart';
 import '../../../../domain/model/network_model.dart';
 import '../../../../services/json_rpc_service.dart';
@@ -335,7 +336,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                           showResultDialog(context, TR(context, '입력 내용을 확인해 주세요.'));
                           return;
                         }
-                        showConfirmDialog(context, ref.read(languageProvider).getLocale!.languageCode == 'ko' ?
+                        showConfirmDialog(context, ref.read(languageProvider).isKor ?
                           TR(context, '\'${newNetwork.name}\'\n네트워크를 추가하시겠습니까?') :
                           TR(context, 'Would you like to add a\n\'${newNetwork.name}\' network?')).then((result) async {
                           if (result != null && result) {

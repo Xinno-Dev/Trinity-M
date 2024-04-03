@@ -328,9 +328,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          if (loginProv.isLogin)...[
-                            _buildPinLoginBox(),
-                          ],
+                          // if (loginProv.isLogin)...[
+                          //   _buildPinLoginBox(),
+                          // ],
                           if (!loginProv.isLogin)...[
                             _buildEmailBox(),
                             _buildCenterLine(),

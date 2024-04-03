@@ -14,6 +14,7 @@ import '../../../common/const/widget/CustomCheckBox.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/detail_row.dart';
 import '../../../common/const/widget/gray_5_round_container.dart';
+import '../../../common/provider/language_provider.dart';
 import '../../../common/provider/network_provider.dart';
 import '../../../common/provider/stakes_data.dart';
 import '../../../common/style/outlineInputBorder.dart';

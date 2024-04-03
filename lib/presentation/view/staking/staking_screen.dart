@@ -15,6 +15,7 @@ import '../../../common/common_package.dart';
 import '../../../common/const/constants.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/balance_row.dart';
+import '../../../common/provider/language_provider.dart';
 import '../../../common/provider/network_provider.dart';
 import '../../../domain/model/network_model.dart';
 import '../../../domain/model/rpc/delegateInfo.dart';
@@ -123,7 +124,7 @@ class _StakingScreenState extends ConsumerState<StakingScreen> with WidgetsBindi
         now.add(Duration(seconds: int.parse(rule.lazyRewardBlocks!) * 3));
 
     DateFormat formatter = DateFormat(
-        ref.read(languageProvider).getLocale!.languageCode == 'ko' ?
+        ref.read(languageProvider).isKor ?
         'yyyy년 M월 d일 HH:mm:ss (\'UTC\' +9)' :
         'M-d-yyyy HH:mm:ss (\'UTC\' +9)');
 

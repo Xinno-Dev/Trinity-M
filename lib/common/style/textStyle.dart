@@ -221,6 +221,14 @@ var typo12regular100 = TextStyle(
   fontSize: 12.r,
 );
 
+var typo12bold = TextStyle(
+  color: GRAY_90,
+  fontWeight: FontWeight.w700,
+  fontFamily: 'Pretendard',
+  fontStyle: FontStyle.normal,
+  fontSize: 12.r,
+  height: 1.0,
+);
 
 var typo12normal = TextStyle(
   color: GRAY_90,

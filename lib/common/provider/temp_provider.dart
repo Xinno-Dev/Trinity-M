@@ -43,6 +43,7 @@ import '../../presentation/view/account/export_rwf_pass_screen.dart';
 import '../../presentation/view/asset/networkScreens/network_list_screen.dart';
 import '../../presentation/view/asset/send_asset_screen.dart';
 import '../../presentation/view/asset/swapScreen/swap_asset_screen.dart';
+import '../../presentation/view/market/market_screen.dart';
 import '../../presentation/view/recover_wallet_complete_screen.dart';
 import '../../presentation/view/recover_wallet_input_screen.dart';
 import '../../presentation/view/recover_wallet_register_password.dart';
@@ -202,6 +203,11 @@ class TempProvider extends ChangeNotifier {
           builder: (context, state) => MainScreen(
             selectedPage: int.parse(state.queryParams['selectedPage'] ?? '0'),
           ),
+        ),
+        GoRoute(
+          path: '/marketScreen',
+          name: MarketScreen.routeName,
+          builder: (context, state) => MarketScreen(),
         ),
         GoRoute(
           path: '/assetScreen',

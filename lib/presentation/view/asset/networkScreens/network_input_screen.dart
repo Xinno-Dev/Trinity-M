@@ -15,6 +15,7 @@ import '../../../../common/const/widget/back_button.dart';
 import '../../../../common/const/widget/custom_text_edit.dart';
 import '../../../../common/const/widget/primary_button.dart';
 import '../../../../common/provider/coin_provider.dart';
+import '../../../../common/provider/language_provider.dart';
 import '../../../../common/provider/network_provider.dart';
 import '../../../../domain/model/network_model.dart';
 import '../../../../services/json_rpc_service.dart';
@@ -353,7 +354,7 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
       builder: (BuildContext context) =>
           AlertDialog(
             content: Text(
-                ref.read(languageProvider).getLocale!.languageCode == 'ko' ?
+                ref.read(languageProvider).isKor ?
                 TR(context, '\'$tokenName\'\n네트워크를 추가하시겠습니까?') :
                 TR(context, 'Would you like to add a\n\'$tokenName\' network?'),
                 style: typo16dialog, textAlign: TextAlign.center),
