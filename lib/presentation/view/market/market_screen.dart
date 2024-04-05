@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:larba_00/common/common_package.dart';
+import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/common/const/widget/mainBox.dart';
+import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/presentation/view/history_screen.dart';
 import 'package:larba_00/presentation/view/signup/login_screen.dart';
 import 'package:larba_00/presentation/view/settings/settings_screen.dart';
 
 import '../../../common/const/utils/languageHelper.dart';
+import '../../../services/google_service.dart';
 
 class MarketScreen extends ConsumerStatefulWidget {
   const MarketScreen({super.key});
@@ -42,21 +45,27 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
           SliverAppBar(
             title: Text(TR(context, 'Market')),
             centerTitle: true,
-            automaticallyImplyLeading: false,
+            // automaticallyImplyLeading: false, // TODO: disabled for Dev..
             titleTextStyle: typo16bold,
             floating: true,
             pinned: true,
             backgroundColor: Colors.white,
             actions: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  GoogleService.uploadToGoogleDrive('test contents...');
+                },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5),
                   child: Icon(Icons.search)
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  ref.read(loginProvider).logout().then((_) {
+                    context.replaceNamed('login');
+                  });
+                },
                 child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5),
                     child: Icon(Icons.more_vert)

@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAvDhz2rsgaoQDz9v26257yvYVlElIuql0',
-    appId: '1:827937887557:android:6889ba2c8b6f753aca1a2c',
-    messagingSenderId: '827937887557',
-    projectId: 'larba-00',
-    storageBucket: 'larba-00.appspot.com',
+    apiKey: 'AIzaSyCXKgxSDwgzDT-0rUQx48QbYO7pXaPmUIU',
+    appId: '1:143986862889:android:0a369eaea1b3f12e3ea538',
+    messagingSenderId: '143986862889',
+    projectId: 'larba-00-9fdd3',
+    storageBucket: 'larba-00-9fdd3.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAvDhz2rsgaoQDz9v26257yvYVlElIuql0',
-    appId: '1:827937887557:android:6889ba2c8b6f753aca1a2c',
-    messagingSenderId: '1069196489489',
-    projectId: 'larba-00',
-    storageBucket: 'larba-00.appspot.com',
+    apiKey: 'AIzaSyCXKgxSDwgzDT-0rUQx48QbYO7pXaPmUIU',
+    appId: '1:143986862889:android:0a369eaea1b3f12e3ea538',
+    messagingSenderId: '143986862889',
+    projectId: 'larba-00-9fdd3',
+    storageBucket: 'larba-00-9fdd3.appspot.com',
     iosClientId: '791302430091-fk73p2r10jb4fsfm4fdmgj0ujll2mdsn.apps.googleusercontent.com',
     iosBundleId: 'com.medium.mauth',
   );

@@ -65,7 +65,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
             TR(context, '약관 동의'),
             style: typo18semibold,
           ),
-          elevation: 0,
+          titleSpacing: 0,
         ),
         body: Container (
           child: Column(

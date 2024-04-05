@@ -18,6 +18,7 @@ import '../../../common/const/constants.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/uihelper.dart';
 import '../../../common/const/widget/warning_icon.dart';
+import 'signup_pass_screen.dart';
 
 class SignUpMnemonicScreen extends ConsumerStatefulWidget {
   SignUpMnemonicScreen({super.key});
@@ -73,7 +74,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
             TR(context, '지갑 만들기'),
             style: typo18semibold,
           ),
-          elevation: 0,
+          titleSpacing: 0,
         ),
         body: LayoutBuilder(builder: (context, constraints) {
           var mnBoxRatio = constraints.maxHeight / constraints.maxWidth;
@@ -108,43 +109,43 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                     ),
                     SizedBox(height: 10.h),
                     Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        child: Container(
-                          child: GridView.builder(
-                            itemCount: mnemonicList.length,
-                            shrinkWrap: true,
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 4,
-                              mainAxisSpacing: 6.r,
-                              childAspectRatio: mnBoxRatio,
-                            ),
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return Container(
-                                  color: BG,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(8.r),
-                                    child: Stack(
-                                      children: [
-                                        Text(
-                                          '${index + 1}',
-                                          style:
-                                          typo14semibold.copyWith(color: GRAY_90),
-                                        ),
-                                        Center(
-                                          child: Text(
-                                            mnemonicList[index],
-                                            style:
-                                            typo16medium.copyWith(color: GRAY_60),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ));
-                            },
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Container(
+                        child: GridView.builder(
+                          itemCount: mnemonicList.length,
+                          shrinkWrap: true,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 4,
+                            mainAxisSpacing: 6.r,
+                            childAspectRatio: mnBoxRatio,
                           ),
-                        )),
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return Container(
+                                color: BG,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.r),
+                                  child: Stack(
+                                    children: [
+                                      Text(
+                                        '${index + 1}',
+                                        style:
+                                        typo14semibold.copyWith(color: GRAY_90),
+                                      ),
+                                      Center(
+                                        child: Text(
+                                          mnemonicList[index],
+                                          style:
+                                          typo16medium.copyWith(color: GRAY_60),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ));
+                          },
+                        ),
+                      )),
                     SizedBox(height: (constraints.maxHeight < 600) ? 10 : 16),
                     Center(
                       child: GestureDetector(
@@ -181,60 +182,41 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         },
                       ),
                     ),
-                    Spacer(),
+                    SizedBox(height: 40.h),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40.h),
-                      child: PrimaryButton(
-                        text: TR(context, '다음'),
-                        round: 0,
+                      padding: EdgeInsets.symmetric(horizontal: 40.w),
+                      child: InkWell(
                         onTap: () {
-                          Navigator.of(context).push(createAniRoute(MainScreen()));
+                          Navigator.of(context).push(createAniRoute(CloudPassScreen()));
                         },
-                      ),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(width: 2, color: GRAY_20),
+                          ),
+                          child: Text(TR(context, '클라우드 백업'), style: typo16bold),
+                        ),
+                      )
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    //   child: PrimaryButton(
-                    //     text: TR(context, '다음'),
-                    //     onTap: () {
-                    //       showDialog(
-                    //         context: context,
-                    //         builder: (BuildContext context) {
-                    //           return SimpleCheckDialog(
-                    //             titleString: TR(context, '문구 보관을 확인하세요'),
-                    //             infoString: TR(context, '지갑 복구용 문구를 보관하셨나요?\n'
-                    //                 '보관 확인 과정을 진행하세요\n\n'
-                    //                 '문구를 잃어버리실 경우 지갑 복구가\n'
-                    //                 '불가하며,  바이핀은 사용자의 지갑\n'
-                    //                 '복구용 문구를 보관하지 않습니다.'),
-                    //             hasTitle: true,
-                    //             defaultButtonText: TR(context, '넘어가기'),
-                    //             hasOptions: true,
-                    //             optionButtonText: TR(context, '보관 확인하기'),
-                    //             hasIcon: true,
-                    //             icon: WarningIcon(),
-                    //             defaultTapOption: () {
-                    //               context.pop();
-                    //               context.pushNamed(
-                    //                   RegistLocalAuthScreen.routeName);
-                    //             },
-                    //             onTapOption: () {
-                    //               context.pop();
-                    //               context.pushNamed(
-                    //                   RegistMnemonicCheckScreen.routeName);
-                    //             },
-                    //           );
-                    //         },
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
-                    // SizedBox(height: 40),
                   ],
                 ),
               )
           );
         }),
+        bottomNavigationBar: Padding(
+          padding: EdgeInsets.symmetric(vertical: 40.h),
+          child: PrimaryButton(
+            text: TR(context, '다음'),
+            round: 0,
+            onTap: () {
+              Navigator.of(context).push(
+                  createAniRoute(MainScreen()));
+            },
+          ),
+        ),
       ),
     );
   }

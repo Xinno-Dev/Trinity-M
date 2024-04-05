@@ -255,8 +255,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
     isRecoverLogin = false;
     fToast = FToast();
     fToast.init(context);
-    ref.read(loginProvider).checkLogin();
-
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       checkAppUpdate(context).then((result) {
@@ -291,7 +289,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
   ) {
     final loginProv = ref.watch(loginProvider);
     LOG('---> LoginScreen isSocialLogin : ${loginProv.isLogin}');
-
+    if (loginProv.isLogin) {
+      LOG('---> LoginScreen loginType : ${loginProv.loginInfo?.loginType}');
+    }
     return GestureDetector(
       onTap: () {
         _focusNode.unfocus();
@@ -344,7 +344,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
                     if (!loginProv.isLoginCheckDone)...[
                       Align(
                         alignment: Alignment.bottomCenter,
-                        child: CircularProgressIndicator()
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 80),
+                          child: CircularProgressIndicator()
+                        ),
                       )
                     ],
                   ],
@@ -523,7 +526,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
     switch(index) {
       case 0:  loginProv.loginKakao(context); break;
       case 1:  loginProv.loginNaver(); break;
-      case 2:  loginProv.loginGoogle(); break;
+      case 2:  loginProv.loginGoogle(context); break;
       case 3:  loginProv.loginApple(); break;
       default: loginProv.loginEmail();
     }

@@ -15,6 +15,7 @@ import 'package:larba_00/presentation/view/sign_password_screen.dart';
 import 'package:larba_00/presentation/view/signup/signup_pass_screen.dart';
 import 'package:larba_00/presentation/view/signup/signup_email_screen.dart';
 import 'package:larba_00/presentation/view/signup/signup_terms_screen.dart';
+import 'package:larba_00/services/google_service.dart';
 import 'package:larba_00/services/social_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -42,8 +43,10 @@ enum LoginType {
 
   get title {
     switch(this) {
-      case LoginType.kakao:   return '카카오';
-      case LoginType.google:  return '구글';
+      case LoginType.kakao:  return '카카오';
+      case LoginType.naver:  return '네이버';
+      case LoginType.google: return '구글';
+      case LoginType.apple:  return '애플';
       default: return '이메일';
     }
   }
@@ -63,6 +66,12 @@ enum NickCheckStep {
   complete;
 }
 
+enum RecoverPassStep {
+  none,
+  ready,
+  complete;
+}
+
 final testEmail = 'jubal2000@gmail.com';
 
 final loginProvider = ChangeNotifierProvider<LoginProvider>((_) {
@@ -70,31 +79,42 @@ final loginProvider = ChangeNotifierProvider<LoginProvider>((_) {
 });
 
 class LoginProvider extends ChangeNotifier {
+  static final _singleton = LoginProvider._internal();
+  factory LoginProvider() {
+    return _singleton;
+  }
+  LoginProvider._internal();
+
   LoginModel? loginInfo;
   bool isLoginCheckDone = false;
   bool isSignUpMode = false;
 
-  var emailStep = EmailSignUpStep.none;
-  var nickStep  = NickCheckStep.none;
+  var emailStep   = EmailSignUpStep.none;
+  var nickStep    = NickCheckStep.none;
+  var recoverStep = RecoverPassStep.none;
+
   var inputEmail = 'jubal2000@gmail.com'; // for test..
-  var inputPass = List.generate(2, (index) => 'testpass00');
+  var inputPass   = List.generate(2, (index) => 'testpass00');
+  var recoverPass = List.generate(2, (index) => 'recoverpass00');
   var inputNick = 'jubal2000';
 
-  LoginProvider() {
-  }
-
-  checkLogin() async {
+  Future<bool> checkLogin() async {
     isLoginCheckDone = false;
     loginInfo = null;
-    LOG('-----------> checkLogin');
+    final localType = await UserHelper().get_loginType();
+    var checkLogin = false;
+    LOG('-----------> checkLogin : $localType');
 
-    var checkLogin = await checkKakaoLogin();
-    LOG('--> checkKakaoLogin : $checkLogin');
-    if (checkLogin) {
-      final user = await getKakaoUserInfo();
-      loginInfo = LoginModel.createFromKakao(user); // TODO: 후에 서버에서 가져오는 정보로 대체..
+    if (localType == LoginType.kakao.name) {
+      checkLogin = await checkKakaoLogin();
+      LOG('--> checkKakaoLogin : $checkLogin');
+      if (checkLogin) {
+        final user = await getKakaoUserInfo();
+        loginInfo =
+            LoginModel.createFromKakao(user); // TODO: 후에 서버에서 가져오는 정보로 대체..
+      }
     }
-    if (!checkLogin) {
+    if (localType == LoginType.google.name) {
       checkLogin = await checkGoogleLogin();
       LOG('--> checkGoogleLogin : $checkLogin');
       if (checkLogin) {
@@ -102,7 +122,7 @@ class LoginProvider extends ChangeNotifier {
         loginInfo = LoginModel.createFromGoogle(user);
       }
     }
-    if (!checkLogin) {
+    if (localType == LoginType.email.name) {
       checkLogin = await checkEmailLogin();
       LOG('--> checkEmailLogin : $checkLogin');
       if (checkLogin) {
@@ -111,6 +131,9 @@ class LoginProvider extends ChangeNotifier {
       }
     }
     LOG('-----------------------------');
+    if (!checkLogin) {
+      await UserHelper().setUser(loginType: '');
+    }
     notifyListeners();
     isLoginCheckDone = true;
     return isLogin;
@@ -120,10 +143,11 @@ class LoginProvider extends ChangeNotifier {
     return loginInfo != null;
   }
 
-  loginKakao(context) async {
+  loginKakao(BuildContext context) async {
     final user = await startKakaoLogin();
     if (user != null) {
       loginInfo = LoginModel.createFromKakao(user);
+      UserHelper().setUser(loginType: LoginType.kakao.name);
     }
     // todo: check signup user..
     if (!isLogin) {
@@ -138,11 +162,13 @@ class LoginProvider extends ChangeNotifier {
     return isLogin;
   }
 
-  loginGoogle() async {
+  loginGoogle(BuildContext context) async {
     final result = await startGoogleLogin();
     if (result != null) {
       final user = result.runtimeType == User ? result : result?.user;
       loginInfo = LoginModel.createFromGoogle(user);
+      UserHelper().setUser(loginType: LoginType.google.name);
+      context.replaceNamed('mainScreen');
     }
     notifyListeners();
     return isLogin;
@@ -162,14 +188,14 @@ class LoginProvider extends ChangeNotifier {
       }
       var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
       var mnemonicEnc = await UserHelper().get_mnemonic(userKeyTmp: userKey);
-      print('--> checkWalletPass : $inputEmail / $passOrg / $pass -> $mnemonicEnc');
+      LOG('--> checkWalletPass : $inputEmail / $passOrg / $pass -> $mnemonicEnc');
       if (mnemonicEnc != 'NOT_MNEMONIC') {
         var result = await AesManager().decrypt(pass, mnemonicEnc);
-        print('--> checkWallet mnemonic : $result');
+        LOG('--> checkWallet mnemonic : $result');
         return result != 'fail';
       }
     } catch (e) {
-      print('--> checkWallet error : $e');
+      LOG('--> checkWallet error : $e');
     }
     return false;
   }
@@ -178,16 +204,16 @@ class LoginProvider extends ChangeNotifier {
   createNewWallet(String passOrg, {String? email}) async {
     UserHelper().setUserKey(email ?? inputEmail);
     var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
-    print('--> createNewWallet : ${email ?? inputEmail} / $passOrg -> $pass');
+    LOG('--> createNewWallet : ${email ?? inputEmail} / $passOrg -> $pass');
     var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
     var generateKeyResult = await eccImpl.generateKeyPair(pass);
     if (generateKeyResult) {
       // check create complete..
       var result = await checkWalletPass(passOrg);
-      print('--> createNewWallet success : $result');
+      LOG('--> createNewWallet success : $result');
       return result;
     } else {
-      print('--> createNewWallet failed');
+      LOG('--> createNewWallet failed');
     }
     return false;
   }
@@ -296,6 +322,7 @@ class LoginProvider extends ChangeNotifier {
     showLoadingDialog(context, '회원 등록중입니다...');
     createNewWallet(userPass).then((result) {
       if (result) {
+        UserHelper().setUser(loginType: LoginType.email.name);
         // TODO: create user API..
         // loginProv.createSignedMsg(userPass).then((signMsg) {
         //   LOG('--> signMsg : $signMsg');
@@ -314,7 +341,7 @@ class LoginProvider extends ChangeNotifier {
   ////////////////////////////////////////////////////////////////////////
 
   get loginType {
-    return loginInfo?.loginType ?? LoginType.email;
+    return loginInfo?.loginType;
   }
 
   toggleLogin() {
@@ -323,6 +350,7 @@ class LoginProvider extends ChangeNotifier {
   }
 
   logout() async {
+    loginInfo = null;
     switch(loginType) {
       case LoginType.kakao:
         await startKakaoLogout();
@@ -331,7 +359,8 @@ class LoginProvider extends ChangeNotifier {
         await startGoogleLogout();
         break;
     }
-    loginInfo = null;
+    LOG('--> logout : $loginType');
+    await UserHelper().setUser(loginType: 'logout');
     notifyListeners();
   }
 }

@@ -46,7 +46,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
             TR(context, '이메일 등록'),
             style: typo18semibold,
           ),
-          elevation: 0,
+          titleSpacing: 0,
         ),
         body: SingleChildScrollView(
           child: Column(

@@ -216,7 +216,7 @@ Widget showLoadingItem([var itemHeight = 60.0]) {
   );
 }
 
-Widget showLoadingFull([var size = 60.0]) {
+Widget showLoadingFull([double size = 60.0]) {
   return Center(
     child: SizedBox(
       width: size,

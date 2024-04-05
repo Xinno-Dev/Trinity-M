@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "827937887557",
-    "project_id": "larba-00",
-    "storage_bucket": "larba-00.appspot.com"
+    "project_number": "143986862889",
+    "project_id": "larba-00-9fdd3",
+    "storage_bucket": "larba-00-9fdd3.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:827937887557:android:6889ba2c8b6f753aca1a2c",
+        "mobilesdk_app_id": "1:143986862889:android:dc6542d33278fa3f3ea538",
         "android_client_info": {
-          "package_name": "com.exino.larba_00"
+          "package_name": "com.exino.larba_01"
         }
       },
       "oauth_client": [
         {
-          "client_id": "827937887557-a58h382j5etl5al3a916cv1but3q0gii.apps.googleusercontent.com",
+          "client_id": "143986862889-91id1je9p99orputhqks0vkmlkqfgbl5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.exino.larba_00",
+            "package_name": "com.exino.larba_01",
             "certificate_hash": "8b900e53055252cd57ba0ae13b7c836bc953eefb"
           }
         },
         {
-          "client_id": "827937887557-5dg0bhsqgr3q6ci0rhakv7r20g8i45qt.apps.googleusercontent.com",
+          "client_id": "143986862889-koktkg5pt6c4fbkc0bb9ci6375linjnb.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAvDhz2rsgaoQDz9v26257yvYVlElIuql0"
+          "current_key": "AIzaSyCXKgxSDwgzDT-0rUQx48QbYO7pXaPmUIU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "827937887557-5dg0bhsqgr3q6ci0rhakv7r20g8i45qt.apps.googleusercontent.com",
+              "client_id": "143986862889-koktkg5pt6c4fbkc0bb9ci6375linjnb.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

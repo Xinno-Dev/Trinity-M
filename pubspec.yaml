@@ -34,7 +34,7 @@ dependencies:
 
   biometric_storage: ^5.0.0+4
   equatable: ^2.0.5
-  http: 0.13.5
+  http: ^1.1.0
   provider: ^6.0.5
   recase: ^4.1.0
   flutter_state_notifier: ^0.7.3
@@ -69,7 +69,7 @@ dependencies:
   logging_appenders: ^1.0.0
   local_auth: ^2.2.0
   flutter_secure_storage: ^8.0.0
-  package_info_plus: ^3.0.3
+  package_info_plus: ^6.0.0
   device_info_plus: ^9.1.1
   email_validator: ^2.1.17
   intl: ^0.18.0
@@ -79,7 +79,7 @@ dependencies:
   json_rpc_2: ^3.0.2
   web_socket_channel: ^2.4.0
   currency_text_input_formatter: ^2.1.9
-  web3dart: ^2.6.1
+  web3dart: ^2.7.0
   eth_sig_util: ^0.0.9
   share_plus: ^7.2.1
   qr_flutter: ^4.0.0
@@ -98,6 +98,7 @@ dependencies:
   store_redirect: ^2.0.1
   dropdown_button2: ^1.8.9
   uuid: ^3.0.6
+  path_provider: ^2.1.2
 
   # firebase..
   firebase_core: ^2.27.1
@@ -114,6 +115,8 @@ dependencies:
 
   # google..
   google_sign_in: ^6.2.1
+  googleapis: ^12.0.0
+  googleapis_auth: ^1.5.1
 
   # kakao..image_picker:
   kakao_flutter_sdk_user: ^1.9.0 # 카카오 로그인 API 패키지

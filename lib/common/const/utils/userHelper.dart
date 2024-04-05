@@ -30,6 +30,7 @@ class UserHelper {
   }
 
   Future<void> setUser({
+    String loginType = '',
     String userID = '',
     String uid = '',
     String publickey = '',
@@ -51,6 +52,9 @@ class UserHelper {
     String addressList = '',
   }) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
+
+    // global key..
+    if (loginType != '') await storage.write(key: LOGIN_TYPE_KEY, value: loginType);
 
     if (userID != '') await storage.write(key: USERID_KEY + userKey, value: userID);
 
@@ -95,6 +99,11 @@ class UserHelper {
 
     if (networkList != '')
       await storage.write(key: NETWORKLIST_KEY + userKey, value: networkList);
+  }
+
+  Future<String> get_loginType() async {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    return await storage.read(key: LOGIN_TYPE_KEY) ?? 'NOT_USERID';
   }
 
   Future<String> get_userID({String? userKeyTmp}) async {

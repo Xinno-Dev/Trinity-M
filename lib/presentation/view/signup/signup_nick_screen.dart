@@ -9,6 +9,7 @@ import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
+import '../registLocalAuth_screen.dart';
 import '../registMnemonic_screen.dart';
 import 'signup_bio_screen.dart';
 import 'signup_pass_screen.dart';
@@ -48,7 +49,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
               TR(context, '사용자 이름 등록'),
               style: typo18semibold,
             ),
-            elevation: 0,
+            titleSpacing: 0,
           ),
           body: SingleChildScrollView(
               child: Column(

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:larba_00/common/const/constants.dart';
+import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/common/provider/coin_provider.dart';
 import 'package:larba_00/common/provider/firebase_provider.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
@@ -200,7 +201,16 @@ Future<void> main() async {
             create: (context) => LoginProvider(),
           )
         ],
-        child: MyApp(),
+        child: FutureBuilder(
+          future: LoginProvider().checkLogin(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return MyApp();
+            } else {
+              return showLoadingFull(50);
+            }
+          }
+        )
       ),
     ),
     // ProviderScope(
@@ -438,8 +448,9 @@ class _FirebaseSetupState extends ConsumerState<FirebaseSetup> {
 
   @override
   Widget build(BuildContext context) {
-    print('--> isGlobalLogin : $isGlobalLogin');
-    return isGlobalLogin
+    final loginProv = ref.read(loginProvider);
+    LOG('---> isSocialLogin : ${loginProv.isLogin}');
+    return loginProv.isLogin
       ? MainScreen()
       : LoginScreen();
   }

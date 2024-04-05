@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:larba_00/common/const/utils/md5Helper.dart';
 import 'package:larba_00/common/rlp/hash.dart';
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:larba_00/services/google_service.dart';
 
 import '../common/const/utils/convertHelper.dart';
 
@@ -66,7 +67,7 @@ startEmailLogout() async {
 }
 
 getEmailUserInfo(emailAuth) async {
-  final emailLink = 'https://www.medium.com/emailSignUp?cartId=1234&apiKey=AIzaSyBYHfihYZDw6KjXraK36CaBfk7t_pM8XKc&oobCode=c00by8i1u40rEroOg_URCgqFdgsyM8WcM7qfP9XewTEAAAGOWiVL0A&mode=signIn&lang=ko';
+  final emailLink = 'https://www.exino.com/emailSignUp?cartId=1234&apiKey=AIzaSyBYHfihYZDw6KjXraK36CaBfk7t_pM8XKc&oobCode=c00by8i1u40rEroOg_URCgqFdgsyM8WcM7qfP9XewTEAAAGOWiVL0A&mode=signIn&lang=ko';
   if (FirebaseAuth.instance.isSignInWithEmailLink(emailLink)) {
     try {
       // The client SDK will parse the code from the link for you.
@@ -173,42 +174,15 @@ checkGoogleLogin() async {
 
 startGoogleLogin() async {
   // Trigger the authentication flow
-  final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-  // Obtain the auth details from the request
-  final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
-  // Create a new credential
-  final credential = google.GoogleAuthProvider.credential(
-    accessToken: googleAuth?.accessToken,
-    idToken: googleAuth?.idToken,
-  );
-
-  // Once signed in, return the UserCredential
-  final result = await google.FirebaseAuth.instance.signInWithCredential(credential);
-  LOG('---> google result : $result');
-  return result;
+  return await GoogleService.signIn();
 }
 
 startGoogleLogout() async {
-  try {
-    await google.FirebaseAuth.instance.signOut();
-    return true;
-  } catch (e) {
-    LOG('--> startGoogleLogout error : $e');
-  }
-  return false;
+  return await GoogleService.signOut();
 }
 
 getGoogleUserInfo() async {
-  try {
-    final user = await google.FirebaseAuth.instance.currentUser;
-    LOG('---> getGoogleUserInfo : $user');
-    return user;
-  } catch (e) {
-    LOG('--> getGoogleUserInfo error : $e');
-  }
-  return null;
+  return await GoogleService.userInfo();
 }
 
 

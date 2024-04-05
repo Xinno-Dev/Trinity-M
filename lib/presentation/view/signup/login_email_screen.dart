@@ -54,86 +54,85 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
           backgroundColor: WHITE,
           appBar: AppBar(
             backgroundColor: WHITE,
-            leading: CustomBackButton(
-              onPressed: context.pop,
-            ),
             centerTitle: true,
             title: Text(
               TR(context, '이메일 로그인'),
               style: typo18semibold,
             ),
-            elevation: 0,
+            titleSpacing: 0,
           ),
           body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 300,
-                    margin: EdgeInsets.only(top: 20),
-                    child: SvgPicture.asset(
-                      'assets/svg/logo.svg',
-                    ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 300,
+                  margin: EdgeInsets.only(top: 20),
+                  child: SvgPicture.asset(
+                    'assets/svg/logo.svg',
                   ),
-                  Container(
-                    height: 240,
-                    margin: EdgeInsets.symmetric(horizontal: 40.w),
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: emailInputController,
-                          decoration: InputDecoration(
-                            hintText: TR(context, '이메일 주소 입력'),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          scrollPadding: EdgeInsets.only(bottom: 200),
-                          onChanged: (text) {
-                            checkNextReady();
-                          },
+                ),
+                Container(
+                  height: 240,
+                  margin: EdgeInsets.symmetric(horizontal: 40.w),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: emailInputController,
+                        decoration: InputDecoration(
+                          hintText: TR(context, '이메일 주소 입력'),
                         ),
-                        SizedBox(height: 40.h),
-                        TextField(
-                          controller: passInputController,
-                          decoration: InputDecoration(
-                            hintText: TR(context, '비밀번호 입력'),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          scrollPadding: EdgeInsets.only(bottom: 200),
-                          onChanged: (text) {
-                            checkNextReady();
-                          },
+                        keyboardType: TextInputType.emailAddress,
+                        scrollPadding: EdgeInsets.only(bottom: 200),
+                        onChanged: (text) {
+                          checkNextReady();
+                        },
+                      ),
+                      SizedBox(height: 40.h),
+                      TextField(
+                        controller: passInputController,
+                        decoration: InputDecoration(
+                          hintText: TR(context, '비밀번호 입력'),
                         ),
-                      ],
-                    )
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: IS_DEV_MODE || isNextReady
-                        ? PrimaryButton(
-                      text: TR(context, '다음'),
-                      onTap: () {
-                        UserHelper().setUserKey(emailInputController.text);
-                        loginProv.checkWalletPass(
-                          passInputController.text
-                        ).then((result) {
-                          if (result) {
-                            Navigator.of(context).pop(true);
-                          } else {
-                            showConfirmDialog(context, '잘못된 계정/비밀번호 입니다.\n새지갑을 생성하시겠습니까?', okText: '만들기', cancelText: '취소').then((result) {
-                              if (BOL(result)) {
-
-                              }
-                            });
-                          }
-                        });
-                      },
-                    ) : DisabledButton(
-                      text: TR(context, '다음'),
-                    ),
+                        keyboardType: TextInputType.emailAddress,
+                        scrollPadding: EdgeInsets.only(bottom: 200),
+                        onChanged: (text) {
+                          checkNextReady();
+                        },
+                      ),
+                    ],
                   )
-                ],
-              )
+                ),
+              ],
+            )
+          ),
+          bottomNavigationBar: Padding(
+            padding: EdgeInsets.symmetric(vertical: 40.h),
+            child: IS_DEV_MODE || isNextReady ?
+              PrimaryButton(
+                text: TR(context, '다음'),
+                round: 0,
+                onTap: () {
+                  UserHelper().setUserKey(emailInputController.text);
+                  loginProv.checkWalletPass(
+                    passInputController.text
+                  ).then((result) {
+                    if (result) {
+                      Navigator.of(context).pop(true);
+                    } else {
+                      showConfirmDialog(context,
+                        '잘못된 계정/비밀번호 입니다.\n새지갑을 생성하시겠습니까?',
+                        okText: '만들기', cancelText: '취소').then((result) {
+                          if (BOL(result)) {
+
+                          }
+                      });
+                    }
+                  });
+                },
+              ) : DisabledButton(
+                text: TR(context, '다음'),
+              ),
           ),
         )
     );

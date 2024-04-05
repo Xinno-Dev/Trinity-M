@@ -44,7 +44,7 @@ class _LoginPassScreenState extends ConsumerState<LoginPassScreen> {
               TR(context, '비밀번호 입력'),
               style: typo18semibold,
             ),
-            elevation: 0,
+            titleSpacing: 0,
           ),
           body: SingleChildScrollView(
             child: Column(

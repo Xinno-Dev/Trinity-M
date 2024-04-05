@@ -11,6 +11,7 @@ const String TEST_NET_URI = 'ws://testnet.rigochain.io:26657/websocket';
 const String TEST_HTTP_URL = 'https://testnet.rigochain.io';
 const String TEST_NET_CHAIN_ID = "testnet0";
 
+const String LOGIN_TYPE_KEY = 'LOGIN_TYPE_KEY';
 const String USERID_KEY = 'USERID_KEY';
 const String UID_KEY = 'UID_KEY';
 const String PUB_KEY = 'PUB_KEY';
