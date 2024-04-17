@@ -9,6 +9,7 @@ import 'package:larba_00/presentation/view/history_screen.dart';
 import 'package:larba_00/presentation/view/signup/login_screen.dart';
 import 'package:larba_00/presentation/view/settings/settings_screen.dart';
 
+import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../services/google_service.dart';
 
@@ -53,7 +54,11 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
             actions: [
               InkWell(
                 onTap: () {
-                  GoogleService.uploadToGoogleDrive('test contents...');
+                  var fileName = '';
+                  GoogleService.showUploadDriveDlg(context,
+                    'mnemonic text list 0000 1111').then((result) {
+                    LOG('---> showUploadDriveDlg result : $result');
+                  });
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5),

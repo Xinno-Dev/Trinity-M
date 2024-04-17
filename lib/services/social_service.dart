@@ -1,11 +1,15 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:firebase_auth/firebase_auth.dart' as google;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:larba_00/common/const/utils/md5Helper.dart';
+import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/common/rlp/hash.dart';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:larba_00/services/google_service.dart';
@@ -22,6 +26,18 @@ import '../common/const/utils/convertHelper.dart';
 
 
 checkEmailLogin() async {
+  if (FirebaseAuth.instance.currentUser != null) {
+    Fluttertoast.showToast(
+      msg: "E-Mail 로그인",
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black,
+      textColor: Colors.white,
+      fontSize: 16.0
+    );
+    return true;
+  }
   return false;
 }
 
@@ -75,10 +91,10 @@ getEmailUserInfo(emailAuth) async {
           .signInWithEmailLink(email: emailAuth, emailLink: emailLink);
       // You can access the new user via userCredential.user.
       // final emailAddress = userCredential.user?.email;
-      print('Successfully signed in with email link! : ${userCredential.user}');
+      LOG('--> Successfully signed in with email link! : ${userCredential.user}');
       return userCredential.user;
     } catch (error) {
-      print('Error signing in with email link.');
+      LOG('--> Error signing in with email link.');
     }
   }
   return null;
@@ -97,7 +113,20 @@ checkKakaoLogin() async {
   try {
     final accessInfo = await kakao.UserApi.instance.accessTokenInfo();
     LOG('--> checkKakaoLogin : $accessInfo');
-    return accessInfo.id != null;
+    if (accessInfo.id != null && accessInfo.expiresIn > 0) {
+      final formatter = DateFormat('HH 시간 mm 분 ss 초');
+      var date = DateTime.fromMillisecondsSinceEpoch(accessInfo.expiresIn * 1000);
+      Fluttertoast.showToast(
+          msg: "카카오 로그인\n${formatter.format(date)} 남음",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+      return true;
+    }
   } catch (e) {
     LOG('--> checkKakaoLogin error : $e');
   }
@@ -105,38 +134,45 @@ checkKakaoLogin() async {
 }
 
 startKakaoLogin() async {
-  if (await kakao.isKakaoTalkInstalled()) {
+  final isKakaoTalkReady = await kakao.isKakaoTalkInstalled();
+  LOG('--> startKakaoLogin $isKakaoTalkReady');
+  kakao.OAuthToken? token;
+  if (isKakaoTalkReady) {
     try {
-      final token = await kakao.UserApi.instance.loginWithKakaoTalk();
+      token = await kakao.UserApi.instance.loginWithKakaoTalk();
       LOG('--> 카카오톡으로 로그인 성공 ${token.accessToken}');
     } catch (error) {
       LOG('--> 카카오톡으로 로그인 실패 $error');
       if (error is PlatformException && error.code == 'CANCELED') {
-        return false;
       }
       try {
-        await kakao.UserApi.instance.loginWithKakaoAccount();
-        LOG('--> 카카오계정으로 로그인 성공');
+        token = await kakao.UserApi.instance.loginWithKakaoAccount();
+        LOG('--> 카카오계정으로 로그인 성공 ${token.accessToken}');
       } catch (error) {
         LOG('--> 카카오계정으로 로그인 실패 $error');
-        return false;
       }
     }
-  } else {
+  }
+  if (token == null) {
     try {
-      await kakao.UserApi.instance.loginWithKakaoAccount();
-      LOG('--> 카카오계정으로 로그인 성공');
+      token = await kakao.UserApi.instance.loginWithKakaoAccount();
+      LOG('--> 카카오계정으로 로그인 성공 ${token.accessToken}');
     } catch (error) {
       LOG('--> 카카오계정으로 로그인 실패 $error');
-      return false;
     }
   }
-  return await getKakaoUserInfo();
+  if (token != null) {
+    await UserHelper().setUser(token: token.accessToken);
+    return await getKakaoUserInfo();
+  } else {
+    await UserHelper().setUser(token: '');
+  }
+  return null;
 }
 
 startKakaoLogout() async {
   try {
-    await kakao.UserApi.instance.logout();
+    await kakao.UserApi.instance.unlink();
     return true;
   } catch (e) {
     LOG('--> startKakaoLogout error : $e');
@@ -148,7 +184,7 @@ Future<kakao.User?> getKakaoUserInfo() async {
   try {
     final user = await kakao.UserApi.instance.me();
     LOG('사용자 정보 요청 성공'
-        '\n회원번호: ${user.id}'
+        '\n회원ID: ${user.id}'
         '\n닉네임: ${user.kakaoAccount?.profile?.nickname}'
         '\n프로필: ${user.kakaoAccount?.profile?.profileImageUrl}'
         '\n이메일: ${user.kakaoAccount?.email}');

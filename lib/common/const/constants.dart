@@ -11,6 +11,11 @@ const String TEST_NET_URI = 'ws://testnet.rigochain.io:26657/websocket';
 const String TEST_HTTP_URL = 'https://testnet.rigochain.io';
 const String TEST_NET_CHAIN_ID = "testnet0";
 
+// for Larba..
+const String RWF_KEY = 'RWF_KEY';
+const String TOKEN_KEY = 'TOKEN_KEY';
+
+// for Byffin..
 const String LOGIN_TYPE_KEY = 'LOGIN_TYPE_KEY';
 const String USERID_KEY = 'USERID_KEY';
 const String UID_KEY = 'UID_KEY';
@@ -22,7 +27,6 @@ const String ADDRESS_KEY = 'ADDRESS_KEY';
 const String COIN_LIST_KEY = 'COIN_LIST_KEY';
 const String SELECTED_COIN_KEY = 'SELECTED_COIN_KEY';
 const String SELECTED_MAINNET_KEY = 'SELECTED_MAINNET_KEY';
-const String RWF_KEY = 'RWF_KEY';
 const String USELOCALAUTH_KEY = 'USELOCALAUTH_KEY';
 const String TRASH_KEY = 'TRASH_KEY';
 const String REGISTDATE_KEY = 'REGISTDATE_KEY';

@@ -11,7 +11,7 @@ class AesManager {
   static int SALT_SIZE = 20;
   static int AES_IV_SIZE = 16;
 
-  Future<String> encrypt(String pin, String msg) async {
+  Future<String> encrypt(String pin, String msg, {var isBase64 = true}) async {
     Random rnd = Random.secure();
     Uint8List salt = _getRandomData(rnd, SALT_SIZE);
 
@@ -64,10 +64,8 @@ class AesManager {
       cp: cp,
       dkp: dkp,
     );
-    var rwfjson = rwf.toJson();
-    String rwfString = json.encode(rwfjson);
+    String rwfString = json.encode(rwf.toJson());
     UserHelper().setUser(rwf: rwfString);
-
     return base64Encode(Uint8List.fromList(all.toBytes()));
   }
 

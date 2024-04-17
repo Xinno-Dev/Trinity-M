@@ -1,7 +1,9 @@
+import '../model/account_model.dart';
+import '../model/ecckeypair.dart';
+
 abstract class EccUseCase {
-  Future<bool> generateKeyPair(String pin, {String mnemonic = ''});
-  Future<bool> addKeyPair(String pin,
-      {bool hasMnemonic = true, String privateKeyHex = ''});
+  Future<bool> generateKeyPair(String pin, {String? nickId, String? mnemonic});
+  Future<bool> addKeyPair(String pin, {String? nickId, String? privateKeyHex});
   Future<String> updateSign(String pin, String UID);
   Future<String> deleteSign(
     String pin,

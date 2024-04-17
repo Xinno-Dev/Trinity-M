@@ -12,7 +12,7 @@ import 'convertHelper.dart';
 class RWFExportHelper {
   static int SALT_SIZE = 20;
   static int AES_IV_SIZE = 16;
-  static int RANDOM_COUNT = Random().nextInt(5000) + 10000;
+  static int RANDOM_COUNT = Random().nextInt(5000) + 1000;
 
   Future<String> encrypt(String pin, String address, String privateKey) async {
     LOG('--> RWFExportHelper encrypt : $pin / $address / $privateKey ($RANDOM_COUNT)');
@@ -63,8 +63,7 @@ class RWFExportHelper {
       cp: cp,
       dkp: dkp,
     );
-    var rwfJson = rwf.toJson();
-    String rwfString = json.encode(rwfJson);
+    String rwfString = json.encode(rwf.toJson());
     return rwfString;
   }
 

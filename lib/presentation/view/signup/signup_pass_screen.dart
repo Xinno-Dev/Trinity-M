@@ -1,10 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:larba_00/common/const/constants.dart';
+import 'package:larba_00/common/const/utils/rwfExportHelper.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/presentation/view/asset/networkScreens/network_input_screen.dart';
 import 'package:larba_00/presentation/view/registMnemonic_screen.dart';
+import 'package:larba_00/services/google_service.dart';
+import 'package:crypto/crypto.dart' as crypto;
 
 import '../../../common/common_package.dart';
+import '../../../common/const/utils/aesManager.dart';
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/uihelper.dart';
@@ -12,7 +19,9 @@ import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
+import '../../../domain/model/ecckeypair.dart';
 import '../../../domain/viewModel/pass_view_model.dart';
+import '../main_screen.dart';
 import 'signup_terms_screen.dart';
 
 class SignUpPassScreen extends ConsumerStatefulWidget {
@@ -109,11 +118,32 @@ class _SignUpPassScreenState extends ConsumerState {
                 ? PrimaryButton(
               text: TR(context, '다음'),
               round: 0,
-              onTap: () {
+              onTap: () async {
                 if (viewModel.passType == PassType.signUp) {
                   Navigator.of(context).push(createAniRoute(SignUpTermsScreen()));
                 } else {
-                  _showDriveSelectDialog();
+                  // var passOrg = loginProv.inputPass.first;
+                  // var pin = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+                  // var encMnemonic = await UserHelper().get_mnemonic();
+                  // var encPrivateKey = await UserHelper().get_key();
+                  // var walletAddress = await UserHelper().get_address();
+                  // var mnemonic  = await AesManager().decrypt(pin, encMnemonic);
+                  // var keyStr = await AesManager().decrypt(pin, encPrivateKey);
+                  // var privateKey = EccKeyPair.fromJson(jsonDecode(keyStr)).d;
+                  // var desc = await RWFExportHelper().encrypt(pin, walletAddress, privateKey);
+                  // LOG('---> mnemonic upload : $pin / $mnemonic / $desc');
+                  var desc = await UserHelper().get_rwf();
+                  LOG('---> RWF upload : $desc');
+                  if (Platform.isAndroid) {
+                    GoogleService.showUploadDriveDlg(context, desc).then((result) {
+                      LOG('---> showUploadDriveDlg result [Android] : $result');
+                      if (result) {
+                        Navigator.of(context)
+                          .push(createAniRoute(MainScreen()));
+                      }
+                    });
+                  }
+                  // _showDriveSelectDialog();
                 }
               },
             ) : DisabledButton(
@@ -139,31 +169,5 @@ class _SignUpPassScreenState extends ConsumerState {
         inputPass[index] = viewModel.passInputController[index].text;
       },
     ));
-  }
-
-  _showDriveSelectDialog() {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          actions: [
-            TextButton(
-              onPressed: () {
-              },
-              child: Text('Send'),
-            ),
-          ],
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                onChanged: (value) {},
-              ),
-            ],
-          ),
-        );
-      }
-    );
   }
 }

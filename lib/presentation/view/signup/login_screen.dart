@@ -290,7 +290,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
     final loginProv = ref.watch(loginProvider);
     LOG('---> LoginScreen isSocialLogin : ${loginProv.isLogin}');
     if (loginProv.isLogin) {
-      LOG('---> LoginScreen loginType : ${loginProv.loginInfo?.loginType}');
+      LOG('--> loginType : ${loginProv.loginType}');
     }
     return GestureDetector(
       onTap: () {

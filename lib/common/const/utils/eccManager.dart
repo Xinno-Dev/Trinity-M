@@ -24,7 +24,6 @@ class EccManager {
 
   Future<AsymmetricKeyPair<PublicKey, PrivateKey>> generateKeypair() async {
     var keyPair = _secp256k1KeyPair();
-
     return keyPair;
   }
 
@@ -126,15 +125,15 @@ class EccManager {
     final String privateKeyHex = formatBytesAsHexString(privateKeyList);
 
     ECPrivateKey privateKey = hexToECPrivateKey(privateKeyHex);
-    ECPublicKey publicKey = getPublicKey(privateKeyHex);
+    ECPublicKey  publicKey  = getPublicKey(privateKeyHex);
 
     AesManager aesManager = AesManager();
     String encMnemonic = await aesManager.encrypt(pin, mnemonic);
-    String encRootKey = await aesManager.encrypt(pin, rootKey.toBase58());
+    String encRootKey  = await aesManager.encrypt(pin, rootKey.toBase58());
 
     UserHelper().setUser(
       mnemonic: encMnemonic,
-      rootKey: encRootKey,
+      rootKey:  encRootKey,
       checkMnemonic: mnemonic,
     );
 

@@ -35,7 +35,6 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
 
   Future<void> _getMnemonic() async {
     String get_mnemonic = await UserHelper().get_check_mnemonic();
-
     setState(() {
       mnemonic = get_mnemonic;
       mnemonicList = mnemonic.split(' ');
@@ -78,7 +77,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
         ),
         body: LayoutBuilder(builder: (context, constraints) {
           var mnBoxRatio = constraints.maxHeight / constraints.maxWidth;
-          if (mnBoxRatio < 2.5) mnBoxRatio = 2.5;
+          if (mnBoxRatio < 2.0) mnBoxRatio = 2.0;
           // log('---> mnBoxRatio : $mnBoxRatio / ${constraints.maxHeight / constraints.maxWidth}');
           return SingleChildScrollView(
               child: Container(

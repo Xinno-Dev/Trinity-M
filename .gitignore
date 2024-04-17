@@ -78,3 +78,4 @@ android/.DS_Store
 ios/.DS_Store
 /android/app/
 assets/svg/.DS_Store
+lib/presentation/.DS_Store

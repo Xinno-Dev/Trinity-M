@@ -9,6 +9,13 @@ part 'address_model.g.dart';
   includeIfNull: false
 )
 class AddressModel {
+  // for Larba..
+  String? nickId;
+  String? subTitle;
+  String? description;
+  int?    status;
+
+  // for Byffin..
   String? address;
   String? keyPair;
   String? publicKey;
@@ -21,12 +28,17 @@ class AddressModel {
   DateTime? createTime;
 
   AddressModel({
-    this.address,
+    this.nickId,
+    this.subTitle,
+    this.description,
+    this.status,
+
     this.keyPair,
     this.publicKey,
     this.accountName,
     this.hasMnemonic,
     this.orderIndex,
+    this.address,
 
     this.imageURL,
     this.thumbURL,

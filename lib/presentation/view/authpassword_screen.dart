@@ -260,7 +260,7 @@ class _AuthPasswordScreenState extends State<AuthPasswordScreen> {
 
           // juan : null 오류 수정
           bool isSuccess = await _usecase.addKeyPair(shaConvert.toString(),
-              hasMnemonic: false, privateKeyHex: widget.import_privateKey ?? '');
+              privateKeyHex: widget.import_privateKey);
 
           if (isSuccess) {
             context.pushReplacementNamed(RegistCompleteScreen.routeName,

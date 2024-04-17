@@ -1,21 +1,23 @@
 import 'package:larba_00/domain/repository/ecc_repository.dart';
 import 'package:larba_00/domain/usecase/ecc_usecase.dart';
 
+import '../model/account_model.dart';
+import '../model/ecckeypair.dart';
+
 class EccUseCaseImpl implements EccUseCase {
   final EccRepository _repository;
 
   const EccUseCaseImpl(this._repository);
 
   @override
-  Future<bool> generateKeyPair(String pin, {String mnemonic = ''}) async {
-    return _repository.generateKeyPair(pin, mnemonic: mnemonic);
+  Future<bool> generateKeyPair(String pin, {String? nickId, String? mnemonic}) async {
+    return _repository.generateKeyPair(pin, nickId: nickId, mnemonic: mnemonic);
   }
 
   @override
   Future<bool> addKeyPair(String pin,
-      {bool hasMnemonic = true, String privateKeyHex = ''}) async {
-    return _repository.addKeyPair(pin,
-        hasMnemonic: hasMnemonic, privateKeyHex: privateKeyHex);
+      {String? nickId, String? privateKeyHex}) async {
+    return _repository.addKeyPair(pin, nickId: nickId, privateKeyHex: privateKeyHex);
   }
 
   @override

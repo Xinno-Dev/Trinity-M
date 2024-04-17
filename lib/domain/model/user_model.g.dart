@@ -1,17 +1,17 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'login_model.dart';
+part of 'user_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoginModel _$LoginModelFromJson(Map<String, dynamic> json) => LoginModel(
+UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       ID: json['ID'] as String?,
       status: json['status'] as int?,
       loginType: $enumDecodeNullable(_$LoginTypeEnumMap, json['loginType']),
-      userId: json['userId'] as String?,
-      userPass: json['userPass'] as String?,
+      mnemonic: json['mnemonic'] as String?,
+      keyPair: json['keyPair'] as String?,
       userName: json['userName'] as String?,
       email: json['email'] as String?,
       mobile: json['mobile'] as String?,
@@ -20,7 +20,7 @@ LoginModel _$LoginModelFromJson(Map<String, dynamic> json) => LoginModel(
       thumbURL: json['thumbURL'] as String?,
       deviceId: json['deviceId'] as String?,
       deviceType: json['deviceType'] as String?,
-      accountData: (json['accountData'] as Map<String, dynamic>?)?.map(
+      addressData: (json['addressData'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, AddressModel.fromJson(e as Map<String, dynamic>)),
       ),
       createTime: json['createTime'] == null
@@ -34,7 +34,7 @@ LoginModel _$LoginModelFromJson(Map<String, dynamic> json) => LoginModel(
           : DateTime.parse(json['logoutTime'] as String),
     );
 
-Map<String, dynamic> _$LoginModelToJson(LoginModel instance) {
+Map<String, dynamic> _$UserModelToJson(UserModel instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
@@ -46,8 +46,8 @@ Map<String, dynamic> _$LoginModelToJson(LoginModel instance) {
   writeNotNull('ID', instance.ID);
   writeNotNull('status', instance.status);
   writeNotNull('loginType', _$LoginTypeEnumMap[instance.loginType]);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('userPass', instance.userPass);
+  writeNotNull('mnemonic', instance.mnemonic);
+  writeNotNull('keyPair', instance.keyPair);
   writeNotNull('userName', instance.userName);
   writeNotNull('email', instance.email);
   writeNotNull('mobile', instance.mobile);
@@ -56,16 +56,18 @@ Map<String, dynamic> _$LoginModelToJson(LoginModel instance) {
   writeNotNull('thumbURL', instance.thumbURL);
   writeNotNull('deviceId', instance.deviceId);
   writeNotNull('deviceType', instance.deviceType);
-  writeNotNull('accountData',
-      instance.accountData?.map((k, e) => MapEntry(k, e.toJson())));
   writeNotNull('createTime', instance.createTime?.toIso8601String());
   writeNotNull('loginTime', instance.loginTime?.toIso8601String());
   writeNotNull('logoutTime', instance.logoutTime?.toIso8601String());
+  writeNotNull('addressData',
+      instance.addressData?.map((k, e) => MapEntry(k, e.toJson())));
   return val;
 }
 
 const _$LoginTypeEnumMap = {
   LoginType.kakao: 'kakao',
+  LoginType.naver: 'naver',
   LoginType.google: 'google',
+  LoginType.apple: 'apple',
   LoginType.email: 'email',
 };

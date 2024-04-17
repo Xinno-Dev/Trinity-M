@@ -6,13 +6,13 @@ part of 'ecckeypair.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_EccKeyPair _$$_EccKeyPairFromJson(Map<String, dynamic> json) =>
-    _$_EccKeyPair(
+_$EccKeyPairImpl _$$EccKeyPairImplFromJson(Map<String, dynamic> json) =>
+    _$EccKeyPairImpl(
       publicKey: json['publicKey'] as String,
       d: json['d'] as String,
     );
 
-Map<String, dynamic> _$$_EccKeyPairToJson(_$_EccKeyPair instance) =>
+Map<String, dynamic> _$$EccKeyPairImplToJson(_$EccKeyPairImpl instance) =>
     <String, dynamic>{
       'publicKey': instance.publicKey,
       'd': instance.d,

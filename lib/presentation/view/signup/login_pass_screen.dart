@@ -92,9 +92,13 @@ class _LoginPassScreenState extends ConsumerState<LoginPassScreen> {
               text: TR(context, '확인'),
               round: 0,
               onTap: () {
-                if (loginProv.checkWalletPass(inputPass)) {
-                  Navigator.of(context).pop(true);
-                }
+                loginProv.checkWalletPass(inputPass).then((result) {
+                  if (result) {
+                    Navigator.of(context).pop(true);
+                  } else {
+                    // TODO: show pass error msg..
+                  }
+                });
               },
             ) : DisabledButton(
               text: TR(context, '확인'),

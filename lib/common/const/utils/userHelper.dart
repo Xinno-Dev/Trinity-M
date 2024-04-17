@@ -15,6 +15,9 @@ class UserHelper {
   }
   UserHelper._internal();
   var userKey = '';
+  var privateKey = '';
+  var publicKey = '';
+  var rwf = '';
   
   setUserKey(String email) {
     userKey = crypto.sha256.convert(utf8.encode(email)).toString();
@@ -30,7 +33,10 @@ class UserHelper {
   }
 
   Future<void> setUser({
-    String loginType = '',
+    String? rwf,
+    String? token,
+    String? loginType,
+
     String userID = '',
     String uid = '',
     String publickey = '',
@@ -41,7 +47,6 @@ class UserHelper {
     String selectedCoin = '',
     String selectedMainNetId = '',
     String loginDate = '',
-    String rwf = '',
     String localAuth = '',
     String trash = '',
     String registDate = '',
@@ -53,8 +58,44 @@ class UserHelper {
   }) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
 
-    // global key..
-    if (loginType != '') await storage.write(key: LOGIN_TYPE_KEY, value: loginType);
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // public user info..
+    //
+
+    if (loginType != null) {
+      if (loginType.isNotEmpty) {
+        await storage.write(key: LOGIN_TYPE_KEY, value: loginType);
+      } else {
+        await storage.delete(key: LOGIN_TYPE_KEY);
+      }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // private user info..
+    //
+
+    if (rwf != null) {
+      if (rwf.isNotEmpty) {
+        await storage.write(key: RWF_KEY + userKey, value: rwf);
+      } else {
+        await storage.delete(key: RWF_KEY + userKey);
+      }
+    }
+
+    if (token != null) {
+      if (token.isNotEmpty) {
+        await storage.write(key: TOKEN_KEY + userKey, value: rwf);
+      } else {
+        await storage.delete(key: TOKEN_KEY + userKey);
+      }
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // deprecated for new wallet....
+    //
 
     if (userID != '') await storage.write(key: USERID_KEY + userKey, value: userID);
 
@@ -73,8 +114,6 @@ class UserHelper {
     if (selectedCoin != '') await storage.write(key: SELECTED_COIN_KEY + userKey, value: selectedCoin);
 
     if (selectedMainNetId != '') await storage.write(key: SELECTED_MAINNET_KEY + userKey, value: selectedMainNetId);
-
-    if (rwf != '') await storage.write(key: RWF_KEY + userKey, value: rwf);
 
     if (localAuth != '')
       await storage.write(key: USELOCALAUTH_KEY + userKey, value: localAuth);
@@ -101,10 +140,35 @@ class UserHelper {
       await storage.write(key: NETWORKLIST_KEY + userKey, value: networkList);
   }
 
-  Future<String> get_loginType() async {
+  ////////////////////////////////////////////////////////////////////////////
+  //
+  // public user info..
+  //
+
+  Future<String?> get_loginType() async {
     FlutterSecureStorage storage = FlutterSecureStorage();
-    return await storage.read(key: LOGIN_TYPE_KEY) ?? 'NOT_USERID';
+    return await storage.read(key: LOGIN_TYPE_KEY);
   }
+
+  ////////////////////////////////////////////////////////////////////////////
+  //
+  // public user info..
+  //
+
+  Future<String?> get_rwf() async {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    return await storage.read(key: RWF_KEY + userKey);
+  }
+
+  Future<String?> get_token() async {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    return await storage.read(key: TOKEN_KEY + userKey);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  //
+  // deprecated for new wallet....
+  //
 
   Future<String> get_userID({String? userKeyTmp}) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
@@ -154,11 +218,6 @@ class UserHelper {
   Future<String> get_selectedMainNetId() async {
     FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: SELECTED_MAINNET_KEY + userKey) ?? 'NOT_SELECTED_MAIN';
-  }
-
-  Future<String> get_rwf() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
-    return await storage.read(key: RWF_KEY + userKey) ?? 'NOT_RWF';
   }
 
   Future<String> get_trash() async {

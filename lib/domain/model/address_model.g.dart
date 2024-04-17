@@ -7,12 +7,16 @@ part of 'address_model.dart';
 // **************************************************************************
 
 AddressModel _$AddressModelFromJson(Map<String, dynamic> json) => AddressModel(
-      address: json['address'] as String?,
+      nickId: json['nickId'] as String?,
+      subTitle: json['subTitle'] as String?,
+      description: json['description'] as String?,
+      status: json['status'] as int?,
       keyPair: json['keyPair'] as String?,
       publicKey: json['publicKey'] as String?,
       accountName: json['accountName'] as String?,
       hasMnemonic: json['hasMnemonic'] as bool?,
       orderIndex: json['orderIndex'] as int?,
+      address: json['address'] as String?,
       imageURL: json['imageURL'] as String?,
       thumbURL: json['thumbURL'] as String?,
       createTime: json['createTime'] == null
@@ -29,6 +33,10 @@ Map<String, dynamic> _$AddressModelToJson(AddressModel instance) {
     }
   }
 
+  writeNotNull('nickId', instance.nickId);
+  writeNotNull('subTitle', instance.subTitle);
+  writeNotNull('description', instance.description);
+  writeNotNull('status', instance.status);
   writeNotNull('address', instance.address);
   writeNotNull('keyPair', instance.keyPair);
   writeNotNull('publicKey', instance.publicKey);

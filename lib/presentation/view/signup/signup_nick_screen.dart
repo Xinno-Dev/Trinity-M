@@ -6,7 +6,9 @@ import 'package:larba_00/presentation/view/asset/networkScreens/network_input_sc
 import '../../../common/common_package.dart';
 import '../../../common/const/constants.dart';
 import '../../../common/const/utils/languageHelper.dart';
+import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
+import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../registLocalAuth_screen.dart';
@@ -92,7 +94,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                             keyboardType: TextInputType.name,
                             scrollPadding: EdgeInsets.only(bottom: 200),
                             onChanged: (text) {
-                              loginProv.emailInput(text);
+                              loginProv.nickInput(text);
                             },
                           ),
                           SizedBox(height: 40.h),
@@ -100,11 +102,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                             onTap: () {
                               FocusScope.of(context).requestFocus(FocusNode()); //remove focus
                               if (loginProv.isNickCheckReady) {
-                                loginProv.checkNickId().then((result) {
-                                  if (result) {
-
-                                  }
-                                });
+                                loginProv.checkNickId();
                               }
                             },
                             child: Container(
@@ -113,8 +111,8 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  border: !loginProv.isEmailSendReady ? Border.all(width: 2, color: GRAY_20) : null,
-                                  color: loginProv.isEmailSendReady ? PRIMARY_90 : WHITE
+                                  border: !loginProv.isNickCheckReady ? Border.all(width: 2, color: GRAY_20) : null,
+                                  color: loginProv.isNickCheckReady ? PRIMARY_90 : WHITE
                               ),
                               child: Text(TR(context, '중복 확인'), style: typo16bold),
                             ),
@@ -127,13 +125,22 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
           ),
           bottomNavigationBar: Padding(
             padding: EdgeInsets.symmetric(vertical: 40.h),
-            child: IS_DEV_MODE || loginProv.isEmailSendDone
+            child: IS_DEV_MODE || loginProv.isNickCheckDone
                 ? PrimaryButton(
               text: TR(context, '다음'),
               round: 0,
               onTap: () {
-                Navigator.of(context).push(
-                    createAniRoute(SignUpBioScreen()));
+                FocusScope.of(context).requestFocus(FocusNode()); //remove focus
+                // if (loginProv.isNickCheckDone) { // disabled for Dev..
+                  showLoadingDialog(context, '회원 등록중입니다...');
+                  Future.delayed(Duration(milliseconds: 200)).then((_) {
+                    loginProv.createNewUser().then((result) {
+                      hideLoadingDialog();
+                      Navigator.of(context).push(
+                          createAniRoute(SignUpBioScreen()));
+                    });
+                  });
+                // }
               },
             ) : DisabledButton(
               text: TR(context, '다음'),

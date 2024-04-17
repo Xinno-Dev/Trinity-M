@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:larba_00/common/const/utils/convertHelper.dart';
 import 'package:larba_00/common/const/utils/eccManager.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
+import 'package:larba_00/domain/model/account_model.dart';
 import 'package:larba_00/domain/model/address_model.dart';
 import 'package:larba_00/domain/repository/ecc_repository.dart';
 import 'package:pointycastle/export.dart';
@@ -18,7 +19,10 @@ class EccRepositoryImpl implements EccRepository {
   EccManager? _eccManager;
 
   @override
-  Future<bool> generateKeyPair(String pin, {String mnemonic = ''}) async {
+  Future<bool> generateKeyPair(String pin, {
+    String? nickId,
+    String? mnemonic,
+  }) async {
     String encodeJson = '';
     UserHelper userHelper = UserHelper();
     LOG('--> generateKeyPair : ${userHelper.userKey}');
@@ -26,7 +30,7 @@ class EccRepositoryImpl implements EccRepository {
     _eccManager = EccManager();
 
     AsymmetricKeyPair<PublicKey, PrivateKey> keyResult =
-        await _eccManager!.generateMnemonicKeypair(pin, mnemonic: mnemonic);
+        await _eccManager!.generateMnemonicKeypair(pin, mnemonic: mnemonic ?? '');
 
     ECPrivateKey privateKey = keyResult.privateKey as ECPrivateKey;
     ECPublicKey publicKey = keyResult.publicKey as ECPublicKey;
@@ -48,7 +52,6 @@ class EccRepositoryImpl implements EccRepository {
     encodeJson = json.encode(toJson);
 
     final String address = _generateAddress(hex_x, hex_y);
-
     userHelper.setUser(address: address);
 
     AesManager aesManager = AesManager();
@@ -56,7 +59,7 @@ class EccRepositoryImpl implements EccRepository {
 
     List<AddressModel> addressList = [];
     AddressModel newAddress = AddressModel(
-        accountName: AccountName + '01',
+        accountName: nickId ?? AccountName + '01',
         address: address,
         keyPair: encResult,
         publicKey: publicKeyStr,
@@ -81,8 +84,10 @@ class EccRepositoryImpl implements EccRepository {
   }
 
   @override
-  Future<bool> addKeyPair(String pin,
-      {bool hasMnemonic = true, String privateKeyHex = ''}) async {
+  Future<bool> addKeyPair(String pin, {
+    String? nickId,
+    String? privateKeyHex
+  }) async {
     _eccManager = EccManager();
     UserHelper userHelper = UserHelper();
     List<AddressModel> addressList = [];
@@ -99,10 +104,10 @@ class EccRepositoryImpl implements EccRepository {
       addressList.add(model);
     }
     AsymmetricKeyPair<PublicKey, PrivateKey>? keyResult;
-    if (hasMnemonic) {
-      keyResult = await _eccManager!.addMnemonicKeypair(pin, index);
-    } else {
+    if (privateKeyHex != null && privateKeyHex.length > 0) {
       keyResult = (await _eccManager!.loadKeyPair(privateKeyHex));
+    } else {
+      keyResult = await _eccManager!.addMnemonicKeypair(pin, index);
     }
     if (keyResult == null) {
       return false;
@@ -131,12 +136,12 @@ class EccRepositoryImpl implements EccRepository {
     final String encResult = await aesManager.encrypt(pin, encodeJson);
 
     AddressModel newAddress = AddressModel(
-        accountName:
+        accountName: nickId ??
             '$AccountName' + '${addressList.length + 1}'.padLeft(2, '0'),
         address: address,
         keyPair: encResult,
         publicKey: publicKeyStr,
-        hasMnemonic: hasMnemonic);
+        hasMnemonic: false);
 
     //추가 전 같은 주소가 있는지 확인 후 같은 주소가 있으면 추가하지 않음.
     for (AddressModel model in addressList) {

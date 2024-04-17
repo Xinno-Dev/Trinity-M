@@ -491,12 +491,12 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
           onChanged: onChanged,
         ),
         value: 0,
-        itemHeight: kMinInteractiveDimension,
-        dropdownWidth: 140,
-        buttonHeight: 30,
-        buttonWidth: 30,
-        itemPadding: const EdgeInsets.only(left: 12, right: 12),
-        offset: const Offset(0, 8),
+        // itemHeight: kMinInteractiveDimension,
+        // dropdownWidth: 140,
+        // buttonHeight: 30,
+        // buttonWidth: 30,
+        // itemPadding: const EdgeInsets.only(left: 12, right: 12),
+        // offset: const Offset(0, 8),
         items: list,
         onChanged: (value) {
           LOG('---> selected item : $value');

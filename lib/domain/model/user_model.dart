@@ -1,25 +1,29 @@
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:larba_00/domain/model/ecckeypair.dart';
 import 'package:uuid/uuid.dart';
 import '../../common/const/constants.dart';
 import '../../common/const/utils/convertHelper.dart';
+import 'account_model.dart';
 import 'address_model.dart';
 
-part 'login_model.g.dart';
+part 'user_model.g.dart';
 
 @JsonSerializable(
     explicitToJson: true,
     includeIfNull: false
 )
-class LoginModel {
+class UserModel {
   String?     ID;             // UUID
   int?        status;         // status 1: active, 0: disable
   LoginType?  loginType;      // login type ['kakao', 'email'..]
-  String? userId;         // id / nickName
-  String? userPass;       // user password ??
-  String? userName;       // real name
-  String? email;          // login email
+
+  String? mnemonic;       // main mnemonic
+  String? keyPair;        // main wallet keyPair
+
+  String? userName;       // login user name
+  String? email;          // login user email
   String? mobile;         // mobile number
   String? country;        // user country (from mobile)
   String? imageURL;       // profile image
@@ -27,18 +31,20 @@ class LoginModel {
   String? deviceId;       // device uuid
   String? deviceType;     // device type ['android', 'ios'...]
 
-  Map<String,AddressModel>? accountData; // sub account list..
-
   DateTime? createTime;
   DateTime? loginTime;
   DateTime? logoutTime;
 
-  LoginModel({
+  Map<String, AddressModel>? addressData; // Map<address, model> address list..
+
+  UserModel({
     this.ID,
     this.status,
     this.loginType,
-    this.userId,
-    this.userPass,
+
+    this.mnemonic,
+    this.keyPair,
+
     this.userName,
     this.email,
     this.mobile,
@@ -47,7 +53,7 @@ class LoginModel {
     this.thumbURL,
     this.deviceId,
     this.deviceType,
-    this.accountData,
+    this.addressData,
 
     this.createTime,
     this.loginTime,
@@ -56,12 +62,12 @@ class LoginModel {
 
   static createFromKakao(user) {
     LOG('--> createFromKakao : ${user.id}');
-    return LoginModel(
+    return UserModel(
       ID:         'kakao${user.id}', // 임시 ID 생성..
       status:     1,
       loginType:  LoginType.kakao,
       email:      user.kakaoAccount?.email,
-      userId:     user.kakaoAccount?.profile?.nickname,
+      userName:   user.kakaoAccount?.profile?.nickname,
       imageURL:   user.kakaoAccount?.profile?.profileImageUrl,
       thumbURL:   user.kakaoAccount?.profile?.thumbnailImageUrl,
     );
@@ -69,39 +75,27 @@ class LoginModel {
 
   static createFromGoogle(User user) {
     LOG('--> createFromGoogle : ${user.uid}');
-    return LoginModel(
+    return UserModel(
       ID:         'google${user.uid}', // 임시 ID 생성..
       status:     1,
       loginType:  LoginType.google,
       email:      user.email,
-      userId:     user.displayName,
+      userName:   user.displayName,
       imageURL:   user.photoURL,
     );
   }
 
-  static createFromEmail(String uid, String email, String accountName) {
+  static createFromEmail(String uid, String email, String nickId) {
     LOG('--> createFromEmail : $uid / $email');
-    return LoginModel(
+    return UserModel(
       ID:         'email$uid', // 임시 ID 생성..
       status:     1,
       loginType:  LoginType.email,
       email:      email,
-      userId:     accountName,
+      userName:   nickId,
     );
   }
 
-  addAccount({
-    required String address,
-    required String accountName,
-  }) {
-    final newAccount = AddressModel(
-      address: address,
-      accountName: accountName,
-    );
-    this.accountData ??= {};
-    this.accountData![address] = newAccount;
-  }
-
-  factory LoginModel.fromJson(JSON json) => _$LoginModelFromJson(json);
-  JSON toJson() => _$LoginModelToJson(this);
+  factory UserModel.fromJson(JSON json) => _$UserModelFromJson(json);
+  JSON toJson() => _$UserModelToJson(this);
 }

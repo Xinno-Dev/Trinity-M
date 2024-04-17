@@ -1,37 +1,34 @@
 
 import 'dart:convert';
 
+import 'package:basic_utils/basic_utils.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter/services.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:larba_00/common/common_package.dart';
 import 'package:larba_00/common/const/utils/aesManager.dart';
 import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/domain/model/app_start_model.dart';
-import 'package:larba_00/domain/model/login_model.dart';
-import 'package:larba_00/domain/model/mdl_check_model.dart';
-import 'package:larba_00/presentation/view/asset/asset_screen.dart';
+import 'package:larba_00/domain/model/user_model.dart';
 import 'package:larba_00/presentation/view/main_screen.dart';
-import 'package:larba_00/presentation/view/sign_password_screen.dart';
 import 'package:larba_00/presentation/view/signup/signup_pass_screen.dart';
-import 'package:larba_00/presentation/view/signup/signup_email_screen.dart';
-import 'package:larba_00/presentation/view/signup/signup_terms_screen.dart';
-import 'package:larba_00/services/google_service.dart';
 import 'package:larba_00/services/social_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:uuid/uuid.dart';
-import 'package:web3dart/credentials.dart';
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:secp256k1cipher/secp256k1cipher.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../data/repository/ecc_repository_impl.dart';
+import '../../domain/model/account_model.dart';
+import '../../domain/model/address_model.dart';
 import '../../domain/model/ecckeypair.dart';
-import '../../domain/usecase/ecc_usecase.dart';
 import '../../domain/usecase/ecc_usecase_impl.dart';
-import '../../services/firebase_api_service.dart';
+import '../../services/google_service.dart';
 import '../../services/larba_api_service.dart';
 import '../const/utils/convertHelper.dart';
 import '../const/utils/eccManager.dart';
-import '../const/utils/localStorageHelper.dart';
+import '../const/utils/languageHelper.dart';
 import '../const/widget/dialog_utils.dart';
 
 enum LoginType {
@@ -85,7 +82,9 @@ class LoginProvider extends ChangeNotifier {
   }
   LoginProvider._internal();
 
-  LoginModel? loginInfo;
+  UserModel? userInfo;
+  String? currentAddress;
+
   bool isLoginCheckDone = false;
   bool isSignUpMode = false;
 
@@ -93,46 +92,67 @@ class LoginProvider extends ChangeNotifier {
   var nickStep    = NickCheckStep.none;
   var recoverStep = RecoverPassStep.none;
 
-  var inputEmail = 'jubal2000@gmail.com'; // for test..
+  var inputNick   = 'jubal2000';
+  var inputEmail  = 'jubal2000@gmail.com'; // for test..
   var inputPass   = List.generate(2, (index) => 'testpass00');
   var recoverPass = List.generate(2, (index) => 'recoverpass00');
-  var inputNick = 'jubal2000';
 
   Future<bool> checkLogin() async {
     isLoginCheckDone = false;
-    loginInfo = null;
-    final localType = await UserHelper().get_loginType();
+    userInfo = null;
+    var startLoginType = await UserHelper().get_loginType();
     var checkLogin = false;
-    LOG('-----------> checkLogin : $localType');
+    LOG('-----------> checkLogin local : $startLoginType');
 
-    if (localType == LoginType.kakao.name) {
-      checkLogin = await checkKakaoLogin();
-      LOG('--> checkKakaoLogin : $checkLogin');
-      if (checkLogin) {
-        final user = await getKakaoUserInfo();
-        loginInfo =
-            LoginModel.createFromKakao(user); // TODO: 후에 서버에서 가져오는 정보로 대체..
+    if (startLoginType == LoginType.kakao.name) {
+      if (await checkKakaoLogin()) {
+        try {
+          var token = await UserHelper().get_token();
+          LOG('--> kakao local token $token');
+          kakao.User? user;
+          if (token != null) {
+            user = await getKakaoUserInfo();
+          } else {
+            // 토큰이 없을 경우 다시 로그인..
+            user = await startKakaoLogin();
+          }
+          if (user != null) {
+            userInfo = UserModel.createFromKakao(user);
+            // TODO: 카카오 정보 가저온후 서버에 로그인 필요..
+            checkLogin = true;
+          }
+        } catch (error) {
+          LOG('--> kakao 로그인 실패 $error');
+        }
       }
     }
-    if (localType == LoginType.google.name) {
+    if (startLoginType == LoginType.google.name) {
       checkLogin = await checkGoogleLogin();
       LOG('--> checkGoogleLogin : $checkLogin');
       if (checkLogin) {
         final user = await getGoogleUserInfo();
-        loginInfo = LoginModel.createFromGoogle(user);
+        userInfo = UserModel.createFromGoogle(user);
       }
     }
-    if (localType == LoginType.email.name) {
-      checkLogin = await checkEmailLogin();
-      LOG('--> checkEmailLogin : $checkLogin');
-      if (checkLogin) {
+    if (startLoginType == LoginType.email.name) {
+      var check = await checkEmailLogin();
+      LOG('--> checkEmailLogin : $check');
+      if (check) {
         final user = await getEmailUserInfo(testEmail);
-        loginInfo = LoginModel.createFromGoogle(user);
+        if (user != null) {
+          checkLogin = true;
+          userInfo = UserModel.createFromGoogle(user);
+        }
       }
     }
+
     LOG('-----------------------------');
-    if (!checkLogin) {
-      await UserHelper().setUser(loginType: '');
+    if (!isLogin) {
+      // clear login record..
+      await UserHelper().setUser(
+        loginType: '',
+        token: ''
+      );
     }
     notifyListeners();
     isLoginCheckDone = true;
@@ -140,13 +160,38 @@ class LoginProvider extends ChangeNotifier {
   }
 
   get isLogin {
-    return loginInfo != null;
+    return userInfo != null;
   }
+
+  get account async {
+    LOG('-----> wallet currentAddress : $currentAddress');
+    if (userInfo != null && currentAddress != null &&
+        userInfo!.addressData!.containsKey(currentAddress)) {
+      final account = userInfo?.addressData?[currentAddress];
+      LOG('--> wallet account : ${account?.toJson()}');
+      return account;
+    }
+    LOG('--> wallet account empty !!');
+    return null;
+  }
+
+  _createEmailUser() {
+    return UserModel(
+      ID: Uuid().v4(),
+      status:     1,
+      loginType:  LoginType.email,
+      userName:   inputNick,
+      email:      inputEmail,
+      createTime: DateTime.now(),
+    );
+  }
+
+  ////////////////////////////////////////////////////////////////////////
 
   loginKakao(BuildContext context) async {
     final user = await startKakaoLogin();
     if (user != null) {
-      loginInfo = LoginModel.createFromKakao(user);
+      userInfo = UserModel.createFromKakao(user);
       UserHelper().setUser(loginType: LoginType.kakao.name);
     }
     // todo: check signup user..
@@ -166,7 +211,7 @@ class LoginProvider extends ChangeNotifier {
     final result = await startGoogleLogin();
     if (result != null) {
       final user = result.runtimeType == User ? result : result?.user;
-      loginInfo = LoginModel.createFromGoogle(user);
+      userInfo = UserModel.createFromGoogle(user);
       UserHelper().setUser(loginType: LoginType.google.name);
       context.replaceNamed('mainScreen');
     }
@@ -180,7 +225,62 @@ class LoginProvider extends ChangeNotifier {
 
   ////////////////////////////////////////////////////////////////////////
 
-  checkWalletPass(String passOrg, {String? email}) async {
+  Future<UserModel?> createNewUser() async {
+    userInfo ??= _createEmailUser();
+    UserHelper().setUserKey(inputEmail);
+    final userPass = inputPass.first;
+    final result = await createNewAccount(userPass);
+    // create user info..
+    LOG('----> createNewUser : $result <- '
+      '$loginType / $userPass / ${userInfo?.toJson()}');
+    if (result) {
+      UserHelper().setUser(loginType: loginType.name);
+    }
+    return userInfo;
+  }
+
+  // add new wallet & account..
+  Future<bool> createNewAccount(String passOrg) async {
+    var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+    LOG('--> createNewAccount : $passOrg');
+    var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
+    var result = await eccImpl.generateKeyPair(pass, nickId: inputNick);
+    if (result) {
+      await _refreshAccountList();
+    }
+    return result;
+  }
+
+  // add new wallet & account..
+  Future<bool> addNewAccount(String passOrg) async {
+    var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+    LOG('--> addNewAccount : $passOrg');
+    var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
+    var result = await eccImpl.addKeyPair(pass, nickId: inputNick);
+    if (result) {
+      await _refreshAccountList();
+    }
+    return result;
+  }
+
+  // local에 있는 address 목록을 userInfo 에 추가 & 케싱 한다..
+  _refreshAccountList() async {
+    if (userInfo == null) return null;
+    var accountListStr = await UserHelper().get_addressList();
+    if (accountListStr != 'NOT_ADDRESSLIST') {
+      userInfo!.addressData = {};
+      List<dynamic> accountList = json.decode(accountListStr);
+      for (var item in accountList) {
+        var address = AddressModel.fromJson(item);
+        userInfo!.addressData![address.address!] = address;
+      }
+    }
+    LOG('--> _refreshAccountList : ${userInfo!.addressData}');
+    return userInfo;
+  }
+
+  // passOrg : 실제로 입력 받은 패스워드 문자열..
+  Future<bool> checkWalletPass(String passOrg, {String? email}) async {
     try {
       String? userKey;
       if (STR(email).isNotEmpty) {
@@ -196,24 +296,6 @@ class LoginProvider extends ChangeNotifier {
       }
     } catch (e) {
       LOG('--> checkWallet error : $e');
-    }
-    return false;
-  }
-
-  // passOrg : 실제로 입력받은 패스워드 문자열..
-  createNewWallet(String passOrg, {String? email}) async {
-    UserHelper().setUserKey(email ?? inputEmail);
-    var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
-    LOG('--> createNewWallet : ${email ?? inputEmail} / $passOrg -> $pass');
-    var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
-    var generateKeyResult = await eccImpl.generateKeyPair(pass);
-    if (generateKeyResult) {
-      // check create complete..
-      var result = await checkWalletPass(passOrg);
-      LOG('--> createNewWallet success : $result');
-      return result;
-    } else {
-      LOG('--> createNewWallet failed');
     }
     return false;
   }
@@ -286,7 +368,18 @@ class LoginProvider extends ChangeNotifier {
     return nickStep == NickCheckStep.complete;
   }
 
-  emailInput(email) {
+  nickInput(String nickId) {
+    if (nickId.length > 4) {
+      inputNick = nickId;
+      final orgStep = nickStep;
+      nickStep = NickCheckStep.ready;
+      if (orgStep != emailStep) {
+        notifyListeners();
+      }
+    }
+  }
+
+  emailInput(String email) {
     inputEmail = email;
     final orgStep = emailStep;
     emailStep = EmailValidator.validate(email) ?
@@ -314,22 +407,8 @@ class LoginProvider extends ChangeNotifier {
   checkNickId() {
     // todo: nickname duplicate check API..
     // inputNick
-    return true;
-  }
 
-  createNewUser(context) {
-    final userPass = inputPass.first;
-    showLoadingDialog(context, '회원 등록중입니다...');
-    createNewWallet(userPass).then((result) {
-      if (result) {
-        UserHelper().setUser(loginType: LoginType.email.name);
-        // TODO: create user API..
-        // loginProv.createSignedMsg(userPass).then((signMsg) {
-        //   LOG('--> signMsg : $signMsg');
-        // });
-      }
-      hideLoadingDialog();
-    });
+    return true;
   }
 
   signupEmail() {
@@ -340,8 +419,11 @@ class LoginProvider extends ChangeNotifier {
 
   ////////////////////////////////////////////////////////////////////////
 
-  get loginType {
-    return loginInfo?.loginType;
+  LoginType get loginType {
+    if (userInfo != null) {
+      return userInfo!.loginType!;
+    }
+    return LoginType.email;
   }
 
   toggleLogin() {
@@ -350,7 +432,7 @@ class LoginProvider extends ChangeNotifier {
   }
 
   logout() async {
-    loginInfo = null;
+    userInfo = null;
     switch(loginType) {
       case LoginType.kakao:
         await startKakaoLogout();
