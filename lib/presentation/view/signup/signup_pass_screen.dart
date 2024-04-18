@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:larba_00/common/const/constants.dart';
 import 'package:larba_00/common/const/utils/rwfExportHelper.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
@@ -132,11 +133,9 @@ class _SignUpPassScreenState extends ConsumerState {
                   // var privateKey = EccKeyPair.fromJson(jsonDecode(keyStr)).d;
                   // var desc = await RWFExportHelper().encrypt(pin, walletAddress, privateKey);
                   // LOG('---> mnemonic upload : $pin / $mnemonic / $desc');
-                  var desc = await UserHelper().get_rwf();
-                  LOG('---> RWF upload : $desc');
                   if (Platform.isAndroid) {
-                    GoogleService.showUploadDriveDlg(context, desc).then((result) {
-                      LOG('---> showUploadDriveDlg result [Android] : $result');
+                    GoogleService.uploadKeyToGoogleDrive(context).then((result) {
+                      LOG('---> startGoogleDriveUpload result [Android] : $result');
                       if (result) {
                         Navigator.of(context)
                           .push(createAniRoute(MainScreen()));

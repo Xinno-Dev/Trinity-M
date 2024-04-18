@@ -1,24 +1,27 @@
 
 import 'dart:io';
+import 'dart:convert' show utf8;
 
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v2.dart' as dv;
 import 'package:googleapis/websecurityscanner/v1.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:http/io_client.dart';
 import 'package:intl/intl.dart';
-import 'package:larba_00/common/const/widget/dialog_utils.dart';
-import 'package:larba_00/services/social_service.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../common/common_package.dart';
 import '../common/const/utils/convertHelper.dart';
 import '../common/const/utils/languageHelper.dart';
+import '../common/const/utils/userHelper.dart';
+import '../common/const/widget/dialog_utils.dart';
 
 GoogleSignInAccount? googleUser;
+final dio = Dio();
 
 class GoogleHttpClient extends IOClient {
   Map<String, String> _headers;
@@ -79,48 +82,63 @@ class GoogleService extends GoogleAccount {
     return null;
   }
 
-  static showUploadDriveDlg(context, desc, {bool isUpload = true}) async {
+  //////////////////////////////////////////////////////////////////
+  //
+  // Google Drive Utils..
+  //
+
+  static uploadKeyToGoogleDrive(context) async {
     var formatter = DateFormat('yyyyMMdd-HHmmss');
-    var fileName = 'larba-mnemonic-${formatter.format(DateTime.now())}.rwf';
+    var fileName = 'larba-${formatter.format(DateTime.now())}.rwf';
+    var privateKey = await UserHelper().get_key();
+    return await _startGoogleDriveUpload(context, privateKey, fileName);
+  }
+
+  static downloadKeyFromGoogleDrive(context) async {
+    return await _startGoogleDriveDownload(context, 'rwf');
+  }
+
+  static _startGoogleDriveUpload(context, desc, fileName) async {
+    LOG('---> startGoogleDriveUpload RWF : $desc');
     if (googleUser != null) {
-      var result = await _showDriveSelectDialog(context, isUpload);
-      LOG('---> _showDriveSelectDialog result 1 : $result');
+      var result = await _showDriveSelectDialog(context, true);
+      LOG('---> startGoogleDriveUpload result 1 : $result');
       if (STR(result).isNotEmpty) {
-        return await _startUploadDrive(context, desc, fileName);
+        return await _uploadToGoogleDrive(context, desc, fileName, parentId: folderId);
       }
       return result;
     } else {
       var user = await signIn();
       if (user != null) {
-        var result = await _showDriveSelectDialog(context, isUpload);
-        LOG('---> _showDriveSelectDialog result 2 : $result');
+        var result = await _showDriveSelectDialog(context, true);
+        LOG('---> startGoogleDriveUpload result 2 : $result');
         if (STR(result).isNotEmpty) {
-          return await _startUploadDrive(context, desc, fileName);
+          return await _uploadToGoogleDrive(context, desc, fileName, parentId: folderId);
         }
       }
     }
   }
 
-  static _startUploadDrive(context, desc, fileName) async {
-    LOG('---> _startUploadDrive : $folderId / $fileName / $desc');
-    if (STR(folderId).isNotEmpty) {
-      showLoadingDialog(context, '복구키를 백업중 입니다..');
-      var parentId = folderId != 'root' ? folderId : null;
-      var result = await uploadToGoogleDrive(
-          desc, fileName: fileName, parentId: parentId);
-      hideLoadingDialog();
-      Fluttertoast.showToast(
-          msg: result != null ? "복구키 백업 완료" : "복구키 백업 실패",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: result != null ? Colors.white : Colors.orange,
-          fontSize: 16.0
-      );
-      return result != null;
+  // return Rwf text..
+  static Future<String?> _startGoogleDriveDownload(context, ext) async {
+    if (googleUser != null) {
+      var result = await _showDriveSelectDialog(context, false, ext: ext);
+      LOG('---> startGoogleDriveDownload result 1 : $result');
+      if (STR(result).isNotEmpty) {
+        return await _downloadFromGoogleDrive(context, result);
+      }
+      return result;
+    } else {
+      var user = await signIn();
+      if (user != null) {
+        var result = await _showDriveSelectDialog(context, false, ext: ext);
+        LOG('---> startGoogleDriveDownload result 2 : $result');
+        if (STR(result).isNotEmpty) {
+          return await _downloadFromGoogleDrive(context, result);
+        }
+      }
     }
-    return false;
+    return null;
   }
 
   static get folderTitle {
@@ -131,39 +149,47 @@ class GoogleService extends GoogleAccount {
     return selectDir.isNotEmpty ? selectDir.last.split('&/').last : 'root';
   }
 
-  static Future<List<dv.File>> _getFolderList() async {
-    LOG("--> _getFolderList : $folderId / ${dirListData.keys}");
+  static Future<List<dv.File>> _getDriveFileList({bool isFolderOnly = false, String? ext}) async {
+    LOG("--> _getDriveFileList : $folderId / ${dirListData.keys} / $isFolderOnly");
     if (dirListData.containsKey(folderId)) {
       return dirListData[folderId] as List<dv.File>;
     }
-    return await GoogleService.getDriveFolders(folderId);
+    if (isFolderOnly) {
+      return await GoogleService.getDriveFolders(folderId);
+    }
+    return await GoogleService.getDriveFilesFromExt(ext);
   }
 
-  static _showDriveSelectDialog(context, isUpload) {
+  static _showDriveSelectDialog(context, isUpload, {String? ext}) {
     selectDir.clear();
     dirListData.clear();
     return showDialog(
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(builder: (context, setState) {
-            return AlertDialog(
-            title: Text(TR(context, '저장 위치 선택'), style: typo16semibold),
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text(TR(context, isUpload ? '저장 위치 선택' : '복구 파일 선택'), style: typo16semibold),
+            insetPadding: EdgeInsets.zero,
             buttonPadding: EdgeInsets.only(top: 10),
-            contentPadding: EdgeInsets.fromLTRB(30, 20, 30, 0),
+            contentPadding: EdgeInsets.fromLTRB(10, 20, 10, 0),
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 FutureBuilder(
-                  future: _getFolderList(),
+                  future: _getDriveFileList(isFolderOnly: isUpload, ext: ext),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       List<DropdownMenuItem> dirList = snapshot.data!.map((e) =>
-                          dirItem(e.title, '${e.title}&/${e.id}')).toList();
+                          dirItem(e.title, '${e.title}&/${e.id}', isDir: isUpload)).toList();
                       dirListData[folderId] = snapshot.data as List<dv.File>;
-                      dirList.insert(0, dirItem(folderTitle, '[top]', isTop: true));
-                      if (selectDir.isNotEmpty) {
-                        dirList.insert(1, dirItem('..', '[back]'));
+                      if (isUpload) {
+                        dirList.insert(0, dirItem(folderTitle, '[top]', isTop: true));
+                        if (selectDir.isNotEmpty) {
+                          dirList.insert(1, dirItem('..', '[back]'));
+                        }
+                      } else {
+                        selectDir.add(dirList.first.value);
                       }
                       return _driveSelectWidget(dirList, onSelected: (select) {
                         setState(() {
@@ -184,22 +210,13 @@ class GoogleService extends GoogleAccount {
               ],
             ),
             actions: [
-              // if (selectDir.isNotEmpty)
-              //   TextButton(
-              //     onPressed: () {
-              //       setState(() {
-              //         selectDir.removeLast();
-              //         LOG('---> back dir : ${selectDir.length}');
-              //       });
-              //     },
-              //     child: Text('Back'),
-              //   ),
               TextButton(
                 onPressed: context.pop,
                 child: Text('Cancel'),
               ),
               TextButton(
                 onPressed: () {
+                  LOG('---> select : $folderId');
                   context.pop(folderId);
                 },
                 child: Text(isUpload ? 'Upload' : 'Download'),
@@ -228,11 +245,12 @@ class GoogleService extends GoogleAccount {
     );
   }
 
-  static DropdownMenuItem dirItem(text, value, {bool isTop = false}) {
+  static DropdownMenuItem dirItem(text, value, {bool isTop = false, bool isDir = false}) {
     return DropdownMenuItem(
       child: Row(
         children: [
-          Icon(isTop ? Icons.folder_open : Icons.folder, color: Colors.blueGrey),
+          if (isDir)
+            Icon(isTop ? Icons.folder_open : Icons.folder, color: Colors.blueGrey),
           SizedBox(width: 7),
           Text(text, style: isTop ? typo16bold : null),
         ],
@@ -244,48 +262,75 @@ class GoogleService extends GoogleAccount {
   static Future<List<dv.File>> getDriveFolders([String? parentId]) async {
     LOG('--> getDriveFolders : [$parentId]');
     return await getDriveFiles(
-      parentId: parentId,
-      query: "mimeType = 'application/vnd.google-apps.folder'"
+        parentId: parentId,
+        query: "'${parentId ?? 'root'}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false"
     );
+  }
+
+  static Future<List<dv.File>> getDriveFilesFromExt(ext) async {
+    LOG('--> getDriveRwfFiles');
+    List<dv.File> files = await getDriveFiles(
+        query: "mimeType != 'application/vnd.google-apps.folder' and title contains '.${ext ?? 'rwf'}' and trashed = false"
+    );
+    return files;
   }
 
   static Future<List<dv.File>> getDriveFiles({String? parentId, String? query}) async {
-    var client = GoogleHttpClient(await googleUser!.authHeaders);
-    var drive = dv.DriveApi(client);
-    var list = await drive.files.list(
+    try {
+      var client = GoogleHttpClient(await googleUser!.authHeaders);
+      var drive = dv.DriveApi(client);
+      var list = await drive.files.list(
         spaces: 'drive',
-        q: "'${parentId ?? 'root'}' in parents${query != null ? ' and $query' : ''}",
-    );
-    if (list.items != null) {
-      for (var i = 0; i < list.items!.length; i++) {
-        LOG("--> file item [${list.items![i].title}]: ${list.items![i].mimeType}");
-        // if (!isDirOnly || list.items![i].)
+        q: query
+      );
+      if (list.items != null) {
+        for (var i = 0; i < list.items!.length; i++) {
+          LOG("--> getDriveFiles item [${list.items![i].title}]: ${list.items![i]
+              .mimeType}");
+        }
+        return list.items ?? [];
+      } else {
+        LOG("--> list.items error: ${list.toJson()}");
       }
-    } else {
-      LOG("--> file error: ${list.toJson()}");
+    } catch (e) {
+      LOG("--> getDriveFiles error: $e");
     }
-    return list.items ?? [];
+    return [];
   }
 
-  static Future<String?> uploadToGoogleDrive(String desc,
-    {var fileName = 'larba-mnemonic-backup.rwf', var parentId = ''}) async {
-    LOG('--> uploadToGoogleDrive : $desc');
-    // List<dv.ParentReference> parents = [];
-    // var dirList = await listGoogleDriveFiles();
-    // parents.add(dirList.first);
+  // static _startUploadDrive(context, desc, fileName) async {
+  //   LOG('---> _startUploadDrive : $folderId / $fileName / $desc');
+  //   if (STR(folderId).isNotEmpty) {
+  //     showLoadingDialog(context, '복구키를 백업중 입니다..');
+  //     var parentId = folderId != 'root' ? folderId : null;
+  //     var result = await uploadToGoogleDrive(
+  //         desc, fileName: fileName, parentId: parentId);
+  //     hideLoadingDialog();
+  //     Fluttertoast.showToast(
+  //         msg: result != null ? "복구키 백업 완료" : "복구키 백업 실패",
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.BOTTOM,
+  //         timeInSecForIosWeb: 1,
+  //         backgroundColor: Colors.black,
+  //         textColor: result != null ? Colors.white : Colors.orange,
+  //         fontSize: 16.0
+  //     );
+  //     return result != null;
+  //   }
+  //   return false;
+  // }
+
+  static Future<bool> _uploadToGoogleDrive(context, desc, fileName, {var parentId = ''}) async {
+    LOG('--> _uploadToGoogleDrive : $desc / $parentId');
+    var result = false;
+    showLoadingDialog(context, '복구키를 백업중 입니다..');
     try {
-      if (googleUser == null) {
-        // TODO: show google sign in dialog..
-        await signIn();
-        if (googleUser == null) return null;
-      }
       var client = GoogleHttpClient(await googleUser!.authHeaders);
       var drive = dv.DriveApi(client);
       dv.File fileToUpload = dv.File();
-
-      var file = await createFile(fileName);
+      var file = await openFile(fileName);
       file.writeAsStringSync(desc);
-      LOG('--> uploadToGoogleDrive file : ${file.path} / ${await file.length()}');
+      LOG('--> _uploadToGoogleDrive file : ${file.path} / ${await file.length()}');
       fileToUpload.mimeType = ' application/vnd.google-apps.file';
       fileToUpload.title = fileName;
       if (parentId.isNotEmpty) {
@@ -295,18 +340,60 @@ class GoogleService extends GoogleAccount {
           ),
         ];
       }
-
       var response = await drive.files.insert(
         fileToUpload,
         uploadMedia: dv.Media(file.openRead(), file.lengthSync()),
       );
-      LOG('--> uploadToGoogleDrive response [${file.path}] : ${response.toJson()}');
+      LOG('--> _uploadToGoogleDrive response [${file.path}] : ${response.toJson()}');
       file.delete();
-      return response.downloadUrl;
+      result = response.downloadUrl != null;
     } catch (e) {
-      LOG('--> uploadToGoogleDrive error : $e');
+      LOG('--> _uploadToGoogleDrive error : $e');
     }
-    return null;
+    hideLoadingDialog();
+    Fluttertoast.showToast(
+      msg: result ? "복구키 백업 완료" : "복구키 백업 실패",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black,
+      textColor: result ? Colors.white : Colors.orange,
+      fontSize: 16.0
+    );
+    return result;
+  }
+
+  static Future<String?> _downloadFromGoogleDrive(context, fileId) async {
+    LOG('--> _downloadFromGoogleDrive : $fileId');
+    showLoadingDialog(context, '복구키를 내려받는 중 입니다..');
+    String? rwfText;
+    try {
+      var client  = GoogleHttpClient(await googleUser!.authHeaders);
+      var drive   = dv.DriveApi(client);
+      var response = await drive.files.get(fileId, downloadOptions: dv.DownloadOptions.fullMedia);
+      if (response is dv.Media) {
+        var bytesArray = await response.stream.toList();
+        List<int> bytes = [];
+        for (var arr in bytesArray) {
+          bytes.addAll(arr);
+        }
+        rwfText = utf8.decode(bytes);
+        LOG('---> response rwfText : $rwfText');
+      }
+    } catch (e) {
+      LOG('--> _downloadFromGoogleDrive error : $e');
+    }
+    hideLoadingDialog();
+    Fluttertoast.showToast(
+      msg: rwfText != null ? "복구키 받기 완료" : "복구키 받기 실패",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black,
+      textColor: rwfText != null ? Colors.white : Colors.orange,
+      fontSize: 16.0
+    );
+    return rwfText;
   }
 
   static Future<String> get _directoryPath async {
@@ -314,7 +401,7 @@ class GoogleService extends GoogleAccount {
     return directory.path;
   }
 
-  static Future<File> createFile(String fileNameWithExtension) async {
+  static Future<File> openFile(String fileNameWithExtension) async {
     final path = await _directoryPath;
     return File("$path/$fileNameWithExtension");
   }

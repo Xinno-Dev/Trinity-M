@@ -54,15 +54,32 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
             actions: [
               InkWell(
                 onTap: () {
-                  var fileName = '';
-                  GoogleService.showUploadDriveDlg(context,
-                    'mnemonic text list 0000 1111').then((result) {
-                    LOG('---> showUploadDriveDlg result : $result');
-                  });
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5),
                   child: Icon(Icons.search)
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  GoogleService.uploadKeyToGoogleDrive(context).then((result) {
+                    LOG('---> uploadKeyToGoogleDrive result : $result');
+                  });
+                },
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    child: Icon(Icons.upload)
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  GoogleService.downloadKeyFromGoogleDrive(context).then((rwf) {
+                    LOG('---> downloadKeyFromGoogleDrive result : $rwf');
+                  });
+                },
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    child: Icon(Icons.download)
                 ),
               ),
               InkWell(
