@@ -5,9 +5,13 @@ import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/common/const/widget/mainBox.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
+import 'package:larba_00/common/provider/market_provider.dart';
 import 'package:larba_00/presentation/view/history_screen.dart';
+import 'package:larba_00/presentation/view/market/product_detail_screen.dart';
 import 'package:larba_00/presentation/view/signup/login_screen.dart';
 import 'package:larba_00/presentation/view/settings/settings_screen.dart';
+
+import 'package:animations/animations.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
@@ -21,8 +25,7 @@ class MarketScreen extends ConsumerStatefulWidget {
 }
 
 class _MarketScreenState extends ConsumerState<MarketScreen> {
-  final categoryN = ['전체','골프','F&B','숙박','여행','공연','푸드','기타',];
-  final controller = ScrollController();
+  final controller  = ScrollController();
   var selectTab = 0;
 
   @override
@@ -37,6 +40,8 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final prov = ref.watch(marketProvider);
+    prov.context = context;
     return SafeArea(
       top: false,
       child: CustomScrollView(
@@ -96,68 +101,11 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
             ],
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(40),
-              child: _buildCategoryBar(),
+              child: prov.showCategoryBar(),
             )
           ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              List.generate(20, (index) => _buildContentItem(index)),
-            ),
-          )
+          prov.showProductList()
         ],
-      ),
-    );
-  }
-
-  _buildCategoryBar() {
-    return Container(
-      margin: EdgeInsets.only(bottom: 5),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          children: List<Widget>.of(categoryN.map((e) =>
-            _buildCategoryItem(e, categoryN.indexOf(e)))),
-        ),
-      ),
-    );
-  }
-
-  _buildCategoryItem(String title, int index) {
-    final isSelected = index == selectTab;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectTab = index;
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-        margin: EdgeInsets.symmetric(horizontal: 5),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: isSelected ? GRAY_80 : GRAY_10,
-        ),
-        child: Text(title,
-          style: typo12semibold100.copyWith(color: isSelected ? WHITE : GRAY_80)),
-      )
-    );
-  }
-
-  _buildContentItem(int index) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      color: PRIMARY_10,
-      elevation: 3,
-      child: Container(
-        height: 150,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Content $index', style: typo14bold),
-          ],
-        )
       ),
     );
   }

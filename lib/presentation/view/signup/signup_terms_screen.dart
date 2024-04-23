@@ -112,9 +112,9 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                               onChanged: (agree) {
                                 setState(() {
                                   agree_all = agree!;
-                                  agree_1 = agree;
-                                  agree_2 = agree;
-                                  agree_3 = agree;
+                                  agree_1   = agree;
+                                  agree_2   = agree;
+                                  agree_3   = agree;
                                   agreeEnable = agree;
                                 });
                               },
@@ -136,7 +136,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                               },
                               onPushnamed: () {
                                 context.pushNamed(TermsDetailScreen.routeName,
-                                    queryParams: {'title': title[0], 'type': '0'});
+                                  queryParams: {'title': title[0], 'type': '0'});
                               },
                             ),
                             SizedBox(height: 4.h),
@@ -151,7 +151,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                               },
                               onPushnamed: () {
                                 context.pushNamed(TermsDetailScreen.routeName,
-                                    queryParams: {'title': title[1], 'type': '1'});
+                                  queryParams: {'title': title[1], 'type': '1'});
                               },
                             ),
                           ],
@@ -159,22 +159,23 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                       ),
                     ),
                   ],
-                )),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 40.h),
-                child: IS_DEV_MODE || agreeEnable
-                    ? PrimaryButton(
-                  text: TR(context, '다음'),
-                  round: 0,
-                  onTap: () {
-                    Navigator.of(context).push(
-                        createAniRoute(SignUpNickScreen()));
-                  },
-                ) : DisabledButton(
-                  text: TR(context, '다음'),
-                ),
+                )
               ),
             ],
+          ),
+        ),
+        bottomNavigationBar: Padding(
+          padding: EdgeInsets.symmetric(vertical: 40.h),
+          child: IS_DEV_MODE || agreeEnable
+              ? PrimaryButton(
+            text: TR(context, '다음'),
+            round: 0,
+            onTap: () {
+              Navigator.of(context).push(
+                  createAniRoute(SignUpNickScreen()));
+            },
+          ) : DisabledButton(
+            text: TR(context, '다음'),
           ),
         ),
       ),

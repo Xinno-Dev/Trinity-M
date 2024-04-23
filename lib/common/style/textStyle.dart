@@ -60,6 +60,14 @@ var typo18regular = TextStyle(
   fontSize: 18.r,
 );
 
+var typo18bold = TextStyle(
+  color: GRAY_90,
+  fontWeight: FontWeight.w800,
+  fontFamily: 'Pretendard',
+  fontStyle: FontStyle.normal,
+  fontSize: 18.r,
+);
+
 var typo18semibold = TextStyle(
   color: GRAY_90,
   fontWeight: FontWeight.w600,

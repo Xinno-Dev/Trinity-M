@@ -7,6 +7,7 @@ import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/common/provider/coin_provider.dart';
 import 'package:larba_00/common/provider/firebase_provider.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
+import 'package:larba_00/common/provider/market_provider.dart';
 import 'package:larba_00/common/provider/network_provider.dart';
 import 'package:larba_00/common/provider/stakes_data.dart';
 import 'package:larba_00/domain/model/app_start_model.dart';
@@ -196,6 +197,9 @@ Future<void> main() async {
           ),
           provider.ChangeNotifierProvider(
             create: (context) => NetworkProvider(),
+          ),
+          provider.ChangeNotifierProvider(
+            create: (context) => MarketProvider(),
           ),
           provider.ChangeNotifierProvider(
             create: (context) => LoginProvider(),

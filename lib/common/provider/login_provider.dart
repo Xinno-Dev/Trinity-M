@@ -69,7 +69,7 @@ enum RecoverPassStep {
   complete;
 }
 
-final testEmail = 'jubal2000@gmail.com';
+final testEmail = 'jubal2000@hanmail.net';
 
 final loginProvider = ChangeNotifierProvider<LoginProvider>((_) {
   return LoginProvider();
@@ -93,7 +93,7 @@ class LoginProvider extends ChangeNotifier {
   var recoverStep = RecoverPassStep.none;
 
   var inputNick   = 'jubal2000';
-  var inputEmail  = 'jubal2000@gmail.com'; // for test..
+  var inputEmail  = testEmail; // for test..
   var inputPass   = List.generate(2, (index) => 'testpass00');
   var recoverPass = List.generate(2, (index) => 'recoverpass00');
 
@@ -428,6 +428,11 @@ class LoginProvider extends ChangeNotifier {
 
   toggleLogin() {
     isSignUpMode = !isSignUpMode;
+    notifyListeners();
+  }
+
+  setSignUpMode(bool status) {
+    isSignUpMode = status;
     notifyListeners();
   }
 

@@ -71,14 +71,16 @@ class ConvertHelper {
   }
 }
 
-String CommaText(String value, [int decimal = 8]) {
-  // final _value = balanceFloor(value, 8);
-  return NumberFormat(',###.${'#' * decimal}').format(double.parse(value));
+String CommaText(value, [int decimal = 8]) {
+  if (value == null) return '0';
+  var numStr = value is String ? double.parse(value) : value;
+  return NumberFormat(',###.${'#' * decimal}').format(numStr);
 }
 
-String CommaIntText(String value, [int decimal = 8]) {
-  // final _value = balanceFloor(value, 8);
-  return NumberFormat(',###').format(double.parse(value));
+String CommaIntText(value) {
+  if (value == null) return '0';
+  var numStr = value is String ? double.parse(value) : value;
+  return NumberFormat(',###').format(numStr);
 }
 
 double balanceFloor(double value, [int decimal = 8]) {

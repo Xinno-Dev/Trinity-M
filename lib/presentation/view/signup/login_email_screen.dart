@@ -122,9 +122,9 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                     } else {
                       showConfirmDialog(context,
                         '잘못된 계정/비밀번호 입니다.\n새지갑을 생성하시겠습니까?',
-                        okText: '만들기', cancelText: '취소').then((result) {
-                          if (BOL(result)) {
-
+                        okText: '만들기', cancelText: '취소').then((dlgResult) {
+                          if (BOL(dlgResult)) {
+                            Navigator.of(context).pop(true);
                           }
                       });
                     }

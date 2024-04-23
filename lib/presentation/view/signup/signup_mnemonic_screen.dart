@@ -80,129 +80,129 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
           if (mnBoxRatio < 2.0) mnBoxRatio = 2.0;
           // log('---> mnBoxRatio : $mnBoxRatio / ${constraints.maxHeight / constraints.maxWidth}');
           return SingleChildScrollView(
-              child: Container(
-                height: constraints.maxHeight,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 30.h),
-                    Container(
-                      padding: EdgeInsets.only(left: 20.w, bottom: 20.h),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 16.h),
-                          Text(
-                            TR(context, '지갑 복구용 문구를 보관하세요.'),
-                            style: typo24bold,
-                          ),
-                          SizedBox(height: 16.h),
-                          Text(
-                            TR(context, '문구를 복사하여 안전한 곳에 보관해주세요.\n'
-                                '문구를 잃어버리실 경우 지갑 복구가 불가합니다.'),
-                            style: typo16medium150.copyWith(
-                                color: GRAY_70),
-                          ),
-                          // SizedBox(height: 56.h),
-                        ]),
-                    ),
-                    SizedBox(height: 10.h),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      child: Container(
-                        child: GridView.builder(
-                          itemCount: mnemonicList.length,
-                          shrinkWrap: true,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 4,
-                            mainAxisSpacing: 6.r,
-                            childAspectRatio: mnBoxRatio,
-                          ),
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return Container(
-                                color: BG,
-                                child: Padding(
-                                  padding: EdgeInsets.all(8.r),
-                                  child: Stack(
-                                    children: [
-                                      Text(
-                                        '${index + 1}',
+            child: Container(
+              height: constraints.maxHeight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 30.h),
+                  Container(
+                    padding: EdgeInsets.only(left: 20.w, bottom: 20.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 16.h),
+                        Text(
+                          TR(context, '지갑 복구용 문구를 보관하세요.'),
+                          style: typo24bold,
+                        ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          TR(context, '문구를 복사하여 안전한 곳에 보관해주세요.\n'
+                              '문구를 잃어버리실 경우 지갑 복구가 불가합니다.'),
+                          style: typo16medium150.copyWith(
+                              color: GRAY_70),
+                        ),
+                        // SizedBox(height: 56.h),
+                      ]),
+                  ),
+                  SizedBox(height: 10.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: Container(
+                      child: GridView.builder(
+                        itemCount: mnemonicList.length,
+                        shrinkWrap: true,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 4,
+                          mainAxisSpacing: 6.r,
+                          childAspectRatio: mnBoxRatio,
+                        ),
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Container(
+                              color: BG,
+                              child: Padding(
+                                padding: EdgeInsets.all(8.r),
+                                child: Stack(
+                                  children: [
+                                    Text(
+                                      '${index + 1}',
+                                      style:
+                                      typo14semibold.copyWith(color: GRAY_90),
+                                    ),
+                                    Center(
+                                      child: Text(
+                                        mnemonicList[index],
                                         style:
-                                        typo14semibold.copyWith(color: GRAY_90),
+                                        typo16medium.copyWith(color: GRAY_60),
                                       ),
-                                      Center(
-                                        child: Text(
-                                          mnemonicList[index],
-                                          style:
-                                          typo16medium.copyWith(color: GRAY_60),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ));
-                          },
-                        ),
-                      )),
-                    SizedBox(height: (constraints.maxHeight < 600) ? 10 : 16),
-                    Center(
-                      child: GestureDetector(
-                        child: Container(
-                          padding:
-                          EdgeInsets.symmetric(vertical: 9, horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: GRAY_5,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset('assets/svg/icon_copy.svg',
-                                  height: 12,
-                                  colorFilter: ColorFilter.mode(
-                                      SECONDARY_90, BlendMode.srcIn)),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              Text(
-                                TR(context, '문구 복사하기'),
-                                style:
-                                typo14bold100.copyWith(color: SECONDARY_90),
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () async {
-                          await Clipboard.setData(ClipboardData(text: mnemonic));
-                          final androidInfo = await DeviceInfoPlugin().androidInfo;
-                          if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
-                            _showToast(TR(context, '문구가 복사되었습니다'));
+                                    ),
+                                  ],
+                                ),
+                              ));
                         },
                       ),
-                    ),
-                    SizedBox(height: 40.h),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40.w),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(createAniRoute(CloudPassScreen()));
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 10.h),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(width: 2, color: GRAY_20),
-                          ),
-                          child: Text(TR(context, '클라우드 백업'), style: typo16bold),
+                    )),
+                  SizedBox(height: (constraints.maxHeight < 600) ? 10 : 16),
+                  Center(
+                    child: GestureDetector(
+                      child: Container(
+                        padding:
+                        EdgeInsets.symmetric(vertical: 9, horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: GRAY_5,
+                          borderRadius: BorderRadius.circular(4),
                         ),
-                      )
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset('assets/svg/icon_copy.svg',
+                                height: 12,
+                                colorFilter: ColorFilter.mode(
+                                    SECONDARY_90, BlendMode.srcIn)),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              TR(context, '문구 복사하기'),
+                              style:
+                              typo14bold100.copyWith(color: SECONDARY_90),
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () async {
+                        await Clipboard.setData(ClipboardData(text: mnemonic));
+                        final androidInfo = await DeviceInfoPlugin().androidInfo;
+                        if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
+                          _showToast(TR(context, '문구가 복사되었습니다'));
+                      },
                     ),
-                  ],
-                ),
-              )
+                  ),
+                  SizedBox(height: 40.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40.w),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(createAniRoute(CloudPassScreen()));
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(width: 2, color: GRAY_20),
+                        ),
+                        child: Text(TR(context, '클라우드 백업'), style: typo16bold),
+                      ),
+                    )
+                  ),
+                ],
+              ),
+            )
           );
         }),
         bottomNavigationBar: Padding(

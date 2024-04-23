@@ -50,7 +50,7 @@ startEmailSend(String emailAuth, Function(String?) onResult) {
   // final vfCodeEnc = encryptAES(vfJson.toString());
   var vfCode = 'vfCode-test-0000';
   var vfCodeEnc = crypto.sha256.convert(utf8.encode(vfCode));
-  LOG('--> vfCodeEnc : $vfCodeEnc');
+  LOG('--> startEmailSend : $vfCodeEnc');
   try {
     var acs = ActionCodeSettings(
         url: 'https://exino.com/user/email/vflink?vfcode=$vfCodeEnc',
@@ -93,8 +93,8 @@ getEmailUserInfo(emailAuth) async {
       // final emailAddress = userCredential.user?.email;
       LOG('--> Successfully signed in with email link! : ${userCredential.user}');
       return userCredential.user;
-    } catch (error) {
-      LOG('--> Error signing in with email link.');
+    } catch (e) {
+      LOG('--> Error signing in with email link : $e');
     }
   }
   return null;

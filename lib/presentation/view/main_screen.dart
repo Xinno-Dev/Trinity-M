@@ -52,6 +52,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         top: false,
         child: Scaffold(
           body: _widgetOptions.elementAt(_selectedIndex),
+          backgroundColor: Colors.white,
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
               borderRadius: bottomNavigationBarBorderRadius,

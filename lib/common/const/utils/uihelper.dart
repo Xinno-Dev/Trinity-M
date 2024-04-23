@@ -1,3 +1,6 @@
+import 'dart:ui' as ui;
+
+import 'package:flutter/services.dart';
 import 'package:larba_00/domain/model/coin_model.dart';
 import 'package:larba_00/domain/model/network_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -320,4 +323,11 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
         ],
       ),
   );
+}
+
+getImageHeight(String path) async {
+  var data  = await rootBundle.load(path);
+  var codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+  var fi = await codec.getNextFrame();
+  return Size(fi.image.width.toDouble(), fi.image.height.toDouble());
 }

@@ -425,7 +425,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
   }
 
   _buildEmailBox() {
-    final isSignUp = ref.read(loginProvider).isSignUpMode;
+    final loginProv = ref.read(loginProvider);
+    final isSignUp  = loginProv.isSignUpMode;
     return Container(
       width: 320,
       margin: EdgeInsets.symmetric(vertical: 30),
@@ -441,6 +442,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
           ),
           InkWell(
             onTap: () {
+              // clean user info..
+              loginProv.userInfo = null;
               if (isSignUp) {
                 Navigator.of(context)
                     .push(createAniRoute(SignUpEmailScreen()))
@@ -454,7 +457,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
                     .push(createAniRoute(LoginEmailScreen()))
                     .then((result) {
                   if (BOL(result)) {
+                    UserHelper().setUser(loginType: LoginType.email.name);
                     ref.read(loginProvider).startWallet(context);
+                    // if (loginProv.isLogin) {
+                    //   UserHelper().setUser(loginType: LoginType.email.name);
+                    //   ref.read(loginProvider).startWallet(context);
+                    // } else {
+                    //   loginProv.setSignUpMode(true);
+                    // }
                   }
                 });
               }
