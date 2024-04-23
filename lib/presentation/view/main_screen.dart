@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:larba_00/common/provider/coin_provider.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/common/provider/temp_provider.dart';
@@ -13,6 +14,7 @@ import '../../common/common_package.dart';
 import '../../common/const/utils/languageHelper.dart';
 import 'asset/asset_screen.dart';
 import 'market/market_screen.dart';
+import 'profile/profile_screen.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({Key? key, this.selectedPage = 0}) : super(key: key);
@@ -28,15 +30,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   List<Widget> _widgetOptions = <Widget>[
     MarketScreen(),
-    AssetScreen(),
+    ProfileScreen(),
     // SettingsScreen(),
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   void initState() {
@@ -45,47 +41,48 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    BorderRadius bottomNavigationBarBorderRadius = BorderRadius.vertical(
-      top: Radius.circular(16.0),
-    );
     return SafeArea(
-        top: false,
-        child: Scaffold(
-          body: _widgetOptions.elementAt(_selectedIndex),
-          backgroundColor: Colors.white,
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              borderRadius: bottomNavigationBarBorderRadius,
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromRGBO(179, 181, 189, 0.15),
-                  spreadRadius: 0,
-                  blurRadius: 10,
-                  offset: Offset(0, -4),
+      top: false,
+      child: Scaffold(
+        body: _widgetOptions.elementAt(_selectedIndex),
+        backgroundColor: Colors.white,
+        bottomNavigationBar: BottomAppBar(
+          height: 55.h,
+          color: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    setState(() => _selectedIndex = 0);
+                    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                  },
+                  child: Center(
+                    child: Text(TR(context, 'Market'),
+                      style: _selectedIndex == 0 ?
+                      typo16bold.copyWith(color: PRIMARY_100) : typo16regular),
+                  ),
+                )
+              ),
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    setState(() => _selectedIndex = 1);
+                    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                  },
+                  child: Center(
+                    child: SvgPicture.asset('assets/svg/'
+                      'icon_profile_0${_selectedIndex == 1 ? '1' : '0'}.svg'),
+                  ),
                 ),
-              ],
-            ),
-            child: BottomNavigationBar(
-              backgroundColor: WHITE,
-              selectedItemColor: PRIMARY_100,
-              unselectedItemColor: GRAY_60,
-              selectedLabelStyle: typo16bold,
-              unselectedLabelStyle: typo16bold,
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home, size: 0),
-                  label: TR(context, 'Market')
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home, size: 0),
-                  label: TR(context, 'Assets')
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-            ),
-          ),
+              ),
+            ]
+          )
         )
+      )
     );
   }
 }

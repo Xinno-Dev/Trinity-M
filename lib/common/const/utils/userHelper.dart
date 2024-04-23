@@ -133,8 +133,10 @@ class UserHelper {
     if (checkMnemonic != '')
       await storage.write(key: CHECK_MNEMONIC_KEY + userKey, value: checkMnemonic);
 
-    if (addressList != '')
+    if (addressList != '') {
+      LOG('--> setUser ADDRESSLIST_KEY : ${ADDRESSLIST_KEY + userKey}');
       await storage.write(key: ADDRESSLIST_KEY + userKey, value: addressList);
+    }
 
     if (networkList != '')
       await storage.write(key: NETWORKLIST_KEY + userKey, value: networkList);
@@ -253,6 +255,7 @@ class UserHelper {
 
   Future<String> get_addressList() async {
     FlutterSecureStorage storage = FlutterSecureStorage();
+    LOG('--> get_addressList : ${ADDRESSLIST_KEY + userKey}');
     return await storage.read(key: ADDRESSLIST_KEY + userKey) ?? 'NOT_ADDRESSLIST';
   }
 

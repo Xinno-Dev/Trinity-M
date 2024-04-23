@@ -71,6 +71,7 @@ class EccRepositoryImpl implements EccRepository {
 
     final addressJsonString = json.encode(addressListJson);
     userHelper.setUser(addressList: addressJsonString);
+    LOG('--> addressJsonString : $addressJsonString');
 
     if (encResult == 'fail') {
       return false;

@@ -14,8 +14,10 @@ import '../../../common/const/widget/primary_button.dart';
 import 'product_buy_screen.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
-  ProductDetailScreen({super.key});
+  ProductDetailScreen({super.key, required this.isShowSeller, required this.isCanBuy});
   static String get routeName => 'productDetailScreen';
+  final bool isShowSeller;
+  final bool isCanBuy;
 
   @override
   ConsumerState<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -38,14 +40,13 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         body: ListView(
           shrinkWrap: true,
           children: [
-            prov.showProductDetail(),
+            prov.showProductDetail(widget.isShowSeller),
             prov.showProductInfo(),
           ]
         ),
-        bottomNavigationBar: IS_DEV_MODE ?
+        bottomNavigationBar: widget.isCanBuy ? IS_DEV_MODE ?
         OpenContainer(
           transitionType: ContainerTransitionType.fadeThrough,
-          transitionDuration: Duration(milliseconds: 400),
           closedBuilder: (context, builder) {
             return PrimaryButton(
               text: TR(context, '구매하기'),
@@ -57,7 +58,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           },
         ) : DisabledButton(
           text: TR(context, '구매하기'),
-        )
+        ) : null
       ),
     );
   }

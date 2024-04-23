@@ -10,10 +10,11 @@ part 'address_model.g.dart';
 )
 class AddressModel {
   // for Larba..
-  String? nickId;
   String? subTitle;
   String? description;
-  int?    status;
+  String? pic;        // 이미지
+  int?    follower;   // 팔로워
+  int?    following;  // 팔로잉
 
   // for Byffin..
   String? address;
@@ -28,10 +29,11 @@ class AddressModel {
   DateTime? createTime;
 
   AddressModel({
-    this.nickId,
     this.subTitle,
     this.description,
-    this.status,
+    this.pic,
+    this.follower,
+    this.following,
 
     this.keyPair,
     this.publicKey,

@@ -43,9 +43,11 @@ class _ProductStoreScreenState extends ConsumerState<ProductStoreScreen> {
         backgroundColor: Colors.white,
         body: ListView(
           shrinkWrap: true,
+          padding: EdgeInsets.symmetric(horizontal: 20),
           children: [
             prov.showStoreDetail(widget.product),
-            prov.showStoreProductList(widget.product),
+            prov.showStoreProductList(context,
+                isShowSeller: false, isCanBuy: true),
           ]
         )
       ),

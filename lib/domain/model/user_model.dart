@@ -26,8 +26,8 @@ class UserModel {
   String? email;          // login user email
   String? mobile;         // mobile number
   String? country;        // user country (from mobile)
-  String? imageURL;       // profile image
-  String? thumbURL;       // thumbnail image
+  String? pic;            // profile image
+  String? picThumb;       // thumbnail image
   String? deviceId;       // device uuid
   String? deviceType;     // device type ['android', 'ios'...]
 
@@ -35,7 +35,7 @@ class UserModel {
   DateTime? loginTime;
   DateTime? logoutTime;
 
-  Map<String, AddressModel>? addressData; // Map<address, model> address list..
+  List<AddressModel>? addressList; // Map<address, model> address list..
 
   UserModel({
     this.ID,
@@ -49,11 +49,11 @@ class UserModel {
     this.email,
     this.mobile,
     this.country,
-    this.imageURL,
-    this.thumbURL,
+    this.pic,
+    this.picThumb,
     this.deviceId,
     this.deviceType,
-    this.addressData,
+    this.addressList,
 
     this.createTime,
     this.loginTime,
@@ -68,8 +68,8 @@ class UserModel {
       loginType:  LoginType.kakao,
       email:      user.kakaoAccount?.email,
       userName:   user.kakaoAccount?.profile?.nickname,
-      imageURL:   user.kakaoAccount?.profile?.profileImageUrl,
-      thumbURL:   user.kakaoAccount?.profile?.thumbnailImageUrl,
+      pic:        user.kakaoAccount?.profile?.profileImageUrl,
+      picThumb:   user.kakaoAccount?.profile?.thumbnailImageUrl,
     );
   }
 
@@ -81,18 +81,18 @@ class UserModel {
       loginType:  LoginType.google,
       email:      user.email,
       userName:   user.displayName,
-      imageURL:   user.photoURL,
+      pic:        user.photoURL,
+      picThumb:   user.photoURL,
     );
   }
 
-  static createFromEmail(String uid, String email, String nickId) {
+  static createFromEmail(String uid, String email) {
     LOG('--> createFromEmail : $uid / $email');
     return UserModel(
       ID:         'email$uid', // 임시 ID 생성..
       status:     1,
       loginType:  LoginType.email,
       email:      email,
-      userName:   nickId,
     );
   }
 

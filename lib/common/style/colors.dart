@@ -15,10 +15,10 @@ const GRAY_80 = Color(0xFF282A3A);
 const GRAY_90 = Color(0xFF101223);
 const BALCK = Color(0xFF0A0B16);
 
-const PRIMARY_10  = Color(0xFFFEE4E8);
-const PRIMARY_20  = Color(0xFFFDD4D9);
-const PRIMARY_50  = Color(0xFFFAA4AF);
-const PRIMARY_90  = Color(0xDD37DBFF);
+const PRIMARY_10  = Color(0x2237DBFF);
+const PRIMARY_20  = Color(0x5537DBFF);
+const PRIMARY_50  = Color(0x8837DBFF);
+const PRIMARY_90  = Color(0xAA37DBFF);
 const PRIMARY_100 = Color(0xFF37DBFF);
 
 const SECONDARY_10 = Color(0xFFEEF2FF);

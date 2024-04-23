@@ -1,78 +1,84 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/uihelper.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/common/const/widget/mainBox.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
-import 'package:larba_00/common/provider/market_provider.dart';
-import 'package:larba_00/presentation/view/history_screen.dart';
-import 'package:larba_00/presentation/view/market/product_detail_screen.dart';
-import 'package:larba_00/presentation/view/signup/login_screen.dart';
-import 'package:larba_00/presentation/view/settings/settings_screen.dart';
 
-import 'package:animations/animations.dart';
-
-import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
-import '../../../services/google_service.dart';
+import '../../../common/provider/market_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
+  ProfileScreen({super.key});
   static String get routeName => 'profileScreen';
+
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  final controller  = ScrollController();
-  var selectTab = 0;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-  }
 
   @override
   Widget build(BuildContext context) {
-    final prov = ref.watch(marketProvider);
+    final prov = ref.watch(loginProvider);
+    prov.context = context;
     return SafeArea(
       top: false,
-      child: CustomScrollView(
-        controller: controller,
-        physics: ClampingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-              title: Text(TR(context, 'Profile')),
-              centerTitle: true,
-              // automaticallyImplyLeading: false, // TODO: disabled for Dev..
-              titleTextStyle: typo16bold,
-              floating: true,
-              pinned: true,
-              backgroundColor: Colors.white,
-              actions: [
-                InkWell(
-                  onTap: () {
-                  },
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      child: Icon(Icons.more_vert)
+      child: GestureDetector(
+        onTap: () {
+          ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    onPressed: () {
+                    },
+                    icon: SvgPicture.asset('assets/svg/icon_ham.svg'),
                   ),
                 ),
-              ],
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(40),
-                child: prov.showCategoryBar(),
-              )
+                Center(
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: InkWell(
+                      onTap: () {
+                        prov.showProfileSelectBox();
+                      },
+                      child: Container(
+                        height: kToolbarHeight,
+                        color: Colors.transparent,
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(TR(context, prov.accountName)),
+                            Icon(Icons.arrow_drop_down_sharp),
+                          ],
+                        )
+                      )
+                    ),
+                  )
+                )
+              ]
+            ),
+            centerTitle: true,
+            titleSpacing: 0,
+            titleTextStyle: typo16bold,
+            backgroundColor: Colors.white,
           ),
-          prov.showProductList()
-        ],
-      ),
+          backgroundColor: Colors.white,
+          body: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            children: [
+              prov.showProfile(),
+              MarketProvider().showStoreProductList(context, isShowSeller: false, isCanBuy: false),
+            ]
+          ),
+        ),
+      )
     );
   }
 }

@@ -16,13 +16,13 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       email: json['email'] as String?,
       mobile: json['mobile'] as String?,
       country: json['country'] as String?,
-      imageURL: json['imageURL'] as String?,
-      thumbURL: json['thumbURL'] as String?,
+      pic: json['pic'] as String?,
+      picThumb: json['picThumb'] as String?,
       deviceId: json['deviceId'] as String?,
       deviceType: json['deviceType'] as String?,
-      addressData: (json['addressData'] as Map<String, dynamic>?)?.map(
-        (k, e) => MapEntry(k, AddressModel.fromJson(e as Map<String, dynamic>)),
-      ),
+      addressList: (json['addressList'] as List<dynamic>?)
+          ?.map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       createTime: json['createTime'] == null
           ? null
           : DateTime.parse(json['createTime'] as String),
@@ -52,15 +52,15 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) {
   writeNotNull('email', instance.email);
   writeNotNull('mobile', instance.mobile);
   writeNotNull('country', instance.country);
-  writeNotNull('imageURL', instance.imageURL);
-  writeNotNull('thumbURL', instance.thumbURL);
+  writeNotNull('pic', instance.pic);
+  writeNotNull('picThumb', instance.picThumb);
   writeNotNull('deviceId', instance.deviceId);
   writeNotNull('deviceType', instance.deviceType);
   writeNotNull('createTime', instance.createTime?.toIso8601String());
   writeNotNull('loginTime', instance.loginTime?.toIso8601String());
   writeNotNull('logoutTime', instance.logoutTime?.toIso8601String());
-  writeNotNull('addressData',
-      instance.addressData?.map((k, e) => MapEntry(k, e.toJson())));
+  writeNotNull(
+      'addressList', instance.addressList?.map((e) => e.toJson()).toList());
   return val;
 }
 

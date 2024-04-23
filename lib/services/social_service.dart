@@ -12,7 +12,9 @@ import 'package:larba_00/common/const/utils/md5Helper.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/common/rlp/hash.dart';
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:larba_00/domain/model/user_model.dart';
 import 'package:larba_00/services/google_service.dart';
+import 'package:uuid/uuid.dart';
 
 import '../common/const/utils/convertHelper.dart';
 
@@ -82,22 +84,29 @@ startEmailLogout() async {
 
 }
 
-getEmailUserInfo(emailAuth) async {
-  final emailLink = 'https://www.exino.com/emailSignUp?cartId=1234&apiKey=AIzaSyBYHfihYZDw6KjXraK36CaBfk7t_pM8XKc&oobCode=c00by8i1u40rEroOg_URCgqFdgsyM8WcM7qfP9XewTEAAAGOWiVL0A&mode=signIn&lang=ko';
-  if (FirebaseAuth.instance.isSignInWithEmailLink(emailLink)) {
-    try {
-      // The client SDK will parse the code from the link for you.
-      final userCredential = await FirebaseAuth.instance
-          .signInWithEmailLink(email: emailAuth, emailLink: emailLink);
-      // You can access the new user via userCredential.user.
-      // final emailAddress = userCredential.user?.email;
-      LOG('--> Successfully signed in with email link! : ${userCredential.user}');
-      return userCredential.user;
-    } catch (e) {
-      LOG('--> Error signing in with email link : $e');
-    }
-  }
-  return null;
+Future<UserModel?> getEmailUserInfo(email) async {
+  // TODO: get user info from API..
+  return UserModel(
+    ID: Uuid().v4(),
+    status: 1,
+    userName: 'juan.kim',
+    email: email,
+  );
+  // final emailLink = 'https://www.exino.com/emailSignUp?cartId=1234&apiKey=AIzaSyBYHfihYZDw6KjXraK36CaBfk7t_pM8XKc&oobCode=c00by8i1u40rEroOg_URCgqFdgsyM8WcM7qfP9XewTEAAAGOWiVL0A&mode=signIn&lang=ko';
+  // if (FirebaseAuth.instance.isSignInWithEmailLink(emailLink)) {
+  //   try {
+  //     // The client SDK will parse the code from the link for you.
+  //     final userCredential = await FirebaseAuth.instance
+  //         .signInWithEmailLink(email: emailAuth, emailLink: emailLink);
+  //     // You can access the new user via userCredential.user.
+  //     // final emailAddress = userCredential.user?.email;
+  //     LOG('--> Successfully signed in with email link! : ${userCredential.user}');
+  //     return userCredential.user;
+  //   } catch (e) {
+  //     LOG('--> Error signing in with email link : $e');
+  //   }
+  // }
+  // return null;
 }
 
 

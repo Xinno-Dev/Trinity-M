@@ -99,12 +99,12 @@ var darkBorderButtonStyle = OutlinedButton.styleFrom(
 );
 
 var primaryBorderButtonStyle = OutlinedButton.styleFrom(
-  backgroundColor: PRIMARY_90,
+  backgroundColor: PRIMARY_50,
   padding: EdgeInsets.symmetric(vertical: 9, horizontal: 20),
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(8),
   ),
-  side: BorderSide(color: GRAY_80, width: 1),
+  side: BorderSide(color: PRIMARY_90, width: 1),
 );
 
 var whiteImageButtonStyle = OutlinedButton.styleFrom(

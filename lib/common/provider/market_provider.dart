@@ -1,13 +1,6 @@
 import 'package:animations/animations.dart';
-import 'package:flutter/animation.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:larba_00/common/const/utils/convertHelper.dart';
 import 'package:larba_00/common/const/widget/primary_button.dart';
-import 'package:larba_00/common/trxHelper.dart';
 import 'package:larba_00/domain/model/product_model.dart';
 import 'package:larba_00/domain/repository/product_repository.dart';
 import 'package:larba_00/presentation/view/market/product_store_screen.dart';
@@ -52,15 +45,18 @@ class MarketProvider extends ChangeNotifier {
   }
 
   showProductList() {
-    return SliverList(
-      delegate: SliverChildListDelegate(
-        List.generate(_marketRepo.productList.length, (index) =>
-          _contentItem(_marketRepo.productList[index])),
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          List.generate(_marketRepo.productList.length, (index) =>
+              _contentItem(_marketRepo.productList[index])),
+        ),
       ),
     );
   }
 
-  showProductDetail() {
+  showProductDetail([var isShowSeller = true]) {
     return Column(
       children: [
         Image.asset('assets/samples/${selectProduct?.pic}'),
@@ -70,7 +66,8 @@ class MarketProvider extends ChangeNotifier {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _contentSellerBar(selectProduct!),
+              if (isShowSeller)
+                _contentSellerBar(selectProduct!),
               _contentTitleBar(selectProduct!, padding: EdgeInsets.only(top: 15)),
               _contentDescription(selectProduct!, padding: EdgeInsets.only(top: 30)),
             ],
@@ -252,22 +249,30 @@ class MarketProvider extends ChangeNotifier {
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: 20,
-        horizontal: 20
       ),
       child: Column(
         children: [
           _contentStoreTopBar(item),
-          _contentStoreDescBox(item, padding: EdgeInsets.symmetric(vertical: 20)),
-          _contentFollowButton(false),
+          _contentStoreDescBox(item,
+            padding: EdgeInsets.symmetric(vertical: 20)),
+          _contentFollowButton(),
         ],
       ),
     );
   }
 
-  showStoreProductList(ProductModel item) {
+  showStoreProductList(context, {var isShowSeller = true, var isCanBuy = true}) {
     // TODO: seller product list change..
     return Column(
-      children: List<Widget>.from(_marketRepo.productList.map((e) => _contentItem(e, false)).toList()),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 20, bottom: 5),
+          child: Text(TR(context, 'Market'), style: typo16bold)
+        ),
+        ...List<Widget>.from(_marketRepo.productList.map((e) =>
+          _contentItem(e, isShowSeller, isCanBuy)).toList())
+      ],
     );
   }
 
@@ -294,12 +299,13 @@ class MarketProvider extends ChangeNotifier {
     );
   }
 
-  _contentItem(ProductModel item, [var isShowSeller = true]) {
+  _contentItem(ProductModel item, [var isShowSeller = true, var isCanBuy = true]) {
     return OpenContainer(
       transitionType: ContainerTransitionType.fadeThrough,
+      closedElevation: 0,
       closedBuilder: (context, builder) {
         return Container(
-          margin: EdgeInsets.all(15),
+          margin: EdgeInsets.only(bottom: 25),
           color: Colors.white,
           width: double.infinity,
           child: Column(
@@ -319,7 +325,11 @@ class MarketProvider extends ChangeNotifier {
       },
       openBuilder: (context, builder) {
         selectProduct = item;
-        return ProductDetailScreen();
+        ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+        return ProductDetailScreen(
+          isShowSeller: isShowSeller,
+          isCanBuy: isCanBuy,
+        );
       },
     );
     // return InkWell(
@@ -530,7 +540,7 @@ class MarketProvider extends ChangeNotifier {
     );
   }
 
-  _contentFollowButton([var isShowFollowing = true]) {
+  _contentFollowButton() {
     return Row(
       children: [
         Expanded(
@@ -544,20 +554,6 @@ class MarketProvider extends ChangeNotifier {
             text: TR(context, '팔로우'),
           )
         ),
-        if (isShowFollowing)...[
-          SizedBox(width: 10),
-          Expanded(
-            child: PrimaryButton(
-              color: GRAY_20,
-              textStyle: typo14semibold,
-              isSmallButton: true,
-              onTap: () {
-
-              },
-              text: TR(context, '팔로잉'),
-            )
-          ),
-        ]
       ],
     );
   }

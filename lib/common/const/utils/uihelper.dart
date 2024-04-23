@@ -6,6 +6,7 @@ import 'package:larba_00/domain/model/network_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../common_package.dart';
+import '../widget/custom_text_form_field.dart';
 import 'convertHelper.dart';
 import 'languageHelper.dart';
 
@@ -280,7 +281,6 @@ Future<void> showResultDialog(BuildContext context, String text,
   );
 }
 
-
 showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
   return await showDialog<void>(
     context: context,
@@ -292,6 +292,8 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
         contentPadding: EdgeInsets.only(top: 40.h, bottom: 10.h),
         actionsPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
         actionsAlignment: MainAxisAlignment.center,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         actions: <Widget>[
           Container(
             child: Row(
@@ -303,7 +305,7 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
                     cancelText ?? TR(context, '취소'),
                     style: typo12semibold100,
                   ),
-                  style: darkBorderButtonStyle,
+                  style: grayBorderButtonStyle,
                 )),
                 SizedBox(width: 10.w),
                 Expanded(child:
@@ -313,7 +315,7 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
                   },
                   child: Text(
                     okText ?? TR(context, '확인'),
-                    style: typo12semibold100.copyWith(color: WHITE),
+                    style: typo12semibold100,
                   ),
                   style: primaryBorderButtonStyle,
                 ))
@@ -330,4 +332,100 @@ getImageHeight(String path) async {
   var codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
   var fi = await codec.getNextFrame();
   return Size(fi.image.width.toDouble(), fi.image.height.toDouble());
+}
+
+Future<String?> showInputDialog(BuildContext context, String title, {
+  String? defaultText,
+  String? hintText,
+  String? okText,
+  String? cancelText,
+  int maxLength = 30
+}) async {
+  var _focusNode = FocusNode();
+  var _textEditingController = TextEditingController(text: defaultText);
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter stateSetter) {
+          return LayoutBuilder(builder: (context, constraints) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(title, style: typo14bold),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 19.0),
+                    child: CustomTextFormField(
+                      hintText: hintText ?? '',
+                      constraints: constraints,
+                      focusNode: _focusNode,
+                      controller: _textEditingController,
+                      // inputFormatters: [
+                      //   FilteringTextInputFormatter(RegExp('[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9| _-]'), allow: true)
+                      // ],
+                      maxLength: maxLength,
+                      maxLines: 1,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 48.h,
+                          child: InkWell(
+                            onTap: () {
+                              context.pop();
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              alignment: Alignment.center,
+                              child: Text(
+                                cancelText ?? TR(context, '취소'),
+                                style: typo14normal,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          height: 48.h,
+                          child: InkWell(
+                            onTap: () async {
+                              context.pop(_textEditingController.text);
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              alignment: Alignment.center,
+                              child: Text(
+                                okText ?? TR(context, '확인'),
+                                style: typo14bold,
+                              )
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          });
+        });
+      });
 }
