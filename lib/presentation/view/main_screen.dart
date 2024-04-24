@@ -27,12 +27,20 @@ class MainScreen extends ConsumerStatefulWidget {
 
 class _MainScreenState extends ConsumerState<MainScreen> {
   late int _selectedIndex = widget.selectedPage;
+  final _pageController = PageController();
 
-  List<Widget> _widgetOptions = <Widget>[
+  List<Widget> _mainPages = <Widget>[
     MarketScreen(),
     ProfileScreen(),
     // SettingsScreen(),
   ];
+
+  _selectPage(index) {
+    setState(() => _selectedIndex = index);
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+    _pageController.animateToPage(_selectedIndex,
+        duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+  }
 
   @override
   void initState() {
@@ -44,7 +52,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        body: _widgetOptions.elementAt(_selectedIndex),
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: _selectPage,
+          children: _mainPages,
+        ),
         backgroundColor: Colors.white,
         bottomNavigationBar: BottomAppBar(
           height: 55.h,
@@ -57,8 +69,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               Expanded(
                 child: InkWell(
                   onTap: () {
-                    setState(() => _selectedIndex = 0);
-                    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                    _selectPage(0);
                   },
                   child: Center(
                     child: Text(TR(context, 'Market'),
@@ -70,8 +81,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               Expanded(
                 child: InkWell(
                   onTap: () {
-                    setState(() => _selectedIndex = 1);
-                    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                    _selectPage(1);
                   },
                   child: Center(
                     child: SvgPicture.asset('assets/svg/'
