@@ -350,6 +350,7 @@ Future<String?> showInputDialog(BuildContext context, String title, {
         builder: (BuildContext context, StateSetter stateSetter) {
           return LayoutBuilder(builder: (context, constraints) {
             return Dialog(
+              backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
               ),
@@ -370,7 +371,7 @@ Future<String?> showInputDialog(BuildContext context, String title, {
                     child: CustomTextFormField(
                       hintText: hintText ?? '',
                       constraints: constraints,
-                      focusNode: _focusNode,
+                      focusNode:  _focusNode,
                       controller: _textEditingController,
                       // inputFormatters: [
                       //   FilteringTextInputFormatter(RegExp('[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9| _-]'), allow: true)

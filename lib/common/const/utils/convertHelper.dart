@@ -195,7 +195,17 @@ double DBL(dynamic value, {double defaultValue = 0.0}) {
 // ignore: non_constant_identifier_names
 String STR(dynamic value, {String defaultValue = ''}) {
   var result = value.runtimeType != Null && value != 'null' &&
-    value!.toString().isNotEmpty ? value!.toString() : defaultValue;
+      value!.toString().isNotEmpty ? value!.toString() : defaultValue;
+  return result;
+}
+
+// ignore: non_constant_identifier_names
+String ADDR(dynamic value, {String defaultValue = ''}) {
+  var result = value.runtimeType != Null && value != 'null' &&
+      value!.toString().isNotEmpty ? value!.toString() : defaultValue;
+  if (!result.contains('0x')) {
+    result =  '0x$result';
+  }
   return result;
 }
 

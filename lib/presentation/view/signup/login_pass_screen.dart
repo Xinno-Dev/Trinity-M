@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:larba_00/common/const/constants.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/presentation/view/asset/networkScreens/network_input_screen.dart';
@@ -27,7 +28,8 @@ class _LoginPassScreenState extends ConsumerState<LoginPassScreen> {
   @override
   void initState() {
     super.initState();
-    passInputController.text = '';
+    inputPass = IS_DEV_MODE ? ref.read(loginProvider).inputPass[0] : '';
+    passInputController.text = inputPass;
   }
 
   @override
@@ -94,9 +96,17 @@ class _LoginPassScreenState extends ConsumerState<LoginPassScreen> {
               onTap: () {
                 loginProv.checkWalletPass(inputPass).then((result) {
                   if (result) {
-                    Navigator.of(context).pop(true);
+                    Navigator.of(context).pop(inputPass);
                   } else {
-                    // TODO: show pass error msg..
+                    Fluttertoast.showToast(
+                      msg: "잘못된 패스워드입니다.",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.black,
+                      textColor: result ? Colors.white : Colors.orange,
+                      fontSize: 16.0
+                    );
                   }
                 });
               },

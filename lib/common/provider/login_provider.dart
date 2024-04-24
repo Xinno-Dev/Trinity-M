@@ -28,6 +28,7 @@ import '../../domain/model/ecckeypair.dart';
 import '../../domain/repository/product_repository.dart';
 import '../../domain/usecase/ecc_usecase_impl.dart';
 import '../../presentation/view/authpassword_screen.dart';
+import '../../presentation/view/signup/login_pass_screen.dart';
 import '../../services/google_service.dart';
 import '../../services/larba_api_service.dart';
 import '../const/utils/convertHelper.dart';
@@ -94,8 +95,9 @@ class LoginProvider extends ChangeNotifier {
 
   late BuildContext context;
 
-  bool isLoginCheckDone = false;
-  bool isSignUpMode = false;
+  var isLoginCheckDone = false;
+  var isSignUpMode = false;
+  var isShowMask = false;
 
   var emailStep   = EmailSignUpStep.none;
   var nickStep    = NickCheckStep.none;
@@ -105,6 +107,10 @@ class LoginProvider extends ChangeNotifier {
   var inputEmail  = testEmail; // for test..
   var inputPass   = List.generate(2, (index) => 'testpass00');
   var recoverPass = List.generate(2, (index) => 'recoverpass00');
+
+  refresh() {
+    notifyListeners();
+  }
 
   Future<bool> checkLogin() async {
     isLoginCheckDone = false;
@@ -182,7 +188,7 @@ class LoginProvider extends ChangeNotifier {
         userInfo?.addressList != null && userInfo!.addressList!.isNotEmpty) {
       selectAddress = userInfo?.addressList?.first;
     }
-    LOG('-----> wallet currentAddress : $selectAddress');
+    // LOG('-----> wallet currentAddress : $selectAddress');
     return selectAddress;
   }
 
@@ -274,9 +280,9 @@ class LoginProvider extends ChangeNotifier {
   // add new wallet & account..
   Future<bool> createNewAccount(String passOrg) async {
     var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
-    LOG('--> createNewAccount : $passOrg');
     var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
     var result = await eccImpl.generateKeyPair(pass, nickId: inputNick);
+    LOG('--> createNewAccount : $passOrg => $result');
     if (result) {
       await _refreshAccountList();
     }
@@ -286,13 +292,19 @@ class LoginProvider extends ChangeNotifier {
   // add new wallet & account..
   Future<bool> addNewAccount(String passOrg) async {
     var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
-    LOG('--> addNewAccount : $passOrg');
     var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
     var result = await eccImpl.addKeyPair(pass, nickId: inputNick);
+    LOG('--> addNewAccount : $inputNick / $passOrg => $result');
     if (result) {
       await _refreshAccountList();
+      notifyListeners();
     }
     return result;
+  }
+
+  changeAccount(AddressModel select) {
+    selectAddress = select;
+    hideProfileSelectBox();
   }
 
   // local에 있는 address 목록을 userInfo 에 추가 & 케싱 한다..
@@ -302,6 +314,7 @@ class LoginProvider extends ChangeNotifier {
     if (accountListStr != 'NOT_ADDRESSLIST') {
       userInfo!.addressList = [];
       List<dynamic> accountList = json.decode(accountListStr);
+      LOG('--> _refreshAccountList address org : ${accountList.length}');
       for (var item in accountList) {
         var address = AddressModel.fromJson(item);
         userInfo!.addressList!.add(address);
@@ -319,11 +332,11 @@ class LoginProvider extends ChangeNotifier {
         userKey = crypto.sha256.convert(utf8.encode(email!)).toString();
       }
       var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
-      var mnemonicEnc = await UserHelper().get_mnemonic(userKeyTmp: userKey);
-      LOG('--> checkWalletPass : $inputEmail / $passOrg / $pass -> $mnemonicEnc');
-      if (mnemonicEnc != 'NOT_MNEMONIC') {
-        var result = await AesManager().decrypt(pass, mnemonicEnc);
-        LOG('--> checkWallet mnemonic : $result');
+      var keyEnc = await UserHelper().get_key(userKeyTmp: userKey);
+      LOG('--> checkWalletPass : $inputEmail / $passOrg / $pass -> $keyEnc');
+      if (keyEnc != 'NOT_KEY') {
+        var result = await AesManager().decrypt(pass, keyEnc);
+        LOG('--> checkWallet decrypt : $result');
         return result != 'fail';
       }
     } catch (e) {
@@ -392,16 +405,19 @@ class LoginProvider extends ChangeNotifier {
     }
   }
 
-  showProfileSelectBox() {
+  hideProfileSelectBox([BuildContext? context]) {
+    isShowMask = false;
+    ScaffoldMessenger.of(context ?? this.context).hideCurrentMaterialBanner();
+    notifyListeners();
+  }
+
+  showProfileSelectBox({Function(AddressModel)? onSelect, Function()? onAdd}) {
+    isShowMask = true;
     ScaffoldMessenger.of(context).showMaterialBanner(
       MaterialBanner(
         elevation: 10,
         surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.white,
-        // leading: SnackBarAction(
-        //   label: 'Close',
-        //   onPressed: () => ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
-        // ),
         content: Container(
           constraints: BoxConstraints(
             maxHeight: 500,
@@ -410,7 +426,9 @@ class LoginProvider extends ChangeNotifier {
             shrinkWrap: true,
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             children: [
-              ...userInfo!.addressList!.map((e) => _profileItem(e)).toList(),
+              ...userInfo!.addressList!.map((e) => _profileItem(e, () {
+                if (onSelect != null) onSelect(e);
+              })).toList(),
               SizedBox(height: 10),
               Ink(
                 decoration: BoxDecoration(
@@ -421,7 +439,7 @@ class LoginProvider extends ChangeNotifier {
                 child: InkWell(
                   onTap: () {
                     LOG('---> account add');
-                    showAddAccountDlg();
+                    if (onAdd != null) onAdd();
                   },
                   borderRadius: BorderRadius.circular(10),
                   // splashColor: PRIMARY_100,
@@ -454,22 +472,14 @@ class LoginProvider extends ChangeNotifier {
         ]
       ),
     );
+    notifyListeners();
   }
 
-  showAddAccountDlg() {
-    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-    showInputDialog(context,
-      TR(context, '계정 추가'), hintText: TR(context, '계정명을 입력해 주세요.')).then((result) {
-
-    });
-  }
-
-  Widget _profileItem(AddressModel item) {
+  Widget _profileItem(AddressModel item, Function() onSelect) {
     final iconSize = 40.0.r;
+    final color = item.address == selectAddress?.address ? PRIMARY_100 : GRAY_50;
     return InkWell(
-      onTap: () {
-        ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-      },
+      onTap: onSelect,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 5),
         child: Row(
@@ -485,9 +495,16 @@ class LoginProvider extends ChangeNotifier {
             ),
             SizedBox(width: 10),
             Expanded(
-              child: Text(STR(item.accountName),
-                style: typo16semibold.copyWith(
-                  color: item.address == selectAddress?.address ? PRIMARY_100 : GRAY_50))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(STR(item.accountName),
+                      style: typo16semibold.copyWith(color: color)),
+                  Text(ADDR(item.address),
+                      style: typo11normal.copyWith(color: GRAY_40))
+                ],
+              )
+            ),
           ],
         ),
       ),

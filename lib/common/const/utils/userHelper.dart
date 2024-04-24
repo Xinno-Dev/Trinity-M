@@ -192,9 +192,9 @@ class UserHelper {
     return await storage.read(key: FCM_KEY + userKey) ?? 'NOT_TOKEN';
   }
 
-  Future<String> get_key() async {
+  Future<String> get_key({String? userKeyTmp}) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
-    return await storage.read(key: KEYPAIR_KEY + userKey) ?? 'NOT_KEY';
+    return await storage.read(key: KEYPAIR_KEY + (userKeyTmp ?? userKey)) ?? 'NOT_KEY';
   }
 
   Future<String> get_address() async {

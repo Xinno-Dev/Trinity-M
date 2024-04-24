@@ -32,14 +32,13 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   List<Widget> _mainPages = <Widget>[
     MarketScreen(),
     ProfileScreen(),
-    // SettingsScreen(),
   ];
 
   _selectPage(index) {
     setState(() => _selectedIndex = index);
-    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
     _pageController.animateToPage(_selectedIndex,
         duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+    ref.read(loginProvider).hideProfileSelectBox(context);
   }
 
   @override
@@ -52,46 +51,58 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: _selectPage,
-          children: _mainPages,
-        ),
-        backgroundColor: Colors.white,
-        bottomNavigationBar: BottomAppBar(
-          height: 55.h,
-          color: Colors.white,
-          surfaceTintColor: Colors.transparent,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    _selectPage(0);
-                  },
-                  child: Center(
-                    child: Text(TR(context, 'Market'),
-                      style: _selectedIndex == 0 ?
-                      typo16bold.copyWith(color: PRIMARY_100) : typo16regular),
+        body: Stack(
+          children: [
+            PageView(
+              controller: _pageController,
+              onPageChanged: _selectPage,
+              children: _mainPages,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: kToolbarHeight,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20),
+                    topLeft:  Radius.circular(20),
                   ),
-                )
-              ),
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    _selectPage(1);
-                  },
-                  child: Center(
-                    child: SvgPicture.asset('assets/svg/'
-                      'icon_profile_0${_selectedIndex == 1 ? '1' : '0'}.svg'),
-                  ),
+                  color: Colors.white,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          _selectPage(0);
+                        },
+                        child: Center(
+                          child: Text(TR(context, 'Market'),
+                              style: _selectedIndex == 0 ?
+                              typo16bold.copyWith(color: PRIMARY_100) : typo16regular),
+                        ),
+                      )
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          _selectPage(1);
+                        },
+                        child: Center(
+                          child: SvgPicture.asset('assets/svg/'
+                              'icon_profile_0${_selectedIndex == 1 ? '1' : '0'}.svg'),
+                        ),
+                      ),
+                    ),
+                  ]
                 ),
               ),
-            ]
-          )
-        )
+            )
+          ],
+        ),
+        backgroundColor: Colors.white,
       )
     );
   }

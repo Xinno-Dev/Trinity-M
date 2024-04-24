@@ -8,6 +8,7 @@ class CustomTextFormField extends StatelessWidget {
       this.maxLength,
       this.maxLines,
       this.inputFormatters,
+      this.borderColor,
       required this.hintText,
       required this.constraints,
       required this.focusNode,
@@ -19,6 +20,7 @@ class CustomTextFormField extends StatelessWidget {
   final BoxConstraints constraints;
   final FocusNode focusNode;
   final TextEditingController controller;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,7 @@ class CustomTextFormField extends StatelessWidget {
         // contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: GRAY_20,
+            color: borderColor ?? GRAY_50,
           ),
           borderRadius: BorderRadius.circular(8),
         ),

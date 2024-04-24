@@ -289,6 +289,14 @@ var typo12dialog = TextStyle(
   height: 2.0,
 );
 
+var typo11normal = TextStyle(
+  color: GRAY_90,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Pretendard',
+  fontStyle: FontStyle.normal,
+  fontSize: 11.r,
+);
+
 var typo10medium100 = TextStyle(
   color: GRAY_90,
   fontWeight: FontWeight.w500,

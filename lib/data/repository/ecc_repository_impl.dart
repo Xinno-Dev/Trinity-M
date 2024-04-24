@@ -70,7 +70,7 @@ class EccRepositoryImpl implements EccRepository {
         addressList.map((address) => address.toJson()).toList();
 
     final addressJsonString = json.encode(addressListJson);
-    userHelper.setUser(addressList: addressJsonString);
+    await userHelper.setUser(addressList: addressJsonString);
     LOG('--> addressJsonString : $addressJsonString');
 
     if (encResult == 'fail') {
@@ -98,10 +98,8 @@ class EccRepositoryImpl implements EccRepository {
     List<dynamic> decodeJson = json.decode(jsonString);
     int index = 0;
     for (var jsonObject in decodeJson) {
+      index++;
       AddressModel model = AddressModel.fromJson(jsonObject);
-      if (model.hasMnemonic == true) {
-        index++;
-      }
       addressList.add(model);
     }
     AsymmetricKeyPair<PublicKey, PrivateKey>? keyResult;
@@ -143,21 +141,22 @@ class EccRepositoryImpl implements EccRepository {
         keyPair: encResult,
         publicKey: publicKeyStr,
         hasMnemonic: false);
+    LOG('--> newAddress : ${newAddress.toJson()} / ${addressList.length}');
 
     //추가 전 같은 주소가 있는지 확인 후 같은 주소가 있으면 추가하지 않음.
     for (AddressModel model in addressList) {
       if (model.address == newAddress.address) {
+        LOG('--> duplicated address ! : ${model.address}');
         return false;
       }
     }
-
     addressList.add(newAddress);
 
     final addressListJson =
         addressList.map((address) => address.toJson()).toList();
 
     final addressJsonString = json.encode(addressListJson);
-    userHelper.setUser(
+    await userHelper.setUser(
       publickey: publicKeyStr,
       key: encResult,
       address: address,

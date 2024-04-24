@@ -46,7 +46,7 @@ class MarketProvider extends ChangeNotifier {
 
   showProductList() {
     return SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
       sliver: SliverList(
         delegate: SliverChildListDelegate(
           List.generate(_marketRepo.productList.length, (index) =>

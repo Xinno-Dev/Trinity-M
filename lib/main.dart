@@ -453,7 +453,7 @@ class _FirebaseSetupState extends ConsumerState<FirebaseSetup> {
   @override
   Widget build(BuildContext context) {
     final loginProv = ref.read(loginProvider);
-    LOG('---> isSocialLogin : ${loginProv.isLogin}');
+    // LOG('---> isSocialLogin : ${loginProv.isLogin}');
     return loginProv.isLogin
       ? MainScreen()
       : LoginScreen();
