@@ -5,12 +5,14 @@ class DisabledButton extends StatelessWidget {
     super.key,
     required this.text,
     this.onTap,
+    this.round,
     this.isSmallButton = false,
   });
 
   final String text;
   final Function()? onTap;
   final bool isSmallButton;
+  final double? round;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class DisabledButton extends StatelessWidget {
         height: isSmallButton ? 36.h : 56.h,
         decoration: BoxDecoration(
           color: GRAY_10,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(round ?? 8),
         ),
         child: Center(
           child: Padding(

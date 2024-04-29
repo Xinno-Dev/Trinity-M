@@ -77,7 +77,6 @@ class _RegistMnemonicCheckScreenState
                   text: '다음',
                   onTap: () {
                     int successCount = 0;
-
                     for (int i = 0; i < 4; i++) {
                       //4가지 문구가 모두 정확하면 다음 화면, 틀리면 에러문구 표시
                       if (mnemonicList[checkNum[i] - 1] ==

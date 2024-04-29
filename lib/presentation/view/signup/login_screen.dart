@@ -41,8 +41,9 @@ import 'signup_terms_screen.dart';
 import '../terms_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
-  static String get routeName => 'login';
+  LoginScreen({this.isAppStart = true, super.key});
+  static String get routeName => 'loginScreen';
+  bool isAppStart;
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -288,7 +289,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
     BuildContext context,
   ) {
     final loginProv = ref.watch(loginProvider);
-    LOG('---> LoginScreen isSocialLogin : ${loginProv.isLogin}');
+    final isSignUp  = loginProv.isSignUpMode;
+    LOG('---> loginProv.isLogin : ${loginProv.isLogin}');
     if (loginProv.isLogin) {
       LOG('--> loginType : ${loginProv.loginType}');
     }
@@ -299,6 +301,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: WHITE,
+        appBar: !widget.isAppStart ? AppBar(
+          title: Text(TR(context, '로그인'), style: typo16bold),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+        ) : null,
         body: SafeArea(
           // bottom: false,
           child: LayoutBuilder(builder: (context, constraints) {
@@ -317,7 +324,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
                     Align(
                       alignment: Alignment.topCenter,
                       child: Container(
-                        height: 400,
+                        height: 400 - (!widget.isAppStart ? kToolbarHeight : 0),
                         margin: EdgeInsets.only(top: 40),
                         child: SvgPicture.asset(
                           'assets/svg/logo.svg',
@@ -331,10 +338,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
                           // if (loginProv.isLogin)...[
                           //   _buildPinLoginBox(),
                           // ],
+                          Container(
+                            height: 30.h,
+                            margin: EdgeInsets.only(bottom: 10.h),
+                            child: Text(
+                              TR(context, isSignUp ? '회원가입' : '로그인'),
+                              style: typo16bold.copyWith(color: PRIMARY_100),
+                            ),
+                          ),
                           if (!loginProv.isLogin)...[
                             _buildEmailBox(),
-                            _buildCenterLine(),
-                            _buildSocialBox(),
+                            _buildKakaoBox(),
+                            // _buildCenterLine(),
+                            // _buildSocialBox(),
                             _buildCreateBox(),
                           ],
                           SizedBox(height: 100),
@@ -429,42 +445,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
     final isSignUp  = loginProv.isSignUpMode;
     return Container(
       width: 320,
-      margin: EdgeInsets.symmetric(vertical: 30),
+      margin: EdgeInsets.only(bottom: 10),
       child: Column(
         children: [
-          Container(
-            height: 30.h,
-            margin: EdgeInsets.only(bottom: 10.h),
-            child: Text(
-              TR(context, isSignUp ? '회원가입' : '로그인'),
-              style: typo16bold.copyWith(color: PRIMARY_100),
-            ),
-          ),
           InkWell(
             onTap: () {
               // clean user info..
-              loginProv.userInfo = null;
+              loginProv.initLogin();
               if (isSignUp) {
                 Navigator.of(context)
-                    .push(createAniRoute(SignUpEmailScreen()))
-                    .then((email) {
-                  if (STR(email).isNotEmpty) {
-                    _startLogin(-1);
-                  }
-                });
+                    .push(createAniRoute(SignUpEmailScreen()));
               } else {
                 Navigator.of(context)
                     .push(createAniRoute(LoginEmailScreen()))
                     .then((result) {
                   if (BOL(result)) {
-                    UserHelper().setUser(loginType: LoginType.email.name);
                     ref.read(loginProvider).startWallet(context);
-                    // if (loginProv.isLogin) {
-                    //   UserHelper().setUser(loginType: LoginType.email.name);
-                    //   ref.read(loginProvider).startWallet(context);
-                    // } else {
-                    //   loginProv.setSignUpMode(true);
-                    // }
                   }
                 });
               }
@@ -484,7 +480,61 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
                   Text(
                     TR(context, '이메일로 ${isSignUp ? '회원가입' : '로그인'}'),
                     style: typo14bold,
-                  )
+                  ),
+                  SizedBox(width: 20.r),
+                ],
+              ),
+            ),
+          ),
+        ],
+      )
+    );
+  }
+
+  _buildKakaoBox() {
+    final loginProv = ref.read(loginProvider);
+    final isSignUp  = loginProv.isSignUpMode;
+    return Container(
+      width: 320,
+      margin: EdgeInsets.only(bottom: 30),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              // clean user info..
+              loginProv.initLogin();
+              if (isSignUp) {
+                loginProv.signUpKakao().then((result) {
+                  if (result == true) {
+                    Navigator.of(context)
+                        .push(createAniRoute(SignUpPassScreen()));
+                  }
+                });
+              } else {
+                _startLogin(LoginType.kakao.index);
+              }
+            },
+            child: Container(
+              height: 50,
+              margin: EdgeInsets.symmetric(vertical: 5),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(width: 2, color: GRAY_30)
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 34.r,
+                    height: 34.r,
+                    child: Image.asset('assets/images/login_icon_${LoginType.kakao.index}.png'),
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    TR(context, '카카오 ${isSignUp ? '회원가입' : '로그인'}'),
+                    style: typo14bold,
+                  ),
+                  SizedBox(width: 20.r),
                 ],
               ),
             ),
@@ -520,7 +570,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
       margin: EdgeInsets.symmetric(vertical: 25),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(4, (index) => GestureDetector(
+        children: List.generate(2, (index) => GestureDetector(
           onTap: () {
             _startLogin(index);
           },
@@ -531,15 +581,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
     );
   }
 
-  _startLogin(index) {
+  Future<bool?> _startLogin(index) async {
     final loginProv = ref.read(loginProvider);
+    bool? result = false;
     switch(index) {
-      case 0:  loginProv.loginKakao(context); break;
-      case 1:  loginProv.loginNaver(); break;
-      case 2:  loginProv.loginGoogle(context); break;
-      case 3:  loginProv.loginApple(); break;
-      default: loginProv.loginEmail();
+      case 0: result = await loginProv.loginKakao(); break;
+      case 1: result = await loginProv.loginGoogle(); break;
+      // case 2:  loginProv.loginNaver(); break;
+      // case 3:  loginProv.loginApple(); break;
+      default: result = await loginProv.loginEmail();
     }
+    if (result == true) {
+      loginProv.startWallet(context);
+    // } else {
+    //   Navigator.of(context).push(createAniRoute(SignUpPassScreen()));
+    //   return false;
+    }
+    return result;
   }
 
   _buildLogoutButton() {
@@ -570,40 +628,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
               children: [
                 Text(
                   TR(context, isSignUp ? '로그인' : '회원가입'),
-                  style: typo14normal.copyWith(color: GRAY_50),
+                  style: typo14semibold.copyWith(color: GRAY_50),
                 ),
                 Container(
-                  width: 80,
+                  width: 60.w,
                   height: 1,
                   color: GRAY_50,
                 )
               ],
             )
           ),
-          Container(
-            height: 15,
-            width: 2,
-            color: GRAY_20,
-            margin: EdgeInsets.symmetric(horizontal: 20),
-          ),
-          InkWell(
-            onTap: () {
-
-            },
-            child: Column(
-              children: [
-                Text(
-                  TR(context, 'ID/PW 찾기'),
-                  style: typo14normal.copyWith(color: GRAY_50),
-                ),
-                Container(
-                  width: 80,
-                  height: 1,
-                  color: GRAY_50,
-                )
-              ],
-            )
-          ),
+          // Container(
+          //   height: 15,
+          //   width: 2,
+          //   color: GRAY_20,
+          //   margin: EdgeInsets.symmetric(horizontal: 20),
+          // ),
+          // InkWell(
+          //   onTap: () {
+          //
+          //   },
+          //   child: Column(
+          //     children: [
+          //       Text(
+          //         TR(context, 'ID/PW 찾기'),
+          //         style: typo14normal.copyWith(color: GRAY_50),
+          //       ),
+          //       Container(
+          //         width: 80,
+          //         height: 1,
+          //         color: GRAY_50,
+          //       )
+          //     ],
+          //   )
+          // ),
         ],
       ),
     );

@@ -50,6 +50,7 @@ import '../../presentation/view/recover_wallet_register_password.dart';
 import '../../presentation/view/settings/settings_language_screen.dart';
 import '../../presentation/view/settings/settings_screen.dart';
 import '../../presentation/view/staking/staking_caution_screen.dart';
+import '../const/utils/convertHelper.dart';
 
 var isGlobalLogin = false;
 var isRecoverLogin = false;
@@ -63,7 +64,6 @@ final tempProvider = ChangeNotifierProvider<TempProvider>((ref) {
 
 class TempProvider extends ChangeNotifier {
   final Ref ref;
-
   bool? isLogin;
   bool? isError;
 
@@ -80,7 +80,9 @@ class TempProvider extends ChangeNotifier {
         GoRoute(
           path: '/login',
           name: LoginScreen.routeName,
-          builder: (_, __) => LoginScreen(),
+          builder: (context, state) => LoginScreen(
+            isAppStart: BOL(state.queryParams['isAppStart']),
+          ),
         ),
         GoRoute(
           path: '/signUpTerms',
@@ -158,6 +160,13 @@ class TempProvider extends ChangeNotifier {
           ),
         ),
         GoRoute(
+          path: '/mainScreen',
+          name: MainScreen.routeName,
+          builder: (context, state) => MainScreen(
+            selectedPage: INT(state.queryParams['selectedPage']),
+          ),
+        ),
+        GoRoute(
           path: '/history',
           name: HistoryScreen.routeName,
           builder: (_, __) => HistoryScreen(),
@@ -195,13 +204,6 @@ class TempProvider extends ChangeNotifier {
           builder: (context, state) => TermsDetailScreen(
             title: state.queryParams['title'],
             type: state.queryParams['type'],
-          ),
-        ),
-        GoRoute(
-          path: '/mainScreen',
-          name: MainScreen.routeName,
-          builder: (context, state) => MainScreen(
-            selectedPage: int.parse(state.queryParams['selectedPage'] ?? '0'),
           ),
         ),
         GoRoute(

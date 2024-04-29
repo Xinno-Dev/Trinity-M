@@ -29,19 +29,11 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
   var selectTab = 0;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
+    final loginProv = ref.watch(loginProvider);
     prov.context = context;
+    loginProv.context = context;
     return SafeArea(
       top: false,
       child: CustomScrollView(
@@ -50,8 +42,13 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
         slivers: [
           SliverAppBar(
             title: Text(TR(context, 'Market')),
+            leading: IconButton(
+              onPressed: () {
+              },
+              icon: SvgPicture.asset('assets/svg/icon_ham.svg'),
+            ),
             centerTitle: true,
-            // automaticallyImplyLeading: false, // TODO: disabled for Dev..
+            automaticallyImplyLeading: false,
             titleTextStyle: typo16bold,
             floating: true,
             pinned: true,

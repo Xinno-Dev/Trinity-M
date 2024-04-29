@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:client_information/client_information.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:larba_00/common/common_package.dart';
 import 'package:larba_00/common/provider/language_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -119,3 +121,14 @@ getNumberFromVersion(String version) {
   }
   return result;
 }
+
+Future<String> getDeviceId() async {
+  ClientInformation info = await ClientInformation.fetch();
+  return info.deviceId;
+}
+
+Future<String> getDeviceName() async {
+  ClientInformation info = await ClientInformation.fetch();
+  return info.osName;
+}
+

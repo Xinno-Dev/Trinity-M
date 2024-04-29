@@ -261,7 +261,7 @@ class MarketProvider extends ChangeNotifier {
     );
   }
 
-  showStoreProductList(context, {var isShowSeller = true, var isCanBuy = true}) {
+  showStoreProductList({var isShowSeller = true, var isCanBuy = true}) {
     // TODO: seller product list change..
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

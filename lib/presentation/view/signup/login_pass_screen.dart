@@ -94,8 +94,9 @@ class _LoginPassScreenState extends ConsumerState<LoginPassScreen> {
               text: TR(context, '확인'),
               round: 0,
               onTap: () {
-                loginProv.checkWalletPass(inputPass).then((result) {
+                loginProv.checkWalletPass(inputPass).then((result) async {
                   if (result) {
+                    await loginProv.loginEmail();
                     Navigator.of(context).pop(inputPass);
                   } else {
                     Fluttertoast.showToast(

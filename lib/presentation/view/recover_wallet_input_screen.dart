@@ -10,7 +10,7 @@ import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/widget/SimpleCheckDialog.dart';
 import '../../common/const/widget/back_button.dart';
 
-var tmpMnList = ['emerge','amount','trigger','cloth','refuse','whisper','laptop','capital','castle','noble','manual','emotion'];
+var tmpMnList = 'depth pelican feature light what bracket fence engage push cheap session love';
 
 class RecoverWalletInputScreen extends StatefulWidget {
   RecoverWalletInputScreen({super.key});
@@ -25,7 +25,7 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
   final List<FocusNode> focusNodeList =
       List<FocusNode>.generate(12, (index) => FocusNode());
   final List<TextEditingController> _controllerList = IS_DEV_MODE ?
-      List.generate(12, (index) => TextEditingController(text: tmpMnList[index])) :
+      List.generate(12, (index) => TextEditingController(text: tmpMnList.split(' ')[index])) :
       List.generate(12, (index) => TextEditingController());
 
   final _scrollController = ScrollController();
@@ -180,49 +180,47 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
               ],
             ),
           ),
-          bottomNavigationBar: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 32.0, horizontal: 20.0),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height / 14.9,
-              child: _allFilled
-                  ? PrimaryButton(
-                      text: TR(context, '다음'),
-                      onTap: () {
-                        mnemonic = '';
-                        for (TextEditingController controller
-                            in _controllerList) {
-                          if (controller == _controllerList.first) {
-                            mnemonic += controller.text;
-                          } else {
-                            mnemonic += (' ' + controller.text);
-                          }
-                        }
-
-                        bool isValidMnemonic = bip39.validateMnemonic(mnemonic);
-                        if (isValidMnemonic) {
-                          context.pushNamed(
-                            RecoverWalletRegisterPassword.routeName,
-                            queryParams: {'mnemonic': mnemonic},
-                          );
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return SimpleCheckDialog(
-                                  hasTitle: true,
-                                  titleString: TR(context, '지갑 복구 문구가 일치하지 않습니다'),
-                                  infoString: TR(context, '다시 입력해주세요.'),
-                                  defaultButtonText: TR(context, '다시 입력하기'));
-                            },
-                          );
-                        }
-                      },
-                    )
-                  : DisabledButton(
-                      text: TR(context, '다음'),
-                    ),
-            ),
+          bottomNavigationBar: Container(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: _allFilled
+              ? PrimaryButton(
+                  text: TR(context, '다음'),
+                  round: 0,
+                  onTap: () {
+                    mnemonic = '';
+                    for (TextEditingController controller
+                        in _controllerList) {
+                      if (controller == _controllerList.first) {
+                        mnemonic += controller.text;
+                      } else {
+                        mnemonic += (' ' + controller.text);
+                      }
+                    }
+                    bool isValidMnemonic = bip39.validateMnemonic(mnemonic);
+                    if (isValidMnemonic) {
+                      // context.pushNamed(
+                      //   RecoverWalletRegisterPassword.routeName,
+                      //   queryParams: {'mnemonic': mnemonic},
+                      // );
+                      context.pop(mnemonic);
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return SimpleCheckDialog(
+                            hasTitle: true,
+                            titleString: TR(context, '지갑 복구 문구가 일치하지 않습니다'),
+                            infoString: TR(context, '다시 입력해주세요.'),
+                            defaultButtonText: TR(context, '다시 입력하기'));
+                        },
+                      );
+                    }
+                  },
+                )
+              : DisabledButton(
+                  round: 0,
+                  text: TR(context, '다음'),
+                ),
           ),
         ),
       ),

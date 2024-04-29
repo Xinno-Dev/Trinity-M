@@ -8,6 +8,7 @@ import 'package:larba_00/services/json_rpc_service.dart';
 import 'package:eth_sig_util/util/utils.dart';
 import 'package:intl/intl.dart';
 
+import '../../../common/const/utils/walletHelper.dart';
 import '../../../common/dartapi/lib/trx_pb.pb.dart';
 
 enum HistoryType {

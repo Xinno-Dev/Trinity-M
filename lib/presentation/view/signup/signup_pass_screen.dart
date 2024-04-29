@@ -142,7 +142,6 @@ class _SignUpPassScreenState extends ConsumerState {
                       }
                     });
                   }
-                  // _showDriveSelectDialog();
                 }
               },
             ) : DisabledButton(

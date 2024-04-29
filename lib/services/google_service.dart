@@ -39,6 +39,16 @@ class GoogleService extends GoogleAccount {
   static List<String> selectDir = [];
   static Map<String, List<dv.File>> dirListData = {};
 
+  static init() {
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        LOG('---> google sign out!');
+      } else {
+        LOG('---> google login!');
+      }
+    });
+  }
+
   static signIn() async {
     // googleUser = await GoogleSignIn().signIn();
     googleUser = await GoogleSignIn(scopes: [

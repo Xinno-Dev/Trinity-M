@@ -33,7 +33,7 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Ink(
-      width: 100,
+      width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(round ?? 8),
         color: color ?? PRIMARY_100,

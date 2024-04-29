@@ -25,6 +25,20 @@ class UserHelper {
     return userKey;
   }
 
+  ////////////////////////////////////////////////////////////////////////////
+  //
+  // public user info..
+  //
+
+  setLoginType(String loginType) async {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    if (loginType.isNotEmpty) {
+      await storage.write(key: LOGIN_TYPE_KEY, value: loginType);
+    } else {
+      await storage.delete(key: LOGIN_TYPE_KEY);
+    }
+  }
+
   checkWallet(String email) async {
     var userKeyTmp = crypto.sha256.convert(utf8.encode(email)).toString();
     var result = await get_mnemonic(userKeyTmp: userKeyTmp);
@@ -34,8 +48,10 @@ class UserHelper {
 
   Future<void> setUser({
     String? rwf,
+    String? jwt,
     String? token,
-    String? loginType,
+    String? loginInfo,
+    String? vfCode,
 
     String userID = '',
     String uid = '',
@@ -60,21 +76,17 @@ class UserHelper {
 
     ////////////////////////////////////////////////////////////////////////////
     //
-    // public user info..
-    //
-
-    if (loginType != null) {
-      if (loginType.isNotEmpty) {
-        await storage.write(key: LOGIN_TYPE_KEY, value: loginType);
-      } else {
-        await storage.delete(key: LOGIN_TYPE_KEY);
-      }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    //
     // private user info..
     //
+
+    if (loginInfo != null) {
+      if (loginInfo.isNotEmpty) {
+        LOG('--> write loginInfo : ${LOGIN_INFO_KEY + userKey}');
+        await storage.write(key: LOGIN_INFO_KEY + userKey, value: loginInfo);
+      } else {
+        await storage.delete(key: LOGIN_INFO_KEY + userKey);
+      }
+    }
 
     if (rwf != null) {
       if (rwf.isNotEmpty) {
@@ -89,6 +101,14 @@ class UserHelper {
         await storage.write(key: TOKEN_KEY + userKey, value: rwf);
       } else {
         await storage.delete(key: TOKEN_KEY + userKey);
+      }
+    };
+
+    if (vfCode != null) {
+      if (vfCode.isNotEmpty) {
+        await storage.write(key: VFCODE_KEY + userKey, value: rwf);
+      } else {
+        await storage.delete(key: VFCODE_KEY + userKey);
       }
     };
 
@@ -157,6 +177,12 @@ class UserHelper {
   // public user info..
   //
 
+  Future<String?> get_loginInfo() async {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    LOG('--> get_loginInfo : ${LOGIN_INFO_KEY + userKey}');
+    return await storage.read(key: LOGIN_INFO_KEY + userKey);
+  }
+
   Future<String?> get_rwf() async {
     FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: RWF_KEY + userKey);
@@ -165,6 +191,11 @@ class UserHelper {
   Future<String?> get_token() async {
     FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: TOKEN_KEY + userKey);
+  }
+
+  Future<String?> get_vfCode() async {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    return await storage.read(key: VFCODE_KEY + userKey);
   }
 
   ////////////////////////////////////////////////////////////////////////////

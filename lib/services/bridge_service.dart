@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:big_decimal/big_decimal.dart';
+import 'package:eth_sig_util/util/utils.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/domain/model/coin_model.dart';
 import 'package:larba_00/domain/model/network_model.dart';

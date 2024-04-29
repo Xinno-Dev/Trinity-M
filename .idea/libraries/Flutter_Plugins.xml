@@ -58,6 +58,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_keyboard_visibility_windows-1.0.0" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_local_notifications-17.0.0" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/local_auth_android-1.0.37" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_email_sender-6.0.3" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/client_information-2.1.4" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

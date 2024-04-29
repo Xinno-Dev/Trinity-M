@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/presentation/view/asset/networkScreens/network_input_screen.dart';
@@ -29,7 +30,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
   void initState() {
     super.initState();
     emailInputController.text = ref.read(loginProvider).inputEmail;
-    ref.read(loginProvider).emailStep = EmailSignUpStep.none;
+    ref.read(loginProvider).emailStep = IS_DEV_MODE ? EmailSignUpStep.ready : EmailSignUpStep.none;
   }
 
   @override
@@ -97,7 +98,9 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode()); //remove focus
                         if (loginProv.isEmailSendReady) {
-                          loginProv.emailSend();
+                          loginProv.emailSend((error) {
+                            showResultDialog(context, error.errorText);
+                          });
                         }
                       },
                       child: Container(
@@ -120,13 +123,21 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
         ),
         bottomNavigationBar: Padding(
           padding: EdgeInsets.symmetric(vertical: 40.h),
-          child: IS_DEV_MODE || loginProv.isEmailSendDone
+          child: loginProv.isEmailCheckDone
               ? PrimaryButton(
-            text: TR(context, '다음'),
+            text: TR(context, '인증 완료'),
             round: 0,
             onTap: () {
-              // todo: check email vf..
-              Navigator.of(context).push(createAniRoute(SignUpPassScreen()));
+              loginProv.emailCheck((error) {
+                showResultDialog(context, error.errorText);
+              }).then((result) {
+                if (result == true) {
+                  Navigator.of(context).push(
+                      createAniRoute(SignUpPassScreen()));
+                } else if (result == false) {
+                  showResultDialog(context, LoginErrorType.mailNotVerified.errorText);
+                }
+              });
             },
           ) : DisabledButton(
             text: TR(context, '다음'),

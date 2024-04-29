@@ -135,10 +135,10 @@ class showHorizontalDivider extends StatelessWidget {
   }
 }
 
-Route createAniRoute(Widget target) {
+Route createAniRoute(Widget target, {var delay = 200}) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => target,
-    transitionDuration: Duration(milliseconds: 200),
+    transitionDuration: Duration(milliseconds: delay),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(1.0, 0.0);
       var end   = Offset.zero;
@@ -232,8 +232,10 @@ Widget showLoadingFull([double size = 60.0]) {
   );
 }
 
-Future<void> showResultDialog(BuildContext context, String text,
-    [String? svgIcon, var height = 140.0]) async {
+Future<void> showResultDialog(
+    BuildContext context,
+    String text,
+    [String? svgIcon, var height = 120.0]) async {
   await showDialog<void>(
     context: context,
     builder: (BuildContext context) =>

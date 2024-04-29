@@ -26,6 +26,7 @@ class _ProductStoreScreenState extends ConsumerState<ProductStoreScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
+    prov.context = context;
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -46,7 +47,7 @@ class _ProductStoreScreenState extends ConsumerState<ProductStoreScreen> {
           padding: EdgeInsets.symmetric(horizontal: 20),
           children: [
             prov.showStoreDetail(widget.product),
-            prov.showStoreProductList(context,
+            prov.showStoreProductList(
                 isShowSeller: false, isCanBuy: true),
           ]
         )

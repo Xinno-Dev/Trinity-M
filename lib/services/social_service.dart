@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
@@ -10,12 +11,14 @@ import 'package:firebase_auth/firebase_auth.dart' as google;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:larba_00/common/const/utils/md5Helper.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
+import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/common/rlp/hash.dart';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:larba_00/domain/model/user_model.dart';
 import 'package:larba_00/services/google_service.dart';
 import 'package:uuid/uuid.dart';
 
+import '../common/const/constants.dart';
 import '../common/const/utils/convertHelper.dart';
 
 
@@ -26,54 +29,49 @@ import '../common/const/utils/convertHelper.dart';
 //
 //
 
-
-checkEmailLogin() async {
-  if (FirebaseAuth.instance.currentUser != null) {
-    Fluttertoast.showToast(
-      msg: "E-Mail 로그인",
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black,
-      textColor: Colors.white,
-      fontSize: 16.0
-    );
-    return true;
+Future<String?> startEmailSend(String emailAddr, Function(LoginErrorType) onError) async {
+  var vfCode    = crypto.sha256.convert(utf8.encode(emailAddr)).toString();
+  var vfCodeStr = emailAddr + vfCode;
+  var vfCodeEnc = crypto.sha256.convert(utf8.encode(vfCodeStr));
+  if (IS_EMAIL_CHECK) {
+    try {
+      var host = IS_DEV_MODE ? LARBA_API_HOST_DEV : LARBA_API_HOST;
+      LOG('--> startEmailSend [$host] : $vfCodeStr => $vfCodeEnc');
+      // final email = Email(
+      //   body: 'Email body',
+      //   subject: 'Email subject',
+      //   recipients: [emailAddr],
+      //   // cc: ['cc@example.com'],
+      //   // bcc: ['bcc@example.com'],
+      //   // attachmentPaths: ['/path/to/attachment.zip'],
+      //   isHTML: false,
+      // );
+      // FlutterEmailSender.send(email)
+      //   .onError((error, stackTrace) {
+      //     LOG('---> email send error : $error');
+      //     onResult(null);
+      //   }).then((value) => onResult(vfCode));
+      var acs = ActionCodeSettings(
+          url: '${host}/users/email/vflink/$vfCodeEnc',
+          handleCodeInApp: true,
+          iOSBundleId: 'com.exino.larba_00',
+          androidPackageName: 'com.exino.larba_00',
+          androidInstallApp: true,
+          androidMinimumVersion: '12');
+      await FirebaseAuth.instance.sendSignInLinkToEmail(
+          email: emailAddr, actionCodeSettings: acs)
+          .catchError((error) {
+        LOG('--> FirebaseAuth error : $error');
+      });
+    } catch (e) {
+      LOG('--> startEmailLogin error : $e');
+      onError(LoginErrorType.mailSend);
+      return null;
+    }
   }
-  return false;
-}
-
-startEmailSend(String emailAuth, Function(String?) onResult) {
-  // var vfCode = Uuid().v4();
-  // final vfJson = {
-  //   'email': emailAuth,
-  //   'vfCode': vfCode,
-  // };
-  // final vfCodeEnc = encryptAES(vfJson.toString());
-  var vfCode = 'vfCode-test-0000';
-  var vfCodeEnc = crypto.sha256.convert(utf8.encode(vfCode));
-  LOG('--> startEmailSend : $vfCodeEnc');
-  try {
-    var acs = ActionCodeSettings(
-        url: 'https://exino.com/user/email/vflink?vfcode=$vfCodeEnc',
-        handleCodeInApp: true,
-        iOSBundleId: 'com.exino.larba_00',
-        androidPackageName: 'com.exino.larba_00',
-        androidInstallApp: true,
-        androidMinimumVersion: '12');
-    FirebaseAuth.instance.sendSignInLinkToEmail(
-        email: emailAuth, actionCodeSettings: acs)
-        .catchError((error) {
-          LOG('--> startEmailLogin error : $error');
-          onResult(null);
-        }).then((value) {
-          LOG('--> startEmailLogin success : $emailAuth');
-          onResult(vfCode);
-        });
-  } catch (e) {
-    LOG('--> startEmailLogin error : $e');
-    onResult(null);
-  }
+  LOG('--------> vfCode : $vfCode / $vfCodeEnc');
+  // return '768d185a2e8770c15556c36ec6fc9615a62f031e1dbc670de2b4aa11b08eb087';
+  return vfCode;
 }
 
 startEmailLogin(String emailAuth, Function(bool) onResult) {
@@ -123,17 +121,6 @@ checkKakaoLogin() async {
     final accessInfo = await kakao.UserApi.instance.accessTokenInfo();
     LOG('--> checkKakaoLogin : $accessInfo');
     if (accessInfo.id != null && accessInfo.expiresIn > 0) {
-      final formatter = DateFormat('HH 시간 mm 분 ss 초');
-      var date = DateTime.fromMillisecondsSinceEpoch(accessInfo.expiresIn * 1000);
-      Fluttertoast.showToast(
-          msg: "카카오 로그인\n${formatter.format(date)} 남음",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
       return true;
     }
   } catch (e) {
@@ -142,7 +129,7 @@ checkKakaoLogin() async {
   return false;
 }
 
-startKakaoLogin() async {
+startKakaoLogin({Function(String)? onError}) async {
   final isKakaoTalkReady = await kakao.isKakaoTalkInstalled();
   LOG('--> startKakaoLogin $isKakaoTalkReady');
   kakao.OAuthToken? token;

@@ -281,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.1"
+  client_information:
+    dependency: "direct main"
+    description:
+      name: client_information
+      sha256: "3af34866e7756824044ebb1b15c5df9d0228b1271efb1684599914853c75cc01"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.4"
   clock:
     dependency: transitive
     description:
@@ -481,6 +489,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  elliptic:
+    dependency: "direct main"
+    description:
+      name: elliptic
+      sha256: "98e2fa89a714c649174553c823db2612dc9581814477fe1264a499d448237b6b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.10"
   email_validator:
     dependency: "direct main"
     description:
@@ -670,6 +686,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.1"
+  flutter_email_sender:
+    dependency: "direct main"
+    description:
+      name: flutter_email_sender
+      sha256: fb515d4e073d238d0daf1d765e5318487b6396d46b96e0ae9745dbc9a133f97a
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.3"
   flutter_keyboard_visibility:
     dependency: "direct main"
     description:
@@ -1674,6 +1698,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  sprintf:
+    dependency: transitive
+    description:
+      name: sprintf
+      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
   sqflite:
     dependency: transitive
     description:
@@ -1859,13 +1891,13 @@ packages:
     source: hosted
     version: "3.1.1"
   uuid:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: uuid
-      sha256: "648e103079f7c64a36dc7d39369cabb358d377078a051d6ae2ad3aa539519313"
+      sha256: "814e9e88f21a176ae1359149021870e87f7cddaf633ab678a5d2b0bff7fd1ba8"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.7"
+    version: "4.4.0"
   vector_graphics:
     dependency: transitive
     description:
@@ -1934,10 +1966,10 @@ packages:
     dependency: "direct main"
     description:
       name: web3dart
-      sha256: bebbea9278723cef51d21caf65668860e7547f59114fe9f8af01b873a72ba0e6
+      sha256: "885e5e8f0cc3c87c09f160a7fce6279226ca41316806f7ece2001959c62ecced"
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.1"
+    version: "2.7.3"
   web_socket_channel:
     dependency: "direct main"
     description:

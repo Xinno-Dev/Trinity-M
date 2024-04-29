@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:auto_size_text_plus/auto_size_text.dart';
+import 'package:eth_sig_util/util/utils.dart';
 import 'package:larba_00/common/common_package.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/common/const/widget/settingsMenu.dart';
@@ -20,6 +21,7 @@ import '../../../common/const/constants.dart';
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/uihelper.dart';
+import '../../../common/const/utils/walletHelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/custom_badge.dart';
 
@@ -518,18 +520,4 @@ getPubKey(String compressedPublicKeyHex2) {
   // final publicKeyBytes = publicKey.Q.getEncoded(false);
 
   // print('Uncompressed Public Key: ${bytesToHex(publicKeyBytes)}');
-}
-
-List<int> hexToBytes(String hex) {
-  final bytes = <int>[];
-  for (var i = 0; i < hex.length; i += 2) {
-    final hexSubstring = hex.substring(i, i + 2);
-    final byte = int.parse(hexSubstring, radix: 16);
-    bytes.add(byte);
-  }
-  return bytes;
-}
-
-String bytesToHex(Uint8List bytes) {
-  return bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
 }

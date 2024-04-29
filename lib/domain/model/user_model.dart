@@ -1,9 +1,15 @@
+import 'dart:convert';
+
+import 'package:larba_00/common/const/utils/aesManager.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:crypto/crypto.dart' as crypto;
+
 import 'package:larba_00/domain/model/ecckeypair.dart';
 import 'package:uuid/uuid.dart';
 import '../../common/const/constants.dart';
+import '../../common/const/utils/appVersionHelper.dart';
 import '../../common/const/utils/convertHelper.dart';
 import 'account_model.dart';
 import 'address_model.dart';
@@ -22,6 +28,8 @@ class UserModel {
   String? mnemonic;       // main mnemonic
   String? keyPair;        // main wallet keyPair
 
+  String? socialId;       // login user social id
+  String? socialToken;    // social login token
   String? userName;       // login user name
   String? email;          // login user email
   String? mobile;         // mobile number
@@ -45,6 +53,8 @@ class UserModel {
     this.mnemonic,
     this.keyPair,
 
+    this.socialId,
+    this.socialToken,
     this.userName,
     this.email,
     this.mobile,
@@ -86,14 +96,26 @@ class UserModel {
     );
   }
 
-  static createFromEmail(String uid, String email) {
-    LOG('--> createFromEmail : $uid / $email');
-    return UserModel(
-      ID:         'email$uid', // 임시 ID 생성..
-      status:     1,
-      loginType:  LoginType.email,
-      email:      email,
-    );
+  get encryptAes async {
+    var deviceId = await getDeviceId();
+    var pass = crypto.sha256.convert(utf8.encode(deviceId)).toString();
+    return await AesManager().encrypt(pass, jsonEncode(this.toJson()));
+  }
+
+  static Future<UserModel?> createFromEmail(String encStr) async {
+    // try {
+      var deviceId = await getDeviceId();
+      LOG('---> createFromEmail : $deviceId');
+      var pass = crypto.sha256.convert(utf8.encode(deviceId)).toString();
+      var encInfo = await AesManager().decrypt(pass, encStr);
+      LOG('---> encInfo : $encInfo');
+      var jsonInfo = jsonDecode(encInfo);
+      LOG('---> jsonInfo : $jsonInfo');
+      return UserModel.fromJson(jsonInfo);
+    // } catch (e) {
+    //   LOG('---> decryptAes error : $e');
+    // }
+    return null;
   }
 
   factory UserModel.fromJson(JSON json) => _$UserModelFromJson(json);

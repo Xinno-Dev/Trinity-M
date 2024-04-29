@@ -13,6 +13,8 @@ import 'package:larba_00/domain/model/ecckeypair.dart';
 import 'package:secp256k1cipher/secp256k1cipher.dart';
 import 'package:larba_00/common/const/utils/aesManager.dart';
 
+import '../../common/const/utils/walletHelper.dart';
+
 const String AccountName = '계정 ';
 
 class EccRepositoryImpl implements EccRepository {
@@ -91,10 +93,9 @@ class EccRepositoryImpl implements EccRepository {
   }) async {
     _eccManager = EccManager();
     UserHelper userHelper = UserHelper();
+
     List<AddressModel> addressList = [];
-
     String jsonString = await userHelper.get_addressList();
-
     List<dynamic> decodeJson = json.decode(jsonString);
     int index = 0;
     for (var jsonObject in decodeJson) {
@@ -102,6 +103,7 @@ class EccRepositoryImpl implements EccRepository {
       AddressModel model = AddressModel.fromJson(jsonObject);
       addressList.add(model);
     }
+
     AsymmetricKeyPair<PublicKey, PrivateKey>? keyResult;
     if (privateKeyHex != null && privateKeyHex.length > 0) {
       keyResult = (await _eccManager!.loadKeyPair(privateKeyHex));

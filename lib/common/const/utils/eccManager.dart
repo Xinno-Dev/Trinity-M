@@ -6,6 +6,9 @@ import 'package:larba_00/common/const/utils/aesManager.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:larba_00/common/const/utils/convertHelper.dart';
+import 'package:larba_00/common/const/utils/walletHelper.dart';
+import 'package:pointycastle/digests/ripemd160.dart';
+import 'package:pointycastle/digests/sha256.dart';
 import 'package:pointycastle/ecc/curves/secp256k1.dart';
 import 'package:pointycastle/key_generators/ec_key_generator.dart';
 import 'package:pointycastle/pointycastle.dart';
@@ -221,5 +224,34 @@ class EccManager {
     return privateKey;
   }
 
-  _generatePrivateKey() {}
+  String getAddressFromPublicKey(ECPublicKey publicKey) {
+    final x_s = publicKey.Q!.x!.toBigInteger()!.toRadixString(16);
+    final y_s = publicKey.Q!.y!.toBigInteger()!.toRadixString(16);
+    final hex_x = left_padding(x_s, 64);
+    final hex_y = left_padding(y_s, 64);
+    final String address = _generateAddress(hex_x, hex_y);
+    return address;
+  }
+
+  String _generateAddress(String x, String y) {
+    late final Uint8List compressed;
+    Uint8List xArr = createUint8ListFromHexString(x);
+    Uint8List yArr = createUint8ListFromHexString(y);
+    compressed = Uint8List(33);
+    if ((yArr.last & 1) == 0) {
+      compressed[0] = 0x02;
+    } else {
+      compressed[0] = 0x03;
+    }
+    compressed.setRange(1, 33, xArr);
+    return formatBytesAsHexString(_btcAddress(compressed));
+  }
+
+  Uint8List _btcAddress(Uint8List compressed) {
+    final sha256 = SHA256Digest();
+    final ripemd160 = RIPEMD160Digest();
+    final hash = sha256.process(compressed);
+    final addr = ripemd160.process(hash);
+    return Uint8List.fromList(addr);
+  }
 }

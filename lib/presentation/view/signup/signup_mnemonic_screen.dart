@@ -212,7 +212,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
             round: 0,
             onTap: () {
               Navigator.of(context).push(
-                  createAniRoute(MainScreen()));
+                  createAniRoute(MainScreen(selectedPage: 1)));
             },
           ),
         ),

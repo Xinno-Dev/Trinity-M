@@ -74,7 +74,6 @@ dependencies:
   decimal: ^2.3.0
   url_launcher: ^6.2.1
   store_redirect: ^2.0.1
-  uuid: ^3.0.6
   path_provider: ^2.1.2
 
   # ui..
@@ -89,12 +88,16 @@ dependencies:
   dropdown_button2: ^2.3.9
   cupertino_icons: ^1.0.2
 
+  # email..
+  flutter_email_sender: ^6.0.3
+
   # networking..
   dio: ^5.4.3+1
 
-  # qr..
+  # system..
   qr_flutter: ^4.0.0
   qr_code_scanner: ^1.0.1
+  client_information: ^2.1.4
 
   # firebase..
   firebase_core: ^2.27.1
@@ -108,6 +111,9 @@ dependencies:
 
   flutter_local_notifications: ^17.0.0
   firebase_core_platform_interface: ^5.0.0
+
+  # data..
+  elliptic: ^0.3.10
 
   # google..
   google_sign_in: ^6.2.1

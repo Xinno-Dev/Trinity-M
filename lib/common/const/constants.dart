@@ -3,6 +3,9 @@ import 'package:flutter/foundation.dart';
 const String API_HOST = 'http://192.168.252.51:19000';
 const String DEVELOP_NET_URI = 'ws://192.168.252.60:26657/websocket';
 
+const String LARBA_API_HOST = 'http://3.36.51.253';
+const String LARBA_API_HOST_DEV = 'http://3.36.51.253';
+
 const String MAIN_NET_URI = 'wss://mainnet.rigochain.io/websocket';
 const String MAIN_HTTP_URL = 'https://mainnet.rigochain.io';
 const String MAIN_NET_CHAIN_ID = "mainnet";
@@ -14,9 +17,12 @@ const String TEST_NET_CHAIN_ID = "testnet0";
 // for Larba..
 const String RWF_KEY = 'RWF_KEY';
 const String TOKEN_KEY = 'TOKEN_KEY';
+const String VFCODE_KEY = 'VFCODE_KEY';
+const String ACCOUNT_KEY = 'ACCOUNT_KEY';
 
 // for Byffin..
 const String LOGIN_TYPE_KEY = 'LOGIN_TYPE_KEY';
+const String LOGIN_INFO_KEY = 'LOGIN_INFO_KEY';
 const String USERID_KEY = 'USERID_KEY';
 const String UID_KEY = 'UID_KEY';
 const String PUB_KEY = 'PUB_KEY';
@@ -42,6 +48,7 @@ const String APP_VERSION_KEY = 'APP_VERSION_KEY';
 const String APP_NOTICE_KEY = 'APP_NOTICE_KEY';
 
 const bool IS_DEV_MODE = kDebugMode && true;
+const bool IS_EMAIL_CHECK = !kDebugMode || false;
 const bool IS_AUTO_LOCK_MODE = false;
 const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc API 이용
 const bool IS_SWAP_ON = false;

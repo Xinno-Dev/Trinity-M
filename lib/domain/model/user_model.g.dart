@@ -12,6 +12,8 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       loginType: $enumDecodeNullable(_$LoginTypeEnumMap, json['loginType']),
       mnemonic: json['mnemonic'] as String?,
       keyPair: json['keyPair'] as String?,
+      socialId: json['socialId'] as String?,
+      socialToken: json['socialToken'] as String?,
       userName: json['userName'] as String?,
       email: json['email'] as String?,
       mobile: json['mobile'] as String?,
@@ -48,6 +50,8 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) {
   writeNotNull('loginType', _$LoginTypeEnumMap[instance.loginType]);
   writeNotNull('mnemonic', instance.mnemonic);
   writeNotNull('keyPair', instance.keyPair);
+  writeNotNull('socialId', instance.socialId);
+  writeNotNull('socialToken', instance.socialToken);
   writeNotNull('userName', instance.userName);
   writeNotNull('email', instance.email);
   writeNotNull('mobile', instance.mobile);

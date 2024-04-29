@@ -84,7 +84,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      TR(context, 'BYFFIN 지갑을 이용해주셔서 감사합니다.\n서비스 이용을 위해 약관 동의가 필요합니다.'),
+                      TR(context, 'Larba 지갑을 이용해주셔서 감사합니다.\n서비스 이용을 위해 약관 동의가 필요합니다.'),
                       style: typo16medium150.copyWith(
                         color: GRAY_70,
                       ),
