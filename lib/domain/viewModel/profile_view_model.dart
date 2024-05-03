@@ -191,7 +191,7 @@ class ProfileViewModel {
 
   hideProfileSelectBox() {
     loginProv.setMaskStatus(false);
-    if (_accountContext != null) {
+    if (_accountContext != null && _accountContext!.mounted) {
       ScaffoldMessenger.of(_accountContext!).hideCurrentMaterialBanner();
     }
   }
