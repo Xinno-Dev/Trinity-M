@@ -77,13 +77,11 @@ class EccRepositoryImpl implements EccRepository {
 
     if (encResult == 'fail') {
       return false;
-    } else {
-      userHelper.setUser(key: encResult); //최초로 사용되는 Key 저장
-      AesManager aesManager = AesManager();
-      String trashResult = await aesManager.encrypt(pin, publicKeyStr);
-      userHelper.setUser(trash: trashResult);
-      return true;
     }
+    userHelper.setUser(key: encResult); //최초로 사용되는 Key 저장
+    String trashResult = await aesManager.encrypt(pin, publicKeyStr);
+    userHelper.setUser(trash: trashResult);
+    return true;
   }
 
   @override

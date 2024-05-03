@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:larba_00/common/common_package.dart';
 import 'package:larba_00/common/const/utils/uihelper.dart';
@@ -31,9 +32,11 @@ import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/localStorageHelper.dart';
 import '../../../common/const/widget/custom_toast.dart';
 import '../../../common/const/widget/rounded_button.dart';
+import '../../../common/provider/market_provider.dart';
 import '../../../common/provider/temp_provider.dart';
 import '../../../services/localization_service.dart';
 import '../../../services/social_service.dart';
+import '../main_screen.dart';
 import 'signup_pass_screen.dart';
 import 'signup_email_screen.dart';
 import 'login_email_screen.dart';
@@ -49,7 +52,8 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingObserver {
+class _LoginScreenState extends ConsumerState<LoginScreen>
+  with WidgetsBindingObserver {
   FocusNode _focusNode = FocusNode();
   TextEditingController _textEditingController = TextEditingController();
   bool hasAddress = false;
@@ -82,171 +86,171 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
   Future<void> _showInputDialog() async {
     bool showErrorText = false;
     return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter stateSetter) {
-            return LayoutBuilder(builder: (context, constraints) {
-              return Dialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 32.h),
-                        child: WarningIcon(),
-                      ),
-                      Container(
-                        padding: EdgeInsets.fromLTRB(16.r, 16.r, 16.r, 0),
-                        // margin: EdgeInsets.all(0),
-                        child: Center(
-                          child: Text(
-                            TR(context, '지갑 초기화 유의사항'),
-                            style: typo16semibold,
-                            textAlign: TextAlign.center,
-                          ),
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter stateSetter) {
+          return LayoutBuilder(builder: (context, constraints) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Container(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 32.h),
+                      child: WarningIcon(),
+                    ),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(16.r, 16.r, 16.r, 0),
+                      // margin: EdgeInsets.all(0),
+                      child: Center(
+                        child: Text(
+                          TR(context, '지갑 초기화 유의사항'),
+                          style: typo16semibold,
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      SizedBox(
-                        height: 20,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        text: TR(context, 'reset_00'),
+                        style: typo14medium150.copyWith(color: GRAY_70),
+                        children: [
+                          TextSpan(
+                            text: TR(context, 'reset_01'),
+                          ),
+                          TextSpan(
+                              text: TR(context, 'reset_02'),
+                              style: TextStyle(color: PRIMARY_90)),
+                          TextSpan(text: TR(context, 'reset_03')),
+                        ],
                       ),
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          text: TR(context, 'reset_00'),
-                          style: typo14medium150.copyWith(color: GRAY_70),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 19.0),
+                      child: CustomTextFormField(
+                          hintText: TR(context, '입력하기'),
+                          constraints: constraints,
+                          focusNode: _focusNode,
+                          controller: _textEditingController),
+                    ),
+                    if (showErrorText)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, left: 16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            TextSpan(
-                              text: TR(context, 'reset_01'),
+                            Text(
+                              TR(context, '문구가 일치하지 않습니다'),
+                              style: typo14regular.copyWith(color: ERROR_90),
                             ),
-                            TextSpan(
-                                text: TR(context, 'reset_02'),
-                                style: TextStyle(color: PRIMARY_90)),
-                            TextSpan(text: TR(context, 'reset_03')),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 19.0),
-                        child: CustomTextFormField(
-                            hintText: TR(context, '입력하기'),
-                            constraints: constraints,
-                            focusNode: _focusNode,
-                            controller: _textEditingController),
-                      ),
-                      if (showErrorText)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, left: 16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                TR(context, '문구가 일치하지 않습니다'),
-                                style: typo14regular.copyWith(color: ERROR_90),
+                    SizedBox(
+                      height: 32,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 48.h,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                context.pop();
+                                _textEditingController.clear();
+                              },
+                              child: Text(
+                                TR(context, '취소'),
+                                style: typo14bold100.copyWith(
+                                    color: SECONDARY_90),
                               ),
-                            ],
+                              style: popupGrayButtonStyle.copyWith(
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    // side: BorderSide(),
+                                    borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.zero,
+                                      bottomLeft: Radius.circular(8.r),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      SizedBox(
-                        height: 32,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: 48.h,
-                              child: ElevatedButton(
-                                onPressed: () {
+                        Expanded(
+                          child: SizedBox(
+                            height: 48.h,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (_textEditingController.text ==
+                                  TR(context, '초기화')) {
+                                  // TODO: 초기화 후 다시 첫 화면으로 돌아가도록
+                                  print('초기화!!');
+                                  clearWallet();
+                                  _addressCheck();
                                   context.pop();
-                                  _textEditingController.clear();
-                                },
-                                child: Text(
-                                  TR(context, '취소'),
-                                  style: typo14bold100.copyWith(
-                                      color: SECONDARY_90),
+                                  fToast.showToast(
+                                    child: CustomToast(
+                                      msg: TR(context, '지갑이 초기화되었습니다'),
+                                    ),
+                                    gravity: ToastGravity.BOTTOM,
+                                    toastDuration: Duration(seconds: 2),
+                                  );
+                                  setState(() {});
+                                } else {
+                                  stateSetter(() {
+                                    showErrorText = true;
+                                  });
+                                }
+                              },
+                              child: Text(
+                                TR(context, '초기화 하기'),
+                                style: typo14bold100.copyWith(color: WHITE),
+                              ),
+                              style: popupSecondaryButtonStyle.copyWith(
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) => SECONDARY_90,
                                 ),
-                                style: popupGrayButtonStyle.copyWith(
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      // side: BorderSide(),
-                                      borderRadius: BorderRadius.only(
-                                        bottomRight: Radius.zero,
-                                        bottomLeft: Radius.circular(8.r),
-                                      ),
+                                overlayColor:
+                                    MaterialStateProperty.all(SECONDARY_90),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    // side: BorderSide(),
+                                    borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(8.r),
+                                      bottomLeft: Radius.zero,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          Expanded(
-                            child: SizedBox(
-                              height: 48.h,
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  if (_textEditingController.text ==
-                                    TR(context, '초기화')) {
-                                    // TODO: 초기화 후 다시 첫 화면으로 돌아가도록
-                                    print('초기화!!');
-                                    clearWallet();
-                                    _addressCheck();
-                                    context.pop();
-                                    fToast.showToast(
-                                      child: CustomToast(
-                                        msg: TR(context, '지갑이 초기화되었습니다'),
-                                      ),
-                                      gravity: ToastGravity.BOTTOM,
-                                      toastDuration: Duration(seconds: 2),
-                                    );
-                                    setState(() {});
-                                  } else {
-                                    stateSetter(() {
-                                      showErrorText = true;
-                                    });
-                                  }
-                                },
-                                child: Text(
-                                  TR(context, '초기화 하기'),
-                                  style: typo14bold100.copyWith(color: WHITE),
-                                ),
-                                style: popupSecondaryButtonStyle.copyWith(
-                                  backgroundColor:
-                                      MaterialStateProperty.resolveWith<Color>(
-                                    (Set<MaterialState> states) => SECONDARY_90,
-                                  ),
-                                  overlayColor:
-                                      MaterialStateProperty.all(SECONDARY_90),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      // side: BorderSide(),
-                                      borderRadius: BorderRadius.only(
-                                        bottomRight: Radius.circular(8.r),
-                                        bottomLeft: Radius.zero,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              );
-            });
+              ),
+            );
           });
         });
+      });
   }
 
   @override
@@ -263,6 +267,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
       });
     });
   }
+
+  // @override
+  // void didChangeDependencies() {
+  //   final loginProv  = ref.read(loginProvider);
+  //   final marketProv = ref.read(marketProvider);
+  //   loginProv.context  = context;
+  //   marketProv.context = context;
+  //   super.didChangeDependencies();
+  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -288,12 +301,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
   Widget build(
     BuildContext context,
   ) {
-    final loginProv = ref.watch(loginProvider);
-    final isSignUp  = loginProv.isSignUpMode;
-    LOG('---> loginProv.isLogin : ${loginProv.isLogin}');
-    if (loginProv.isLogin) {
-      LOG('--> loginType : ${loginProv.loginType}');
-    }
+    final prov = ref.watch(loginProvider);
+    // LOG('---> loginProv.isLogin : ${loginProv.isLogin}');
+    // if (loginProv.isLogin) {
+    //   LOG('--> loginType : ${loginProv.loginType}');
+    // }
     return GestureDetector(
       onTap: () {
         _focusNode.unfocus();
@@ -331,7 +343,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
                         ),
                       ),
                     ),
-                    if (loginProv.isLoginCheckDone)...[
+                    if (prov.isLoginCheckDone)...[
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -342,11 +354,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
                             height: 30.h,
                             margin: EdgeInsets.only(bottom: 10.h),
                             child: Text(
-                              TR(context, isSignUp ? '회원가입' : '로그인'),
+                              TR(context, prov.isSignUpMode ? '회원가입' : '로그인'),
                               style: typo16bold.copyWith(color: PRIMARY_100),
                             ),
                           ),
-                          if (!loginProv.isLogin)...[
+                          if (!prov.isLogin)...[
                             _buildEmailBox(),
                             _buildKakaoBox(),
                             // _buildCenterLine(),
@@ -357,7 +369,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
                         ],
                       ),
                     ],
-                    if (!loginProv.isLoginCheckDone)...[
+                    if (!prov.isLoginCheckDone)...[
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Padding(
@@ -451,7 +463,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
           InkWell(
             onTap: () {
               // clean user info..
-              loginProv.initLogin();
+              loginProv.init();
               if (isSignUp) {
                 Navigator.of(context)
                     .push(createAniRoute(SignUpEmailScreen()));
@@ -460,7 +472,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
                     .push(createAniRoute(LoginEmailScreen()))
                     .then((result) {
                   if (BOL(result)) {
-                    ref.read(loginProvider).startWallet(context);
+                    _startWallet();
                   }
                 });
               }
@@ -468,20 +480,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
             child: Container(
               height: 50,
               margin: EdgeInsets.symmetric(vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 13),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(width: 2, color: GRAY_30)
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(width: 1, color: GRAY_50)
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Stack(
                 children: [
-                  SvgPicture.asset('assets/svg/icon_mail.svg'),
-                  SizedBox(width: 10),
-                  Text(
-                    TR(context, '이메일로 ${isSignUp ? '회원가입' : '로그인'}'),
-                    style: typo14bold,
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: SvgPicture.asset('assets/svg/icon_mail.svg'),
                   ),
-                  SizedBox(width: 20.r),
+                  Center(
+                    child: Text(
+                      TR(context, '이메일로 ${isSignUp ? '회원가입' : '로그인'}'),
+                      style: typo14bold,
+                    ),
+                  )
                 ],
               ),
             ),
@@ -489,6 +504,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
         ],
       )
     );
+  }
+
+  _startWallet() {
+    LOG('---> startWallet');
+    final loginProv = ref.read(loginProvider);
+    loginProv.mainPageIndexOrg = 0;
+    context.pushReplacementNamed(
+        MainScreen.routeName, queryParams: {'selectedPage': '1'});
   }
 
   _buildKakaoBox() {
@@ -502,42 +525,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
           InkWell(
             onTap: () {
               // clean user info..
-              loginProv.initLogin();
+              loginProv.init();
               if (isSignUp) {
-                loginProv.signUpKakao().then((result) {
-                  if (result == true) {
+                loginProv.initSignUpKakao().then((result) {
+                  if (result) {
                     Navigator.of(context)
                         .push(createAniRoute(SignUpPassScreen()));
                   }
                 });
               } else {
-                _startLogin(LoginType.kakao.index);
+                _startLogin(LoginType.kakaotalk.index);
               }
             },
             child: Container(
               height: 50,
               margin: EdgeInsets.symmetric(vertical: 5),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 2, color: GRAY_30)
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Stack(
                 children: [
-                  SizedBox(
-                    width: 34.r,
-                    height: 34.r,
-                    child: Image.asset('assets/images/login_icon_${LoginType.kakao.index}.png'),
+                  SizedBox.expand(
+                    child: FittedBox(
+                      child: Image.asset('assets/images/login_kakao.png'),
+                    ),
                   ),
-                  SizedBox(width: 10),
-                  Text(
-                    TR(context, '카카오 ${isSignUp ? '회원가입' : '로그인'}'),
-                    style: typo14bold,
-                  ),
-                  SizedBox(width: 20.r),
+                  Center(
+                    child: Text(
+                      TR(context, '카카오로 시작하기'),
+                      style: typo14bold,
+                    ),
+                  )
                 ],
               ),
-            ),
+            )
           ),
         ],
       )
@@ -592,7 +610,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
       default: result = await loginProv.loginEmail();
     }
     if (result == true) {
-      loginProv.startWallet(context);
+      _startWallet();
     // } else {
     //   Navigator.of(context).push(createAniRoute(SignUpPassScreen()));
     //   return false;
@@ -604,7 +622,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with WidgetsBindingOb
     final loginProv = ref.read(loginProvider);
     return GestureDetector(
       onTap: () {
-        loginProv.logout();
+        loginProv.logout().then((_) {
+          Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
+        });
       },
       child: Container(
         padding: EdgeInsets.all(20),

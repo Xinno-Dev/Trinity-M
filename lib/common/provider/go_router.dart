@@ -5,7 +5,6 @@ import 'package:larba_00/common/provider/temp_provider.dart';
 final routerProvider = Provider<GoRouter>(
   (ref) {
     final provider = ref.read(tempProvider);
-
     return GoRouter(
       routes: provider.route,
       initialLocation: '/firebaseSetup',

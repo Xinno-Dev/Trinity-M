@@ -199,22 +199,23 @@ Future<void> main() async {
             create: (context) => NetworkProvider(),
           ),
           provider.ChangeNotifierProvider(
-            create: (context) => MarketProvider(),
+            create: (context) => MarketProvider()
           ),
           provider.ChangeNotifierProvider(
-            create: (context) => LoginProvider(),
+            create: (context) => LoginProvider()
           )
         ],
-        child: FutureBuilder(
-          future: LoginProvider().checkLogin(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return MyApp();
-            } else {
-              return showLoadingFull(50);
-            }
-          }
-        )
+        child: MyApp()
+        // child: FutureBuilder(
+        //   future: LoginProvider().checkLogin(),
+        //   builder: (context, snapshot) {
+        //     if (snapshot.hasData) {
+        //       return MyApp();
+        //     } else {
+        //       return showLoadingFull(50);
+        //     }
+        //   }
+        // )
       ),
     ),
     // ProviderScope(
@@ -453,18 +454,17 @@ class _FirebaseSetupState extends ConsumerState<FirebaseSetup> {
   @override
   Widget build(BuildContext context) {
     final loginProv = ref.read(loginProvider);
-    LOG('---> isSocialLogin isCanLogin : ${loginProv.isCanLogin}');
-    return MainScreen();
-    // return FutureBuilder(
-    //   future: loginProv.checkCanLogin(),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.hasData) {
-    //       return loginProv.isCanLogin ?
-    //         MainScreen() : LoginScreen();
-    //     } else {
-    //       return showLoadingFull();
-    //     }
-    //   }
-    // );
+    // LOG('---> main : ${loginProv.isLogin}');
+    return loginProv.isLogin ? MainScreen() :
+      FutureBuilder(
+      future: LoginProvider().checkLogin(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return MainScreen();
+        } else {
+          return showLoadingFull();
+        }
+      }
+    );
   }
 }

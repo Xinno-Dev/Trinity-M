@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="LARBA"
+        android:label="TRINITY M"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -79,6 +79,75 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+
+        <!-- 보안-->
+        <package android:name="com.ahnlab.v3mobileplus"/>
+        <package android:name="com.TouchEn.mVaccine.webs"/>
+
+        <!-- 우리카드-->
+        <package android:name="com.wooricard.wpay"/>
+        <package android:name="com.wooricard.smartapp"/>
+        <package android:name="com.mysmilepay.app"/>
+
+        <!-- 씨티카드-->
+        <package android:name="kr.co.citibank.citimobile"/>
+        <package android:name="com.citibank.cardapp"/>
+
+        <!-- 신한카드-->
+        <package android:name="com.shcard.smartpay"/>
+
+        <!-- ISP-->
+        <package android:name="kvp.jjy.MispAndroid320"/>
+
+        <!-- KB-->
+        <package android:name="com.kbcard.cxh.appcard"/>
+        <package android:name="com.nhnent.payapp"/>
+
+        <!-- 현대카드-->
+        <package android:name="com.hyundaicard.appcard"/>
+        <package android:name="com.samsung.android.spaylite"/>
+        <package android:name="com.ssg.serviceapp.android.egiftcertificate"/>
+
+        <!-- 삼성카드-->
+        <package android:name="kr.co.samsungcard.mpocket"/>
+        <package android:name="com.nhnent.payapp"/>
+        <package android:name="com.samsung.android.spaylite"/>
+
+        <!-- 하나카드-->
+        <package android:name="com.hanaskcard.paycla"/>
+        <package android:name="kr.co.hanamembers.hmscustomer"/>
+        <package android:name="com.samsung.android.spaylite"/>
+        <package android:name="com.kakao.talk"/>
+        <package android:name="com.nhnent.payapp"/>
+
+        <!-- 롯데카드-->
+        <package android:name="com.lcacApp"/>
+        <package android:name="com.lotte.lpay"/>
+        <package android:name="com.nhnent.payapp"/>
+        <package android:name="com.samsung.android.spaylite"/>
+
+        <!-- 카카오페이 -->
+        <package android:name="com.kakaopay.app"/>
+
+        <!-- 농협카드-->
+        <package android:name="nh.smart.nhallonepay"/>
+
+        <package android:name="com.samsung.android.spay"/>
+        <package android:name="net.nshc.droidx3web"/>
+        <package android:name="kr.shiftworks.vguardweb"/>
+        <package android:name="com.payprotocol.walletkr"/>
+        <package android:name="kr.danal.app.damoum"/>
+        <package android:name="com.kt.ktauth"/>
+        <package android:name="uplus.membership"/>
+        <package android:name="com.bankpay.android"/>
+        <package android:name="com.kbstar.liivbank"/>
+        <package android:name="com.nh.cashcardapp"/>
+        <package android:name="kr.co.kfcc.mobilebank"/>
+        <package android:name="com.knb.psb"/>
+        <package android:name="com.kftc.bankpay.android"/>
+        <package android:name="kr.co.shiftworks.vguardweb"/>
+        <package android:name="com.kbankwith.smartbank"/>
+
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

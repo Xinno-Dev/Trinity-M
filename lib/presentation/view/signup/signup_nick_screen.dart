@@ -106,9 +106,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode()); //remove focus
                         if (loginProv.isNickCheckReady) {
-                          loginProv.checkNickId((error) {
-                            showResultDialog(context, error.errorText);
-                          });
+                          loginProv.checkNickId(onError: (type) => showLoginErrorDialog(context, type));
                         }
                       },
                       child: Container(
@@ -139,7 +137,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
               FocusScope.of(context).requestFocus(FocusNode()); //remove focus
               showLoadingDialog(context, '회원 가입중입니다...');
               Future.delayed(Duration(milliseconds: 200)).then((_) {
-                loginProv.createNewUser().then((result) {
+                loginProv.signUpUser().then((result) {
                   hideLoadingDialog();
                   if (loginProv.isLogin) {
                     Navigator.of(context).push(

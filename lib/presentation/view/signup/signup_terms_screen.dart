@@ -28,7 +28,7 @@ class SignUpTermsScreen extends ConsumerStatefulWidget {
 class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
   //
   List<String> title = [
-    'LARBA 이용약관',
+    '이용 약관',
     '개인정보처리방침',
   ];
   // '마케팅 활용 및 광고성 정보 수신 동의'];
@@ -84,7 +84,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      TR(context, 'Larba 지갑을 이용해주셔서 감사합니다.\n서비스 이용을 위해 약관 동의가 필요합니다.'),
+                      TR(context, 'Trinity M 을 이용해주셔서 감사합니다.\n서비스 이용을 위해 약관 동의가 필요합니다.'),
                       style: typo16medium150.copyWith(
                         color: GRAY_70,
                       ),

@@ -82,32 +82,6 @@ startEmailLogout() async {
 
 }
 
-Future<UserModel?> getEmailUserInfo(email) async {
-  // TODO: get user info from API..
-  return UserModel(
-    ID: Uuid().v4(),
-    status: 1,
-    userName: 'juan.kim',
-    email: email,
-  );
-  // final emailLink = 'https://www.exino.com/emailSignUp?cartId=1234&apiKey=AIzaSyBYHfihYZDw6KjXraK36CaBfk7t_pM8XKc&oobCode=c00by8i1u40rEroOg_URCgqFdgsyM8WcM7qfP9XewTEAAAGOWiVL0A&mode=signIn&lang=ko';
-  // if (FirebaseAuth.instance.isSignInWithEmailLink(emailLink)) {
-  //   try {
-  //     // The client SDK will parse the code from the link for you.
-  //     final userCredential = await FirebaseAuth.instance
-  //         .signInWithEmailLink(email: emailAuth, emailLink: emailLink);
-  //     // You can access the new user via userCredential.user.
-  //     // final emailAddress = userCredential.user?.email;
-  //     LOG('--> Successfully signed in with email link! : ${userCredential.user}');
-  //     return userCredential.user;
-  //   } catch (e) {
-  //     LOG('--> Error signing in with email link : $e');
-  //   }
-  // }
-  // return null;
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 //
@@ -158,10 +132,7 @@ startKakaoLogin({Function(String)? onError}) async {
     }
   }
   if (token != null) {
-    await UserHelper().setUser(token: token.accessToken);
-    return await getKakaoUserInfo();
-  } else {
-    await UserHelper().setUser(token: '');
+    return await getKakaoUserInfo(token.accessToken);
   }
   return null;
 }
@@ -176,7 +147,7 @@ startKakaoLogout() async {
   return false;
 }
 
-Future<kakao.User?> getKakaoUserInfo() async {
+Future<kakao.User?> getKakaoUserInfo(String token) async {
   try {
     final user = await kakao.UserApi.instance.me();
     LOG('사용자 정보 요청 성공'
@@ -184,6 +155,8 @@ Future<kakao.User?> getKakaoUserInfo() async {
         '\n닉네임: ${user.kakaoAccount?.profile?.nickname}'
         '\n프로필: ${user.kakaoAccount?.profile?.profileImageUrl}'
         '\n이메일: ${user.kakaoAccount?.email}');
+    user.properties ??= {};
+    user.properties!['token'] = token;
     return user;
   } catch (error) {
     LOG('--> getKakaoUserInfo error : $error');

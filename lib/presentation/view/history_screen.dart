@@ -17,12 +17,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   String b = '';
   String c = '';
   String d = '';
-  late String uid = '';
   List<History> historyList = [];
 
   @override
   void didChangeDependencies() async {
-    uid = await UserHelper().get_uid();
     super.didChangeDependencies();
   }
 

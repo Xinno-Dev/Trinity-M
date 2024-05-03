@@ -13,6 +13,7 @@ import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
+import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import 'login_restore_screen.dart';
@@ -115,7 +116,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
               text: TR(context, '다음'),
               round: 0,
               onTap: () {
-                _startLogin();
+                _startEmailLogin();
               },
             ) : DisabledButton(
               text: TR(context, '다음'),
@@ -125,28 +126,36 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
     );
   }
 
-  _startLogin() async {
+  _startEmailLogin() async {
     var loginProv = ref.read(loginProvider);
     loginProv.inputEmail = emailInputController.text;
     loginProv.inputPass.first = passInputController.text;
     await UserHelper().setUserKey(loginProv.inputEmail);
-    LOG('----> _startLogin : ${loginProv.inputEmail}');
-
+    LOG('----> _startEmailLogin : ${loginProv.inputEmail}');
+    showLoadingDialog(context, '로그인중입니다...');
     var result = await loginProv.loginEmail();
+    hideLoadingDialog();
     if (result == true) {
-      Fluttertoast.showToast(msg: '이메일 로그인 성공');
+      Fluttertoast.showToast(msg: '로그인 성공');
       Navigator.of(context).pop(true);
-    } else if (result == false) {
-      UserHelper().setUserKey('');
-      Fluttertoast.showToast(msg: '잘못된 계정/비밀번호입니다.');
     } else {
-      Navigator.of(context).push(
-          createAniRoute(LoginRestoreScreen())).then((rResult) {
-        LOG('----> LoginRestoreScreen result : $rResult');
-        if (rResult == true) {
-          _startLogin();
-        }
-      });
+      // TODO : get nickId from server..
+      // for test account..
+      if (loginProv.inputEmail == EX_TEST_MAIL_00) {
+        loginProv.recoverUser(EX_TEST_MN_00).then((result) {
+          if (loginProv.isLogin) {
+            _startEmailLogin();
+          }
+        });
+      } else {
+        Navigator.of(context).push(
+            createAniRoute(LoginRestoreScreen())).then((rResult) {
+          LOG('----> LoginRestoreScreen result : $rResult');
+          if (rResult == true) {
+            _startEmailLogin();
+          }
+        });
+      }
     }
   }
 }

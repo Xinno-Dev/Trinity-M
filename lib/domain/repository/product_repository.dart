@@ -40,7 +40,7 @@ class ProductRepository {
         sellerFollowing: Random().nextInt(999),
         amount:       1000,
         amountMax:    2000,
-        price:        10000000,
+        price:        1000,
         currency:     '원',
         status:       CD_SALE_ST.sale,
         showIndex:    index,

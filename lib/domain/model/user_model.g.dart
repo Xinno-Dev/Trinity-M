@@ -7,7 +7,7 @@ part of 'user_model.dart';
 // **************************************************************************
 
 UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
-      ID: json['ID'] as String?,
+      uid: json['uid'] as String?,
       status: json['status'] as int?,
       loginType: $enumDecodeNullable(_$LoginTypeEnumMap, json['loginType']),
       mnemonic: json['mnemonic'] as String?,
@@ -45,7 +45,7 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) {
     }
   }
 
-  writeNotNull('ID', instance.ID);
+  writeNotNull('uid', instance.uid);
   writeNotNull('status', instance.status);
   writeNotNull('loginType', _$LoginTypeEnumMap[instance.loginType]);
   writeNotNull('mnemonic', instance.mnemonic);
@@ -69,7 +69,7 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) {
 }
 
 const _$LoginTypeEnumMap = {
-  LoginType.kakao: 'kakao',
+  LoginType.kakaotalk: 'kakaotalk',
   LoginType.naver: 'naver',
   LoginType.google: 'google',
   LoginType.apple: 'apple',

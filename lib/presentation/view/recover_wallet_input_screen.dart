@@ -10,8 +10,6 @@ import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/widget/SimpleCheckDialog.dart';
 import '../../common/const/widget/back_button.dart';
 
-var tmpMnList = 'depth pelican feature light what bracket fence engage push cheap session love';
-
 class RecoverWalletInputScreen extends StatefulWidget {
   RecoverWalletInputScreen({super.key});
   static String get routeName => 'recover_wallet_input';
@@ -25,7 +23,7 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
   final List<FocusNode> focusNodeList =
       List<FocusNode>.generate(12, (index) => FocusNode());
   final List<TextEditingController> _controllerList = IS_DEV_MODE ?
-      List.generate(12, (index) => TextEditingController(text: tmpMnList.split(' ')[index])) :
+      List.generate(12, (index) => TextEditingController(text: EX_TEST_MN_00.split(' ')[index])) :
       List.generate(12, (index) => TextEditingController());
 
   final _scrollController = ScrollController();

@@ -6,6 +6,7 @@ import 'package:larba_00/common/const/widget/PageNumbers.dart';
 import 'package:larba_00/common/const/widget/SimpleCheckDialog.dart';
 import 'package:larba_00/common/const/widget/custom_toast.dart';
 import 'package:larba_00/common/const/widget/primary_button.dart';
+import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/presentation/view/main_screen.dart';
 import 'package:larba_00/presentation/view/registLocalAuth_screen.dart';
 import 'package:larba_00/presentation/view/registMnemonic_check_screen.dart';
@@ -85,7 +86,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 30.h),
+                  SizedBox(height: 10.h),
                   Container(
                     padding: EdgeInsets.only(left: 20.w, bottom: 20.h),
                     child: Column(
@@ -93,13 +94,13 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                       children: [
                         SizedBox(height: 16.h),
                         Text(
-                          TR(context, '지갑 복구용 문구를 보관하세요.'),
+                          TR(context, '블록체인 연결을 위한\n복구문구를 보관하세요.'),
                           style: typo24bold,
                         ),
                         SizedBox(height: 16.h),
                         Text(
-                          TR(context, '문구를 복사하여 안전한 곳에 보관해주세요.\n'
-                              '문구를 잃어버리실 경우 지갑 복구가 불가합니다.'),
+                          TR(context, '블록체인 복구 문구를 안전한 곳에 보관해 주세요.\n'
+                              '잃어버리실 경우 복구가 불가합니다.'),
                           style: typo16medium150.copyWith(
                               color: GRAY_70),
                         ),
@@ -211,8 +212,9 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
             text: TR(context, '다음'),
             round: 0,
             onTap: () {
-              Navigator.of(context).push(
-                  createAniRoute(MainScreen(selectedPage: 1)));
+              ref.read(loginProvider).mainPageIndexOrg = 0;
+              context.pushReplacementNamed(
+                  MainScreen.routeName, queryParams: {'selectedPage': '1'});
             },
           ),
         ),

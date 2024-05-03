@@ -18,7 +18,6 @@ final marketProvider = ChangeNotifierProvider<MarketProvider>((_) {
 class MarketProvider extends ChangeNotifier {
   static final _singleton  = MarketProvider._internal();
   static final _marketRepo = ProductRepository();
-  late BuildContext context;
 
   factory MarketProvider() {
     _marketRepo.init();
@@ -26,9 +25,11 @@ class MarketProvider extends ChangeNotifier {
   }
   MarketProvider._internal();
 
+  ProductModel? selectProduct;
+  BuildContext? context;
+
   var selectCategory = 0;
   var selectDetail = 0;
-  ProductModel? selectProduct;
 
   showCategoryBar() {
     return Container(
@@ -207,7 +208,7 @@ class MarketProvider extends ChangeNotifier {
         children: [
           Padding(
             padding: EdgeInsets.only(bottom: 15),
-            child: Text(TR(context, '구매 상품'), style: typo16bold),
+            child: Text(TR(context!, '구매 상품'), style: typo16bold),
           ),
           _contentSellerBar(selectProduct!),
           _contentBuyDetailBox(selectProduct!),
@@ -215,13 +216,13 @@ class MarketProvider extends ChangeNotifier {
           Divider(height: 50),
           Padding(
             padding: EdgeInsets.only(bottom: 10),
-            child: Text(TR(context, '결제 예정 금액을 확인해 주세요.'), style: typo16bold),
+            child: Text(TR(context!, '결제 예정 금액을 확인해 주세요.'), style: typo16bold),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 10),
             child: Row(
               children: [
-                Text(TR(context, '상품 금액'), style: typo16medium),
+                Text(TR(context!, '상품 금액'), style: typo16medium),
                 Spacer(),
                 Text(selectProduct!.priceText, style: typo16medium),
               ],
@@ -231,13 +232,13 @@ class MarketProvider extends ChangeNotifier {
             padding: EdgeInsets.only(bottom: 50),
             child: Row(
               children: [
-                Text(TR(context, '결제 예정 금액'), style: typo18bold),
+                Text(TR(context!, '결제 예정 금액'), style: typo18bold),
                 Spacer(),
                 Text(selectProduct!.priceText, style: typo18bold),
               ],
             ),
           ),
-          Text(TR(context, '(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다. '
+          Text(TR(context!, '(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다. '
             '이에 따라, 당사는 상품, 거래정보 및 거래에 대하여 책임을 지지 않습니다.'),
             style: typo14normal),
         ],
@@ -261,14 +262,14 @@ class MarketProvider extends ChangeNotifier {
     );
   }
 
-  showStoreProductList({var isShowSeller = true, var isCanBuy = true}) {
+  showStoreProductList(String title, {var isShowSeller = true, var isCanBuy = true}) {
     // TODO: seller product list change..
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 5),
-          child: Text(TR(context, 'Market'), style: typo16bold)
+          child: Text(title, style: typo16bold)
         ),
         ...List<Widget>.from(_marketRepo.productList.map((e) =>
           _contentItem(e, isShowSeller, isCanBuy)).toList())
@@ -407,8 +408,8 @@ class MarketProvider extends ChangeNotifier {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _contentFollowBox(TR(context, '팔로워'), STR(item.sellerFollower)),
-                _contentFollowBox(TR(context, '팔로잉'), STR(item.sellerFollowing)),
+                _contentFollowBox(TR(context!, '팔로워'), STR(item.sellerFollower)),
+                _contentFollowBox(TR(context!, '팔로잉'), STR(item.sellerFollowing)),
               ],
             ),
           )
@@ -496,13 +497,13 @@ class MarketProvider extends ChangeNotifier {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 5),
-                Text(TR(context, 'TICKET'), style: typo14bold),
+                Text(TR(context!, 'TICKET'), style: typo14bold),
                 if (item.edition != null)...[
                   Row(
                     children: [
-                      Text(TR(context, '에디션'), style: typo14medium),
+                      Text(TR(context!, '에디션'), style: typo14medium),
                       Spacer(),
-                      Text(TR(context, item.edition!), style: typo14medium),
+                      Text(TR(context!, item.edition!), style: typo14medium),
                     ],
                   )
                 ],
@@ -525,13 +526,14 @@ class MarketProvider extends ChangeNotifier {
             onTap: () {
               LOG('---> option select');
             },
+            width: 100,
             round: 8,
             color: Colors.white,
             padding: EdgeInsets.zero,
             isBorderShow: true,
             isSmallButton: true,
             textStyle: typo14bold.copyWith(color: GRAY_80),
-            text: TR(context, '옵션선택'),
+            text: TR(context!, '옵션 선택'),
           ),
           Spacer(),
           Text(item.priceText, style: typo14bold),
@@ -551,7 +553,7 @@ class MarketProvider extends ChangeNotifier {
             onTap: () {
 
             },
-            text: TR(context, '팔로우'),
+            text: TR(context!, '팔로우'),
           )
         ),
       ],

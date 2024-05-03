@@ -47,7 +47,7 @@ class _ProductStoreScreenState extends ConsumerState<ProductStoreScreen> {
           padding: EdgeInsets.symmetric(horizontal: 20),
           children: [
             prov.showStoreDetail(widget.product),
-            prov.showStoreProductList(
+            prov.showStoreProductList(TR(context, 'Market'),
                 isShowSeller: false, isCanBuy: true),
           ]
         )

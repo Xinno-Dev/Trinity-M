@@ -21,8 +21,8 @@ part 'user_model.g.dart';
     includeIfNull: false
 )
 class UserModel {
-  String?     ID;             // UUID
-  int?        status;         // status 1: active, 0: disable
+  String?     uid;            // user id from login
+  int?        status;         // status 1: login done, 0: login not yet..
   LoginType?  loginType;      // login type ['kakao', 'email'..]
 
   String? mnemonic;       // main mnemonic
@@ -46,7 +46,7 @@ class UserModel {
   List<AddressModel>? addressList; // Map<address, model> address list..
 
   UserModel({
-    this.ID,
+    this.uid,
     this.status,
     this.loginType,
 
@@ -71,22 +71,22 @@ class UserModel {
   });
 
   static createFromKakao(user) {
-    LOG('--> createFromKakao : ${user.id}');
+    var token = STR(user.properties!['token']);
+    LOG('--> createFromKakao : ${user.id} / $token');
     return UserModel(
-      ID:         'kakao${user.id}', // 임시 ID 생성..
-      status:     1,
-      loginType:  LoginType.kakao,
-      email:      user.kakaoAccount?.email,
-      userName:   user.kakaoAccount?.profile?.nickname,
-      pic:        user.kakaoAccount?.profile?.profileImageUrl,
-      picThumb:   user.kakaoAccount?.profile?.thumbnailImageUrl,
+      status:       1,
+      loginType:    LoginType.kakaotalk,
+      email:        user.kakaoAccount?.email,
+      userName:     user.kakaoAccount?.profile?.nickname,
+      pic:          user.kakaoAccount?.profile?.profileImageUrl,
+      picThumb:     user.kakaoAccount?.profile?.thumbnailImageUrl,
+      socialToken:  token
     );
   }
 
   static createFromGoogle(User user) {
     LOG('--> createFromGoogle : ${user.uid}');
     return UserModel(
-      ID:         'google${user.uid}', // 임시 ID 생성..
       status:     1,
       loginType:  LoginType.google,
       email:      user.email,
@@ -99,22 +99,22 @@ class UserModel {
   get encryptAes async {
     var deviceId = await getDeviceId();
     var pass = crypto.sha256.convert(utf8.encode(deviceId)).toString();
-    return await AesManager().encrypt(pass, jsonEncode(this.toJson()));
+    return await AesManager().encrypt(pass, Uri.encodeFull(jsonEncode(this.toJson())));
   }
 
-  static Future<UserModel?> createFromEmail(String encStr) async {
-    // try {
+  static Future<UserModel?> createFromLocal(String encStr) async {
+    try {
       var deviceId = await getDeviceId();
-      LOG('---> createFromEmail : $deviceId');
+      LOG('---> createFromLocal : $deviceId');
       var pass = crypto.sha256.convert(utf8.encode(deviceId)).toString();
       var encInfo = await AesManager().decrypt(pass, encStr);
       LOG('---> encInfo : $encInfo');
-      var jsonInfo = jsonDecode(encInfo);
+      var jsonInfo = jsonDecode(Uri.decodeFull(encInfo));
       LOG('---> jsonInfo : $jsonInfo');
       return UserModel.fromJson(jsonInfo);
-    // } catch (e) {
-    //   LOG('---> decryptAes error : $e');
-    // }
+    } catch (e) {
+      LOG('---> createFromLocal error : $e');
+    }
     return null;
   }
 

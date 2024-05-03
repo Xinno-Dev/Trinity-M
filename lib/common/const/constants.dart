@@ -16,6 +16,7 @@ const String TEST_NET_CHAIN_ID = "testnet0";
 
 // for Larba..
 const String RWF_KEY = 'RWF_KEY';
+const String JWT_KEY = 'JWT_KEY';
 const String TOKEN_KEY = 'TOKEN_KEY';
 const String VFCODE_KEY = 'VFCODE_KEY';
 const String ACCOUNT_KEY = 'ACCOUNT_KEY';
@@ -54,6 +55,13 @@ const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc AP
 const bool IS_SWAP_ON = false;
 
 String CURRENT_CHAIN_ID = TEST_NET_CHAIN_ID;
+
+const String EX_TEST_MAIL_00 = 'test00@exsino.com';
+const String EX_TEST_PASS_00 = 'testpass00';
+const String EX_TEST_ACCCOUNT_00 = 'tester00';
+const String EX_TEST_ACCCOUNT_00_1 = 'tester00_1';
+const String EX_TEST_MN_00 = 'dwarf panel jeans timber stumble remind head cruise foil erosion success force'; // tester00
+
 
 const int DECIMAL_PLACES = 8;
 

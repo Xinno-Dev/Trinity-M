@@ -128,14 +128,14 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
             text: TR(context, '인증 완료'),
             round: 0,
             onTap: () {
-              loginProv.emailCheck((error) {
-                showResultDialog(context, error.errorText);
+              loginProv.emailCheck(onError: (error) {
+                showLoginErrorTextDialog(context, error.errorText);
               }).then((result) {
                 if (result == true) {
                   Navigator.of(context).push(
                       createAniRoute(SignUpPassScreen()));
                 } else if (result == false) {
-                  showResultDialog(context, LoginErrorType.mailNotVerified.errorText);
+                  showLoginErrorDialog(context, LoginErrorType.mailNotVerified);
                 }
               });
             },

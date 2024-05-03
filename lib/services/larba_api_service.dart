@@ -8,6 +8,7 @@ import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 
 import '../common/const/constants.dart';
+import '../common/const/utils/appVersionHelper.dart';
 import '../common/const/utils/convertHelper.dart';
 
 //////////////////////////////////////////////////////////////////////////
@@ -26,8 +27,6 @@ class LarbaApiService {
   LarbaApiService._internal();
 
   var httpUrl = IS_DEV_MODE ? LARBA_API_HOST_DEV : LARBA_API_HOST;
-  String? serverKey;
-  String? jwt;
 
   isSuccess(statusCode) {
     return INT(statusCode) == 200 || INT(statusCode) == 201;
@@ -39,7 +38,7 @@ class LarbaApiService {
   //  /users/email/{email}/dup
   //
 
-  Future<bool?> checkEmail(String email) async {
+  Future<bool> checkEmail(String email) async {
     try {
       LOG('--> checkEmail : $email');
       final response = await http.get(
@@ -52,7 +51,7 @@ class LarbaApiService {
     } catch (e) {
       LOG('--> checkEmail error : $e');
     }
-    return null;
+    return false;
   }
 
   //////////////////////////////////////////////////////////////////////////
@@ -170,10 +169,13 @@ class LarbaApiService {
     String subTitle,
     String desc,
     String address,
+    String sig,
     String type,
-    String sig) async {
+    String authToken,
+  ) async {
     try {
-      LOG('--> createUser : $name, $socialNo, $email, $nickId, $subTitle, $desc, $address, $type, $sig');
+      LOG('--> createUser : $name, $socialNo, $email, $nickId, '
+          '$subTitle, $desc, $address, $sig, $type, $authToken');
       final response = await http.post(
           Uri.parse(httpUrl + '/users/createUser'),
           headers: {
@@ -189,6 +191,8 @@ class LarbaApiService {
             'description':  desc,
             'address':      address,
             'sig':          sig,
+            'type':         type,
+            'authToken':    authToken,
           })
       );
       LOG('--> createUser response : ${response.statusCode} / ${response.body}');
@@ -232,7 +236,7 @@ class LarbaApiService {
       if (isSuccess(response.statusCode)) {
         var resultJson = jsonDecode(response.body);
         if (resultJson['result'] != null) {
-          serverKey = STR(resultJson['result']['pubKey']);
+          var serverKey = STR(resultJson['result']['pubKey']);
           LOG('--> getSecretKey result : $serverKey');
           return serverKey;
         }
@@ -247,7 +251,7 @@ class LarbaApiService {
   //////////////////////////////////////////////////////////////////////////
   //
   //  유저 로그인
-  //  /auth/nick/{nickId}
+  //  /auth/signIn/{email}
   //
 
   Future<bool> loginUser(
@@ -260,41 +264,41 @@ class LarbaApiService {
       }
     ) async {
     try {
-      LOG('------> loginUser : $nickId, $type, $email, $authToken');
+      LOG('------> API loginUser [$email] : $nickId, $type, $authToken');
       final response = await http.post(
-        Uri.parse(httpUrl + '/auth/nick/$nickId'),
+        Uri.parse(httpUrl + '/auth/signIn/$email'),
         headers: {
           'accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'nickId': nickId,
           'type': type,
-          'email': email,
           'authToken': authToken,
+          'nickId': nickId,
         })
       );
-      LOG('--> loginUser response :'
+      LOG('--> API loginUser response :'
           ' ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         var resultJson = jsonDecode(response.body);
         if (resultJson['result'] != null) {
-          var jwt    = STR(resultJson['result']['jwt']);
-          var pass   = crypto.sha256.convert(utf8.encode(email)).toString();
-          var jwtEnc = await AesManager().encrypt(pass, jwt);
+          var jwt       = STR(resultJson['result']['jwt']);
+          var uid       = STR(resultJson['result']['uid']);
+          var pass      = await AesManager().deviceIdPass;
+          var jwtEnc    = await AesManager().encrypt(pass, jwt);
           await UserHelper().setUser(jwt: jwtEnc);
-          await UserHelper().setLoginType(type);
-          LOG('--> loginUser success [$type] : $jwt => $jwtEnc');
+          await UserHelper().setUser(uid: uid);
+          LOG('--> API loginUser success [$type] : $pass => $jwt');
           return true;
         } else {
           var error = STR(resultJson['error' ]);
-          LOG('--> loginUser error : $error');
+          LOG('--> API loginUser error : $error');
           if (onError != null) onError(LoginErrorType.text, error);
           return false;
         }
       }
     } catch (e) {
-      LOG('--> loginUser error : $e');
+      LOG('--> API loginUser error : $e');
     }
     return false;
   }
@@ -305,14 +309,20 @@ class LarbaApiService {
   //  /users/nick/{newNickId}
   //
 
-  addAccount(
+  Future<bool> addAccount(
       String nickId,
-      String subTitle,
-      String desc,
       String address,
-      String sig
-    ) async {
-    LOG('--> addAddress : $nickId, $subTitle, $desc, $address, $sig / $jwt');
+      String sig,
+    {
+      String? subTitle,
+      String? desc,
+    }
+  ) async {
+    var jwt = await AesManager().localJwt;
+    if (jwt == null) {
+      return false;
+    }
+    LOG('--> addAccount : $nickId, $address, $sig / $subTitle, $desc - $jwt');
     if (STR(jwt).isNotEmpty) {
       try {
         final response = await http.post(
@@ -320,26 +330,26 @@ class LarbaApiService {
           headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json',
-            'JWT': jwt!,
+            'Authorization': 'Bearer $jwt',
           },
           body: jsonEncode({
-            'subTitle': subTitle,
-            'description': desc,
-            'address': address,
-            'sig': sig,
+            'address'     : address,
+            'sig'         : sig,
+            'subTitle'    : subTitle ?? '',
+            'description' : desc ?? '',
           })
         );
         LOG('--> addAddress response : ${response.statusCode} / ${response
             .body}');
         if (isSuccess(response.statusCode)) {
           var result = jsonDecode(response.body)['result'];
-          return result;
+          return STR(result['address']).isNotEmpty;
         }
       } catch (e) {
         LOG('--> addAddress error : $e');
       }
     }
-    return null;
+    return false;
   }
 
 }

@@ -22,7 +22,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void didChangeDependencies() async {
-    uid = await UserHelper().get_uid();
     super.didChangeDependencies();
   }
 

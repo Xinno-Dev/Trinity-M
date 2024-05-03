@@ -124,6 +124,8 @@ dependencies:
   kakao_flutter_sdk_user: ^1.9.0 # 카카오 로그인 API 패키지
   kakao_flutter_sdk_share: ^1.9.0 # 카카오톡 공유 API 패키지
 
+  # PG service..
+  iamport_flutter: ^0.10.18
 
 dev_dependencies:
   flutter_test:

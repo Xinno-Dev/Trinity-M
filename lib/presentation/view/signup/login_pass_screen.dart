@@ -96,18 +96,7 @@ class _LoginPassScreenState extends ConsumerState<LoginPassScreen> {
               onTap: () {
                 loginProv.checkWalletPass(inputPass).then((result) async {
                   if (result) {
-                    await loginProv.loginEmail();
                     Navigator.of(context).pop(inputPass);
-                  } else {
-                    Fluttertoast.showToast(
-                      msg: "잘못된 패스워드입니다.",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.black,
-                      textColor: result ? Colors.white : Colors.orange,
-                      fontSize: 16.0
-                    );
                   }
                 });
               },

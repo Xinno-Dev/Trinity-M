@@ -30,20 +30,33 @@ class UserHelper {
   // public user info..
   //
 
-  setLoginType(String loginType) async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
-    if (loginType.isNotEmpty) {
-      await storage.write(key: LOGIN_TYPE_KEY, value: loginType);
-    } else {
-      await storage.delete(key: LOGIN_TYPE_KEY);
-    }
-  }
-
   checkWallet(String email) async {
     var userKeyTmp = crypto.sha256.convert(utf8.encode(email)).toString();
     var result = await get_mnemonic(userKeyTmp: userKeyTmp);
     LOG('--> checkWallet : $userKeyTmp($email) => $result');
     return result != 'NOT_MNEMONIC';
+  }
+
+  logoutUser() async {
+    LOG('--> logoutUser');
+    await setUserKey('');
+    await setUser(
+      loginInfo: '',
+      token: '',
+      jwt: '',
+      uid: '',
+    );
+    userKey = '';
+  }
+
+  removeUser() async {
+    LOG('--> removeUser : $userKey');
+    await setUser(
+      rwf: '',
+      address: '',
+      addressList: '',
+    );
+    await logoutUser();
   }
 
   Future<void> setUser({
@@ -52,13 +65,13 @@ class UserHelper {
     String? token,
     String? loginInfo,
     String? vfCode,
+    String? address,
+    String? uid,
 
     String userID = '',
-    String uid = '',
     String publickey = '',
     String fcmToken = '',
     String key = '',
-    String address = '',
     String coinList = '',
     String selectedCoin = '',
     String selectedMainNetId = '',
@@ -76,17 +89,45 @@ class UserHelper {
 
     ////////////////////////////////////////////////////////////////////////////
     //
-    // private user info..
+    // public user info..
     //
+
+    if (token != null) {
+      if (token.isNotEmpty) {
+        await storage.write(key: TOKEN_KEY, value: token);
+      } else {
+        await storage.delete(key: TOKEN_KEY);
+      }
+    };
+
+    if (jwt != null) {
+      if (jwt.isNotEmpty) {
+        await storage.write(key: JWT_KEY, value: jwt);
+      } else {
+        await storage.delete(key: JWT_KEY);
+      }
+    }
+
+    if (uid != null) {
+      if (uid.isNotEmpty) {
+        await storage.write(key: UID_KEY, value: uid);
+      } else {
+        await storage.delete(key: UID_KEY);
+      }
+    }
 
     if (loginInfo != null) {
       if (loginInfo.isNotEmpty) {
-        LOG('--> write loginInfo : ${LOGIN_INFO_KEY + userKey}');
-        await storage.write(key: LOGIN_INFO_KEY + userKey, value: loginInfo);
+        await storage.write(key: LOGIN_INFO_KEY, value: loginInfo);
       } else {
-        await storage.delete(key: LOGIN_INFO_KEY + userKey);
+        await storage.delete(key: LOGIN_INFO_KEY);
       }
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // private user info..
+    //
 
     if (rwf != null) {
       if (rwf.isNotEmpty) {
@@ -96,19 +137,20 @@ class UserHelper {
       }
     }
 
-    if (token != null) {
-      if (token.isNotEmpty) {
-        await storage.write(key: TOKEN_KEY + userKey, value: rwf);
+    if (vfCode != null) {
+      if (vfCode.isNotEmpty) {
+        await storage.write(key: VFCODE_KEY + userKey, value: vfCode);
       } else {
-        await storage.delete(key: TOKEN_KEY + userKey);
+        await storage.delete(key: VFCODE_KEY + userKey);
       }
     };
 
-    if (vfCode != null) {
-      if (vfCode.isNotEmpty) {
-        await storage.write(key: VFCODE_KEY + userKey, value: rwf);
+    if (address != null) {
+      LOG('--> setUser ADDRESS_KEY : ${ADDRESS_KEY + userKey}');
+      if (address.isNotEmpty) {
+        await storage.write(key: ADDRESS_KEY + userKey, value: address);
       } else {
-        await storage.delete(key: VFCODE_KEY + userKey);
+        await storage.delete(key: ADDRESS_KEY + userKey);
       }
     };
 
@@ -119,15 +161,11 @@ class UserHelper {
 
     if (userID != '') await storage.write(key: USERID_KEY + userKey, value: userID);
 
-    if (uid != '') await storage.write(key: UID_KEY + userKey, value: uid);
-
     if (publickey != '') await storage.write(key: PUB_KEY + userKey, value: publickey);
 
     if (fcmToken != '') await storage.write(key: FCM_KEY + userKey, value: fcmToken);
 
     if (key != '') await storage.write(key: KEYPAIR_KEY + userKey, value: key);
-
-    if (address != '') await storage.write(key: ADDRESS_KEY + userKey, value: address);
 
     if (coinList != '') await storage.write(key: COIN_LIST_KEY + userKey, value: coinList);
 
@@ -167,30 +205,34 @@ class UserHelper {
   // public user info..
   //
 
-  Future<String?> get_loginType() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
-    return await storage.read(key: LOGIN_TYPE_KEY);
-  }
-
-  ////////////////////////////////////////////////////////////////////////////
-  //
-  // public user info..
-  //
-
   Future<String?> get_loginInfo() async {
     FlutterSecureStorage storage = FlutterSecureStorage();
-    LOG('--> get_loginInfo : ${LOGIN_INFO_KEY + userKey}');
-    return await storage.read(key: LOGIN_INFO_KEY + userKey);
-  }
-
-  Future<String?> get_rwf() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
-    return await storage.read(key: RWF_KEY + userKey);
+    return await storage.read(key: LOGIN_INFO_KEY);
   }
 
   Future<String?> get_token() async {
     FlutterSecureStorage storage = FlutterSecureStorage();
-    return await storage.read(key: TOKEN_KEY + userKey);
+    return await storage.read(key: TOKEN_KEY);
+  }
+
+  Future<String?> get_jwt() async {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    return await storage.read(key: JWT_KEY);
+  }
+
+  Future<String?> get_uid() async {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    return await storage.read(key: UID_KEY);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  //
+  // private user info..
+  //
+
+  Future<String?> get_rwf() async {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    return await storage.read(key: RWF_KEY + userKey);
   }
 
   Future<String?> get_vfCode() async {
@@ -206,11 +248,6 @@ class UserHelper {
   Future<String> get_userID({String? userKeyTmp}) async {
     FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: USERID_KEY + (userKeyTmp ?? userKey)) ?? 'NOT_USERID';
-  }
-
-  Future<String> get_uid() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
-    return await storage.read(key: UID_KEY + userKey) ?? 'NOT_UID';
   }
 
   Future<String> get_publickey() async {

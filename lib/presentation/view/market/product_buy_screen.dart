@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:larba_00/common/common_package.dart';
+import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/common/provider/market_provider.dart';
 import 'package:larba_00/domain/model/product_model.dart';
 
@@ -9,6 +10,8 @@ import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
+import 'product_payment_screen.dart';
+import 'pg/payment_test.dart';
 
 class ProductBuyScreen extends ConsumerStatefulWidget {
   ProductBuyScreen({super.key});
@@ -61,6 +64,7 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
           text: TR(context, '결제하기'),
           round: 0,
           onTap: () {
+            Navigator.of(context).push(createAniRoute(PaymentTest()));
           },
         ) : DisabledButton(
           text: TR(context, '결제하기'),

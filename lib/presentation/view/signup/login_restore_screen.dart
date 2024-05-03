@@ -95,7 +95,8 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
               child: Column(
                 children: [
                   _buildMenuButton('복구단어로 복구', () async {
-                    Navigator.of(context).push(createAniRoute(RecoverWalletInputScreen())).then((mnemonic) {
+                    Navigator.of(context).push(
+                      createAniRoute(RecoverWalletInputScreen())).then((mnemonic) {
                       LOG('--> RecoverWalletInputScreen result : $mnemonic');
                       if (STR(mnemonic).isNotEmpty) {
                         loginProv.recoverUser(mnemonic).then((result) {

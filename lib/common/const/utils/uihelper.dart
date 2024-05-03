@@ -6,6 +6,7 @@ import 'package:larba_00/domain/model/network_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../common_package.dart';
+import '../../provider/login_provider.dart';
 import '../widget/custom_text_form_field.dart';
 import 'convertHelper.dart';
 import 'languageHelper.dart';
@@ -151,7 +152,6 @@ Route createAniRoute(Widget target, {var delay = 200}) {
     },
   );
 }
-
 
 Widget getNetworkIcon(NetworkModel networkModel, {var size = 30.0}) {
   if (networkModel.isRigo) {
@@ -431,4 +431,64 @@ Future<String?> showInputDialog(BuildContext context, String title, {
           });
         });
       });
+}
+
+
+showLoginErrorTextDialog(BuildContext context, String text) async {
+  return await showLoginErrorDialog(context, LoginErrorType.none, text);
+}
+
+showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) async {
+  await showDialog<void>(
+    context: context,
+    builder: (BuildContext context) =>
+      AlertDialog(
+        backgroundColor: WHITE,
+        surfaceTintColor: WHITE,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12.0))),
+        content: Container(
+          height: 120.h,
+          constraints: BoxConstraints(
+            minWidth: 400.w,
+          ),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                  'assets/svg/icon_warning.svg',
+                  width: 40.r, height: 40.r),
+              SizedBox(height: 15.h),
+              Text(type.errorText,
+                  style: typo16semibold,
+                  textAlign: TextAlign.center),
+              if (text != null)...[
+                SizedBox(height: 10.h),
+                Text(text,
+                    style: typo14normal,
+                    textAlign: TextAlign.center),
+              ]
+            ],
+          ),
+        ),
+        contentPadding: EdgeInsets.only(top: 20.h),
+        actionsPadding: EdgeInsets.fromLTRB(30.w, 10.h, 20.w, 30.h),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: <Widget>[
+          Container(
+              width: 127.w,
+              height: 40.h,
+              child: OutlinedButton(
+                onPressed: context.pop,
+                child: Text(
+                  TR(context, '닫기'),
+                  style: typo12semibold100,
+                ),
+                style: darkBorderButtonStyle,
+              )
+          )
+        ],
+      ),
+  );
 }

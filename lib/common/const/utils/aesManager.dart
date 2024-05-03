@@ -6,6 +6,10 @@ import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/domain/model/rwf.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pointycastle/export.dart';
+import 'package:crypto/crypto.dart' as crypto;
+
+import 'appVersionHelper.dart';
+import 'convertHelper.dart';
 
 class AesManager {
   static int SALT_SIZE = 20;
@@ -67,6 +71,25 @@ class AesManager {
     String rwfString = json.encode(rwf.toJson());
     UserHelper().setUser(rwf: rwfString);
     return base64Encode(Uint8List.fromList(all.toBytes()));
+  }
+
+  Future<String?> get localJwt async {
+    var jwtEnc = await UserHelper().get_jwt();
+    if (jwtEnc == null) {
+      LOG('--> jwtEnc error !!');
+      return null;
+    }
+    var pass = await deviceIdPass;
+    var jwt  = await AesManager().decrypt(pass, jwtEnc);
+    LOG('--> jwt : $jwt / $pass');
+    return jwt;
+  }
+
+  Future<String> get deviceIdPass async {
+    var deviceId = await getDeviceId();
+    var pass = crypto.sha256.convert(utf8.encode(deviceId)).toString();
+    LOG('--> deviceIdPass : $pass');
+    return pass;
   }
 
   Future<String> decrypt(String pin, String ciphertext) async {
