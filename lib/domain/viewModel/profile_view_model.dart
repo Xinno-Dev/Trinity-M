@@ -13,8 +13,10 @@ import '../../presentation/view/signup/login_pass_screen.dart';
 import '../model/address_model.dart';
 
 class ProfileViewModel {
-  factory ProfileViewModel(LoginProvider provider) {
-    _singleton.loginProv = provider;
+  factory ProfileViewModel([LoginProvider? provider]) {
+    if (provider != null) {
+      _singleton.loginProv = provider;
+    }
     return _singleton;
   }
   static final _singleton = ProfileViewModel._internal();
@@ -64,7 +66,6 @@ class ProfileViewModel {
         child: InkWell(
           onTap: () {
             showProfileSelectBox(
-              context,
               onSelect: _selectAccount,
               onAdd: _startAccountAdd);
           },
@@ -184,16 +185,18 @@ class ProfileViewModel {
 
   BuildContext? _accountContext;
 
+  setProfileContext(BuildContext context) {
+    _accountContext = context;
+  }
+
   hideProfileSelectBox() {
     loginProv.setMaskStatus(false);
     if (_accountContext != null) {
       ScaffoldMessenger.of(_accountContext!).hideCurrentMaterialBanner();
-      _accountContext = null;
     }
   }
 
-  showProfileSelectBox(BuildContext context,
-    {Function(AddressModel)? onSelect, Function()? onAdd}) {
+  showProfileSelectBox({Function(AddressModel)? onSelect, Function()? onAdd}) {
     if (loginProv.isShowMask || loginProv.userInfo == null) return false;
     _accountContext = context;
     loginProv.setMaskStatus(true);
@@ -391,6 +394,7 @@ class ProfileViewModel {
           then((check) {
             if (check == true) {
               // pass check..
+              hideProfileSelectBox();
               Navigator.of(context).push(
                   createAniRoute(LoginPassScreen())).then((passOrg) {
                 if (STR(passOrg).isNotEmpty) {
@@ -403,7 +407,6 @@ class ProfileViewModel {
                   });
                 }
               });
-              hideProfileSelectBox();
             } else {
               _startAccountAdd();
             }

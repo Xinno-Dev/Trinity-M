@@ -599,7 +599,7 @@ class LoginProvider extends ChangeNotifier {
     var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
     var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
     var result = await eccImpl.addKeyPair(pass, nickId: inputNick);
-    LOG('--> addNewAccount : $inputNick / $passOrg => $result');
+    LOG('--> addNewAccount : $inputNick / $passOrg => $result / $walletAddress');
     if (result) {
       await _refreshAccountList();
       var uid = STR(await UserHelper().get_uid());

@@ -52,6 +52,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   void didChangeDependencies() {
+    _viewModel.setProfileContext(context);
     super.didChangeDependencies();
   }
 
@@ -137,6 +138,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             PageView(
               controller: _pageController,
               onPageChanged: _selectPage,
+              physics: NeverScrollableScrollPhysics(),
               children: _mainPages,
             ),
             Align(
