@@ -165,6 +165,31 @@ class EccRepositoryImpl implements EccRepository {
     return true;
   }
 
+  @override
+  Future<bool> removeKeyPair(String address) async {
+    UserHelper userHelper = UserHelper();
+    String? firstAddress;
+    String jsonString = await userHelper.get_addressList();
+    List<dynamic> decodeJson = json.decode(jsonString);
+    List<dynamic> encodeJson = [];
+    for (var jsonObject in decodeJson) {
+      AddressModel model = AddressModel.fromJson(jsonObject);
+      if (model.address != address) {
+        encodeJson.add(jsonObject);
+        firstAddress = model.address;
+      } else {
+        LOG('--> removeKeyPair remove : $address');
+      }
+    }
+    final addressJsonString = json.encode(encodeJson);
+    LOG('--> removeKeyPair : $addressJsonString / $firstAddress');
+    await userHelper.setUser(
+      address: firstAddress ?? '',
+      addressList: addressJsonString,
+    );
+    return true;
+  }
+
   String _generateAddress(String x, String y) {
     late final Uint8List compressed;
 

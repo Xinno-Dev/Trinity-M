@@ -128,7 +128,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
             text: TR(context, '인증 완료'),
             round: 0,
             onTap: () {
-              loginProv.emailCheck(onError: (error) {
+              loginProv.emailVfCheck(onError: (error) {
                 showLoginErrorTextDialog(context, error.errorText);
               }).then((result) {
                 if (result == true) {

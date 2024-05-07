@@ -76,7 +76,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           leadingWidth: 50,
           leading: Container(
             padding: EdgeInsets.only(left: 5),
-            child: InkWell(
+            child: prov.isShowMask ? null : InkWell(
               onTap: () {
                 _viewModel.hideProfileSelectBox();
                 _scaffoldController.currentState!.openDrawer();

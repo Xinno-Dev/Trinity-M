@@ -172,6 +172,9 @@ class LarbaApiService {
     String sig,
     String type,
     String authToken,
+    {
+      Function(LoginErrorType, String?)? onError,
+    }
   ) async {
     try {
       LOG('--> createUser : $name, $socialNo, $email, $nickId, '
@@ -201,7 +204,8 @@ class LarbaApiService {
         var uId   = STR(resultJson['result']);
         var error = STR(resultJson['error' ]);
         LOG('--> createUser result : $uId / $error');
-        return uId.isNotEmpty && error.isEmpty ? null : error; // null is success
+        if (error.isNotEmpty && onError != null) onError(LoginErrorType.signupFail, error);
+        return uId.isNotEmpty ? uId : null; // null is success
       }
     } catch (e) {
       LOG('--> createUser error : $e');
@@ -237,7 +241,6 @@ class LarbaApiService {
         var resultJson = jsonDecode(response.body);
         if (resultJson['result'] != null) {
           var serverKey = STR(resultJson['result']['pubKey']);
-          LOG('--> getSecretKey result : $serverKey');
           return serverKey;
         }
       }

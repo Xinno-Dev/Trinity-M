@@ -121,7 +121,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
                       var signKey = computeSecretHex(PrivateKey.fromHex(curve, privKey), pKey);
                       LOG('---> signKey : $signKey');
                       var message = 'jubal2000@hanmail.netjubal2000$signKey';
-                      var sign = await loginProv.createSign(loginProv.userPass, message);
+                      var sign = await loginProv.createSign(message);
                       LOG('---> sign : $sign');
                       var error = await LarbaApiService().loginUser('jubal2000', 'email', 'jubal2000@hanmail.net', sign);
                       LOG('---> error : $error');

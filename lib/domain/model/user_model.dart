@@ -5,6 +5,7 @@ import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 
 import 'package:larba_00/domain/model/ecckeypair.dart';
 import 'package:uuid/uuid.dart';
@@ -70,7 +71,7 @@ class UserModel {
     this.logoutTime,
   });
 
-  static createFromKakao(user) {
+  static createFromKakao(kakao.User user) {
     var token = STR(user.properties!['token']);
     LOG('--> createFromKakao : ${user.id} / $token');
     return UserModel(
@@ -96,21 +97,33 @@ class UserModel {
     );
   }
 
+  static createFromEmail(String email) {
+    return UserModel(
+      status:     1,
+      email:      email,
+      loginType:  LoginType.email,
+    );
+  }
+
   get encryptAes async {
     var deviceId = await getDeviceId();
     var pass = crypto.sha256.convert(utf8.encode(deviceId)).toString();
-    return await AesManager().encrypt(pass, Uri.encodeFull(jsonEncode(this.toJson())));
+    var loginInfo = UserModel(
+      status:    this.status,
+      email:     this.email,
+      loginType: this.loginType,
+      loginTime: this.loginTime,
+    );
+    return await AesManager().encrypt(pass, Uri.encodeFull(jsonEncode(loginInfo.toJson())));
   }
 
   static Future<UserModel?> createFromLocal(String encStr) async {
     try {
       var deviceId = await getDeviceId();
-      LOG('---> createFromLocal : $deviceId');
-      var pass = crypto.sha256.convert(utf8.encode(deviceId)).toString();
-      var encInfo = await AesManager().decrypt(pass, encStr);
-      LOG('---> encInfo : $encInfo');
-      var jsonInfo = jsonDecode(Uri.decodeFull(encInfo));
-      LOG('---> jsonInfo : $jsonInfo');
+      var pass      = crypto.sha256.convert(utf8.encode(deviceId)).toString();
+      var encInfo   = await AesManager().decrypt(pass, encStr);
+      var jsonInfo  = jsonDecode(Uri.decodeFull(encInfo));
+      LOG('---> createFromLocal : $jsonInfo');
       return UserModel.fromJson(jsonInfo);
     } catch (e) {
       LOG('---> createFromLocal error : $e');

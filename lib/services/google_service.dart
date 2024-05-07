@@ -363,12 +363,6 @@ class GoogleService extends GoogleAccount {
     hideLoadingDialog();
     Fluttertoast.showToast(
       msg: result ? "복구키 백업 완료" : "복구키 백업 실패",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black,
-      textColor: result ? Colors.white : Colors.orange,
-      fontSize: 16.0
     );
     return result;
   }

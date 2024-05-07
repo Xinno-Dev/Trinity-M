@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:larba_00/common/common_package.dart';
 
 import '../../style/colors.dart';
+import '../utils/convertHelper.dart';
 
-BuildContext? dialogContext;
+BuildContext? _dialogContext;
 
 showLoadingDialog(BuildContext context, String message, {var isShowIcon = true}) {
   showDialog(
@@ -10,7 +12,7 @@ showLoadingDialog(BuildContext context, String message, {var isShowIcon = true})
     barrierColor: Colors.transparent,
     barrierDismissible: false, // lock touched close..
     builder: (BuildContext context) {
-      dialogContext = context;
+      _dialogContext = context;
       return Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -39,8 +41,8 @@ showLoadingDialog(BuildContext context, String message, {var isShowIcon = true})
 }
 
 hideLoadingDialog() {
-  if (dialogContext == null) return;
-  Navigator.of(dialogContext!).pop();
-  dialogContext = null;
+  if (_dialogContext == null) return;
+  _dialogContext!.pop();
+  _dialogContext = null;
 }
 

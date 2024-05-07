@@ -65,9 +65,13 @@ class ProfileViewModel {
         fit: BoxFit.fitWidth,
         child: InkWell(
           onTap: () {
-            showProfileSelectBox(
-              onSelect: _selectAccount,
-              onAdd: _startAccountAdd);
+            if (loginProv.isShowMask) {
+              hideProfileSelectBox();
+            } else {
+              showProfileSelectBox(
+                  onSelect: _selectAccount,
+                  onAdd: _startAccountAdd);
+            }
           },
           child: Container(
             height: kToolbarHeight,
@@ -76,8 +80,13 @@ class ProfileViewModel {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(TR(context, loginProv.accountName)),
-                Icon(Icons.arrow_drop_down_sharp),
+                if (loginProv.isShowMask)...[
+                  Text(TR(context, '계정 선택')),
+                ],
+                if (!loginProv.isShowMask)...[
+                  Text(TR(context, loginProv.accountName)),
+                  Icon(Icons.arrow_drop_down_sharp),
+                ]
               ],
             )
           )
@@ -155,6 +164,7 @@ class ProfileViewModel {
             case DrawerActionType.logout:
               loginProv.logout().then((_) {
                 loginProv.setMainPageIndex(0);
+                Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
               });
               break;
             default:
@@ -203,7 +213,7 @@ class ProfileViewModel {
     ScaffoldMessenger.of(context).showMaterialBanner(
       MaterialBanner(
         elevation: 10,
-        surfaceTintColor: Colors.transparent,
+        surfaceTintColor: Colors.white,
         backgroundColor: Colors.white,
         content: Container(
           constraints: BoxConstraints(
@@ -211,11 +221,9 @@ class ProfileViewModel {
           ),
           child: ListView(
             shrinkWrap: true,
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
             children: [
-              ...loginProv.userInfo!.addressList!.map((e) => _profileItem(e, () {
-                if (onSelect != null) onSelect(e);
-              })).toList(),
+              ...loginProv.userInfo!.addressList!.map((e) => _profileItem(e, onSelect)).toList(),
               SizedBox(height: 10),
               Ink(
                 decoration: BoxDecoration(
@@ -262,11 +270,13 @@ class ProfileViewModel {
     return true;
   }
 
-  Widget _profileItem(AddressModel item, Function() onSelect) {
+  Widget _profileItem(AddressModel item, Function(AddressModel)? onSelect) {
     final iconSize = 40.0.r;
     final color = item.address == loginProv.selectAccount?.address ? PRIMARY_100 : GRAY_50;
     return InkWell(
-      onTap: onSelect,
+      onTap: () {
+        if (onSelect != null) onSelect(item);
+      },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 5),
         child: Row(
@@ -377,8 +387,14 @@ class ProfileViewModel {
 
   _selectAccount(AddressModel select) {
     LOG('---> _selectAccount : ${select.toJson()}');
-    loginProv.changeAccount(select);
-    hideProfileSelectBox();
+    loginProv.changeAccount(select).then((result) {
+      if (result) {
+        Fluttertoast.showToast(msg: TR(context, '계정 변경 성공'));
+        hideProfileSelectBox();
+      } else {
+        Fluttertoast.showToast(msg: TR(context, '계정 변경 실패'));
+      }
+    });
   }
 
   _startAccountAdd() {

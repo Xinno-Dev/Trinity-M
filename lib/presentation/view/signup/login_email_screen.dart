@@ -130,18 +130,18 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
     var loginProv = ref.read(loginProvider);
     loginProv.inputEmail = emailInputController.text;
     loginProv.inputPass.first = passInputController.text;
-    await UserHelper().setUserKey(loginProv.inputEmail);
-    LOG('----> _startEmailLogin : ${loginProv.inputEmail}');
+    LOG('=================> _startEmailLogin : ${loginProv.inputEmail}');
     showLoadingDialog(context, '로그인중입니다...');
+    await Future.delayed(Duration(milliseconds: 200));
     var result = await loginProv.loginEmail();
+    LOG('----> loginProv.loginEmail result : $result');
     hideLoadingDialog();
     if (result == true) {
       Fluttertoast.showToast(msg: '로그인 성공');
       Navigator.of(context).pop(true);
-    } else {
-      // TODO : get nickId from server..
+    } else if (result == null) {
       // for test account..
-      if (loginProv.inputEmail == EX_TEST_MAIL_00) {
+      if (loginProv.inputEmail == EX_TEST_MAIL_EX) {
         loginProv.recoverUser(EX_TEST_MN_00).then((result) {
           if (loginProv.isLogin) {
             _startEmailLogin();
@@ -156,6 +156,8 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
           }
         });
       }
+    } else {
+      Fluttertoast.showToast(msg: '로그인 실패');
     }
   }
 }

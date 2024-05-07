@@ -21,6 +21,11 @@ class EccUseCaseImpl implements EccUseCase {
   }
 
   @override
+  Future<bool> removeKeyPair(String address) async {
+    return _repository.removeKeyPair(address);
+  }
+
+  @override
   Future<String> authSign(String pin, String message) async {
     return _repository.signing(pin, message);
   }

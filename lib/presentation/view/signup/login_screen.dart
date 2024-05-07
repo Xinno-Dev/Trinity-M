@@ -24,6 +24,7 @@ import 'package:larba_00/common/style/colors.dart';
 import 'package:larba_00/common/style/textStyle.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:larba_00/presentation/view/signup/login_restore_screen.dart';
 
 import '../../../common/const/constants.dart';
 import '../../../common/const/utils/appVersionHelper.dart';
@@ -514,6 +515,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         MainScreen.routeName, queryParams: {'selectedPage': '1'});
   }
 
+  _startRestore(index) {
+    LOG('---> _startRestore : $index');
+    final loginProv = ref.read(loginProvider);
+    // 기존 회원가입된 메일인지 체크..
+    loginProv.emailDupCheck().then((result) {
+      if (result) {
+        // 니모닉 복구 화면으로 이동..
+        Navigator.of(context).push(
+            createAniRoute(LoginRestoreScreen())).then((rResult) {
+          LOG('----> LoginRestoreScreen result : $rResult');
+          if (rResult == true) {
+            _startLogin(index);
+          }
+        });
+        showLoginErrorTextDialog(context,
+            TR(context, LoginErrorType.mnemonicRequire.errorText));
+      } else {
+        showLoginErrorDialog(context,
+            LoginErrorType.signupRequire, loginProv.userInfo?.email);
+      }
+    });
+  }
+
   _buildKakaoBox() {
     final loginProv = ref.read(loginProvider);
     final isSignUp  = loginProv.isSignUpMode;
@@ -603,19 +627,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final loginProv = ref.read(loginProvider);
     bool? result = false;
     switch(index) {
-      case 0: result = await loginProv.loginKakao(); break;
-      case 1: result = await loginProv.loginGoogle(); break;
+      case 0: result = await loginProv.loginKakao(onError: _loginError); break;
+      case 1: result = await loginProv.loginGoogle(onError: _loginError); break;
       // case 2:  loginProv.loginNaver(); break;
       // case 3:  loginProv.loginApple(); break;
-      default: result = await loginProv.loginEmail();
+      default: result = await loginProv.loginEmail(onError: _loginError);
     }
     if (result == true) {
       _startWallet();
-    // } else {
-    //   Navigator.of(context).push(createAniRoute(SignUpPassScreen()));
-    //   return false;
+    } else if (result == null) {
+      _startRestore(index);
     }
     return result;
+  }
+
+  _loginError(LoginErrorType type, String? error) {
+    LOG('--> _loginError : $type, $error');
+    showLoginErrorDialog(context, type, error);
   }
 
   _buildLogoutButton() {

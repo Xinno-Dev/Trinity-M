@@ -136,10 +136,6 @@ class _SignUpPassScreenState extends ConsumerState {
                   if (Platform.isAndroid) {
                     GoogleService.uploadKeyToGoogleDrive(context).then((result) {
                       LOG('---> startGoogleDriveUpload result [Android] : $result');
-                      if (result) {
-                        Navigator.of(context)
-                          .push(createAniRoute(MainScreen()));
-                      }
                     });
                   }
                 }
