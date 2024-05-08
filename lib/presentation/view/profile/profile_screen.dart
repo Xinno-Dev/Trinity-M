@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:larba_00/common/common_package.dart';
 import 'package:larba_00/common/const/constants.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
+import 'package:larba_00/domain/viewModel/market_view_model.dart';
 import 'package:larba_00/domain/viewModel/profile_view_model.dart';
 import 'package:larba_00/presentation/view/main_screen.dart';
 import 'package:larba_00/presentation/view/signup/login_screen.dart';
@@ -26,11 +27,14 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   late ProfileViewModel _viewModel;
+  late MarketViewModel _marketViewModel;
 
   @override
   void initState() {
     final prov = ref.read(loginProvider);
+    final marketProv = ref.read(marketProvider);
     _viewModel = ProfileViewModel(prov);
+    _marketViewModel = MarketViewModel(marketProv);
     super.initState();
   }
 
@@ -72,7 +76,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   SizedBox(height: 10.h),
                   if (prov.isLogin)...[
                     _viewModel.showProfile(context),
-                    ref.read(marketProvider).showStoreProductList(
+                    _marketViewModel.showStoreProductList(
                         TR(context, 'Market'),
                         isShowSeller: false, isCanBuy: false),
                   ]

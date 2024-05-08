@@ -11,6 +11,7 @@ import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
+import '../../../domain/viewModel/market_view_model.dart';
 import 'product_buy_screen.dart';
 
 class ProductStoreScreen extends ConsumerStatefulWidget {
@@ -23,6 +24,15 @@ class ProductStoreScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductStoreScreenState extends ConsumerState<ProductStoreScreen> {
+  late MarketViewModel _viewModel;
+
+  @override
+  void initState() {
+    final prov = ref.read(marketProvider);
+    _viewModel = MarketViewModel(prov);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
@@ -46,8 +56,8 @@ class _ProductStoreScreenState extends ConsumerState<ProductStoreScreen> {
           shrinkWrap: true,
           padding: EdgeInsets.symmetric(horizontal: 20),
           children: [
-            prov.showStoreDetail(widget.product),
-            prov.showStoreProductList(TR(context, 'Market'),
+            _viewModel.showStoreDetail(widget.product),
+            _viewModel.showStoreProductList(TR(context, 'Market'),
                 isShowSeller: false, isCanBuy: true),
           ]
         )

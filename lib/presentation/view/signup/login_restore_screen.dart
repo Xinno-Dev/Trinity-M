@@ -14,7 +14,7 @@ import 'package:larba_00/common/const/widget/dialog_utils.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/domain/model/ecckeypair.dart';
 import 'package:larba_00/presentation/view/signup/signup_pass_screen.dart';
-import 'package:larba_00/services/larba_api_service.dart';
+import 'package:larba_00/services/api_service.dart';
 import 'package:pointycastle/digests/ripemd160.dart';
 import 'package:pointycastle/digests/sha256.dart';
 import 'package:pointycastle/ecc/curves/secp256k1.dart';

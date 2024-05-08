@@ -37,7 +37,7 @@ import '../../domain/usecase/ecc_usecase_impl.dart';
 import '../../presentation/view/authpassword_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
 import '../../services/google_service.dart';
-import '../../services/larba_api_service.dart';
+import '../../services/api_service.dart';
 import '../const/constants.dart';
 import '../const/utils/appVersionHelper.dart';
 import '../const/utils/convertHelper.dart';
@@ -136,7 +136,7 @@ enum LoginErrorType {
 
 final drawerTitleN = [
   '내 정보','구매 내역','-','이용약관','개인정보처리방침', '버전 정보', '로그아웃',
-  'RWF Export(test)', '본인인증(test)', '로컬정보 삭제(test)'];
+  '본인인증(test)', '로컬정보 삭제(test)'];
 
 enum DrawerActionType {
   my,
@@ -164,8 +164,7 @@ final loginProvider = ChangeNotifierProvider<LoginProvider>((_) {
 
 class LoginProvider extends ChangeNotifier {
   static final _singleton = LoginProvider._internal();
-  static final _marketRepo = ProductRepository();
-  static final apiService = LarbaApiService();
+  static final apiService = ApiService();
 
   factory LoginProvider() {
     return _singleton;
@@ -558,15 +557,16 @@ class LoginProvider extends ChangeNotifier {
       }
       if (token.isNotEmpty) {
         // signing..
-        var msg = email + inputNick + address + token;
-        var sig = await createSign(msg);
+        var nickId  = Uri.encodeFull(inputNick);
+        var msg     = email + nickId + address + token;
+        var sig     = await createSign(msg);
         LOG('----> createNewUser : $msg');
         // create user from server..
         var result = await apiService.createUser(
           userName ?? '',
           socialId ?? '',
           email,
-          inputNick, '', '',
+          nickId, '', '',
           address,
           sig,
           type,
@@ -618,7 +618,8 @@ class LoginProvider extends ChangeNotifier {
     {Function(LoginErrorType, String?)? onError}) async {
     LOG('========> startLogin : ${userInfo?.email} / ${userInfo?.loginType} / $key');
     if (STR(userInfo?.email).isNotEmpty) {
-      var nickId  = STR(account?.accountName);
+      var nickStr = STR(account?.accountName);
+      var nickId  = Uri.encodeFull(nickStr);
       var type    = STR(userInfo?.loginType?.name);
       var email   = STR(userInfo?.email);
       var token   = STR(userInfo?.socialToken);
@@ -698,11 +699,11 @@ class LoginProvider extends ChangeNotifier {
     if (result) {
       await _refreshAccountList();
       var uid     = STR(await UserHelper().get_uid());
-      var nickId  = crypto.sha256.convert(utf8.encode(inputNick)).toString();
+      var nickId  = Uri.encodeFull(inputNick);
       var message = uid + nickId + walletAddress;
       LOG('--> addNewAccount message : $uid + $nickId + $walletAddress');
       var sig = await createSign(message);
-      var addResult = await apiService.addAccount(inputNick, walletAddress, sig);
+      var addResult = await apiService.addAccount(nickId, walletAddress, sig);
       if (addResult) {
         LOG('--> addNewAccount success !!');
         notifyListeners();
@@ -738,17 +739,17 @@ class LoginProvider extends ChangeNotifier {
   }
 
 
-  changeAccountName(String addr, String nickId) async {
+  setLocalAccountName(String addr, String nickId) async {
     var addrListStr = await UserHelper().get_addressList();
     if (addrListStr != 'NOT_ADDRESSLIST') {
       List<dynamic> accountList = json.decode(addrListStr);
       List<AddressModel> addrList = [];
-      LOG('--> changeAccountName : $addr / $nickId / ${accountList.length}');
+      LOG('--> setLocalAccountName : $addr / $nickId / ${accountList.length}');
       for (var item in accountList) {
         var itemModel = AddressModel.fromJson(item);
         if (addr == itemModel.address) {
           itemModel.accountName = nickId;
-          LOG('--> changeAccountName set : ${itemModel.toJson()}');
+          LOG('--> setLocalAccountName set : ${itemModel.toJson()}');
         }
         addrList.add(itemModel);
       }
@@ -757,7 +758,7 @@ class LoginProvider extends ChangeNotifier {
       for (var item in addrList) {
         if (STR(item.accountName).isEmpty) {
           item.accountName = 'account $count';
-          LOG('--> changeAccountName empty [$count] : ${item.toJson()}');
+          LOG('--> setLocalAccountName empty [$count] : ${item.toJson()}');
         }
         count++;
       }
@@ -986,7 +987,7 @@ class LoginProvider extends ChangeNotifier {
         var item = tmpUserInfo.addressList![i];
         if (i < accountCount) {
           LOG('--> _setAccountListFromServer set nick [$i] : ${item.accountName}');
-          await changeAccountName(STR(item.address), STR(item.accountName));
+          await setLocalAccountName(STR(item.address), STR(item.accountName));
         } else {
           LOG('--> _setAccountListFromServer addKeyPair [$i] : ${item.accountName}');
           await eccImpl.addKeyPair(pass, nickId: item.accountName);

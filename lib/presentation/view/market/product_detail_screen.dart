@@ -11,6 +11,7 @@ import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
+import '../../../domain/viewModel/market_view_model.dart';
 import 'product_buy_screen.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
@@ -24,6 +25,15 @@ class ProductDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
+  late MarketViewModel _viewModel;
+
+  @override
+  void initState() {
+    final prov = ref.read(marketProvider);
+    _viewModel = MarketViewModel(prov);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
@@ -40,8 +50,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         body: ListView(
           shrinkWrap: true,
           children: [
-            prov.showProductDetail(widget.isShowSeller),
-            prov.showProductInfo(),
+            _viewModel.showProductDetail(widget.isShowSeller),
+            _viewModel.showProductInfo(),
           ]
         ),
         bottomNavigationBar: widget.isCanBuy ? IS_DEV_MODE ?

@@ -19,12 +19,12 @@ import '../common/const/utils/convertHelper.dart';
 
 final LARBA_RESPONSE_SUCCESS = 200;
 
-class LarbaApiService {
-  static final LarbaApiService _singleton = LarbaApiService._internal();
-  factory LarbaApiService() {
+class ApiService {
+  static final ApiService _singleton = ApiService._internal();
+  factory ApiService() {
     return _singleton;
   }
-  LarbaApiService._internal();
+  ApiService._internal();
 
   var httpUrl = IS_DEV_MODE ? LARBA_API_HOST_DEV : LARBA_API_HOST;
 
@@ -389,4 +389,39 @@ class LarbaApiService {
     }
     return null;
   }
+
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  상품 카테고리 리스트
+  //  /users/nick/{newNickId}
+  //
+
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  상품 리스트
+  //  /prods?tagId=&lastId=&pageCnt=
+  //
+
+  Future<JSON?> getProductList({int? tagId, int? lastId, int? pageCnt}) async {
+    try {
+      LOG('--> getProductList : $tagId / $lastId / $pageCnt');
+      final response = await http.get(
+        Uri.parse(httpUrl + '/prods?tagId=$tagId&lastId=$lastId&pageCnt=$pageCnt'),
+      );
+      LOG('--> getProductList response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        if (resultJson['result'] != null) {
+          return resultJson['result'];
+        }
+      }
+    } catch (e) {
+      LOG('--> getUserInfo error : $e');
+    }
+    return null;
+  }
+
+
 }

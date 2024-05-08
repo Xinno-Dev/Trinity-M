@@ -16,6 +16,10 @@ class ProductRepository {
   var sellerPicN  = ['0','1','2','1','2'];
   var contentImgN = List.generate(6, (index) => 'banner_0$index.png');
 
+  var pageCount = 0;
+  var lastId = 0;
+  var isLastPage = false;
+
   init() {
     productData = {}; // product cache data..
     optionData  = {}; // product item cache data..
@@ -34,8 +38,8 @@ class ProductRepository {
         sellerNameEx: sellerSubN[index],
         sellerPic:    'seller_pic_0${sellerPicN[index]}.png',
         sellerDesc:   '  이국적 풍치의 이탈리아 투스카니 스타일 클럽하우스와 대저택 컨셉의'
-            ' 최고급 호텔 시설로 휴양과 메이저급 골프코스의 다이나믹을 함께 즐길 '
-            '수 있는 태안반도에 위치한 휴양형 고급 골프 리조트입니다.',
+                      ' 최고급 호텔 시설로 휴양과 메이저급 골프코스의 다이나믹을 함께 즐길 '
+                      '수 있는 태안반도에 위치한 휴양형 고급 골프 리조트입니다.',
         sellerFollower:  Random().nextInt(999),
         sellerFollowing: Random().nextInt(999),
         amount:       1000,
