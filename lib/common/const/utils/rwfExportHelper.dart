@@ -10,11 +10,11 @@ import 'package:pointycastle/export.dart';
 import 'convertHelper.dart';
 
 class RWFExportHelper {
-  static int SALT_SIZE = 20;
-  static int AES_IV_SIZE = 16;
-  static int RANDOM_COUNT = Random().nextInt(5000) + 1000;
+  static Future<String> encrypt(String pin, String address, String privateKey) async {
+    int SALT_SIZE = 20;
+    int AES_IV_SIZE = 16;
+    int RANDOM_COUNT = Random().nextInt(5000) + 1000;
 
-  Future<String> encrypt(String pin, String address, String privateKey) async {
     LOG('--> RWFExportHelper encrypt : $pin / $address / $privateKey ($RANDOM_COUNT)');
     Random rnd = Random.secure();
     Uint8List salt = _getRandomData(rnd, SALT_SIZE);
@@ -67,36 +67,34 @@ class RWFExportHelper {
     return rwfString;
   }
 
-  Future<String> decrypt(String pin, String ciphertext) async {
+  static Future<String?> decrypt(String pin, String ciphertext) async {
     JSON jsonData = jsonDecode(ciphertext);
     var salt      = base64Decode(jsonData['dkp']['ks']);
     var iv        = base64Decode(jsonData['cp']['ci']);
     var encrypted = base64Decode(jsonData['cp']['ct']);
-    LOG('--> RWFExportHelper decrypt : $pin / $salt / $iv ($ciphertext)');
-
-    Uint8List key =
-      await _generatePbkdf2Key(salt, Uint8List.fromList(utf8.encode(pin)), RANDOM_COUNT);
+    var random    = INT(jsonData['dkp']['kc']);
+    LOG('--> RWFExportHelper decrypt : $pin / $random => $encrypted');
+    Uint8List key = await _generatePbkdf2Key(salt,
+      Uint8List.fromList(utf8.encode(pin)), random);
 
     final CBCBlockCipher cbcCipher = CBCBlockCipher(AESEngine());
     final ParametersWithIV<KeyParameter> ivParams =
-    ParametersWithIV<KeyParameter>(new KeyParameter(key), iv);
-    final PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>
-    paddingParams =
-    PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>(
+      ParametersWithIV<KeyParameter>(new KeyParameter(key), iv);
+    final paddingParams =
+      PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>(
         ivParams, null);
-    final PaddedBlockCipherImpl paddedCipher =
-    new PaddedBlockCipherImpl(new PKCS7Padding(), cbcCipher);
-
+    final paddedCipher =
+      PaddedBlockCipherImpl(new PKCS7Padding(), cbcCipher);
     paddedCipher.init(false, paddingParams);
     Uint8List cipherText = Uint8List.fromList([]);
 
     try {
       cipherText = paddedCipher.process(encrypted);
-    } catch (_) {
-      return 'fail';
+      return String.fromCharCodes(cipherText);
+    } catch (e) {
+      LOG('--> RWFExportHelper decrypt error : $e');
     }
-
-    return String.fromCharCodes(cipherText);
+    return null;
   }
 
   static Uint8List _getRandomData(Random rnd, int numberBytes) {
@@ -107,11 +105,10 @@ class RWFExportHelper {
     return data;
   }
 
-  Future<Uint8List> _generatePbkdf2Key(
-      Uint8List salt, Uint8List passphrase, int randomCount) async {
+  static Future<Uint8List> _generatePbkdf2Key(
+    Uint8List salt, Uint8List passphrase, int randomCount) async {
     KeyDerivator derivator = PBKDF2KeyDerivator(HMac(SHA256Digest(), 64));
     Pbkdf2Parameters params = Pbkdf2Parameters(salt, randomCount, 32);
-    // Pbkdf2Parameters params = Pbkdf2Parameters(salt, randomCont, 32);
     derivator.init(params);
     return derivator.process(passphrase);
   }

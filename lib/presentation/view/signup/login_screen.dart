@@ -529,8 +529,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             _startLogin(index);
           }
         });
-        showLoginErrorTextDialog(context,
-            TR(context, LoginErrorType.mnemonicRequire.errorText));
+        showLoginErrorDialog(context,
+            LoginErrorType.recoverRequire, loginProv.userInfo?.email);
       } else {
         showLoginErrorDialog(context,
             LoginErrorType.signupRequire, loginProv.userInfo?.email);

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:larba_00/common/common_package.dart';
@@ -16,9 +17,12 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../common/const/constants.dart';
+import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
+import '../../../common/const/utils/rwfExportHelper.dart';
 import '../../../common/const/utils/uihelper.dart';
 import '../../../common/const/widget/warning_icon.dart';
+import '../../../services/google_service.dart';
 import 'signup_pass_screen.dart';
 
 class SignUpMnemonicScreen extends ConsumerStatefulWidget {
@@ -63,6 +67,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loginProv = ref.watch(loginProvider);
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -187,7 +192,20 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 40.w),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).push(createAniRoute(CloudPassScreen()));
+                        Navigator.of(context).push(
+                          createAniRoute(CloudPassCreateScreen())).then((pass) async {
+                          if (STR(pass).isNotEmpty) {
+                            var address = loginProv.accountAddress;
+                            // var keyPair = await loginProv.getAccountKey();
+                            if (address != null) {
+                              // var keyJson = jsonEncode(keyPair.toJson());
+                              var rwfStr = await RWFExportHelper.encrypt(pass, address, mnemonic);
+                              GoogleService.uploadKeyToGoogleDrive(context, rwfStr).then((result) {
+                                LOG('---> startGoogleDriveUpload result : $result');
+                              });
+                            }
+                          }
+                        });
                       },
                       child: Container(
                         width: double.infinity,
@@ -215,6 +233,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
               ref.read(loginProvider).mainPageIndexOrg = 0;
               context.pushReplacementNamed(
                   MainScreen.routeName, queryParams: {'selectedPage': '1'});
+              Fluttertoast.showToast(msg: TR(context, '회원가입 완료'));
             },
           ),
         ),

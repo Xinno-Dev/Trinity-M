@@ -23,11 +23,11 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
   final List<FocusNode> focusNodeList =
       List<FocusNode>.generate(12, (index) => FocusNode());
   final List<TextEditingController> _controllerList = IS_DEV_MODE ?
-      List.generate(12, (index) => TextEditingController(text: EX_TEST_MN_00.split(' ')[index])) :
+      List.generate(12, (index) => TextEditingController(text: EX_TEST_MN_01.split(' ')[index])) :
       List.generate(12, (index) => TextEditingController());
 
   final _scrollController = ScrollController();
-  bool _allFilled = false;
+  bool _allFilled = IS_DEV_MODE;
   bool _showInfoText = false;
   String mnemonic = '';
 

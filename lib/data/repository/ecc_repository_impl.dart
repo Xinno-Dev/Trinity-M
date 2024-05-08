@@ -27,7 +27,7 @@ class EccRepositoryImpl implements EccRepository {
   }) async {
     String encodeJson = '';
     UserHelper userHelper = UserHelper();
-    LOG('--> generateKeyPair : ${userHelper.userKey}');
+    LOG('--> generateKeyPair : $nickId, ${userHelper.userKey}');
 
     _eccManager = EccManager();
 
@@ -73,7 +73,6 @@ class EccRepositoryImpl implements EccRepository {
 
     final addressJsonString = json.encode(addressListJson);
     await userHelper.setUser(addressList: addressJsonString);
-    LOG('--> addressJsonString : $addressJsonString');
 
     if (encResult == 'fail') {
       return false;
@@ -91,26 +90,30 @@ class EccRepositoryImpl implements EccRepository {
   }) async {
     _eccManager = EccManager();
     UserHelper userHelper = UserHelper();
+    int index = 0;
 
     List<AddressModel> addressList = [];
     String jsonString = await userHelper.get_addressList();
-    List<dynamic> decodeJson = json.decode(jsonString);
-    int index = 0;
-    for (var jsonObject in decodeJson) {
-      index++;
-      AddressModel model = AddressModel.fromJson(jsonObject);
-      addressList.add(model);
+    if (jsonString != 'NOT_ADDRESSLIST') {
+      List<dynamic> decodeJson = json.decode(jsonString);
+      for (var jsonObject in decodeJson) {
+        index++;
+        AddressModel model = AddressModel.fromJson(jsonObject);
+        addressList.add(model);
+      }
     }
 
     AsymmetricKeyPair<PublicKey, PrivateKey>? keyResult;
     if (privateKeyHex != null && privateKeyHex.length > 0) {
-      keyResult = (await _eccManager!.loadKeyPair(privateKeyHex));
+      keyResult = await _eccManager!.loadKeyPair(privateKeyHex);
     } else {
       keyResult = await _eccManager!.addMnemonicKeypair(pin, index);
     }
     if (keyResult == null) {
+      LOG('--> keyResult fail ! : $privateKeyHex');
       return false;
     }
+    LOG('--> keyResult ! : $keyResult');
 
     ECPrivateKey privateKey = keyResult.privateKey as ECPrivateKey;
     ECPublicKey publicKey = keyResult.publicKey as ECPublicKey;
@@ -141,7 +144,7 @@ class EccRepositoryImpl implements EccRepository {
         keyPair: encResult,
         publicKey: publicKeyStr,
         hasMnemonic: false);
-    LOG('--> newAddress : ${newAddress.toJson()} / ${addressList.length}');
+    LOG('--> addKeyPair result : ${newAddress.toJson()} / ${addressList.length}');
 
     //추가 전 같은 주소가 있는지 확인 후 같은 주소가 있으면 추가하지 않음.
     for (AddressModel model in addressList) {
@@ -158,10 +161,13 @@ class EccRepositoryImpl implements EccRepository {
     final addressJsonString = json.encode(addressListJson);
     await userHelper.setUser(
       publickey: publicKeyStr,
-      key: encResult,
+      // key: encResult,
       address: address,
       addressList: addressJsonString,
     );
+
+    var decResult = await aesManager.decrypt(pin, encResult);
+    LOG('--> decResult : [$pin] / $decResult');
     return true;
   }
 

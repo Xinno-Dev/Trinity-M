@@ -114,7 +114,7 @@ class _ScreenState extends State<ExportRWFPassScreen> {
                         showLoadingDialog(context, 'RWF 변환중 입니다.', isShowIcon: false);
                         Future.delayed(Duration(milliseconds: 200)).then((_) async {
                           var walletAddress = await UserHelper().get_address();
-                          var rwfText = await RWFExportHelper().encrypt(inputPass, walletAddress, widget.privateKey!);
+                          var rwfText = await RWFExportHelper.encrypt(inputPass, walletAddress, widget.privateKey!);
                           LOG('---> rwfText : $rwfText');
                           // var rwfTextDec = await RWFExportHelper().decrypt(inputPass, rwfText);
                           // LOG('---> rwfTextDec : $rwfTextDec');

@@ -97,10 +97,9 @@ class GoogleService extends GoogleAccount {
   // Google Drive Utils..
   //
 
-  static uploadKeyToGoogleDrive(context) async {
+  static uploadKeyToGoogleDrive(context, String privateKey) async {
     var formatter = DateFormat('yyyyMMdd-HHmmss');
-    var fileName = 'larba-${formatter.format(DateTime.now())}.rwf';
-    var privateKey = await UserHelper().get_key();
+    var fileName = 'tr_${formatter.format(DateTime.now())}.rwf';
     return await _startGoogleDriveUpload(context, privateKey, fileName);
   }
 
@@ -390,12 +389,6 @@ class GoogleService extends GoogleAccount {
     hideLoadingDialog();
     Fluttertoast.showToast(
       msg: rwfText != null ? "복구키 받기 완료" : "복구키 받기 실패",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black,
-      textColor: rwfText != null ? Colors.white : Colors.orange,
-      fontSize: 16.0
     );
     return rwfText;
   }

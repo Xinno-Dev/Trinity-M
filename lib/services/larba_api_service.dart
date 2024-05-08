@@ -217,23 +217,25 @@ class LarbaApiService {
   //////////////////////////////////////////////////////////////////////////
   //
   //  유저 로그인 Secret Key
-  //  /auth/nick/{nickId}/secret-key
+  //  /auth/nick/{email}/secret-key
   //
 
   Future<String?> getSecretKey(
       String nickId,
+      String email,
       String publicKey,
     ) async {
     try {
-      LOG('--> getSecretKey : $nickId / $publicKey');
+      LOG('--> getSecretKey : $nickId / $email / $publicKey');
       final response = await http.post(
-        Uri.parse(httpUrl + '/auth/nick/$nickId/secret-key'),
+        Uri.parse(httpUrl + '/auth/nick/$email/secret-key'),
         headers: {
           'accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
           'pubKey': publicKey,
+          'nickId': nickId
         })
       );
       LOG('--> getSecretKey response : ${response.statusCode} / ${response.body}');
@@ -325,11 +327,11 @@ class LarbaApiService {
     if (jwt == null) {
       return false;
     }
-    LOG('--> addAccount : $nickId, $address, $sig / $subTitle, $desc - $jwt');
+    LOG('--> addAccount : $nickId (${Uri.encodeFull(nickId)}), $address, $sig / $subTitle, $desc - $jwt');
     if (STR(jwt).isNotEmpty) {
       try {
         final response = await http.post(
-          Uri.parse(httpUrl + '/users/nick/$nickId'),
+          Uri.parse(httpUrl + '/users/nick/${nickId}'),
           headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json',
@@ -355,4 +357,36 @@ class LarbaApiService {
     return false;
   }
 
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  유저 정보 조회
+  //  /users/{uid}
+  //
+
+  Future<JSON?> getUserInfo() async {
+    try {
+      var jwt = await AesManager().localJwt;
+      if (jwt == null) {
+        return null;
+      }
+      LOG('--> getUserInfo : $jwt');
+      final response = await http.get(
+        Uri.parse(httpUrl + '/users/info'),
+        headers: {
+          'Authorization': 'Bearer $jwt',
+        },
+      );
+      LOG('--> getUserInfo response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        if (resultJson['result'] != null) {
+          return resultJson['result'];
+        }
+      }
+    } catch (e) {
+      LOG('--> getUserInfo error : $e');
+    }
+    return null;
+  }
 }

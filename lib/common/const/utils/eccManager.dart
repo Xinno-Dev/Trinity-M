@@ -157,6 +157,7 @@ class EccManager {
         bip32.BIP32.fromBase58(rootKeyString); //base58 String 으로 부터 rootKey 복원
     final keyPair = rootKey
         .derivePath("m/44'/1021'/0'/0/$index"); //AddressModel 의 hasmnemonic
+    LOG('--> rootKey : ${rootKey.toString()}');
 
     final Uint8List privateKeyList = keyPair.privateKey!;
     final String privateKeyHex = formatBytesAsHexString(privateKeyList);
@@ -173,6 +174,7 @@ class EccManager {
       ECPublicKey publicKey = getPublicKey(privateKeyHex);
       return AsymmetricKeyPair(publicKey, privateKey);
     } catch (e) {
+      LOG('--> AsymmetricKeyPair error : $e');
       return null;
     }
   }

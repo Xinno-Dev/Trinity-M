@@ -7,6 +7,7 @@ import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/presentation/view/market/pg/quota.dart';
 import 'package:larba_00/presentation/view/market/product_payment_screen.dart';
 
+import '../../../../common/const/constants.dart';
 import 'method.dart';
 import 'pg.dart';
 
@@ -17,8 +18,8 @@ class PaymentTest extends StatefulWidget {
 
 class _PaymentTestState extends State<PaymentTest> {
   final _formKey = GlobalKey<FormState>();
-  late String userCode; // 가맹점 식별코드
-  String pg = 'danal_tpay'; // PG사
+  String userCode = PORTONE_IMP_CODE; // 가맹점 식별코드
+  String pg = PAYMENT_PG; // PG사
   String payMethod = 'card'; // 결제수단
   String cardQuota = '0'; // 할부개월수
   late String vbankDue; // 가상계좌 입금기한
@@ -60,7 +61,7 @@ class _PaymentTestState extends State<PaymentTest> {
                 ),
                 validator: (value) =>
                 value!.isEmpty ? '가맹점 식별코드는 필수입력입니다' : null,
-                initialValue: 'imp32281033',
+                initialValue: userCode,
                 onSaved: (String? value) {
                   userCode = value!;
                 },
@@ -312,7 +313,7 @@ class _PaymentTestState extends State<PaymentTest> {
                         KcpProducts p = KcpProducts(
                           orderNumber: 'order1234',
                           name: '에스크로 주문',
-                          quantity: 3,
+                          quantity: 1,
                           amount: 5000,
                         );
                         data.kcpProducts = [p];

@@ -1,15 +1,21 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 
 import '../../common/common_package.dart';
 import '../../common/const/constants.dart';
 import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
+import '../../common/const/utils/rwfExportHelper.dart';
 import '../../common/const/utils/uihelper.dart';
 import '../../common/const/widget/primary_button.dart';
 import '../../presentation/view/main_screen.dart';
+import '../../presentation/view/profile/profile_Identity_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
+import '../../services/google_service.dart';
 import '../model/address_model.dart';
 
 class ProfileViewModel {
@@ -25,7 +31,6 @@ class ProfileViewModel {
   late LoginProvider loginProv;
   late BuildContext context;
 
-  final drawerTitleN = ['내 정보','구매 내역','-','이용약관','개인정보처리방침', '버전 정보', '로그아웃'];
   final profileSize = 100.0;
 
   get accountPic {
@@ -133,19 +138,18 @@ class ProfileViewModel {
                 ),
               ),
             ),
-            ...drawerTitleN.map((e) => _mainDrawerItem(e, drawerTitleN.indexOf(e))).toList(),
+            ...DrawerActionType.values.map((e) => _mainDrawerItem(e)).toList(),
             Spacer(),
             ListTile(
               title: Text(
-                  '사업자명: 주식회사 엑시노\n'
-                      '대표이사: 이지민\n'
-                      '등록번호: 644-86-03081\n'
-                      '대표번호: 070-4304-5778\n'
-                      '서울시 서초구 서운로 13 126-나94호',
-                  style: typo12semibold100),
-              onTap: () {
-                context!.pop();
-              },
+                '사업자명: 주식회사 엑시노\n'
+                '대표이사: 이지민\n'
+                '등록번호: 644-86-03081\n'
+                '대표번호: 070-4304-5778\n'
+                '서울시 서초구 서운로 13 126-나94호',
+                style: typo12semibold100
+              ),
+              onTap: context.pop,
             ),
           ],
         ),
@@ -153,25 +157,40 @@ class ProfileViewModel {
     );
   }
 
-  _mainDrawerItem(String e, index) {
-    if (e == '-') {
+  _mainDrawerItem(DrawerActionType type) {
+    if (type.title == '-') {
       return Divider();
     }
     return ListTile(
-        title: Text(e, style: typo16bold),
-        onTap: () {
-          switch (DrawerActionType.values[index]) {
-            case DrawerActionType.logout:
+      title: Text(type.title,
+        style: typo16bold.copyWith(
+        color: type.title.contains('(test)') ? Colors.blueAccent : GRAY_80)),
+      onTap: () {
+        LOG('--> _mainDrawerItem: $type');
+        switch (type) {
+          case DrawerActionType.logout:
+            loginProv.logout().then((_) {
+              loginProv.setMainPageIndex(0);
+              Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
+            });
+            break;
+          case DrawerActionType.test_identity:
+            Navigator.of(context).push(
+              createAniRoute(ProfileIdentityScreen()));
+            return;
+          case DrawerActionType.test_delete:
+            UserHelper().clearAllUser().then((_) {
               loginProv.logout().then((_) {
                 loginProv.setMainPageIndex(0);
-                Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
               });
-              break;
-            default:
-              break;
-          }
-          context.pop();
-        });
+              Fluttertoast.showToast(msg: TR(context, '로컬정보 삭제 완료'));
+            });
+            break;
+          default:
+            break;
+        }
+        context.pop();
+      });
   }
 
   ////////////////////////////////////////////////////////////////////////

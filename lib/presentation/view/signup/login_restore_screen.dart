@@ -10,8 +10,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:larba_00/common/const/constants.dart';
 import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
+import 'package:larba_00/common/const/widget/dialog_utils.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/domain/model/ecckeypair.dart';
+import 'package:larba_00/presentation/view/signup/signup_pass_screen.dart';
 import 'package:larba_00/services/larba_api_service.dart';
 import 'package:pointycastle/digests/ripemd160.dart';
 import 'package:pointycastle/digests/sha256.dart';
@@ -20,16 +22,22 @@ import 'package:pointycastle/pointycastle.dart' as po;
 import 'package:provider/provider.dart';
 import 'package:secp256k1cipher/secp256k1cipher.dart';
 import 'package:web3dart/credentials.dart';
+import 'package:crypto/crypto.dart' as crypto;
 
 import '../../../common/common_package.dart';
+import '../../../common/const/utils/aesManager.dart';
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/eccManager.dart';
 import '../../../common/const/utils/languageHelper.dart';
+import '../../../common/const/utils/rwfExportHelper.dart';
 import '../../../common/const/utils/walletHelper.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../common/rlp/hash.dart';
+import '../../../services/google_service.dart';
+import '../main_screen.dart';
 import '../recover_wallet_input_screen.dart';
+import 'login_pass_screen.dart';
 
 class LoginRestoreScreen extends ConsumerStatefulWidget {
   const LoginRestoreScreen({Key? key}) : super(key: key);
@@ -94,56 +102,35 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
               margin: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
                 children: [
-                  _buildMenuButton('복구단어로 복구', () async {
+                  _buildMenuButton('복구단어로 복구', () {
                     Navigator.of(context).push(
                       createAniRoute(RecoverWalletInputScreen())).then((mnemonic) {
                       LOG('--> RecoverWalletInputScreen result : $mnemonic');
                       if (STR(mnemonic).isNotEmpty) {
-                        loginProv.recoverUser(mnemonic).then((result) {
-                          if (loginProv.isLogin) {
-                            // TODO: check email and address compare from server..
-                            context.pop(true);
-                          }
+                        showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
+                        loginProv.recoverUser(mnemonic: mnemonic).then((result) {
+                          LOG('--> recoverUser mn result : $result');
+                          _moveToMainProfile();
                         });
                       }
                     });
                   }),
-                  _buildMenuButton('클라우드로 복구', () async {
-                    var privKey  = await getPrivateKey(loginProv.userPass);
-                    var pubKey   = await getPublicKey(privKey);
-                    var shareKey = formatBytesAsHexString(pubKey.Q!.getEncoded());
-                    LOG('----> keyPair [${loginProv.userPass}]: $shareKey');
-                    var secretKey = await LarbaApiService().getSecretKey('jubal2000', shareKey);
-                    if (secretKey != null) {
-                      var curve  = getS256();
-                      var pKey = PublicKey.fromHex(curve, secretKey);
-                      LOG('---> pubKey : $pKey');
-                      var signKey = computeSecretHex(PrivateKey.fromHex(curve, privKey), pKey);
-                      LOG('---> signKey : $signKey');
-                      var message = 'jubal2000@hanmail.netjubal2000$signKey';
-                      var sign = await loginProv.createSign(message);
-                      LOG('---> sign : $sign');
-                      var error = await LarbaApiService().loginUser('jubal2000', 'email', 'jubal2000@hanmail.net', sign);
-                      LOG('---> error : $error');
-                    }
-                    // var ec   = getS256();
-                    // var priv = ec.generatePrivateKey();
-                    // var pub  = priv.publicKey;
-                    // // LOG('----> privateKey: 0x$priv');
-                    // // LOG('----> publicKey: 0x$pub');
-                    // LOG('--> pub : ${pub.toCompressedHex()}');
-                    // var secretKey = await LarbaApiService().getSecretKey('jubal2000', pub.toCompressedHex());
-                    // if (secretKey != null) {
-                    //   LOG('---> secretKey : $secretKey');
-                    //   var pubKey = PublicKey.fromHex(ec, secretKey);
-                    //   LOG('---> pubKey : $pubKey');
-                    //   var signKey = computeSecretHex(priv, pubKey);
-                    //   LOG('---> signKey : $signKey');
-                    //   var sign = await EccManager().signingEx(signKey, 'jubal2000@hanmail.netjubal2000$signKey');
-                    //   LOG('---> sign : $sign');
-                    //   var error = await LarbaApiService().loginUser('jubal2000', 'email', 'jubal2000@hanmail.net', sign);
-                    //   LOG('---> error : $error');
-                    // }
+                  _buildMenuButton('클라우드로 복구', () {
+                    GoogleService.downloadKeyFromGoogleDrive(context).then((rwfStr) {
+                      LOG('---> downloadKeyFromGoogleDrive rwfStr : $rwfStr');
+                      if (STR(rwfStr).isNotEmpty) {
+                        Navigator.of(context).push(
+                          createAniRoute(CloudPassScreen())).then((pass) async {
+                          LOG('---> CloudPassScreen pass : $pass');
+                          var mnemonic = await RWFExportHelper.decrypt(pass, rwfStr);
+                          loginProv.recoverUser(mnemonic: mnemonic).then((result) {
+                            LOG('--> recoverUser mn result : $result');
+                            _moveToMainProfile();
+                          });
+                          // _recoverRwfKey(pass, rwfStr);
+                        });
+                      }
+                    });
                   }),
                 ],
               )
@@ -152,6 +139,51 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
         )
       ),
     );
+  }
+
+  _recoverRwfKey(String pass, String rwfStr) async {
+    LOG('--> _recoverRwfKey : $pass / $rwfStr');
+    final loginProv = ref.read(loginProvider);
+    // if (STR(pass).isNotEmpty) {
+    //   final shaConvert = crypto.sha256.convert(utf8.encode(pass));
+    //   final keyStr = await AesManager().decrypt(shaConvert.toString(), keyData);
+    //   LOG('---> privateKey create : $pass -> $keyStr');
+    //   if (keyStr != 'fail') {
+    //     var keyJson = jsonDecode(keyStr);
+    //     var privateKey = STR(keyJson['publicKey']);
+    //   var utf8List = utf8.encode(pass);
+    //   var rwfPass = crypto.sha256.convert(utf8List).toString();
+    //   // var privateKeyStr = await AesManager().decrypt(shaConvert.toString(), encPrivateKey!);
+      var privateKey = await RWFExportHelper.decrypt(pass, rwfStr);
+      LOG('--> recoverUser privateKey : $privateKey');
+      if (STR(privateKey).isNotEmpty) {
+        var keyPair = EccKeyPair.fromJson(jsonDecode(privateKey!));
+        LOG('--> recoverUser keyPair : ${keyPair.toJson()}');
+        if (STR(privateKey).isNotEmpty) {
+          loginProv.recoverUser(privateKey: keyPair.d).then((result) {
+            LOG('--> recoverUser cloud success : $result / ${loginProv.isLogin}');
+            if (loginProv.isLogin) {
+              _moveToMainProfile();
+            }
+          });
+        }
+      }
+    // }
+    //   }
+    // }
+  }
+
+  _moveToMainProfile() {
+    hideLoadingDialog();
+    final loginProv = ref.read(loginProvider);
+    if (!loginProv.isLogin) {
+      Fluttertoast.showToast(msg: TR(context, '로그인 실패'));
+      return;
+    }
+    Fluttertoast.showToast(msg: TR(context, '로그인 성공'));
+    ref.read(loginProvider).mainPageIndexOrg = 0;
+    context.pushReplacementNamed(
+        MainScreen.routeName, queryParams: {'selectedPage': '1'});
   }
 
   Uint8List _btcAddress(Uint8List compressed) {

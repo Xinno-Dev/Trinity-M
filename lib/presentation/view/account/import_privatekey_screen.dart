@@ -112,7 +112,7 @@ class _ImportPrivateKeyScreenState
                             if (inputPass.length >= 6) {
                               showLoadingDialog(context, 'RWF 변환중 입니다.', isShowIcon: false);
                               Future.delayed(Duration(milliseconds: 200)).then((_) async {
-                                var rwfTextDec = await RWFExportHelper().decrypt(inputPass, rwfText);
+                                var rwfTextDec = await RWFExportHelper.decrypt(inputPass, rwfText);
                                 LOG('---> RWFExportHelper().decrypt : $rwfTextDec');
                                 hideLoadingDialog();
                                 _execImport(rwfTextDec);

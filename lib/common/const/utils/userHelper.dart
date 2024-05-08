@@ -14,12 +14,14 @@ class UserHelper {
     return _singleton;
   }
   UserHelper._internal();
+  var userKeyMail = ''; // for Dev..
   var userKey = '';
   var privateKey = '';
   var publicKey = '';
   var rwf = '';
   
   setUserKey(String email) {
+    userKeyMail = email;
     userKey = crypto.sha256.convert(utf8.encode(email)).toString();
     LOG('---------> setUserKey : $email => $userKey');
     return userKey;
@@ -192,7 +194,7 @@ class UserHelper {
       await storage.write(key: CHECK_MNEMONIC_KEY + userKey, value: checkMnemonic);
 
     if (addressList != '') {
-      LOG('--> setUser ADDRESSLIST_KEY : ${ADDRESSLIST_KEY + userKey}');
+      LOG('--> setUser ADDRESSLIST_KEY : ${ADDRESSLIST_KEY + userKey} / $addressList');
       await storage.write(key: ADDRESSLIST_KEY + userKey, value: addressList);
     }
 
@@ -350,6 +352,12 @@ class UserHelper {
         return false;
       }
     }
+  }
+
+  Future<void> clearAllUser() async {
+    userKey = '';
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    await storage.deleteAll();
   }
 
   Future<void> clearUser() async {

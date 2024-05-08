@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:larba_00/common/const/constants.dart';
 import 'package:larba_00/common/const/utils/rwfExportHelper.dart';
@@ -35,13 +36,13 @@ class SignUpPassScreen extends ConsumerStatefulWidget {
   );
 }
 
-class CloudPassScreen extends ConsumerStatefulWidget {
-  CloudPassScreen({Key? key}) : super(key: key);
-  static String get routeName => 'cloudPassScreen';
+class CloudPassCreateScreen extends ConsumerStatefulWidget {
+  CloudPassCreateScreen({Key? key}) : super(key: key);
+  static String get routeName => 'cloudPassCreateScreen';
 
   @override
   ConsumerState createState() => _SignUpPassScreenState(
-    PassViewModel(PassType.recover),
+    PassViewModel(PassType.cloudUp),
   );
 }
 
@@ -120,23 +121,11 @@ class _SignUpPassScreenState extends ConsumerState {
               text: TR(context, '다음'),
               round: 0,
               onTap: () async {
-                if (viewModel.passType == PassType.signUp) {
-                  Navigator.of(context).push(createAniRoute(SignUpTermsScreen()));
-                } else {
-                  // var passOrg = loginProv.inputPass.first;
-                  // var pin = crypto.sha256.convert(utf8.encode(passOrg)).toString();
-                  // var encMnemonic = await UserHelper().get_mnemonic();
-                  // var encPrivateKey = await UserHelper().get_key();
-                  // var walletAddress = await UserHelper().get_address();
-                  // var mnemonic  = await AesManager().decrypt(pin, encMnemonic);
-                  // var keyStr = await AesManager().decrypt(pin, encPrivateKey);
-                  // var privateKey = EccKeyPair.fromJson(jsonDecode(keyStr)).d;
-                  // var desc = await RWFExportHelper().encrypt(pin, walletAddress, privateKey);
-                  // LOG('---> mnemonic upload : $pin / $mnemonic / $desc');
-                  if (Platform.isAndroid) {
-                    GoogleService.uploadKeyToGoogleDrive(context).then((result) {
-                      LOG('---> startGoogleDriveUpload result [Android] : $result');
-                    });
+                if (viewModel.comparePass) {
+                  if (viewModel.passType == PassType.signUp) {
+                    Navigator.of(context).push(createAniRoute(SignUpTermsScreen()));
+                  } else {
+                    context.pop(viewModel.password);
                   }
                 }
               },

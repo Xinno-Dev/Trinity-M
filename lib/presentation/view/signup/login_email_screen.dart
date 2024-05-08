@@ -142,17 +142,24 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
     } else if (result == null) {
       // for test account..
       if (loginProv.inputEmail == EX_TEST_MAIL_EX) {
-        loginProv.recoverUser(EX_TEST_MN_00).then((result) {
+        loginProv.recoverUser(mnemonic: EX_TEST_MN_00).then((result) {
           if (loginProv.isLogin) {
             _startEmailLogin();
           }
         });
       } else {
-        Navigator.of(context).push(
-            createAniRoute(LoginRestoreScreen())).then((rResult) {
-          LOG('----> LoginRestoreScreen result : $rResult');
-          if (rResult == true) {
-            _startEmailLogin();
+        loginProv.emailDupCheck().then((result) {
+          if (result) {
+            Navigator.of(context).push(
+                createAniRoute(LoginRestoreScreen()));
+            showLoginErrorDialog(context,
+                LoginErrorType.recoverRequire, loginProv.userInfo?.email);
+          } else {
+            showLoginErrorDialog(context,
+                LoginErrorType.signupRequire, loginProv.userInfo?.email).then((_) {
+              loginProv.setSignUpMode();
+              context.pop();
+            });
           }
         });
       }

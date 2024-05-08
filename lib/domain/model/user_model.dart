@@ -105,6 +105,29 @@ class UserModel {
     );
   }
 
+  static createFromInfo(JSON info) {
+    List<AddressModel> addr = [];
+    var accounts = info['accounts'];
+    if (accounts != null) {
+      for (var item in accounts) {
+        LOG('--> createFromInfo addr item : $item');
+        addr.add(AddressModel(
+          accountName:  STR(item['nickId']),
+          address:      STR(item['address']),
+          subTitle:     STR(item['subTitle']),
+          description:  STR(item['description']),
+          imageURL:     STR(item['pfImg']),
+        ));
+      }
+    }
+    return UserModel(
+      status:     1,
+      uid:        STR(info['uid']),
+      email:      STR(info['email']),
+      addressList: addr
+    );
+  }
+
   get encryptAes async {
     var deviceId = await getDeviceId();
     var pass = crypto.sha256.convert(utf8.encode(deviceId)).toString();

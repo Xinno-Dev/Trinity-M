@@ -12,6 +12,7 @@ import '../../../common/const/utils/uihelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
+import '../../../domain/viewModel/pass_view_model.dart';
 import 'signup_terms_screen.dart';
 
 class LoginPassScreen extends ConsumerStatefulWidget {
@@ -19,11 +20,23 @@ class LoginPassScreen extends ConsumerStatefulWidget {
   static String get routeName => 'loginPassScreen';
 
   @override
-  ConsumerState createState() => _LoginPassScreenState();
+  ConsumerState createState() =>
+    _LoginPassScreenState(PassViewModel(PassType.signIn));
 }
 
-class _LoginPassScreenState extends ConsumerState<LoginPassScreen> {
+class CloudPassScreen extends ConsumerStatefulWidget {
+  const CloudPassScreen({Key? key}) : super(key: key);
+  static String get routeName => 'cloudPassScreen';
+
+  @override
+  ConsumerState createState() =>
+    _LoginPassScreenState(PassViewModel(PassType.cloudDown));
+}
+
+class _LoginPassScreenState extends ConsumerState {
+  _LoginPassScreenState(this.viewModel);
   final passInputController = TextEditingController();
+  PassViewModel viewModel;
   var inputPass = '';
 
   @override
@@ -62,12 +75,12 @@ class _LoginPassScreenState extends ConsumerState<LoginPassScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        TR(context, '비밀번호를\n입력해 주세요.'),
+                        TR(context, viewModel.passType.info1),
                         style: typo24bold150,
                       ),
                       SizedBox(height: 16.h),
                       Text(
-                        TR(context, '회원가입시 생성하신 비밀번호를 입력해 주세요.'),
+                        TR(context, viewModel.passType.info2),
                         style: typo16medium150.copyWith(
                           color: GRAY_70,
                         ),
@@ -95,11 +108,16 @@ class _LoginPassScreenState extends ConsumerState<LoginPassScreen> {
               text: TR(context, '확인'),
               round: 0,
               onTap: () {
-                loginProv.checkWalletPass(inputPass).then((result) async {
-                  if (result) {
-                    Navigator.of(context).pop(inputPass);
-                  }
-                });
+                LOG('--> viewModel.passType : [$inputPass] ${viewModel.passType}');
+                if (viewModel.passType == PassType.cloudDown) {
+                  Navigator.of(context).pop(inputPass);
+                } else {
+                  loginProv.checkWalletPass(inputPass).then((result) async {
+                    if (result) {
+                      Navigator.of(context).pop(inputPass);
+                    }
+                  });
+                }
               },
             ) : DisabledButton(
               text: TR(context, '확인'),
