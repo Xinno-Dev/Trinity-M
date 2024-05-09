@@ -26,15 +26,25 @@ class ProductModel {
   String?   prodSaleId;   // 판매상품 ID
   String?   type;         // 상품종류. CD_PROD_TYPE 값
   String?   name;         // 상품이름
-  String?   repImg;       // 상품에 대한 대표 이미지
-  String?   infoImg;      // 상품에 대한 상세 이미지
+
+  // 목록 정보..
+  String?   repImg;       // 상품 목록 이미지
   String?   totalAmount;  // 현재 상품의 전체 아이템 개수
   String?   remainAmount; // 현재 상품의 잔여(미판매) 아이템 개수
   String?   itemPrice;    // 아이템 개당 가격
   String?   priceUnit;    // 가격 단위
   String?   status;       // CD_SALE_ST
 
+  // 상세 정보..
+  String?   repDetailImg; // 상품 디테일 이미지
+  String?   desc;         // 상품 내용
+  String?   desc2;        // 상품 내용 2
+  String?   externUrl;    // 상품에 대한 추가정보 Url
+
+  // 판매자 정보..
   SellerModel? seller;
+
+  // 옵션 정보..
   List<ProductItemModel>? optionList;
 
   int?        showIndex;    // 상품 순서
@@ -45,13 +55,19 @@ class ProductModel {
     this.prodSaleId,
     this.type,
     this.name,
+
     this.repImg,
-    this.infoImg,
     this.totalAmount,
     this.remainAmount,
     this.itemPrice,
     this.priceUnit,
     this.status,
+
+    this.repDetailImg,
+    this.desc,
+    this.desc2,
+    this.externUrl,
+
     this.seller,
     this.optionList,
     this.showIndex,
@@ -67,16 +83,12 @@ class ProductModel {
     return '${CommaIntText(itemPrice)} $priceUnit';
   }
 
-  get detailPic {
-    return optionList?.first.img;
-  }
-
   get description {
-    return STR(optionList?.first.desc);
+    return STR(desc);
   }
 
   get description2 {
-    return STR(optionList?.first.desc2);
+    return STR(desc2);
   }
 
   get sellerImage {

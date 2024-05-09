@@ -20,10 +20,10 @@ class SellerDetailScreen extends ConsumerStatefulWidget {
   final ProductModel product;
 
   @override
-  ConsumerState<SellerDetailScreen> createState() => _ProductStoreScreenState();
+  ConsumerState<SellerDetailScreen> createState() => _SellerDetailScreenState();
 }
 
-class _ProductStoreScreenState extends ConsumerState<SellerDetailScreen> {
+class _SellerDetailScreenState extends ConsumerState<SellerDetailScreen> {
   late MarketViewModel _viewModel;
 
   @override

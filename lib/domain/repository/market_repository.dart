@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../common/const/utils/convertHelper.dart';
 import '../../services/api_service.dart';
+import '../model/category_model.dart';
 
 class MarketRepository {
   static final _apiService = ApiService();
@@ -14,8 +15,8 @@ class MarketRepository {
   Map<String, ProductModel> productData = {};
   Map<String, ProductItemModel> optionData = {};
   List<ProductModel> productList = [];
+  List<CategoryModel> categoryList = [];
 
-  var categoryN   = ['전체','골프','F&B','숙박','여행','공연','푸드','기타',];
   var titleN      = ['주말 1박 2일 36홀 (4인) 조식, 숙박, 카트 무료 지원','고메 겟어웨이','제주 봄 미식 프로모션','연박 특가 프로모션','연간 회원권 2024',];
   var sellerN     = ['GoldenBAY Golf & Resort','PARK HYATT Seoul','PARNAS HOTEL JEJU','PARK HYATT Seoul','PARNAS HOTEL JEJU'];
   var sellerSubN  = ['골든베이 골프 & 리조트','파크 하얏트 서울','파르나스 호텔 제주','파크 하얏트 서울','파르나스 호텔 제주'];
@@ -23,7 +24,7 @@ class MarketRepository {
   var contentImgN = List.generate(6, (index) => 'banner_0$index.png');
 
   var pageCount = 0;
-  var lastId = 0;
+  var lastId = '';
   var isLastPage = false;
 
   init() {
@@ -47,13 +48,20 @@ class MarketRepository {
         prodSaleId:   Uuid().v4(),
         name:         title,
         repImg:       'banner_0$index.png',
-        infoImg:      'detail_00.png',
         totalAmount:  '2000',
         remainAmount: '1000',
         itemPrice:    '1000',
         priceUnit:    'KRW',
         status:       '1',
         showIndex:    index,
+
+        repDetailImg: 'main_00.png',
+        desc: '이용권 1매 + 무료 증정 NFT Art 1개 (옵션 선택)',
+        desc2:'주말 4인 기준\n'
+              '총 36홀 : 1일차 18홀, 2일차 18홀\n'
+              '2일차 조식 무료\n'
+              '1일차, 2일차 카트 무료',
+        externUrl:    'detail_00.png',
         seller:       seller,
       );
       // add sample options..
@@ -66,12 +74,8 @@ class MarketRepository {
             address:  'contAddr0000000001',
             img:  pic,
             name: title,
-            desc: '이용권 1매 + 무료 증정 NFT Art 1개 (옵션 선택)\n'
-                  '주말 4인 기준\n'
-                  '총 36홀 : 1일차 18홀, 2일차 18홀\n'
-                  '2일차 조식 무료\n'
-                  '1일차, 2일차 카트 무료',
-            desc2:      '티켓 이미지 옵션 선택',
+            desc:       'Ticket No.${(i * 12) + j}',
+            desc2:      '티켓 번호 선택',
             tokenId:    '1',
             chainId:    'mainnet@rigo',
             type:       'ERC721',
@@ -85,19 +89,45 @@ class MarketRepository {
       }
       productData[newItem.prodSaleId!] = newItem;
       productList.add(newItem);
+      lastId = STR(newItem.prodSaleId);
     }
   }
 
-  getProductList() async {
-    final result = await _apiService.getProductList();
-    if (result?['data'] != null) {
-      var data = result!['data'];
-      LOG('--> getProductList : $data');
-      for (var item in data) {
-        var product = ProductModel(
+  getStartData() async {
+    categoryList = [
+      CategoryModel(
+        tagId: 0,
+        value: '전체',
+      )
+    ];
+    try {
+      var categoryData = await _apiService.getCategory();
+      if (categoryData != null) {
+        for (var item in categoryData) {
+          var addItem = CategoryModel.fromJson(item);
+          categoryList.add(addItem);
+        }
+      }
+    } catch (e) {
+      LOG('--> getStartData error : $e');
+    }
+    LOG('--> getStartData result : ${categoryList.length}');
+    return true;
+  }
 
-        );
+  getProductList({int tagId = 0}) async {
+    final jsonData = await _apiService.getProductList(
+      tagId:  tagId,
+      lastId: lastId
+    );
+    if (jsonData?['data'] != null) {
+      var data = jsonData!['data'];
+      for (var item in data) {
+        var newItem = ProductModel.fromJson(item);
+        lastId = STR(newItem.prodSaleId);
       }
     }
+    LOG('--> getProductList result : ${productList.length} / $lastId');
+    return productList;
   }
 }

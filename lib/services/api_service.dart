@@ -394,9 +394,27 @@ class ApiService {
   //////////////////////////////////////////////////////////////////////////
   //
   //  상품 카테고리 리스트
-  //  /users/nick/{newNickId}
+  //  /tags
   //
 
+  Future<List?> getCategory() async {
+    try {
+      LOG('--> getCategory');
+      final response = await http.get(
+        Uri.parse(
+            httpUrl + '/tags'),
+      );
+      LOG('--> getCategory response : ${response.statusCode} / '
+          '${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        return resultJson['result'];
+      }
+    } catch (e) {
+      LOG('--> getCategory error : $e');
+    }
+    return null;
+  }
 
   //////////////////////////////////////////////////////////////////////////
   //
@@ -404,7 +422,8 @@ class ApiService {
   //  /prods?tagId=&lastId=&pageCnt=
   //
 
-  Future<JSON?> getProductList({int? tagId, int? lastId, int? pageCnt}) async {
+  Future<JSON?> getProductList(
+    {int tagId = 1, var lastId = '', int pageCnt = 20}) async {
     try {
       LOG('--> getProductList : $tagId / $lastId / $pageCnt');
       final response = await http.get(

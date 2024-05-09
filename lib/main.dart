@@ -205,17 +205,16 @@ Future<void> main() async {
             create: (context) => LoginProvider()
           )
         ],
-        child: MyApp()
-        // child: FutureBuilder(
-        //   future: LoginProvider().checkLogin(),
-        //   builder: (context, snapshot) {
-        //     if (snapshot.hasData) {
-        //       return MyApp();
-        //     } else {
-        //       return showLoadingFull(50);
-        //     }
-        //   }
-        // )
+        child: FutureBuilder(
+          future: MarketProvider().getStartData(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return MyApp();
+            } else {
+              return showLoadingFull(50);
+            }
+          }
+        )
       ),
     ),
     // ProviderScope(

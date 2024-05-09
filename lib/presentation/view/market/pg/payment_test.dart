@@ -5,7 +5,7 @@ import 'package:iamport_flutter/model/pg/kcp/kcp_products.dart';
 import 'package:larba_00/common/common_package.dart';
 import 'package:larba_00/common/const/utils/uihelper.dart';
 import 'package:larba_00/presentation/view/market/pg/quota.dart';
-import 'package:larba_00/presentation/view/market/product_payment_screen.dart';
+import 'package:larba_00/presentation/view/market/payment_screen.dart';
 
 import '../../../../common/const/constants.dart';
 import 'method.dart';
@@ -333,7 +333,7 @@ class _PaymentTestState extends State<PaymentTest> {
                       //     'data': data,
                       //   },
                       // );
-                      Navigator.of(context).push(createAniRoute(ProductPaymentScreen(userCode, data)));
+                      Navigator.of(context).push(createAniRoute(PaymentScreen(userCode, data)));
                     }
                   },
                   child: Text(

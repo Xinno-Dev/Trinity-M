@@ -20,15 +20,16 @@ ProductItemModel _$ProductItemModelFromJson(Map<String, dynamic> json) =>
       type: json['type'] as String?,
       symbol: json['symbol'] as String?,
       totalSupply: json['totalSupply'] as String?,
+      issuer: json['issuer'] == null
+          ? null
+          : SellerModel.fromJson(json['issuer'] as Map<String, dynamic>),
       createTime: json['createTime'] == null
           ? null
           : DateTime.parse(json['createTime'] as String),
       updateTime: json['updateTime'] == null
           ? null
           : DateTime.parse(json['updateTime'] as String),
-    )..issuer = json['issuer'] == null
-        ? null
-        : SellerModel.fromJson(json['issuer'] as Map<String, dynamic>);
+    );
 
 Map<String, dynamic> _$ProductItemModelToJson(ProductItemModel instance) {
   final val = <String, dynamic>{};

@@ -40,6 +40,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
+    _viewModel.context = context;
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -54,7 +55,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           shrinkWrap: true,
           children: [
             _viewModel.showProductDetail(widget.isShowSeller),
-            _viewModel.showProductInfo(),
+            _viewModel.showProductInfoTab(),
           ]
         ),
         bottomNavigationBar: widget.isCanBuy ? IS_DEV_MODE ?

@@ -11,7 +11,7 @@ import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/viewModel/market_view_model.dart';
-import 'product_payment_screen.dart';
+import 'payment_screen.dart';
 import 'pg/payment_test.dart';
 
 class ProductBuyScreen extends ConsumerStatefulWidget {

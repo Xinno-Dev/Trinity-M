@@ -5,8 +5,8 @@ import 'package:larba_00/common/common_package.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
 
-class ProductPaymentScreen extends StatelessWidget {
-  ProductPaymentScreen(this.userCode, this.data);
+class PaymentScreen extends StatelessWidget {
+  PaymentScreen(this.userCode, this.data);
   String userCode;
   PaymentData data;
 

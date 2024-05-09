@@ -629,7 +629,7 @@ class LoginProvider extends ChangeNotifier {
           var pubKey = await getPublicKey(key.d);
           var shareKey = formatBytesAsHexString(pubKey.Q!.getEncoded());
           var secretKey = await apiService.getSecretKey(
-              nickId, email, shareKey);
+              nickStr, email, shareKey);
           if (secretKey != null) {
             var curve = getS256();
             var pKey = PublicKey.fromHex(curve, secretKey);
@@ -647,7 +647,7 @@ class LoginProvider extends ChangeNotifier {
       LOG('--> startLogin token : $token');
       if (token.isNotEmpty) {
         var result = await apiService.loginUser(
-            nickId, type, email, token, onError: onError);
+            nickStr, type, email, token, onError: onError);
         if (result) {
           var userEnc = await userInfo?.encryptAes;
           await UserHelper().setUser(loginInfo: userEnc);

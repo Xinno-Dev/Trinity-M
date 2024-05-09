@@ -16,6 +16,7 @@ import 'package:animations/animations.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
+import '../../../domain/model/product_model.dart';
 import '../../../domain/viewModel/market_view_model.dart';
 import '../../../services/google_service.dart';
 
@@ -44,31 +45,40 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
     _viewModel.context = context;
     return SafeArea(
       top: false,
-      child: CustomScrollView(
-        controller: controller,
-        physics: ClampingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            // title: Text(TR(context, 'Market')),
-            // leading: IconButton(
-            //   onPressed: () {
-            //   },
-            //   icon: SvgPicture.asset('assets/svg/icon_ham.svg'),
-            // ),
-            // centerTitle: true,
-            // titleTextStyle: typo16bold,
-            toolbarHeight: 0,
-            automaticallyImplyLeading: false,
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            bottom: PreferredSize(
-              preferredSize: Size.fromHeight(40),
-              child: _viewModel.showCategoryBar(),
-            ),
-          ),
-          _viewModel.showProductList()
-        ],
-      ),
+      child: FutureBuilder(
+        future: prov.getProductList(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return CustomScrollView(
+              controller: controller,
+              physics: ClampingScrollPhysics(),
+              slivers: [
+                SliverAppBar(
+                  // title: Text(TR(context, 'Market')),
+                  // leading: IconButton(
+                  //   onPressed: () {
+                  //   },
+                  //   icon: SvgPicture.asset('assets/svg/icon_ham.svg'),
+                  // ),
+                  // centerTitle: true,
+                  // titleTextStyle: typo16bold,
+                  toolbarHeight: 0,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Colors.white,
+                  surfaceTintColor: Colors.white,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(40),
+                    child: _viewModel.showCategoryBar(),
+                  ),
+                ),
+                _viewModel.showProductList()
+              ],
+            );
+          } else {
+            return showLoadingFull();
+          }
+        }
+      )
     );
   }
 }

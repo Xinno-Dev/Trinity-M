@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:larba_00/common/provider/market_provider.dart';
 import '../../common/common_package.dart';
 import '../../common/const/utils/convertHelper.dart';
@@ -6,7 +7,7 @@ import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/uihelper.dart';
 import '../../common/const/widget/primary_button.dart';
 import '../../presentation/view/market/product_detail_screen.dart';
-import '../../presentation/view/market/product_store_screen.dart';
+import '../../presentation/view/market/seller_detail_screen.dart';
 import '../model/product_item_model.dart';
 import '../model/product_model.dart';
 
@@ -24,7 +25,7 @@ class MarketViewModel {
   late BuildContext context;
 
   showCategoryBar() {
-    LOG('--> prov.categoryList : ${prov.categoryList}');
+    // LOG('--> prov.categoryList : ${prov.categoryList}');
     return Container(
       margin: EdgeInsets.only(bottom: 5),
       child: SingleChildScrollView(
@@ -32,7 +33,7 @@ class MarketViewModel {
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: List<Widget>.of(prov.categoryList.map((e) =>
-              _categoryItem(e, prov.categoryList.indexOf(e)))),
+              _categoryItem(STR(e.value), prov.categoryList.indexOf(e)))),
         ),
       ),
     );
@@ -43,10 +44,15 @@ class MarketViewModel {
       padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
       sliver: SliverList(
         delegate: SliverChildListDelegate(
-          List.generate(prov.marketRepo.productList.length, (index) =>
-              _contentItem(prov.marketRepo.productList[index])),
+        List.generate(prov.marketRepo.productList.length, (index) =>
+          _contentItem(prov.marketRepo.productList[index])),
         ),
       ),
+      //     );
+      //   } else {
+      //     return showLoadingFull();
+      //   }
+      // }
     );
   }
 
@@ -75,9 +81,9 @@ class MarketViewModel {
     );
   }
 
-  showProductInfo() {
+  showProductInfoTab() {
     return FutureBuilder(
-      future: getImageHeight('assets/samples/${prov.selectProduct!.detailPic}'),
+      future: getImageHeight('assets/samples/${prov.externalPic}'),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var exSize = snapshot.data as Size;
@@ -92,7 +98,7 @@ class MarketViewModel {
                 // LOG('---> listHeight : $listHeight / $itemHeight / $itemLength /'
                 //     ' $detailHeight (${constraints.maxWidth / exSize.width} / ${exSize.width})');
                 return DefaultTabController(
-                  initialIndex: prov.selectDetail,
+                  initialIndex: prov.selectDetailTab,
                   length: 2,
                   child: Column(
                     children: [
@@ -104,7 +110,7 @@ class MarketViewModel {
                         indicatorSize: TabBarIndicatorSize.tab,
                         onTap: (index) {
                           setState(() {
-                            prov.selectDetail = index;
+                            prov.selectDetailTab = index;
                             LOG('--> prov.selectDetail : $prov.selectDetail');
                           });
                         },
@@ -122,7 +128,7 @@ class MarketViewModel {
                       ),
                       AnimatedContainer(
                         color: Colors.white,
-                        height: prov.selectDetail == 0 ? listHeight : detailHeight,
+                        height: prov.selectDetailTab == 0 ? listHeight : detailHeight,
                         margin: EdgeInsets.only(top: 2),
                         duration: Duration(milliseconds: 100),
                         child: TabBarView(
@@ -156,30 +162,30 @@ class MarketViewModel {
     }
     return Container(
       child: GridView.builder(
-          itemCount: prov.selectProduct?.optionList?.length ?? 0,
-          shrinkWrap: true,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              crossAxisSpacing: 2,
-              mainAxisSpacing: 2
-          ),
-          physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return SizedBox(
-              // width: itemHeight,
-              // height: itemHeight,
-              child: _optionListItem(
-                prov.selectProduct!.optionList![index],
-                index,
-              ),
-            );
-          }
+        itemCount: prov.selectProduct?.optionList?.length ?? 0,
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            crossAxisSpacing: 2,
+            mainAxisSpacing: 2
+        ),
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          return SizedBox(
+            // width: itemHeight,
+            // height: itemHeight,
+            child: _optionListItem(
+              prov.selectProduct!.optionList![index],
+              index,
+            ),
+          );
+        }
       ),
     );
   }
 
   showDetailTab() {
-    if (prov.selectProduct?.infoImg == null) {
+    if (STR(prov.externalPic).isEmpty) {
       return Container(
         height: 100,
         child: Center(
@@ -190,7 +196,8 @@ class MarketViewModel {
     return Container(
       alignment: Alignment.topCenter,
       child: Image.asset(
-          'assets/samples/${prov.selectProduct?.infoImg}', fit: BoxFit.fitWidth),
+        'assets/samples/${prov.externalPic}',
+        fit: BoxFit.fitWidth),
     );
   }
 
@@ -208,7 +215,7 @@ class MarketViewModel {
         children: [
           Padding(
             padding: EdgeInsets.only(bottom: 15),
-            child: Text(TR(context!, '구매 상품'), style: typo16bold),
+            child: Text(TR(context, '구매 상품'), style: typo16bold),
           ),
           _contentSellerBar(prov.selectProduct!),
           _contentBuyDetailBox(prov.selectProduct!),
@@ -216,13 +223,13 @@ class MarketViewModel {
           Divider(height: 50),
           Padding(
             padding: EdgeInsets.only(bottom: 10),
-            child: Text(TR(context!, '결제 예정 금액을 확인해 주세요.'), style: typo16bold),
+            child: Text(TR(context, '결제 예정 금액을 확인해 주세요.'), style: typo16bold),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 10),
             child: Row(
               children: [
-                Text(TR(context!, '상품 금액'), style: typo16medium),
+                Text(TR(context, '상품 금액'), style: typo16medium),
                 Spacer(),
                 Text(prov.selectProduct!.priceText, style: typo16medium),
               ],
@@ -232,7 +239,7 @@ class MarketViewModel {
             padding: EdgeInsets.only(bottom: 50),
             child: Row(
               children: [
-                Text(TR(context!, '결제 예정 금액'), style: typo18bold),
+                Text(TR(context, '결제 예정 금액'), style: typo18bold),
                 Spacer(),
                 Text(prov.selectProduct!.priceText, style: typo18bold),
               ],
@@ -448,11 +455,12 @@ class MarketViewModel {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(STR(item.name), style: typo14medium),
+          SizedBox(height: 10),
+          Text(STR(item.name), style: typo16bold),
           Row(
             children: [
               Text(CommaIntText(INT(item.itemPrice).toString()), style: typo18bold),
-              Text(' ${item.itemPrice}', style: typo14medium),
+              Text(' ${item.priceUnit}', style: typo14medium),
               SizedBox(width: 10),
               Text('[수량 ${item.amountText}]', style: typo14medium),
             ],
@@ -465,7 +473,26 @@ class MarketViewModel {
   _contentDescription(ProductModel item, {EdgeInsets? padding}) {
     return Container(
       padding: padding,
-      child: Text(STR(item.description), style: typo14medium),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(STR(item.description), style: typo14bold),
+          if (STR(item.description2).isNotEmpty)...[
+            SizedBox(height: 10),
+            Text(STR(item.description2), style: typo14medium),
+          ],
+          if (STR(prov.optionDesc).isNotEmpty || STR(prov.optionDesc2).isNotEmpty)...[
+            Divider(height: 50),
+          ],
+          if (STR(prov.optionDesc).isNotEmpty)...[
+            Text(STR(prov.optionDesc), style: typo14bold),
+            SizedBox(height: 10),
+          ],
+          if (STR(prov.optionDesc2).isNotEmpty)...[
+            Text(STR(prov.optionDesc2), style: typo14medium),
+          ],
+        ],
+      )
     );
   }
 
@@ -476,12 +503,19 @@ class MarketViewModel {
       },
       child: Container(
         padding: padding,
+        decoration: BoxDecoration(
+          border: Border.all(color: PRIMARY_100, width: prov.optionIndex == index ? 5 : 0),
+        ),
         child: Stack(
           children: [
             SizedBox.expand(
               child: Image.asset('assets/samples/${option.img}', fit: BoxFit.cover),
             ),
-            Text(STR(option.itemId), style: typo10regular100),
+            Positioned(
+              top: 2,
+              left: 2,
+              child: Text(STR(option.desc), style: typo12shadowR.copyWith(fontSize: 10)),
+            ),
           ],
         ),
       ),
@@ -494,14 +528,15 @@ class MarketViewModel {
       margin: EdgeInsets.symmetric(vertical: 20),
       child: Row(
         children: [
+          if (prov.detailPic != null)
           Container(
-              width: 100,
-              height: 100,
-              margin: EdgeInsets.only(right: 15),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset('assets/samples/${item.repImg}'),
-              )
+            width: 100,
+            height: 100,
+            margin: EdgeInsets.only(right: 15),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset('assets/samples/${prov.detailPic!}'),
+            )
           ),
           Expanded(
             child: Column(

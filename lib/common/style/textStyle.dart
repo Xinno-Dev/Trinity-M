@@ -289,6 +289,63 @@ var typo12dialog = TextStyle(
   height: 2.0,
 );
 
+var typo12shadow = TextStyle(
+    color: GRAY_90,
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Pretendard',
+    fontStyle: FontStyle.normal,
+    fontSize: 12.r,
+    height: 1.0,
+    shadows: [
+      Shadow( // topRight
+          offset: Offset(0.5, 0.5),
+          color: Colors.white
+      ),
+    ]
+);
+
+var typo12shadowR = TextStyle(
+    color: WHITE,
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Pretendard',
+    fontStyle: FontStyle.normal,
+    fontSize: 12.r,
+    height: 1.0,
+    shadows: [
+      Shadow( // topRight
+          offset: Offset(0.5, 0.5),
+          color: GRAY_80
+      ),
+    ]
+);
+
+var typo12outline = TextStyle(
+  color: GRAY_90,
+    fontWeight: FontWeight.w700,
+  fontFamily: 'Pretendard',
+  fontStyle: FontStyle.normal,
+  fontSize: 12.r,
+  height: 1.0,
+  shadows: [
+    Shadow( // bottomLeft
+        offset: Offset(-0.5, 0.5),
+        color: Colors.white
+    ),
+    Shadow( // bottomRight
+        offset: Offset(0.5, -0.5),
+        color: Colors.white
+    ),
+    Shadow( // topRight
+        offset: Offset(0.5, 0.5),
+        color: Colors.white
+    ),
+    Shadow( // topLeft
+        offset: Offset(-0.5, -0.5),
+        color: Colors.white
+    ),
+  ]
+);
+
 var typo11normal = TextStyle(
   color: GRAY_90,
   fontWeight: FontWeight.w300,

@@ -16,6 +16,10 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       itemPrice: json['itemPrice'] as String?,
       priceUnit: json['priceUnit'] as String?,
       status: json['status'] as String?,
+      repDetailImg: json['repDetailImg'] as String?,
+      desc: json['desc'] as String?,
+      desc2: json['desc2'] as String?,
+      externUrl: json['externUrl'] as String?,
       seller: json['seller'] == null
           ? null
           : SellerModel.fromJson(json['seller'] as Map<String, dynamic>),
@@ -49,6 +53,10 @@ Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
   writeNotNull('itemPrice', instance.itemPrice);
   writeNotNull('priceUnit', instance.priceUnit);
   writeNotNull('status', instance.status);
+  writeNotNull('repDetailImg', instance.repDetailImg);
+  writeNotNull('desc', instance.desc);
+  writeNotNull('desc2', instance.desc2);
+  writeNotNull('externUrl', instance.externUrl);
   writeNotNull('seller', instance.seller?.toJson());
   writeNotNull(
       'optionList', instance.optionList?.map((e) => e.toJson()).toList());

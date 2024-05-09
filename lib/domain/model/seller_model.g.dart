@@ -11,6 +11,9 @@ SellerModel _$SellerModelFromJson(Map<String, dynamic> json) => SellerModel(
       nickId: json['nickId'] as String?,
       subTitle: json['subTitle'] as String?,
       pfImg: json['pfImg'] as String?,
+      desc: json['desc'] as String?,
+      follower: json['follower'] as int?,
+      following: json['following'] as int?,
       createTime: json['createTime'] == null
           ? null
           : DateTime.parse(json['createTime'] as String),
@@ -32,6 +35,9 @@ Map<String, dynamic> _$SellerModelToJson(SellerModel instance) {
   writeNotNull('nickId', instance.nickId);
   writeNotNull('subTitle', instance.subTitle);
   writeNotNull('pfImg', instance.pfImg);
+  writeNotNull('desc', instance.desc);
+  writeNotNull('follower', instance.follower);
+  writeNotNull('following', instance.following);
   writeNotNull('createTime', instance.createTime?.toIso8601String());
   writeNotNull('updateTime', instance.updateTime?.toIso8601String());
   return val;
