@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
@@ -13,6 +14,7 @@ import '../../common/const/utils/rwfExportHelper.dart';
 import '../../common/const/utils/uihelper.dart';
 import '../../common/const/widget/primary_button.dart';
 import '../../presentation/view/main_screen.dart';
+import '../../presentation/view/profile/my_info_screen.dart';
 import '../../presentation/view/profile/profile_Identity_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
 import '../../services/google_service.dart';
@@ -103,7 +105,6 @@ class ProfileViewModel {
   ////////////////////////////////////////////////////////////////////////
 
   mainDrawer(BuildContext context) {
-    this.context = context;
     return Drawer(
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
@@ -138,7 +139,7 @@ class ProfileViewModel {
                 ),
               ),
             ),
-            ...DrawerActionType.values.map((e) => _mainDrawerItem(e)).toList(),
+            ...DrawerActionType.values.map((e) => _mainDrawerItem(context, e)).toList(),
             Spacer(),
             ListTile(
               title: Text(
@@ -147,7 +148,7 @@ class ProfileViewModel {
                 '등록번호: 644-86-03081\n'
                 '대표번호: 070-4304-5778\n'
                 '서울시 서초구 서운로 13 126-나94호',
-                style: typo12semibold100
+                style: typo12semibold100.copyWith(color: GRAY_40),
               ),
               onTap: context.pop,
             ),
@@ -157,7 +158,7 @@ class ProfileViewModel {
     );
   }
 
-  _mainDrawerItem(DrawerActionType type) {
+  _mainDrawerItem(BuildContext context, DrawerActionType type) {
     if (type.title == '-') {
       return Divider();
     }
@@ -167,7 +168,11 @@ class ProfileViewModel {
         color: type.title.contains('(test)') ? Colors.blueAccent : GRAY_80)),
       onTap: () {
         LOG('--> _mainDrawerItem: $type');
+        context.pop();
         switch (type) {
+          case DrawerActionType.my:
+            Navigator.of(context).push(createAniRoute(MyInfoScreen()));
+            break;
           case DrawerActionType.logout:
             loginProv.logout().then((_) {
               loginProv.setMainPageIndex(0);
@@ -177,7 +182,7 @@ class ProfileViewModel {
           case DrawerActionType.test_identity:
             Navigator.of(context).push(
               createAniRoute(ProfileIdentityScreen()));
-            return;
+            break;
           case DrawerActionType.test_delete:
             UserHelper().clearAllUser().then((_) {
               loginProv.logout().then((_) {
@@ -189,7 +194,6 @@ class ProfileViewModel {
           default:
             break;
         }
-        context.pop();
       });
   }
 
@@ -289,7 +293,56 @@ class ProfileViewModel {
     return true;
   }
 
-  Widget _profileItem(AddressModel item, Function(AddressModel)? onSelect) {
+  ////////////////////////////////////////////////////////////////////////
+
+  myInfoEditItem(String title, List<List> items,
+    {Function()? onEdit, Function(bool)? onToggle}) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(TR(context, title), style: typo16bold),
+          ...items.map((e) => _myInfoItem(e, onEdit, onToggle)),
+        ],
+      ),
+    );
+  }
+
+  _myInfoItem(List item, Function()? onEdit, Function(bool)? onToggle) {
+    var _isChecked = STR(item[1]) == 'on';
+    return StatefulBuilder(builder: (context, setState) {
+      return Container(
+        child: Row(
+          children: [
+            Text(TR(context, STR(item[0])), style: typo16regular),
+            Spacer(),
+            if (STR(item[1]).isNotEmpty)...[
+              if (STR(item[1]) != 'on' && STR(item[1]) != 'off')
+                OutlinedButton(
+                  onPressed: onEdit,
+                  style: darkBorderButtonStyle,
+                  child: Text(TR(context, STR(item[1])), style: typo14semibold),
+                ),
+              if (STR(item[1]) == 'on' || STR(item[1]) == 'off')
+                CupertinoSwitch(
+                  value: _isChecked,
+                  activeColor: CupertinoColors.activeBlue,
+                  onChanged: (bool? value) {
+                    _isChecked = value ?? false;
+                    if (onToggle != null) onToggle(_isChecked);
+                  },
+                ),
+            ],
+          ],
+        ),
+      );
+    });
+  }
+
+  ////////////////////////////////////////////////////////////////////////
+
+  _profileItem(AddressModel item, Function(AddressModel)? onSelect) {
     final iconSize = 40.0.r;
     final color = item.address == loginProv.selectAccount?.address ? PRIMARY_100 : GRAY_50;
     return InkWell(
@@ -445,6 +498,49 @@ class ProfileViewModel {
             } else {
               _startAccountAdd();
             }
+        });
+      }
+    });
+  }
+
+  editAccountSubTitle() {
+    showInputDialog(context,
+      TR(context, '유저 이름 변경'),
+      defaultText: IS_DEV_MODE ? EX_TEST_ACCCOUNT_00_1 : '',
+      hintText: TR(context, '유저 이름을 입력해 주세요.')).then((text) {
+      if (STR(text).isNotEmpty) {
+        // loginProv.userInfo!.
+        _editAccountInfo();
+      }
+    });
+  }
+
+  _editAccountInfo() {
+    showInputDialog(context,
+        TR(context, '계정 변경'),
+        defaultText: IS_DEV_MODE ? EX_TEST_ACCCOUNT_00_1 : '',
+        hintText: TR(context, '계정명을 입력해 주세요.')).then((text) {
+      LOG('---> account add name : $text');
+      if (STR(text).isNotEmpty) {
+        // nickId duplicate check..
+        loginProv.checkNickId(nickId: text!,
+            onError: (type) => Fluttertoast.showToast(msg: type.errorText)).
+        then((check) {
+          if (check == true) {
+            Navigator.of(context).push(
+                createAniRoute(LoginPassScreen())).then((passOrg) {
+              if (STR(passOrg).isNotEmpty) {
+                loginProv.setUserInfo(passOrg, loginProv.account!).then((result) {
+                  LOG('---> account add result : $result');
+                  Fluttertoast.showToast(
+                    msg: result ? "내정보 변경 성공" : "내정보 변경 실패",
+                  );
+                });
+              }
+            });
+          } else {
+            _editAccountInfo();
+          }
         });
       }
     });

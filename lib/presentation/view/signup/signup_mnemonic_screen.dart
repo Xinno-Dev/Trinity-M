@@ -26,8 +26,10 @@ import '../../../services/google_service.dart';
 import 'signup_pass_screen.dart';
 
 class SignUpMnemonicScreen extends ConsumerStatefulWidget {
-  SignUpMnemonicScreen({super.key});
+  SignUpMnemonicScreen({super.key, this.isShowNext = true});
   static String get routeName => 'signupMnemonicScreen';
+  bool isShowNext;
+
   @override
   ConsumerState<SignUpMnemonicScreen> createState() =>
       _SignUpMnemonicScreenState();
@@ -39,23 +41,9 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
   List<String> mnemonicList = [];
 
   Future<void> _getMnemonic() async {
-    String get_mnemonic = await UserHelper().get_check_mnemonic();
-    setState(() {
-      mnemonic = get_mnemonic;
-      mnemonicList = mnemonic.split(' ');
-    });
-    fToast = FToast();
-    fToast.init(context);
-  }
-
-  _showToast(String msg) {
-    fToast.showToast(
-      child: CustomToast(
-        msg: msg,
-      ),
-      gravity: ToastGravity.BOTTOM,
-      toastDuration: Duration(seconds: 2),
-    );
+    mnemonic = await UserHelper().get_check_mnemonic();
+    mnemonicList = mnemonic.split(' ');
+    setState(() {});
   }
 
   @override
@@ -89,9 +77,9 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
             child: Container(
               height: constraints.maxHeight,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10.h),
                   Container(
                     padding: EdgeInsets.only(left: 20.w, bottom: 20.h),
                     child: Column(
@@ -100,7 +88,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         SizedBox(height: 16.h),
                         Text(
                           TR(context, '블록체인 연결을 위한\n복구문구를 보관하세요.'),
-                          style: typo24bold,
+                          style: typo24bold150,
                         ),
                         SizedBox(height: 16.h),
                         Text(
@@ -112,7 +100,6 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         // SizedBox(height: 56.h),
                       ]),
                   ),
-                  SizedBox(height: 10.h),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
                     child: Container(
@@ -128,30 +115,29 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
                           return Container(
-                              color: BG,
-                              child: Padding(
-                                padding: EdgeInsets.all(8.r),
-                                child: Stack(
-                                  children: [
-                                    Text(
-                                      '${index + 1}',
+                            color: BG,
+                            child: Padding(
+                              padding: EdgeInsets.all(5.r),
+                              child: Stack(
+                                children: [
+                                  Text(
+                                    '${index + 1}',
+                                    style:
+                                    typo14semibold.copyWith(color: GRAY_90),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      mnemonicList[index],
                                       style:
-                                      typo14semibold.copyWith(color: GRAY_90),
+                                      typo16medium.copyWith(color: GRAY_60),
                                     ),
-                                    Center(
-                                      child: Text(
-                                        mnemonicList[index],
-                                        style:
-                                        typo16medium.copyWith(color: GRAY_60),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ));
+                                  ),
+                                ],
+                              ),
+                            ));
                         },
                       ),
                     )),
-                  SizedBox(height: (constraints.maxHeight < 600) ? 10 : 16),
                   Center(
                     child: GestureDetector(
                       child: Container(
@@ -183,13 +169,12 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         await Clipboard.setData(ClipboardData(text: mnemonic));
                         final androidInfo = await DeviceInfoPlugin().androidInfo;
                         if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
-                          _showToast(TR(context, '문구가 복사되었습니다'));
+                          Fluttertoast.showToast(msg: TR(context, '문구가 복사되었습니다'));
                       },
                     ),
                   ),
-                  SizedBox(height: 40.h),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40.w),
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(
@@ -219,12 +204,13 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                       ),
                     )
                   ),
+                  SizedBox(height: 10),
                 ],
               ),
             )
           );
         }),
-        bottomNavigationBar: Padding(
+        bottomNavigationBar: widget.isShowNext ? Padding(
           padding: EdgeInsets.symmetric(vertical: 40.h),
           child: PrimaryButton(
             text: TR(context, '다음'),
@@ -236,7 +222,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
               Fluttertoast.showToast(msg: TR(context, '회원가입 완료'));
             },
           ),
-        ),
+        ) : null,
       ),
     );
   }

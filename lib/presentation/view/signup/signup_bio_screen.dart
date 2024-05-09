@@ -8,6 +8,8 @@ import 'package:larba_00/common/const/widget/SimpleCheckDialog.dart';
 import 'package:larba_00/common/const/widget/disabled_button.dart';
 import 'package:larba_00/common/const/widget/primary_button.dart';
 import 'package:larba_00/common/provider/language_provider.dart';
+import 'package:larba_00/common/provider/login_provider.dart';
+import 'package:larba_00/common/style/textStyle.dart';
 import 'package:larba_00/presentation/view/recover_wallet_complete_screen.dart';
 import 'package:larba_00/presentation/view/registComplete_screen.dart';
 import 'package:flutter/services.dart';
@@ -27,8 +29,9 @@ enum _SupportState {
 }
 
 class SignUpBioScreen extends ConsumerStatefulWidget {
-  SignUpBioScreen({super.key});
+  SignUpBioScreen({super.key, this.isShowNext = true});
   static String get routeName => 'signUpBioScreen';
+  bool isShowNext;
 
   @override
   ConsumerState createState() => _SignUpBioScreenState();
@@ -91,7 +94,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
       var androidStrings = AndroidAuthMessages(
         signInTitle: '생체인증 사용 동의',
         biometricHint: '지문',
-        cancelButton: '사용안함',
+        cancelButton: '닫기',
       );
 
       authenticated = await auth.authenticate(
@@ -138,6 +141,10 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
         _localAuthAgree = true;
       }
       LOG('----> authenticated result : $message');
+      ref.read(loginProvider).setBioIdentity(authenticated);
+      if (!widget.isShowNext && authenticated) {
+        Navigator.of(context).pop(true);
+      }
     });
   }
 
@@ -207,7 +214,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: Padding(
+        bottomNavigationBar: widget.isShowNext ? Padding(
           padding: EdgeInsets.symmetric(vertical: 40.h),
           child: PrimaryButton(
             text: TR(context, _localAuthAgree ? '다음' : '건너뛰기'),
@@ -217,7 +224,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
               Navigator.of(context).push(createAniRoute(SignUpMnemonicScreen()));
             },
           ),
-        ),
+        ) : null,
       ),
     );
   }

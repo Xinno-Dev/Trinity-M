@@ -41,18 +41,13 @@ class MarketViewModel {
 
   showProductList() {
     return SliverPadding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
       sliver: SliverList(
         delegate: SliverChildListDelegate(
         List.generate(prov.marketRepo.productList.length, (index) =>
           _contentItem(prov.marketRepo.productList[index])),
         ),
       ),
-      //     );
-      //   } else {
-      //     return showLoadingFull();
-      //   }
-      // }
     );
   }
 

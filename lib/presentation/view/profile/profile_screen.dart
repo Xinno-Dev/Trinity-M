@@ -39,26 +39,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   @override
-  void didChangeDependencies() {
-    // final loginProv = ref.read(loginProvider);
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (!loginProv.isLogin) {
-    //     Fluttertoast.showToast(msg: TR(context, '로그인이 필요한 서비스입니다.'));
-    //     Navigator.of(context).push(
-    //       createAniRoute(LoginScreen(isAppStart: false))).then((result) {
-    //         LOG('---> LoginScreen result : $result');
-    //         if (result == null) {
-    //           Future.delayed(Duration(milliseconds: 100)).then((_) {
-    //             loginProv.setMainPageIndex(0);
-    //           });
-    //         }
-    //     });
-    //   }
-    // });
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     return SafeArea(

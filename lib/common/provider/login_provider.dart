@@ -190,12 +190,32 @@ class LoginProvider extends ChangeNotifier {
   var inputPass   = List.generate(2, (index) => IS_DEV_MODE ? EX_TEST_PASS_00 : '');
 
   String? localLoginType;
-  String? userName;
+  String? socialName;
   String? socialId;
   String? emailVfCode;
 
   get userPass {
     return inputPass.first;
+  }
+
+  get userMail {
+    return STR(userInfo?.email);
+  }
+
+  get userId {
+    return accountName;
+  }
+
+  get userName {
+    return accountSubtitle;
+  }
+
+  get userIdentityYN {
+    return BOL(userInfo?.identityYN);
+  }
+
+  get userBioYN {
+    return BOL(userInfo?.bioIdentityYN);
   }
 
   refresh() {
@@ -204,14 +224,24 @@ class LoginProvider extends ChangeNotifier {
 
   init() {
     selectAccount = null;
-    userInfo = null;
-    userName = null;
-    socialId = null;
+    userInfo    = null;
+    socialName  = null;
+    socialId    = null;
   }
 
   setMaskStatus(bool status) {
     isShowMask = status;
     notifyListeners();
+  }
+
+  setBioIdentity(bool status) async {
+    if (isLogin) {
+      userInfo!.bioIdentityYN = status;
+      await UserHelper().setUser(bioIdentity: status ? 'y' : '');
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 
   // local에 있는 address 목록을 userInfo 에 추가 & 케싱 한다..
@@ -716,6 +746,33 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
+  // change user info..
+  Future<bool> setUserInfo(String passOrg, AddressModel info) async {
+    var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+    var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
+    var result = await eccImpl.addKeyPair(pass, nickId: inputNick);
+    LOG('--> setUserInfo : $inputNick / $passOrg => $result / $walletAddress');
+    if (result) {
+      await _refreshAccountList();
+      var uid     = STR(await UserHelper().get_uid());
+      var nickId  = Uri.encodeFull(inputNick);
+      var message = uid + nickId + walletAddress;
+      LOG('--> setUserInfo message : $uid + $nickId + $walletAddress');
+      var sig = await createSign(message);
+      var addResult = await apiService.setUserInfo(
+        walletAddress, sig, subTitle: info.subTitle, desc: info.description);
+      if (addResult == true) {
+        LOG('--> setUserInfo success !!');
+        notifyListeners();
+        return true;
+      } else {
+        // restore org address..
+        await removeAccountFromAddr(walletAddress);
+      }
+    }
+    return false;
+  }
+
   removeAccountFromAddr(String address) async {
     var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
     await eccImpl.removeKeyPair(address);
@@ -771,7 +828,7 @@ class LoginProvider extends ChangeNotifier {
   // passOrg : 실제로 입력 받은 패스워드 문자열..
   Future<bool> checkWalletPass(String passOrg) async {
     var keyEnc = await getAccountKey(passOrg: passOrg);
-    LOG('--> checkWalletPass result : $passOrg');
+    LOG('--> checkWalletPass result : $keyEnc');
     return keyEnc != null;
   }
 

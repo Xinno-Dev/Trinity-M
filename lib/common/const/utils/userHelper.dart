@@ -69,6 +69,7 @@ class UserHelper {
     String? vfCode,
     String? address,
     String? uid,
+    String? bioIdentity,
 
     String userID = '',
     String publickey = '',
@@ -126,6 +127,15 @@ class UserHelper {
       }
     }
 
+    if (bioIdentity != null) {
+      LOG('--> setUser BIO_IDENTITY_KEY : ${BIO_IDENTITY_KEY + userKey}');
+      if (bioIdentity.isNotEmpty) {
+        await storage.write(key: BIO_IDENTITY_KEY, value: bioIdentity);
+      } else {
+        await storage.delete(key: BIO_IDENTITY_KEY);
+      }
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     //
     // private user info..
@@ -148,7 +158,6 @@ class UserHelper {
     };
 
     if (address != null) {
-      LOG('--> setUser ADDRESS_KEY : ${ADDRESS_KEY + userKey}');
       if (address.isNotEmpty) {
         await storage.write(key: ADDRESS_KEY + userKey, value: address);
       } else {

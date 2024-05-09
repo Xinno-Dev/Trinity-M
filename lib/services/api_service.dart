@@ -338,8 +338,8 @@ class ApiService {
             'Authorization': 'Bearer $jwt',
           },
           body: jsonEncode({
-            'address'     : address,
             'sig'         : sig,
+            'address'     : address,
             'subTitle'    : subTitle ?? '',
             'description' : desc ?? '',
           })
@@ -384,6 +384,47 @@ class ApiService {
           return resultJson['result'];
         }
       }
+    } catch (e) {
+      LOG('--> getUserInfo error : $e');
+    }
+    return null;
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  유저 정보 변경
+  //  /users/{uid}
+  //
+
+  Future<bool?> setUserInfo(String address, String sig, {
+    String? subTitle,
+    String? desc,
+  }) async {
+    try {
+      var jwt = await AesManager().localJwt;
+      if (jwt == null) {
+        return null;
+      }
+      LOG('--> getUserInfo : $jwt');
+      final response = await http.post(
+        Uri.parse(httpUrl + '/users/info'),
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwt',
+        },
+        body: jsonEncode({
+          'sig'         : sig,
+          'address'     : address,
+          'subTitle'    : subTitle ?? '',
+          'description' : desc ?? '',
+        })
+      );
+      LOG('--> getUserInfo response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        return true;
+      }
+      return false;
     } catch (e) {
       LOG('--> getUserInfo error : $e');
     }

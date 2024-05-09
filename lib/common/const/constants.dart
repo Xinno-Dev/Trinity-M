@@ -25,6 +25,7 @@ const String ACCOUNT_KEY = 'ACCOUNT_KEY';
 const String LOGIN_TYPE_KEY = 'LOGIN_TYPE_KEY';
 const String LOGIN_INFO_KEY = 'LOGIN_INFO_KEY';
 const String USERID_KEY = 'USERID_KEY';
+const String BIO_IDENTITY_KEY = 'BIO_IDENTITY_KEY';
 const String UID_KEY = 'UID_KEY';
 const String PUB_KEY = 'PUB_KEY';
 const String FCM_KEY = 'FCM_KEY';

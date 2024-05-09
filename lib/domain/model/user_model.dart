@@ -25,6 +25,8 @@ class UserModel {
   String?     uid;            // user id from login
   int?        status;         // status 1: login done, 0: login not yet..
   LoginType?  loginType;      // login type ['kakao', 'email'..]
+  bool?   identityYN;     // 본인인증 여부
+  bool?   bioIdentityYN;  // 생체인증 여부
 
   String? mnemonic;       // main mnemonic
   String? keyPair;        // main wallet keyPair
@@ -50,6 +52,8 @@ class UserModel {
     this.uid,
     this.status,
     this.loginType,
+    this.identityYN,
+    this.bioIdentityYN,
 
     this.mnemonic,
     this.keyPair,
@@ -65,6 +69,7 @@ class UserModel {
     this.deviceId,
     this.deviceType,
     this.addressList,
+
 
     this.createTime,
     this.loginTime,

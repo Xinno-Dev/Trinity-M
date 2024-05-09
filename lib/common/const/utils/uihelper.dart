@@ -329,6 +329,21 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
   );
 }
 
+defaultAppBar(String title) {
+  return AppBar(
+    title: Text(title),
+    titleTextStyle: typo18bold,
+    titleSpacing: 0,
+    centerTitle: true,
+    backgroundColor: WHITE,
+    surfaceTintColor: WHITE,
+  );
+}
+
+grayDivider() {
+  return Divider(color: GRAY_10);
+}
+
 getImageHeight(String? path) async {
   if (path != null) {
     var data = await rootBundle.load(path);

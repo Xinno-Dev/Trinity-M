@@ -169,7 +169,7 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
         centerTitle: true,
         title: Text(
           TR(context, '생체인증 사용동의'),
-          style: typo14bold,
+          style: typo16bold,
         ),
         elevation: 0,
       ),

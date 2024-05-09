@@ -16,12 +16,13 @@ import '../../../domain/viewModel/pass_view_model.dart';
 import 'signup_terms_screen.dart';
 
 class LoginPassScreen extends ConsumerStatefulWidget {
-  const LoginPassScreen({Key? key}) : super(key: key);
+  LoginPassScreen({Key? key, this.isFailBack = false}) : super(key: key);
   static String get routeName => 'loginPassScreen';
+  bool isFailBack;
 
   @override
   ConsumerState createState() =>
-    _LoginPassScreenState(PassViewModel(PassType.signIn));
+    _LoginPassScreenState(PassViewModel(PassType.signIn), isFailBack);
 }
 
 class CloudPassScreen extends ConsumerStatefulWidget {
@@ -30,13 +31,14 @@ class CloudPassScreen extends ConsumerStatefulWidget {
 
   @override
   ConsumerState createState() =>
-    _LoginPassScreenState(PassViewModel(PassType.cloudDown));
+      _LoginPassScreenState(PassViewModel(PassType.cloudDown), false);
 }
 
 class _LoginPassScreenState extends ConsumerState {
-  _LoginPassScreenState(this.viewModel);
+  _LoginPassScreenState(this.viewModel, this.isFailBack);
   final passInputController = TextEditingController();
   PassViewModel viewModel;
+  bool isFailBack;
   var inputPass = '';
 
   @override
@@ -115,6 +117,10 @@ class _LoginPassScreenState extends ConsumerState {
                   loginProv.checkWalletPass(inputPass).then((result) async {
                     if (result) {
                       Navigator.of(context).pop(inputPass);
+                    } else if (isFailBack) {
+                      Navigator.of(context).pop();
+                    } else {
+                      Fluttertoast.showToast(msg: TR(context, '잘못된 비밀번호입니다.'));
                     }
                   });
                 }
