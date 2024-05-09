@@ -41,7 +41,7 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
-    prov.context = context;
+    _viewModel.context = context;
     return SafeArea(
       top: false,
       child: CustomScrollView(

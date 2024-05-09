@@ -14,16 +14,16 @@ import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/viewModel/market_view_model.dart';
 import 'product_buy_screen.dart';
 
-class ProductStoreScreen extends ConsumerStatefulWidget {
-  ProductStoreScreen(this.product, {super.key});
-  static String get routeName => 'productStoreScreen';
+class SellerDetailScreen extends ConsumerStatefulWidget {
+  SellerDetailScreen(this.product, {super.key});
+  static String get routeName => 'sellerDetailScreen';
   final ProductModel product;
 
   @override
-  ConsumerState<ProductStoreScreen> createState() => _ProductStoreScreenState();
+  ConsumerState<SellerDetailScreen> createState() => _ProductStoreScreenState();
 }
 
-class _ProductStoreScreenState extends ConsumerState<ProductStoreScreen> {
+class _ProductStoreScreenState extends ConsumerState<SellerDetailScreen> {
   late MarketViewModel _viewModel;
 
   @override
@@ -36,7 +36,7 @@ class _ProductStoreScreenState extends ConsumerState<ProductStoreScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
-    prov.context = context;
+    _viewModel.context = context;
     return SafeArea(
       top: false,
       child: Scaffold(

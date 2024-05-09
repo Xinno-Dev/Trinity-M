@@ -2,7 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:larba_00/common/const/utils/convertHelper.dart';
 import 'package:larba_00/common/const/widget/primary_button.dart';
 import 'package:larba_00/domain/model/product_model.dart';
-import 'package:larba_00/domain/repository/product_repository.dart';
+import 'package:larba_00/domain/repository/market_repository.dart';
 import 'package:larba_00/presentation/view/market/product_store_screen.dart';
 import 'package:larba_00/services/api_service.dart';
 
@@ -18,8 +18,7 @@ final marketProvider = ChangeNotifierProvider<MarketProvider>((_) {
 
 class MarketProvider extends ChangeNotifier {
   static final _singleton  = MarketProvider._internal();
-  static final _marketRepo = ProductRepository();
-  static final _apiService = ApiService();
+  static final _marketRepo = MarketRepository();
 
   factory MarketProvider() {
     _marketRepo.init();
@@ -28,13 +27,17 @@ class MarketProvider extends ChangeNotifier {
   MarketProvider._internal();
 
   ProductModel? selectProduct;
-  BuildContext? context;
 
   var selectCategory = 0;
   var selectDetail = 0;
+  var optionIndex = 0;
 
   get marketRepo {
     return _marketRepo;
+  }
+
+  get detailPic {
+    return selectProduct?.optionList?[optionIndex].img;
   }
 
   List<String> get categoryList {
@@ -45,7 +48,9 @@ class MarketProvider extends ChangeNotifier {
     return _marketRepo.productList;
   }
 
-  updateProductList() async {
+  setOptionIndex(int index) {
+    optionIndex = index;
+    notifyListeners();
   }
 
   setCategory(int index) {

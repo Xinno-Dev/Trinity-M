@@ -329,11 +329,14 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
   );
 }
 
-getImageHeight(String path) async {
-  var data  = await rootBundle.load(path);
-  var codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
-  var fi = await codec.getNextFrame();
-  return Size(fi.image.width.toDouble(), fi.image.height.toDouble());
+getImageHeight(String? path) async {
+  if (path != null) {
+    var data = await rootBundle.load(path);
+    var codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+    var fi = await codec.getNextFrame();
+    return Size(fi.image.width.toDouble(), fi.image.height.toDouble());
+  }
+  return Size.zero;
 }
 
 Future<String?> showInputDialog(BuildContext context, String title, {

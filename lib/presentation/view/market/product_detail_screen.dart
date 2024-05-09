@@ -7,6 +7,7 @@ import 'package:larba_00/common/provider/market_provider.dart';
 import 'package:larba_00/domain/model/product_model.dart';
 
 import '../../../common/const/constants.dart';
+import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
@@ -30,7 +31,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   @override
   void initState() {
     final prov = ref.read(marketProvider);
+    prov.optionIndex = 0;
     _viewModel = MarketViewModel(prov);
+    LOG('---> reset index to 0');
     super.initState();
   }
 

@@ -32,7 +32,7 @@ import '../../data/repository/ecc_repository_impl.dart';
 import '../../domain/model/account_model.dart';
 import '../../domain/model/address_model.dart';
 import '../../domain/model/ecckeypair.dart';
-import '../../domain/repository/product_repository.dart';
+import '../../domain/repository/market_repository.dart';
 import '../../domain/usecase/ecc_usecase_impl.dart';
 import '../../presentation/view/authpassword_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:larba_00/domain/model/seller_model.dart';
 import '../../common/const/utils/convertHelper.dart';
 
 part 'product_item_model.g.dart';
@@ -8,37 +9,49 @@ enum CD_ITEM_ST {
   deleted,
 }
 
+enum CD_ITEM_TYPE {
+  ticket,
+  art,
+}
+
 @JsonSerializable(
   includeIfNull: false,
   explicitToJson: true,
 )
 class ProductItemModel {
-  String      id;
-  CD_ITEM_ST  status;       // 아이템 상태
-  String      contAddr;     // contract 주소
-  String      tokenId;      // token id
-  String      pic;          // 이미지(메인)
-  String?     picThumb;     // 이미지(리스트)
-  int         amount;       // token amount
-  int?        index;
-  String      ownerAddr;    // 현 소유자 주소
-  String?     originItemId; // 거래체결, 전송 등으로 상품이 새로 생성된 경우, 삭제된 이전 상품ID
-  String?     txHash;       // 생성 transaction hash
-  DateTime?   createTime;
-  DateTime?   updateTime;
+  String?   itemId;
+  String?   itemType;     // CD_ITEM_TYPE
+  String?   address;
+  String?   img;          // 부가상품 이미지
+  String?   name;
+  String?   desc;         // 거래체결, 전송 등으로 상품이 새로 생성된 경우, 삭제된 이전 상품ID
+  String?   desc2;        // 생성 transaction hash
+  String?   tokenId;      // 토큰 ID
+  String?   chainId;
+  String?   type;
+  String?   symbol;
+  String?   totalSupply;  // 총 발행량
+
+  SellerModel?  issuer;
+
+  DateTime? createTime;
+  DateTime? updateTime;
 
   ProductItemModel({
-    required this.id,
-    required this.status,
-    required this.contAddr,
-    required this.tokenId,
-    required this.pic,
-    required this.amount,
-    required this.ownerAddr,
-    this.index,
-    this.picThumb,
-    this.originItemId,
-    this.txHash,
+    this.itemId,
+    this.itemType,
+    this.address,
+    this.img,
+    this.name,
+    this.desc,
+    this.desc2,
+    this.tokenId,
+    this.chainId,
+    this.type,
+    this.symbol,
+    this.totalSupply,
+    this.issuer,
+
     this.createTime,
     this.updateTime,
   });

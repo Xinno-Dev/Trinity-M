@@ -51,9 +51,13 @@ class MarketViewModel {
   }
 
   showProductDetail([var isShowSeller = true]) {
+    final imageSize = MediaQuery.of(context).size.width;
+    // LOG('--> detailPic : ${prov.optionIndex} / ${prov.selectProduct?.optionList?.length}');
     return Column(
       children: [
-        Image.asset('assets/samples/${prov.selectProduct?.pic}'),
+        if (prov.detailPic != null)
+          Image.asset('assets/samples/${prov.detailPic}',
+            width: imageSize, height: imageSize, fit: BoxFit.fitWidth),
         Container(
           padding: EdgeInsets.all(15),
           margin: EdgeInsets.only(bottom: 20),
@@ -73,7 +77,7 @@ class MarketViewModel {
 
   showProductInfo() {
     return FutureBuilder(
-      future: getImageHeight('assets/samples/${prov.selectProduct!.externUrl}'),
+      future: getImageHeight('assets/samples/${prov.selectProduct!.detailPic}'),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var exSize = snapshot.data as Size;
@@ -85,8 +89,8 @@ class MarketViewModel {
                     ((prov.selectProduct?.optionList?.length ?? 0) % 4 > 0 ? 1 : 0);
                 final listHeight = itemHeight * itemLength + 5;
                 final detailHeight = exSize.height * (constraints.maxWidth / exSize.width);
-                LOG('---> listHeight : $listHeight / $itemHeight / $itemLength /'
-                    ' $detailHeight (${constraints.maxWidth / exSize.width} / ${exSize.width})');
+                // LOG('---> listHeight : $listHeight / $itemHeight / $itemLength /'
+                //     ' $detailHeight (${constraints.maxWidth / exSize.width} / ${exSize.width})');
                 return DefaultTabController(
                   initialIndex: prov.selectDetail,
                   length: 2,
@@ -141,7 +145,7 @@ class MarketViewModel {
   }
 
   showOptionTab() {
-    LOG('--> showOptionTab : $prov.selectProduct');
+    // LOG('--> showOptionTab : $prov.selectProduct');
     if (prov.selectProduct?.optionList == null) {
       return Container(
         height: 100,
@@ -164,7 +168,10 @@ class MarketViewModel {
             return SizedBox(
               // width: itemHeight,
               // height: itemHeight,
-              child: _optionListItem(prov.selectProduct!.optionList![index]),
+              child: _optionListItem(
+                prov.selectProduct!.optionList![index],
+                index,
+              ),
             );
           }
       ),
@@ -172,7 +179,7 @@ class MarketViewModel {
   }
 
   showDetailTab() {
-    if (prov.selectProduct?.externUrl == null) {
+    if (prov.selectProduct?.infoImg == null) {
       return Container(
         height: 100,
         child: Center(
@@ -183,7 +190,7 @@ class MarketViewModel {
     return Container(
       alignment: Alignment.topCenter,
       child: Image.asset(
-          'assets/samples/${prov.selectProduct?.externUrl}', fit: BoxFit.fitWidth),
+          'assets/samples/${prov.selectProduct?.infoImg}', fit: BoxFit.fitWidth),
     );
   }
 
@@ -240,18 +247,23 @@ class MarketViewModel {
   }
 
   showStoreDetail(ProductModel item) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 20,
-      ),
-      child: Column(
-        children: [
-          _contentStoreTopBar(item),
-          _contentStoreDescBox(item,
-              padding: EdgeInsets.symmetric(vertical: 20)),
-          _contentFollowButton(),
-        ],
-      ),
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(
+            vertical: 20.w,
+            horizontal: 30.w
+          ),
+          child: Column(
+            children: [
+              _contentSellerTopBar(item),
+              _contentSellerDescBox(item,
+                  padding: EdgeInsets.symmetric(vertical: 20)),
+            ],
+          ),
+        ),
+        _contentFollowButton(),
+      ],
     );
   }
 
@@ -308,7 +320,7 @@ class MarketViewModel {
                 _contentSellerBar(item),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
-                child: Image.asset('assets/samples/${item.picThumb}',
+                child: Image.asset('assets/samples/${item.repImg}',
                     height: 220, fit: BoxFit.fitHeight),
               ),
               _contentTitleBar(item),
@@ -358,20 +370,22 @@ class MarketViewModel {
           padding: padding,
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.white,
-                child: Image.asset('assets/samples/${item.sellerPic}'),
-              ),
-              SizedBox(width: 10),
+              if (item.sellerImage != null)...[
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.white,
+                  child: Image.asset('assets/samples/${item.sellerImage}'),
+                ),
+                SizedBox(width: 10),
+              ],
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(item.sellerName, style: typo16bold),
-                    if (item.sellerNameEx != null)...[
-                      Text(item.sellerNameEx!, style: typo14normal),
+                    if (item.sellerSubtitle != null)...[
+                      Text(item.sellerSubtitle!, style: typo14normal),
                     ]
                   ],
                 ),
@@ -381,27 +395,27 @@ class MarketViewModel {
         );
       },
       openBuilder: (context, builder) {
-        return ProductStoreScreen(item);
+        return SellerDetailScreen(item);
       },
     );
   }
 
-  _contentStoreTopBar(ProductModel item, {EdgeInsets? padding}) {
+  _contentSellerTopBar(ProductModel item, {EdgeInsets? padding}) {
     return Container(
       padding: padding,
       child: Row(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(80),
-            child: Image.asset('assets/samples/${item.sellerPic}'),
+            child: Image.asset('assets/samples/${item.sellerImage}'),
           ),
           SizedBox(width: 20),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _contentFollowBox(TR(context!, '팔로워'), STR(item.sellerFollower)),
-                _contentFollowBox(TR(context!, '팔로잉'), STR(item.sellerFollowing)),
+                _contentFollowBox(TR(context, '팔로워'), CommaIntText(item.sellerFollower)),
+                _contentFollowBox(TR(context, '팔로잉'), CommaIntText(item.sellerFollowing)),
               ],
             ),
           )
@@ -410,10 +424,10 @@ class MarketViewModel {
     );
   }
 
-  _contentStoreDescBox(ProductModel item, {EdgeInsets? padding}) {
+  _contentSellerDescBox(ProductModel item, {EdgeInsets? padding}) {
     return Container(
       padding: padding,
-      child: Text(STR(item.sellerDesc), style: typo14normal),
+      child: Text(STR(item.sellerDesc), style: typo14normal, textAlign: TextAlign.center),
     );
   }
 
@@ -434,11 +448,11 @@ class MarketViewModel {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(item.title, style: typo14medium),
+          Text(STR(item.name), style: typo14medium),
           Row(
             children: [
-              Text(CommaIntText(INT(item.price).toString()), style: typo18bold),
-              Text(' ${item.currency}', style: typo14medium),
+              Text(CommaIntText(INT(item.itemPrice).toString()), style: typo18bold),
+              Text(' ${item.itemPrice}', style: typo14medium),
               SizedBox(width: 10),
               Text('[수량 ${item.amountText}]', style: typo14medium),
             ],
@@ -455,16 +469,21 @@ class MarketViewModel {
     );
   }
 
-  _optionListItem(ProductItemModel option, {EdgeInsets? padding}) {
-    return Container(
-      padding: padding,
-      child: Stack(
-        children: [
-          SizedBox.expand(
-            child: Image.asset('assets/samples/${option.picThumb}', fit: BoxFit.cover),
-          ),
-          Text(STR(option.id), style: typo10regular100),
-        ],
+  _optionListItem(ProductItemModel option, int index, {EdgeInsets? padding}) {
+    return InkWell(
+      onTap: () {
+        prov.setOptionIndex(index);
+      },
+      child: Container(
+        padding: padding,
+        child: Stack(
+          children: [
+            SizedBox.expand(
+              child: Image.asset('assets/samples/${option.img}', fit: BoxFit.cover),
+            ),
+            Text(STR(option.itemId), style: typo10regular100),
+          ],
+        ),
       ),
     );
   }
@@ -481,7 +500,7 @@ class MarketViewModel {
               margin: EdgeInsets.only(right: 15),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.asset('assets/samples/${item.pic}'),
+                child: Image.asset('assets/samples/${item.repImg}'),
               )
           ),
           Expanded(
@@ -489,18 +508,18 @@ class MarketViewModel {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 5),
-                Text(TR(context!, 'TICKET'), style: typo14bold),
-                if (item.edition != null)...[
-                  Row(
-                    children: [
-                      Text(TR(context!, '에디션'), style: typo14medium),
-                      Spacer(),
-                      Text(TR(context!, item.edition!), style: typo14medium),
-                    ],
-                  )
-                ],
+                Text(TR(context, 'TICKET'), style: typo14bold),
+                // if (item.edition != null)...[
+                //   Row(
+                //     children: [
+                //       Text(TR(context, '에디션'), style: typo14medium),
+                //       Spacer(),
+                //       Text(TR(context, item.edition!), style: typo14medium),
+                //     ],
+                //   )
+                // ],
                 Divider(),
-                Text(item.title, style: typo14normal.copyWith(height: 1.0)),
+                Text(STR(item.name), style: typo14normal.copyWith(height: 1.0)),
                 SizedBox(height: 5),
               ],
             ),
@@ -525,7 +544,7 @@ class MarketViewModel {
             isBorderShow: true,
             isSmallButton: true,
             textStyle: typo14bold.copyWith(color: GRAY_80),
-            text: TR(context!, '옵션 선택'),
+            text: TR(context, '옵션 선택'),
           ),
           Spacer(),
           Text(item.priceText, style: typo14bold),
@@ -545,7 +564,7 @@ class MarketViewModel {
               onTap: () {
 
               },
-              text: TR(context!, '팔로우'),
+              text: TR(context, '팔로우'),
             )
         ),
       ],
