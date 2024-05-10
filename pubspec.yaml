@@ -48,10 +48,8 @@ dependencies:
   flutter_riverpod: ^2.1.3
   logger: any #for logging purpose
   no_context_navigation: ^2.1.2
-  flutter_svg: ^2.0.9
   flutter_native_splash: ^2.2.17
   shared_preferences: ^2.0.17
-  cached_network_image: ^3.3.0
   logging: ^1.0.0
   logging_appenders: ^1.0.0
   local_auth: ^2.2.0
@@ -87,6 +85,12 @@ dependencies:
   flutter_keyboard_visibility: ^6.0.0
   dropdown_button2: ^2.3.9
   cupertino_icons: ^1.0.2
+
+  # image..
+  image_picker: ^1.1.1
+  image_cropper: ^5.0.0
+  cached_network_image: ^3.3.0
+  flutter_svg: ^2.0.9
 
   # email..
   flutter_email_sender: ^6.0.3

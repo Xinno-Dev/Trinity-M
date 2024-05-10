@@ -102,36 +102,8 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
               margin: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
                 children: [
-                  _buildMenuButton('복구단어로 복구', () {
-                    Navigator.of(context).push(
-                      createAniRoute(RecoverWalletInputScreen())).then((mnemonic) {
-                      LOG('--> RecoverWalletInputScreen result : $mnemonic');
-                      if (STR(mnemonic).isNotEmpty) {
-                        showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
-                        loginProv.recoverUser(mnemonic: mnemonic).then((result) {
-                          LOG('--> recoverUser mn result : $result');
-                          _moveToMainProfile();
-                        });
-                      }
-                    });
-                  }),
-                  _buildMenuButton('클라우드로 복구', () {
-                    GoogleService.downloadKeyFromGoogleDrive(context).then((rwfStr) {
-                      LOG('---> downloadKeyFromGoogleDrive rwfStr : $rwfStr');
-                      if (STR(rwfStr).isNotEmpty) {
-                        Navigator.of(context).push(
-                          createAniRoute(CloudPassScreen())).then((pass) async {
-                          LOG('---> CloudPassScreen pass : $pass');
-                          var mnemonic = await RWFExportHelper.decrypt(pass, rwfStr);
-                          loginProv.recoverUser(mnemonic: mnemonic).then((result) {
-                            LOG('--> recoverUser mn result : $result');
-                            _moveToMainProfile();
-                          });
-                          // _recoverRwfKey(pass, rwfStr);
-                        });
-                      }
-                    });
-                  }),
+                  _buildMenuButton('복구단어로 복구', startRecoverMnemonic),
+                  _buildMenuButton('클라우드로 복구', startRecoverCloud),
                 ],
               )
             ),
@@ -139,6 +111,53 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
         )
       ),
     );
+  }
+
+  // 니모닉으로 계정 복구..
+  startRecoverMnemonic() {
+    final loginProv = ref.read(loginProvider);
+    Navigator.of(context).push(
+      createAniRoute(RecoverWalletInputScreen())).then((mnemonic) {
+      LOG('--> RecoverWalletInputScreen result : $mnemonic');
+      if (STR(mnemonic).isNotEmpty) {
+        showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
+        loginProv.recoverUser(mnemonic: mnemonic,
+          onError: (type, code) {
+            hideLoadingDialog();
+            showLoginErrorDialog(context, type, code);
+            UserHelper().clearUser();
+          }).then((result) {
+            LOG('--> recoverUser mn result : $result');
+            _moveToMainProfile();
+        });
+      }
+    });
+  }
+
+  // 클라우드로 계정 복구..
+  startRecoverCloud() {
+    final loginProv = ref.read(loginProvider);
+    GoogleService.downloadKeyFromGoogleDrive(context).then((rwfStr) {
+      if (STR(rwfStr).isNotEmpty) {
+        Navigator.of(context).push(
+          createAniRoute(CloudPassScreen())).then((pass) async {
+          LOG('--> CloudPassScreen result : $pass');
+          if (STR(pass).isNotEmpty) {
+            showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
+            var mnemonic = await RWFExportHelper.decrypt(pass, rwfStr);
+            loginProv.recoverUser(mnemonic: mnemonic,
+              onError: (type, code) {
+                hideLoadingDialog();
+                showLoginErrorDialog(context, type, code);
+                UserHelper().clearUser();
+              }).then((result) {
+                LOG('--> recoverUser mn result : $result');
+                _moveToMainProfile();
+            });
+          }
+        });
+      }
+    });
   }
 
   _recoverRwfKey(String pass, String rwfStr) async {
@@ -173,6 +192,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
     // }
   }
 
+  // 프로필 화면으로 이동..
   _moveToMainProfile() {
     hideLoadingDialog();
     final loginProv = ref.read(loginProvider);

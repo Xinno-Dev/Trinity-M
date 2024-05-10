@@ -34,8 +34,7 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
 
   @override
   void initState() {
-    final prov = ref.read(marketProvider);
-    _viewModel = MarketViewModel(prov);
+    _viewModel = MarketViewModel();
     super.initState();
   }
 

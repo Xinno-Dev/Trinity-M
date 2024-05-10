@@ -359,7 +359,11 @@ Future<String?> showInputDialog(BuildContext context, String title, {
   String? hintText,
   String? okText,
   String? cancelText,
-  int maxLength = 30
+  int maxLine = 1,
+  int maxLength = 30,
+  TextInputAction? textInputAction,
+  TextInputType? textInputType,
+  TextAlign? textAlign,
 }) async {
   var _focusNode = FocusNode();
   var _textEditingController = TextEditingController(text: defaultText);
@@ -397,11 +401,14 @@ Future<String?> showInputDialog(BuildContext context, String title, {
                       //   FilteringTextInputFormatter(RegExp('[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9| _-]'), allow: true)
                       // ],
                       maxLength: maxLength,
-                      maxLines: 1,
+                      maxLines: maxLine,
+                      textInputAction: textInputAction,
+                      textInputType: textInputType,
+                      textAlign: textAlign,
                     ),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   Row(
                     children: [
@@ -457,6 +464,15 @@ showLoginErrorTextDialog(BuildContext context, String text) async {
 }
 
 showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) async {
+  var errorText1 = '';
+  var errorText2 = '';
+  if (type == LoginErrorType.code && STR(text).isNotEmpty) {
+    var textList = getLoginErrorCodeText(text!);
+    if (textList != null) {
+      errorText1 = textList[0];
+      errorText2 = textList[1];
+    }
+  }
   await showDialog<void>(
     context: context,
     builder: (BuildContext context) =>
@@ -466,7 +482,7 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(12.0))),
         content: Container(
-          height: 120.h,
+          height: errorText1.isNotEmpty ? 150.h : 120.h,
           constraints: BoxConstraints(
             minWidth: 400.w,
           ),
@@ -478,14 +494,25 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
                   'assets/svg/icon_warning.svg',
                   width: 40.r, height: 40.r),
               SizedBox(height: 15.h),
-              Text(type.errorText,
+              if (type == LoginErrorType.code)...[
+                Text(errorText1,
+                    style: typo16semibold,
+                    textAlign: TextAlign.center),
+                SizedBox(height: 10),
+                Text(errorText2,
+                    style: typo14normal.copyWith(color: SECONDARY_90),
+                    textAlign: TextAlign.center),
+              ],
+              if (type != LoginErrorType.code)...[
+                Text(type.errorText,
                   style: typo16semibold,
                   textAlign: TextAlign.center),
-              if (text != null)...[
-                SizedBox(height: 10.h),
-                Text(text,
-                    style: typo14normal,
-                    textAlign: TextAlign.center),
+                if (STR(text).isNotEmpty)...[
+                  SizedBox(height: 10.h),
+                  Text(STR(text),
+                      style: typo14normal,
+                      textAlign: TextAlign.center),
+                ],
               ]
             ],
           ),
@@ -509,4 +536,12 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
         ],
       ),
   );
+}
+
+getLoginErrorCodeText(String codeText) {
+  switch(codeText) {
+    case '__invalid_signature__':
+      return ['잘못된 서명입니다.', '복구한 계정일 경우,\n복구파일 or 복구단어를 확인해 주세요.'];
+  }
+  return null;
 }

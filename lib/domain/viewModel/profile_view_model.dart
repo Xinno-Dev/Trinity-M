@@ -1,10 +1,20 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:auto_size_text_plus/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:larba_00/common/const/utils/userHelper.dart';
+import 'package:larba_00/common/const/widget/dialog_utils.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
+import 'package:larba_00/domain/model/account_model.dart';
+import 'package:larba_00/domain/model/user_model.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as IMG;
 
 import '../../common/common_package.dart';
 import '../../common/const/constants.dart';
@@ -12,7 +22,9 @@ import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/rwfExportHelper.dart';
 import '../../common/const/utils/uihelper.dart';
+import '../../common/const/widget/image_widget.dart';
 import '../../common/const/widget/primary_button.dart';
+import '../../common/provider/firebase_provider.dart';
 import '../../presentation/view/main_screen.dart';
 import '../../presentation/view/profile/my_info_screen.dart';
 import '../../presentation/view/profile/profile_Identity_screen.dart';
@@ -21,45 +33,32 @@ import '../../services/google_service.dart';
 import '../model/address_model.dart';
 
 class ProfileViewModel {
-  factory ProfileViewModel([LoginProvider? provider]) {
-    if (provider != null) {
-      _singleton.loginProv = provider;
-    }
+  factory ProfileViewModel() {
     return _singleton;
   }
   static final _singleton = ProfileViewModel._internal();
   ProfileViewModel._internal();
 
-  late LoginProvider loginProv;
+  final loginProv = LoginProvider();
+  final fireProv  = FirebaseProvider();
   late BuildContext context;
 
-  final profileSize = 100.0;
+  final profileSize = Size(100.0, 100.0);
+  AddressModel? accountOrg;
 
   get accountPic {
     final account  = loginProv.account;
     final userInfo = loginProv.userInfo;
-    if (account?.pic != null) {
-      LOG('---> account?.pic : ${account?.pic}');
-      if (account!.pic!.contains('https:')) {
-        return CachedNetworkImage(imageUrl: account.pic!, width: profileSize.r, height: profileSize.r);
-      }
-      return Image.asset(account.pic!, width: profileSize.r, height: profileSize.r);
+    if (account?.image != null) {
+      return showImage(account!.image!, profileSize);
     }
     if (userInfo?.pic != null) {
-      LOG('---> userInfo?.pic : ${userInfo?.pic}');
-      if (userInfo!.pic!.contains('https:')) {
-        return CachedNetworkImage(imageUrl: userInfo.pic!, width: profileSize.r, height: profileSize.r);
-      }
-      return Image.asset(userInfo.pic!, width: profileSize.r, height: profileSize.r);
+      return showImage(userInfo!.pic!, profileSize);
     }
     if (userInfo?.picThumb != null) {
-      LOG('---> userInfo?.picThumb : ${userInfo?.picThumb}');
-      if (userInfo!.picThumb!.contains('https:')) {
-        return CachedNetworkImage(imageUrl: userInfo.picThumb!, width: profileSize.r, height: profileSize.r);
-      }
-      return userInfo.picThumb;
+      return showImage(userInfo!.picThumb!, profileSize);
     }
-    return Icon(Icons.account_circle, size: profileSize.r, color: GRAY_30);
+    return Icon(Icons.account_circle, size: profileSize.height, color: GRAY_30);
   }
 
   getPageTitle(BuildContext context) {
@@ -76,8 +75,8 @@ class ProfileViewModel {
               hideProfileSelectBox();
             } else {
               showProfileSelectBox(
-                  onSelect: _selectAccount,
-                  onAdd: _startAccountAdd);
+                onSelect: _selectAccount,
+                onAdd: _startAccountAdd);
             }
           },
           child: Container(
@@ -129,12 +128,12 @@ class ProfileViewModel {
                         )
                       ],
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 15),
                     Text(loginProv.accountName, style: typo18bold),
                     if (loginProv.accountSubtitle.isNotEmpty)
-                      Text(loginProv.accountSubtitle, style: typo14semibold),
-                    SizedBox(height: 5),
-                    Text(loginProv.accountMail, style: typo14regular),
+                      Text(loginProv.accountSubtitle, style: typo14normal, maxLines: 1, overflow: TextOverflow.fade),
+                    SizedBox(height: 10),
+                    Text(loginProv.accountMail, style: typo14semibold),
                   ],
                 ),
               ),
@@ -204,8 +203,8 @@ class ProfileViewModel {
     if (loginProv.userInfo != null) {
       return Column(
         children: [
-          _profileTopBar(),
-          _profileDescription(padding: EdgeInsets.symmetric(vertical: 25)),
+          _profileTopBar(padding: EdgeInsets.only(bottom: 20)),
+          _profileDescription(padding: EdgeInsets.only(bottom: 30)),
           _profileButtonBox(),
         ],
       );
@@ -315,7 +314,7 @@ class ProfileViewModel {
       return Container(
         child: Row(
           children: [
-            Text(TR(context, STR(item[0])), style: typo16regular),
+            Text(TR(context, STR(item[0])), style: typo16regular, maxLines: 2),
             Spacer(),
             if (STR(item[1]).isNotEmpty)...[
               if (STR(item[1]) != 'on' && STR(item[1]) != 'off')
@@ -358,7 +357,7 @@ class ProfileViewModel {
               height: iconSize,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(iconSize),
-                child: item.pic != null ? Image.asset(item.pic!) :
+                child: item.image != null ? showImage(item.image!, Size(iconSize, iconSize)) :
                 Icon(Icons.account_circle, size: iconSize, color: GRAY_40),
               ),
             ),
@@ -386,10 +385,47 @@ class ProfileViewModel {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(profileSize.r),
-            child: accountPic,
-          ),
+          SizedBox(
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(profileSize.height.r),
+                  child: accountPic,
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(50),
+                    onTap: () {
+                      showImagePicker().then((data) {
+                        if (data != null) {
+                          JSON imageInfo = {
+                            'id': loginProv.walletAddress,
+                            'data': data,
+                          };
+                          showLoadingDialog(context, TR(context, '이미지 업로드 중입니다...'));
+                          fireProv.uploadProfileImage(imageInfo).then((picUrl) async {
+                            LOG('---> uploadProfileImage result : $picUrl');
+                            if (STR(picUrl).isNotEmpty) {
+                              _backupAccount();
+                              loginProv.selectAccount!.image = picUrl;
+                              await _setAccountInfo();
+                            }
+                            hideLoadingDialog();
+                          });
+                        }
+                      });
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(5),
+                      child: Icon(Icons.photo_camera, color: GRAY_50),
+                    ),
+                  )
+                )
+              ],
+            ),
+          )
           // SizedBox(width: 20),
           // Expanded(
           //   child: Row(
@@ -427,33 +463,36 @@ class ProfileViewModel {
     );
   }
 
-  _profileButtonBox() {
-    return Row(
-      children: [
-        Expanded(
-          child: PrimaryButton(
-            color: GRAY_20,
-            textStyle: typo14semibold,
-            isSmallButton: true,
-            onTap: () {
+  _profileButtonBox({EdgeInsets? padding}) {
+    return Container(
+      padding: padding,
+      child: Row(
+        children: [
+          Expanded(
+              child: PrimaryButton(
+                color: GRAY_20,
+                textStyle: typo14semibold,
+                isSmallButton: true,
+                onTap: () {
+                  showEditDescription();
+                },
+                text: TR(context, '프로필 편집'),
+              )
+          ),
+          SizedBox(width: 10),
+          Expanded(
+              child: PrimaryButton(
+                color: GRAY_20,
+                textStyle: typo14semibold,
+                isSmallButton: true,
+                onTap: () {
 
-            },
-            text: TR(context, '프로필 편집'),
-          )
-        ),
-        SizedBox(width: 10),
-        Expanded(
-          child: PrimaryButton(
-            color: GRAY_20,
-            textStyle: typo14semibold,
-            isSmallButton: true,
-            onTap: () {
-
-            },
-            text: TR(context, '보유 상품'),
-          )
-        ),
-      ],
+                },
+                text: TR(context, '보유 상품'),
+              )
+          ),
+        ],
+      ),
     );
   }
 
@@ -473,11 +512,11 @@ class ProfileViewModel {
     showInputDialog(context,
       TR(context, '계정 추가'),
       defaultText: IS_DEV_MODE ? EX_TEST_ACCCOUNT_00_1 : '',
-      hintText: TR(context, '계정명을 입력해 주세요.')).then((text) {
-      LOG('---> account add name : $text');
-      if (STR(text).isNotEmpty) {
+      hintText: TR(context, '계정명을 입력해 주세요.')).then((newNickId) {
+      LOG('---> account add name : $newNickId');
+      if (STR(newNickId).isNotEmpty) {
         // nickId duplicate check..
-        loginProv.checkNickId(nickId: text!,
+        loginProv.checkNickId(nickId: newNickId!,
           onError: (type) => Fluttertoast.showToast(msg: type.errorText)).
           then((check) {
             if (check == true) {
@@ -487,7 +526,7 @@ class ProfileViewModel {
                   createAniRoute(LoginPassScreen())).then((passOrg) {
                 if (STR(passOrg).isNotEmpty) {
                   // add wallet..
-                  loginProv.addNewAccount(passOrg).then((result) {
+                  loginProv.addNewAccount(passOrg, newNickId).then((result) {
                     LOG('---> account add result : $result');
                     Fluttertoast.showToast(
                       msg: result ? "계정추가 성공" : "계정추가 실패",
@@ -503,46 +542,207 @@ class ProfileViewModel {
     });
   }
 
-  editAccountSubTitle() {
+  showEditAccountName() {
     showInputDialog(context,
-      TR(context, '유저 이름 변경'),
-      defaultText: IS_DEV_MODE ? EX_TEST_ACCCOUNT_00_1 : '',
-      hintText: TR(context, '유저 이름을 입력해 주세요.')).then((text) {
+        TR(context, '유저 닉네임 변경'),
+        defaultText: STR(loginProv.selectAccount?.accountName),
+        hintText: TR(context, '변경할 닉네임 입력해 주세요.'),
+        maxLength: 40,
+    ).then((text) {
       if (STR(text).isNotEmpty) {
-        // loginProv.userInfo!.
-        _editAccountInfo();
+        _backupAccount();
+        loginProv.selectAccount!.accountName = text;
+        _setAccountName();
       }
     });
   }
 
-  _editAccountInfo() {
+  showEditSubTitle() {
     showInputDialog(context,
-        TR(context, '계정 변경'),
-        defaultText: IS_DEV_MODE ? EX_TEST_ACCCOUNT_00_1 : '',
-        hintText: TR(context, '계정명을 입력해 주세요.')).then((text) {
-      LOG('---> account add name : $text');
+        TR(context, '유저 이름 변경'),
+        defaultText: _getEditSubTitle,
+        hintText: TR(context, '변경할 이름을 입력해 주세요.'),
+        textInputType: TextInputType.multiline,
+        textAlign: TextAlign.start,
+        maxLine: 1,
+        maxLength: 50,
+    ).then((text) {
       if (STR(text).isNotEmpty) {
-        // nickId duplicate check..
-        loginProv.checkNickId(nickId: text!,
-            onError: (type) => Fluttertoast.showToast(msg: type.errorText)).
-        then((check) {
-          if (check == true) {
-            Navigator.of(context).push(
-                createAniRoute(LoginPassScreen())).then((passOrg) {
-              if (STR(passOrg).isNotEmpty) {
-                loginProv.setUserInfo(passOrg, loginProv.account!).then((result) {
-                  LOG('---> account add result : $result');
-                  Fluttertoast.showToast(
-                    msg: result ? "내정보 변경 성공" : "내정보 변경 실패",
-                  );
-                });
-              }
-            });
-          } else {
-            _editAccountInfo();
-          }
-        });
+        _backupAccount();
+        loginProv.selectAccount!.subTitle = text;
+        _setAccountInfo();
       }
     });
+  }
+
+  showEditDescription() {
+    showInputDialog(context,
+        TR(context, '프로필 변경'),
+        defaultText: STR(loginProv.selectAccount?.description),
+        hintText: TR(context, '변경할 프로필 내용을 입력해 주세요.'),
+        textInputType: TextInputType.multiline,
+        textAlign: TextAlign.start,
+        maxLine: 5,
+        maxLength: 300,
+    ).then((text) {
+      if (STR(text).isNotEmpty) {
+        _backupAccount();
+        loginProv.selectAccount!.description = text;
+        _setAccountInfo();
+      }
+    });
+  }
+
+  Future<Uint8List?> showImagePicker() async {
+    XFile? pickImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    LOG('---> showImagePicker : $pickImage');
+    if (pickImage != null) {
+      var imageUrl  = await showProfileImageCropper(pickImage.path);
+      LOG('---> imageUrl : $imageUrl');
+      if (imageUrl != null) {
+        var dataOrg = await _readFileByte(imageUrl);
+        if (dataOrg != null) {
+          return await resizeImage(
+              dataOrg.buffer.asUint8List(), 256) as Uint8List;
+        }
+      }
+    }
+    return null;
+  }
+
+  Future resizeImage(Uint8List data, double maxSize) async {
+    Uint8List? resizedData = data;
+    try {
+      var img = IMG.decodeImage(data);
+      bool isResized = false;
+      if (img != null) {
+        var nWidth  = img.width.toDouble();
+        var nHeight = img.height.toDouble();
+        if (nWidth > nHeight) {
+          if (nWidth > maxSize) {
+            nWidth = maxSize;
+            nHeight *= nWidth / img.width;
+            isResized = true;
+          }
+        } else {
+          if (nHeight > maxSize) {
+            nHeight = maxSize;
+            nWidth *= nHeight / img.height;
+            isResized = true;
+          }
+        }
+        if (isResized) {
+          LOG('--> resize : ${img.width} x ${img.height} => $nWidth x $nHeight');
+          img = IMG.copyResize(img, width: nWidth.toInt(), height: nHeight.toInt());
+        }
+        resizedData = IMG.encodeJpg(img, quality: 100) as Uint8List?;
+        return resizedData;
+      }
+    } catch (e) {
+      LOG('--> resize error : $e');
+      return resizedData;
+    }
+  }
+
+  showProfileImageCropper(String imageFilePath) async {
+    var preset = [
+      CropAspectRatioPreset.square,
+    ];
+    return await startImageCropper(
+      imageFilePath, CropStyle.circle, preset, CropAspectRatioPreset.square, false);
+  }
+
+  Future<Uint8List?> _readFileByte(String filePath) async {
+    Uri myUri = Uri.parse(filePath);
+    File audioFile = File.fromUri(myUri);
+    Uint8List? bytes;
+    await audioFile.readAsBytes().then((value) {
+      bytes = Uint8List.fromList(value);
+      LOG('--> reading of bytes is completed');
+    }).catchError((onError) {
+      LOG('--> Exception Error while reading audio from path: ${onError.toString()}');
+    });
+    return bytes;
+  }
+
+  startImageCropper(
+      String imageFilePath,
+      CropStyle cropStyle,
+      List<CropAspectRatioPreset> preset,
+      CropAspectRatioPreset initPreset,
+      bool lockAspectRatio) async {
+    try {
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        cropStyle: cropStyle,
+        sourcePath: imageFilePath,
+        aspectRatioPresets: preset,
+        maxWidth: 1024,
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Image Cropper',
+              toolbarColor: Colors.purple,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: initPreset,
+              lockAspectRatio: lockAspectRatio),
+          IOSUiSettings(
+            title: 'Image Cropper',
+          ),
+        ],
+      );
+      return croppedFile?.path;
+    } catch (e) {
+      LOG('---> startImageCropper error : $e');
+    }
+  }
+
+  get _getEditSubTitle {
+    var org = STR(loginProv.selectAccount?.subTitle);
+    return org.isNotEmpty ? org : IS_DEV_MODE ? EX_TEST_NAME_00 : '';
+  }
+
+  _backupAccount() {
+    accountOrg = null;
+    if (loginProv.selectAccount != null) {
+      accountOrg = AddressModel.fromJson(loginProv.selectAccount!.toJson());
+    }
+  }
+
+  _restoreAccount() {
+    if (accountOrg != null) {
+      loginProv.setLocalAccountInfo(accountOrg!);
+    }
+    accountOrg = null;
+  }
+
+  _setAccountName() async {
+    var passOrg = await Navigator.of(context).push(
+        createAniRoute(LoginPassScreen()));
+    if (STR(passOrg).isNotEmpty) {
+      var result = await loginProv.setAccountName(loginProv.selectAccount!);
+      Fluttertoast.showToast(
+        msg: result == true ? "내정보 변경 성공" : "내정보 변경 실패",
+      );
+      if (result == true) {
+        _restoreAccount();
+      }
+      return result;
+    }
+    return false;
+  }
+
+  _setAccountInfo() async {
+    var passOrg = await Navigator.of(context).push(
+        createAniRoute(LoginPassScreen()));
+    if (STR(passOrg).isNotEmpty) {
+      var result = await loginProv.setAccountInfo(loginProv.selectAccount!);
+      Fluttertoast.showToast(
+        msg: result == true ? "내정보 변경 성공" : "내정보 변경 실패",
+      );
+      if (result == true) {
+        _restoreAccount();
+      }
+      return result;
+    }
+    return false;
   }
 }

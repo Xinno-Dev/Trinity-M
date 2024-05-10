@@ -46,7 +46,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   void initState() {
     final prov = ref.read(loginProvider);
     prov.mainPageIndex = widget.selectedPage;
-    _viewModel = ProfileViewModel(prov);
+    _viewModel = ProfileViewModel();
     super.initState();
   }
 

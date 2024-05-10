@@ -32,7 +32,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   void initState() {
     final prov = ref.read(marketProvider);
     prov.optionIndex = 0;
-    _viewModel = MarketViewModel(prov);
+    _viewModel = MarketViewModel();
     LOG('---> reset index to 0');
     super.initState();
   }

@@ -86,6 +86,7 @@ enum RecoverPassStep {
 }
 
 enum LoginErrorType {
+  code,
   text,
   network,
   mailDuplicate,
@@ -251,11 +252,13 @@ class LoginProvider extends ChangeNotifier {
     if (accountListStr != 'NOT_ADDRESSLIST') {
       userInfo!.addressList = [];
       List<dynamic> accountList = json.decode(accountListStr);
+      LOG('---------------------------------');
       for (var item in accountList) {
         var address = AddressModel.fromJson(item);
-        LOG('--> _refreshAccountList address : ${address.accountName} / ${address.address}');
+        LOG('----> ${address.accountName} / ${address.address}');
         userInfo!.addressList!.add(address);
       }
+      LOG('---------------------------------');
     }
     await _refreshSelectAccount();
     return userInfo;
@@ -265,7 +268,7 @@ class LoginProvider extends ChangeNotifier {
     selectAccount = null;
     if (userInfo?.addressList != null) {
       address ??= await UserHelper().get_address();
-      LOG('--> _refreshSelectAccount : $address');
+      // LOG('--> _refreshSelectAccount : $address');
       if (address != 'NOT_ADDRESS') {
         for (var item in userInfo!.addressList!) {
           if (item.address == address) {
@@ -419,7 +422,7 @@ class LoginProvider extends ChangeNotifier {
 
   ////////////////////////////////////////////////////////////////////////
 
-  Future<bool> loginAuto(String user) async {
+  Future<bool?> loginAuto(String user) async {
     init();
     userInfo = await UserModel.createFromLocal(user);
     if (userInfo != null && STR(userInfo?.email).isNotEmpty) {
@@ -428,16 +431,13 @@ class LoginProvider extends ChangeNotifier {
       }
       await UserHelper().setUserKey(userInfo!.email!);
       await _refreshAccountList();
-      var key = await getAccountKey();
-      if (key != null) {
-        var result = await startLogin(key);
-        LOG('--> loginAuto result : $result');
-        if (result != true) {
-          userInfo = null;
-          return false;
-        }
-        return true;
+      var result = await startLoginWithKey();
+      LOG('--> loginAuto result : $result');
+      if (result != true) {
+        userInfo = null;
+        return false;
       }
+      return result;
     }
     return false;
   }
@@ -451,21 +451,17 @@ class LoginProvider extends ChangeNotifier {
     if (STR(userInfo?.email).isNotEmpty) {
       await UserHelper().setUserKey(userInfo!.email!);
       await _refreshAccountList();
-      var key = await getAccountKey();
-      if (key != null) {
-        var result = await startLogin(
-            key, onError: !isAutoLogin ? onError : null);
-        LOG('--> loginEmail result : $result');
-        if (result != true) {
-          userInfo = null;
-          if (!isAutoLogin && onError != null) {
-            onError(LoginErrorType.loginFail, null);
-          }
-          return false;
+      var result = await startLoginWithKey(
+          onError: !isAutoLogin ? onError : null);
+      LOG('--> loginEmail result : $result');
+      if (result != true) {
+        userInfo = null;
+        if (!isAutoLogin && onError != null) {
+          onError(LoginErrorType.loginFail, null);
         }
         return result;
       }
-      return null;
+      return true;
     }
     return false;
   }
@@ -482,19 +478,16 @@ class LoginProvider extends ChangeNotifier {
       if (STR(userInfo?.email).isNotEmpty) {
         await UserHelper().setUserKey(userInfo!.email!);
         await _refreshAccountList();
-        var key = await getAccountKey();
-        if (key != null) {
-          var result = await startLogin(key, onError: onError);
-          if (result != true) {
-            // 로그인 실패시 카카오 로그아웃..
-            await logout(false);
-            if (!isAutoLogin && onError != null) {
-              onError(LoginErrorType.loginFail, '회원가입이 필요한 계정입니다.');
-            }
-            return false;
+        var result = await startLoginWithKey(onError: onError);
+        if (result != true) {
+          // 로그인 실패시 카카오 로그아웃..
+          await logout(false);
+          if (!isAutoLogin && onError != null) {
+            onError(LoginErrorType.loginFail, '회원가입이 필요한 계정입니다.');
           }
           return result;
         }
+        return true;
       }
       return null;
     } else {
@@ -539,19 +532,14 @@ class LoginProvider extends ChangeNotifier {
       if (STR(userInfo?.email).isNotEmpty) {
         await UserHelper().setUserKey(userInfo!.email!);
         await _refreshAccountList();
-        var key = await getAccountKey();
-        if (key != null) {
-          userInfo!.loginType = LoginType.google;
-          userInfo!.socialToken = await UserHelper().get_token();
-          var result = await startLogin(key, onError: onError);
-          if (result != true) {
-            userInfo = null;
-            return false;
-          }
-          return true;
-        } else {
-          return null;
+        userInfo!.loginType = LoginType.google;
+        userInfo!.socialToken = await UserHelper().get_token();
+        var result = await startLoginWithKey(onError: onError);
+        if (result != true) {
+          userInfo = null;
+          return false;
         }
+        return result;
       }
     }
     return false;
@@ -605,8 +593,7 @@ class LoginProvider extends ChangeNotifier {
         );
         LOG('----> createNewUser result : $result');
         if (result != null) {
-          var key = await getAccountKey();
-          var loginResult = await startLogin(key, onError: onError);
+          var loginResult = await startLoginWithKey(onError: onError);
           if (loginResult == true) {
             return userInfo;
           }
@@ -634,14 +621,21 @@ class LoginProvider extends ChangeNotifier {
     LOG('--> recoverUser : $result <= $mnemonic / $privateKey');
     // create user info..
     if (result) {
-      var key = await getAccountKey();
-      var loginResult = await startLogin(key, onError: onError);
+      var loginResult = await startLoginWithKey(onError: onError);
       if (loginResult == true) {
         return userInfo;
       }
     }
     userInfo = null;
     return userInfo;
+  }
+
+  Future<bool?> startLoginWithKey({Function(LoginErrorType, String?)? onError}) async {
+    var key = await getAccountKey();
+    if (key != null) {
+      return await startLogin(key, onError: onError);
+    }
+    return null;
   }
 
   Future<bool?> startLogin(EccKeyPair? key,
@@ -679,13 +673,10 @@ class LoginProvider extends ChangeNotifier {
         var result = await apiService.loginUser(
             nickStr, type, email, token, onError: onError);
         if (result) {
-          var userEnc = await userInfo?.encryptAes;
-          await UserHelper().setUser(loginInfo: userEnc);
+          userInfo      = await _setAccountListFromServer();
           userInfo!.uid = await UserHelper().get_uid();
-          LOG('--> loginUser accountName : $accountName / ${userInfo!.uid}');
-          if (STR(accountName).isEmpty) {
-            userInfo = await _setAccountListFromServer();
-          }
+          var userEnc   = await userInfo?.encryptAes;
+          await UserHelper().setUser(loginInfo: userEnc);
           LOG('-----------> loginUser success : [${userInfo!.uid}] ${userInfo?.toJson()}');
         }
         return result;
@@ -708,7 +699,7 @@ class LoginProvider extends ChangeNotifier {
     if (STR(privateKey).isNotEmpty) {
       result = await _importPrivateKey(privateKey!);
     } else {
-      var pass    = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+      var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
       var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
       result = await eccImpl.generateKeyPair(
           pass, nickId: inputNick, mnemonic: mnemonic);
@@ -721,15 +712,15 @@ class LoginProvider extends ChangeNotifier {
   }
 
   // add new account..
-  Future<bool> addNewAccount(String passOrg) async {
-    var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+  Future<bool> addNewAccount(String passOrg, String newNickId) async {
+    var pass    = crypto.sha256.convert(utf8.encode(passOrg)).toString();
     var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
-    var result = await eccImpl.addKeyPair(pass, nickId: inputNick);
-    LOG('--> addNewAccount : $inputNick / $passOrg => $result / $walletAddress');
+    var result  = await eccImpl.addKeyPair(pass, nickId: newNickId);
+    LOG('--> addNewAccount : $newNickId / $passOrg => $result / $walletAddress');
     if (result) {
       await _refreshAccountList();
       var uid     = STR(await UserHelper().get_uid());
-      var nickId  = Uri.encodeFull(inputNick);
+      var nickId  = Uri.encodeFull(newNickId);
       var message = uid + nickId + walletAddress;
       LOG('--> addNewAccount message : $uid + $nickId + $walletAddress');
       var sig = await createSign(message);
@@ -746,29 +737,36 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
+  // change user nickId..
+  Future<bool> setUserNickId(String newNickId) async {
+    var uid     = STR(userInfo?.uid);
+    var nickId  = Uri.encodeFull(STR(newNickId));
+    var message = uid + nickId + walletAddress;
+    LOG('--> setUserNickId : [$newNickId] / $message');
+    var sig = await createSign(message);
+    var addResult = await apiService.addAccount(nickId, walletAddress, sig);
+    if (addResult == true) {
+      LOG('--> setUserNickId success !!');
+      return true;
+    }
+    return false;
+  }
+
   // change user info..
-  Future<bool> setUserInfo(String passOrg, AddressModel info) async {
-    var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
-    var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
-    var result = await eccImpl.addKeyPair(pass, nickId: inputNick);
-    LOG('--> setUserInfo : $inputNick / $passOrg => $result / $walletAddress');
-    if (result) {
-      await _refreshAccountList();
-      var uid     = STR(await UserHelper().get_uid());
-      var nickId  = Uri.encodeFull(inputNick);
-      var message = uid + nickId + walletAddress;
-      LOG('--> setUserInfo message : $uid + $nickId + $walletAddress');
-      var sig = await createSign(message);
-      var addResult = await apiService.setUserInfo(
-        walletAddress, sig, subTitle: info.subTitle, desc: info.description);
-      if (addResult == true) {
-        LOG('--> setUserInfo success !!');
-        notifyListeners();
-        return true;
-      } else {
-        // restore org address..
-        await removeAccountFromAddr(walletAddress);
-      }
+  Future<bool> setUserInfo(AddressModel info) async {
+    var uid     = STR(userInfo?.uid);
+    var nickId  = Uri.encodeFull(accountName);
+    var message = uid + nickId + walletAddress;
+    LOG('--> setUserInfo : $message / ${info.toJson()}');
+    var sig = await createSign(message);
+    var addResult = await apiService.setUserInfo(walletAddress, sig,
+        subTitle: info.subTitle,
+        desc:     info.description,
+        imageUrl: info.image,
+    );
+    if (addResult == true) {
+      LOG('--> setUserInfo success !!');
+      return true;
     }
     return false;
   }
@@ -795,33 +793,50 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
+  setAccountName(AddressModel account) async {
+    if (isLogin) {
+      if (await setUserNickId(STR(account.accountName))) {
+        // nickId 가 변경될경우 jwt 값이 바뀌는 이유로 재로그인 필요..
+        var result = await startLoginWithKey();
+        LOG('--> loginAuto result : $result');
+        if (result == true) {
+          await setLocalAccountInfo(account);
+          await _refreshAccountList();
+          notifyListeners();
+        }
+        return result;
+      }
+    }
+    return false;
+  }
 
-  setLocalAccountName(String addr, String nickId) async {
+  setAccountInfo(AddressModel account) async {
+    if (isLogin) {
+      if (await setUserInfo(account)) {
+        await setLocalAccountInfo(account);
+        await _refreshAccountList();
+        notifyListeners();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  setLocalAccountInfo(AddressModel account) async {
     var addrListStr = await UserHelper().get_addressList();
     if (addrListStr != 'NOT_ADDRESSLIST') {
       List<dynamic> accountList = json.decode(addrListStr);
       List<AddressModel> addrList = [];
-      LOG('--> setLocalAccountName : $addr / $nickId / ${accountList.length}');
+      // LOG('--> setLocalAccountName : ${account.toJson()} / ${accountList.length}');
       for (var item in accountList) {
         var itemModel = AddressModel.fromJson(item);
-        if (addr == itemModel.address) {
-          itemModel.accountName = nickId;
-          LOG('--> setLocalAccountName set : ${itemModel.toJson()}');
+        if (account.address == itemModel.address) {
+          itemModel = itemModel.copyWithInfo(account);
         }
         addrList.add(itemModel);
       }
-      // TODO: nickId 가 없을경우.. (계정과 다른 니모닉을 임포트했을경우)
-      var count = 0;
-      for (var item in addrList) {
-        if (STR(item.accountName).isEmpty) {
-          item.accountName = 'account $count';
-          LOG('--> setLocalAccountName empty [$count] : ${item.toJson()}');
-        }
-        count++;
-      }
-      final addressListJson = addrList.map((e) => e.toJson()).toList();
-      final addressJsonString = json.encode(addressListJson);
-      await UserHelper().setUser(addressList: addressJsonString);
+      var addressListJson = addrList.map((e) => e.toJson()).toList();
+      await UserHelper().setUser(addressList: json.encode(addressListJson));
     }
   }
 
@@ -833,14 +848,14 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<EccKeyPair?> getAccountKey({String? passOrg, String? tmpKeyStr}) async {
-    LOG('--> getAccountKey : ${selectAccount?.toJson()}');
+    // LOG('--> getAccountKey : ${selectAccount?.toJson()}');
     try {
       passOrg ??= userPass;
       var keyData = tmpKeyStr ?? selectAccount?.keyPair;
-      LOG('--> getAccountKey [$passOrg] : $tmpKeyStr / ${selectAccount?.keyPair}');
+      LOG('--> getAccountKey [$passOrg] : $tmpKeyStr / ${selectAccount?.address}');
       if (passOrg != null && STR(keyData).isNotEmpty) {
         var keyStr = await decryptKey(passOrg, keyData!);
-        LOG('--> getAccountKey keyStr : $keyStr');
+        // LOG('--> getAccountKey : $keyStr');
         if (keyStr != 'fail') {
           var keyPair = EccKeyPair.fromJson(jsonDecode(keyStr));
           return keyPair;
@@ -1043,15 +1058,15 @@ class LoginProvider extends ChangeNotifier {
       for (var i = 0; i < tmpUserInfo!.addressList!.length; i++) {
         var item = tmpUserInfo.addressList![i];
         if (i < accountCount) {
-          LOG('--> _setAccountListFromServer set nick [$i] : ${item.accountName}');
-          await setLocalAccountName(STR(item.address), STR(item.accountName));
+          // LOG('--> _setAccountListFromServer set nick [$i] : ${item.accountName}');
+          await setLocalAccountInfo(item);
         } else {
-          LOG('--> _setAccountListFromServer addKeyPair [$i] : ${item.accountName}');
+          // LOG('--> _setAccountListFromServer addKeyPair [$i] : ${item.accountName}');
           await eccImpl.addKeyPair(pass, nickId: item.accountName);
         }
       }
       await _refreshAccountList();
-      LOG('--> _setAccountListFromServer result : ${userInfo?.toJson()}');
+      // LOG('--> _setAccountListFromServer result : ${userInfo?.toJson()}');
       return userInfo;
     }
     return null;

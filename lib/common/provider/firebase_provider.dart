@@ -13,40 +13,35 @@ final firebaseProvider = ChangeNotifierProvider<FirebaseProvider>((_) {
 });
 
 class FirebaseProvider extends ChangeNotifier {
+  final api = FirebaseApiService();
   FirebaseMessaging? messaging;
-  FirebaseApiService? firebaseApiService;
   String? pushToken;
   AppStartModel? startInfo;
 
   FirebaseProvider() {
     messaging ??= FirebaseMessaging.instance;
-    firebaseApiService ??= FirebaseApiService();
     messaging!.getToken().then((token) {
       pushToken = token;
     });
   }
 
   Future<AppStartModel?> getAppStartInfo() async {
-    if (firebaseApiService != null) {
-      var result = await firebaseApiService!.getAppStartInfo();
-      if (result != null) {
-        startInfo = AppStartModel.fromJson(result);
-        print('---> getServerVersion : ${getServerVersion('android')}');
-        return startInfo;
-      }
+    var result = await api.getAppStartInfo();
+    if (result != null) {
+      startInfo = AppStartModel.fromJson(result);
+      print('---> getServerVersion : ${getServerVersion('android')}');
+      return startInfo;
     }
     return null;
   }
 
   Future<List<MDLCheckModel>> getMDLNetworkCheckUrl() async {
     List<MDLCheckModel> resultList = [];
-    if (firebaseApiService != null) {
-      var result = await firebaseApiService!.getMDLNetworkCheckUrl();
-      if (result != null) {
-        for (var item in result.entries) {
-          print('---> mdlCheckInfo add : ${item.value}');
-          resultList.add(MDLCheckModel.fromJson(item.value));
-        }
+    var result = await api.getMDLNetworkCheckUrl();
+    if (result != null) {
+      for (var item in result.entries) {
+        print('---> mdlCheckInfo add : ${item.value}');
+        resultList.add(MDLCheckModel.fromJson(item.value));
       }
     }
     print('---> mdlCheckInfo result : ${resultList.length}');
@@ -56,5 +51,9 @@ class FirebaseProvider extends ChangeNotifier {
   getServerVersion(String deviceType) {
     if (startInfo == null) return null;
     return startInfo!.versionInfo[deviceType] as AppVersionData;
+  }
+
+  uploadProfileImage(JSON imageInfo) async {
+    return await api.uploadImageData(imageInfo['id'], imageInfo['data'], 'profile_img');
   }
 }

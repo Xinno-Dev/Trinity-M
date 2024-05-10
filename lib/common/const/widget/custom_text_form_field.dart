@@ -1,18 +1,24 @@
 import 'package:flutter/services.dart';
 
 import '../../common_package.dart';
+import '../utils/convertHelper.dart';
 
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField(
-      {super.key,
+    {super.key,
+      this.autoFocus,
       this.maxLength,
       this.maxLines,
       this.inputFormatters,
       this.borderColor,
+      this.textInputAction,
+      this.textInputType,
+      this.textAlign,
       required this.hintText,
       required this.constraints,
       required this.focusNode,
       required this.controller});
+  final bool? autoFocus;
   final int? maxLength;
   final int? maxLines;
   final List<TextInputFormatter>? inputFormatters;
@@ -21,15 +27,20 @@ class CustomTextFormField extends StatelessWidget {
   final FocusNode focusNode;
   final TextEditingController controller;
   final Color? borderColor;
+  final TextInputAction? textInputAction;
+  final TextInputType? textInputType;
+  final TextAlign? textAlign;
 
   @override
   Widget build(BuildContext context) {
-    bool isSmallScreen = constraints.maxWidth < 106;
+    bool isSmallScreen = INT(maxLines) <= 1;
     return TextFormField(
+      autofocus: autoFocus ?? true,
       focusNode: focusNode,
       controller: controller,
       maxLength: maxLength,
       maxLines: maxLines,
+      keyboardType: textInputType ?? TextInputType.text,
       inputFormatters: inputFormatters,
       scrollPadding: EdgeInsets.only(bottom: 200.h),
       style: isSmallScreen
@@ -41,7 +52,7 @@ class CustomTextFormField extends StatelessWidget {
             ? typo12regular.copyWith(color: GRAY_30)
             : typo14regular.copyWith(color: GRAY_30),
         floatingLabelBehavior: FloatingLabelBehavior.never,
-        contentPadding: EdgeInsets.only(top: 20.h),
+        contentPadding: isSmallScreen ? EdgeInsets.fromLTRB(20, 20, 20, 0) : null,
         // contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
@@ -57,9 +68,9 @@ class CustomTextFormField extends StatelessWidget {
         ),
       ),
       cursorColor: GRAY_90,
-      cursorHeight: isSmallScreen ? 14.r : 18.r,
-      textInputAction: TextInputAction.next,
-      textAlign: TextAlign.center,
+      textInputAction: textInputAction ??
+          (isSmallScreen ? TextInputAction.next : TextInputAction.newline),
+      textAlign: textAlign ?? TextAlign.start,
     );
   }
 }

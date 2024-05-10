@@ -136,25 +136,30 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
     var result = await loginProv.loginEmail();
     LOG('----> loginProv.loginEmail result : $result');
     hideLoadingDialog();
+
     if (result == true) {
+      // 로그인 완료..
       Fluttertoast.showToast(msg: '로그인 성공');
       Navigator.of(context).pop(true);
     } else if (result == null) {
-      // for test account..
+      // tester00 계정용 자동 니모닉 복구..
       if (loginProv.inputEmail == EX_TEST_MAIL_EX) {
-        loginProv.recoverUser(mnemonic: EX_TEST_MN_00).then((result) {
+        loginProv.recoverUser(mnemonic: EX_TEST_MN_EX).then((result) {
           if (loginProv.isLogin) {
             _startEmailLogin();
           }
         });
       } else {
+        // 이미 생성된 계정인지 체크..
         loginProv.emailDupCheck().then((result) {
           if (result) {
+            // 계정 복구..
             Navigator.of(context).push(
                 createAniRoute(LoginRestoreScreen()));
             showLoginErrorDialog(context,
                 LoginErrorType.recoverRequire, loginProv.userInfo?.email);
           } else {
+            // 회원가입..
             showLoginErrorDialog(context,
                 LoginErrorType.signupRequire, loginProv.userInfo?.email).then((_) {
               loginProv.setSignUpMode();

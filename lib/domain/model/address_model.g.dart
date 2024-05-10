@@ -9,7 +9,7 @@ part of 'address_model.dart';
 AddressModel _$AddressModelFromJson(Map<String, dynamic> json) => AddressModel(
       subTitle: json['subTitle'] as String?,
       description: json['description'] as String?,
-      pic: json['pic'] as String?,
+      image: json['image'] as String?,
       follower: json['follower'] as int?,
       following: json['following'] as int?,
       keyPair: json['keyPair'] as String?,
@@ -36,7 +36,7 @@ Map<String, dynamic> _$AddressModelToJson(AddressModel instance) {
 
   writeNotNull('subTitle', instance.subTitle);
   writeNotNull('description', instance.description);
-  writeNotNull('pic', instance.pic);
+  writeNotNull('image', instance.image);
   writeNotNull('follower', instance.follower);
   writeNotNull('following', instance.following);
   writeNotNull('address', instance.address);

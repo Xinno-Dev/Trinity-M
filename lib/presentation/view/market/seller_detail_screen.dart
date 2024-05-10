@@ -28,8 +28,7 @@ class _SellerDetailScreenState extends ConsumerState<SellerDetailScreen> {
 
   @override
   void initState() {
-    final prov = ref.read(marketProvider);
-    _viewModel = MarketViewModel(prov);
+    _viewModel = MarketViewModel();
     super.initState();
   }
 

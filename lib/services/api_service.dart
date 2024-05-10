@@ -284,8 +284,8 @@ class ApiService {
       );
       LOG('--> API loginUser response :'
           ' ${response.statusCode} / ${response.body}');
+      var resultJson = jsonDecode(response.body);
       if (isSuccess(response.statusCode)) {
-        var resultJson = jsonDecode(response.body);
         if (resultJson['result'] != null) {
           var jwt       = STR(resultJson['result']['jwt']);
           var uid       = STR(resultJson['result']['uid']);
@@ -295,12 +295,11 @@ class ApiService {
           await UserHelper().setUser(uid: uid);
           LOG('--> API loginUser success [$type] : $pass => $jwt');
           return true;
-        } else {
-          var error = STR(resultJson['error' ]);
-          LOG('--> API loginUser error : $error');
-          if (onError != null) onError(LoginErrorType.text, error);
-          return false;
         }
+      } else {
+        var errorCode = STR(resultJson['err' ]?['code']);
+        LOG('--> API loginUser error : $errorCode');
+        if (onError != null) onError(LoginErrorType.code, errorCode);
       }
     } catch (e) {
       LOG('--> API loginUser error : $e');
@@ -393,19 +392,23 @@ class ApiService {
   //////////////////////////////////////////////////////////////////////////
   //
   //  유저 정보 변경
-  //  /users/{uid}
+  //  /users/info
   //
 
-  Future<bool?> setUserInfo(String address, String sig, {
+  Future<bool?> setUserInfo(
+    String address,
+    String sig,
+  {
     String? subTitle,
     String? desc,
+    String? imageUrl,
   }) async {
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
         return null;
       }
-      LOG('--> getUserInfo : $jwt');
+      LOG('--> API setUserInfo : $address / $sig / $subTitle / $desc');
       final response = await http.post(
         Uri.parse(httpUrl + '/users/info'),
         headers: {
@@ -418,15 +421,16 @@ class ApiService {
           'address'     : address,
           'subTitle'    : subTitle ?? '',
           'description' : desc ?? '',
+          'image'       : imageUrl ?? '',
         })
       );
-      LOG('--> getUserInfo response : ${response.statusCode} / ${response.body}');
+      LOG('--> API setUserInfo response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         return true;
       }
       return false;
     } catch (e) {
-      LOG('--> getUserInfo error : $e');
+      LOG('--> API setUserInfo error : $e');
     }
     return null;
   }

@@ -23,8 +23,7 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
 
   @override
   void initState() {
-    final prov = ref.read(loginProvider);
-    _viewModel = ProfileViewModel(prov);
+    _viewModel = ProfileViewModel();
     super.initState();
   }
 

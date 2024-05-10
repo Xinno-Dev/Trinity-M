@@ -4,15 +4,15 @@ import 'package:larba_00/common/common_package.dart';
 import '../../style/colors.dart';
 import '../utils/convertHelper.dart';
 
-BuildContext? _dialogContext;
+BuildContext? dialogContext;
 
 showLoadingDialog(BuildContext context, String message, {var isShowIcon = true}) {
   showDialog(
     context: context,
-    barrierColor: Colors.transparent,
+    barrierColor: Colors.black54,
     barrierDismissible: false, // lock touched close..
     builder: (BuildContext context) {
-      _dialogContext = context;
+      dialogContext = context;
       return Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -41,8 +41,8 @@ showLoadingDialog(BuildContext context, String message, {var isShowIcon = true})
 }
 
 hideLoadingDialog() {
-  if (_dialogContext == null) return;
-  _dialogContext!.pop();
-  _dialogContext = null;
+  if (dialogContext == null) return;
+  dialogContext!.pop();
+  dialogContext = null;
 }
 

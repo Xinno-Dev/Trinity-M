@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import '../common/const/utils/convertHelper.dart';
 
@@ -115,6 +116,7 @@ CURRENT_SERVER_TIME() {
 
 class FirebaseApiService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseStorage storage = FirebaseStorage.instance;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -176,6 +178,29 @@ class FirebaseApiService {
       return result;
     } catch (e) {
       LOG('--> getAccount Error : $e');
+    }
+    return null;
+  }
+
+  //----------------------------------------------------------------------------------------
+  //
+  //    upload file..
+  //
+
+  Future? uploadImageData(imageId, data, path) async {
+    try {
+      var ref = storage.ref().child('$path/$imageId');
+      var uploadTask = ref.putData(data);
+      var snapshot = await uploadTask;
+      if (snapshot.state == TaskState.success) {
+        var imageUrl = await snapshot.ref.getDownloadURL();
+        LOG('--> uploadImageData done : $imageUrl');
+        return imageUrl;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      LOG('--> uploadImageData error : $e');
     }
     return null;
   }

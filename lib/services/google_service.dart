@@ -37,6 +37,7 @@ class GoogleHttpClient extends IOClient {
 class GoogleService extends GoogleAccount {
 
   static List<String> selectDir = [];
+  static String? selectFile;
   static Map<String, List<dv.File>> dirListData = {};
 
   static init() {
@@ -97,9 +98,9 @@ class GoogleService extends GoogleAccount {
   // Google Drive Utils..
   //
 
-  static uploadKeyToGoogleDrive(context, String privateKey) async {
+  static uploadKeyToGoogleDrive(context, String nickId, String privateKey) async {
     var formatter = DateFormat('yyyyMMdd-HHmmss');
-    var fileName = 'tr_${formatter.format(DateTime.now())}.rwf';
+    var fileName = '${nickId.substring(0, 2)}_${formatter.format(DateTime.now())}.rwf';
     return await _startGoogleDriveUpload(context, privateKey, fileName);
   }
 
@@ -110,7 +111,7 @@ class GoogleService extends GoogleAccount {
   static _startGoogleDriveUpload(context, desc, fileName) async {
     LOG('---> startGoogleDriveUpload RWF : $desc');
     if (googleUser != null) {
-      var result = await _showDriveSelectDialog(context, true);
+      var result = await _showDriveSelectDialog(context, true, ext: fileName);
       LOG('---> startGoogleDriveUpload result 1 : $result');
       if (STR(result).isNotEmpty) {
         return await _uploadToGoogleDrive(context, desc, fileName, parentId: folderId);
@@ -119,7 +120,7 @@ class GoogleService extends GoogleAccount {
     } else {
       var user = await signIn();
       if (user != null) {
-        var result = await _showDriveSelectDialog(context, true);
+        var result = await _showDriveSelectDialog(context, true, ext: fileName);
         LOG('---> startGoogleDriveUpload result 2 : $result');
         if (STR(result).isNotEmpty) {
           return await _uploadToGoogleDrive(context, desc, fileName, parentId: folderId);
@@ -178,13 +179,28 @@ class GoogleService extends GoogleAccount {
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
             title: Text(TR(context, isUpload ? '저장 위치 선택' : '복구 파일 선택'), style: typo16semibold),
+            titlePadding: EdgeInsets.fromLTRB(20, 20, 10, 0),
             insetPadding: EdgeInsets.zero,
-            buttonPadding: EdgeInsets.only(top: 10),
-            contentPadding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+            actionsPadding: EdgeInsets.fromLTRB(0, 0, 20, 5),
+            contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (isUpload)
+                  Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(TR(context, '파일명'), style: typo12bold),
+                        SizedBox(height: 5),
+                        Text(STR(ext), style: typo14normal),
+                      ],
+                    ),
+                  ),
+                Text(TR(context, '저장폴더'), style: typo12bold),
+                SizedBox(height: 5),
                 FutureBuilder(
                   future: _getDriveFileList(isFolderOnly: isUpload, ext: ext),
                   builder: (context, snapshot) {
@@ -197,20 +213,22 @@ class GoogleService extends GoogleAccount {
                         if (selectDir.isNotEmpty) {
                           dirList.insert(1, dirItem('..', '[back]'));
                         }
-                      } else {
+                      } else if (selectDir.isEmpty && dirList.isNotEmpty) {
                         selectDir.add(dirList.first.value);
                       }
-                      return _driveSelectWidget(dirList, onSelected: (select) {
-                        setState(() {
-                          if (select == '[back]') {
+                      return _driveSelectWidget(dirList,
+                        selectValue: !isUpload ? selectDir.last : null,
+                        onSelected: (select) {
+                          setState(() {
+                            if (select == '[back]') {
                               selectDir.removeLast();
                               LOG('---> back dir : ${selectDir.length}');
-                          }
-                          else if (select != '[top]' && (selectDir.isEmpty || selectDir.last != select)) {
-                            LOG('---> selectDir add : $select / ${selectDir.length}');
-                            selectDir.add(select);
-                          }
-                        });
+                            }
+                            else if (select != '[top]' && (selectDir.isEmpty || selectDir.last != select)) {
+                              LOG('---> selectDir add : $select / ${selectDir.length}');
+                              selectDir.add(select);
+                            }
+                          });
                       });
                     } else {
                       return CircularProgressIndicator();
@@ -241,12 +259,14 @@ class GoogleService extends GoogleAccount {
     String? selectValue,
     Function(String)? onSelected,
   }) {
+    LOG('--> _driveSelectWidget : $selectValue');
     return DropdownButton(
       value: selectValue ?? (list.isNotEmpty ? list.first.value : null),
       underline: Container(height: 1, color: GRAY_50),
       padding: EdgeInsets.symmetric(vertical: 5),
       items: list,
       isExpanded: true,
+      menuMaxHeight: 800,
       onChanged: (value) {
         LOG('---> selected item : $value');
         if (onSelected != null) onSelected(value);

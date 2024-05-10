@@ -33,8 +33,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
 
   @override
   void initState() {
-    final prov = ref.read(loginProvider);
-    _viewModel = ProfileViewModel(prov);
+    _viewModel = ProfileViewModel();
     super.initState();
   }
 
@@ -56,18 +55,16 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                 children: [
                   SizedBox(height: 10.h),
                   _viewModel.myInfoEditItem('이메일',
-                    [[prov.userMail,'']], onEdit: () {
-
-                    }),
+                    [[prov.userMail,'']]),
                   grayDivider(),
                   _viewModel.myInfoEditItem('ID(닉네임)',
                     [[prov.userId,'변경']], onEdit: () {
-
+                      _viewModel.showEditAccountName();
                     }),
                   grayDivider(),
                   _viewModel.myInfoEditItem('사용자 이름',
                     [[prov.userName,'변경']], onEdit: () {
-
+                      _viewModel.showEditSubTitle();
                     }),
                   grayDivider(),
                   _viewModel.myInfoEditItem('본인인증',

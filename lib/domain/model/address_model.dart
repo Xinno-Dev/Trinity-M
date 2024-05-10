@@ -12,7 +12,7 @@ class AddressModel {
   // for Larba..
   String? subTitle;
   String? description;
-  String? pic;        // 이미지
+  String? image;      // 프로파일 이미지
   int?    follower;   // 팔로워
   int?    following;  // 팔로잉
 
@@ -31,7 +31,7 @@ class AddressModel {
   AddressModel({
     this.subTitle,
     this.description,
-    this.pic,
+    this.image,
     this.follower,
     this.following,
 
@@ -46,6 +46,14 @@ class AddressModel {
     this.thumbURL,
     this.createTime,
   });
+
+  copyWithInfo(AddressModel source) {
+    this.accountName = source.accountName;
+    this.subTitle    = source.subTitle;
+    this.description = source.description;
+    this.image       = source.image;
+    return this;
+  }
 
   factory AddressModel.fromJson(JSON json) => _$AddressModelFromJson(json);
   JSON toJson() => _$AddressModelToJson(this);

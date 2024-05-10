@@ -203,7 +203,7 @@ class UserHelper {
       await storage.write(key: CHECK_MNEMONIC_KEY + userKey, value: checkMnemonic);
 
     if (addressList != '') {
-      LOG('--> setUser ADDRESSLIST_KEY : ${ADDRESSLIST_KEY + userKey} / $addressList');
+      // LOG('--> setUser ADDRESSLIST_KEY : ${ADDRESSLIST_KEY + userKey} / $addressList');
       await storage.write(key: ADDRESSLIST_KEY + userKey, value: addressList);
     }
 
@@ -335,7 +335,7 @@ class UserHelper {
 
   Future<String> get_addressList() async {
     FlutterSecureStorage storage = FlutterSecureStorage();
-    LOG('--> get_addressList : ${ADDRESSLIST_KEY + userKey}');
+    // LOG('--> get_addressList : ${ADDRESSLIST_KEY + userKey}');
     return await storage.read(key: ADDRESSLIST_KEY + userKey) ?? 'NOT_ADDRESSLIST';
   }
 
@@ -349,14 +349,9 @@ class UserHelper {
     } else {
       DateTime loginDate = DateTime.parse(loginDateStr);
       DateTime nowDate = DateTime.now();
-
       if (nowDate.difference(loginDate).inDays <= 15) {
-        // isLogin = true;
-        // isLogin = true;
         return true;
       } else {
-        // isLogin = false;
-
         UserHelper().clearLoginDate();
         return false;
       }
@@ -371,22 +366,18 @@ class UserHelper {
 
   Future<void> clearUser() async {
     FlutterSecureStorage storage = FlutterSecureStorage();
-    if (userKey.isEmpty) {
-      await storage.deleteAll();
-    } else {
-      await storage.delete(key: USERID_KEY + userKey);
-      await storage.delete(key: UID_KEY + userKey);
-      await storage.delete(key: PUB_KEY + userKey);
-      await storage.delete(key: FCM_KEY + userKey);
-      await storage.delete(key: KEYPAIR_KEY + userKey);
-      await storage.delete(key: ADDRESS_KEY + userKey);
-      await storage.delete(key: NETWORKLIST_KEY + userKey);
-      await storage.delete(key: COIN_LIST_KEY + userKey);
-      await storage.delete(key: SELECTED_COIN_KEY + userKey);
-      await storage.delete(key: ROOT_KEY + userKey);
-      await storage.delete(key: MNEMONIC_KEY + userKey);
-      await storage.delete(key: ADDRESSLIST_KEY + userKey);
-    }
+    await storage.delete(key: USERID_KEY + userKey);
+    await storage.delete(key: UID_KEY + userKey);
+    await storage.delete(key: PUB_KEY + userKey);
+    await storage.delete(key: FCM_KEY + userKey);
+    await storage.delete(key: KEYPAIR_KEY + userKey);
+    await storage.delete(key: NETWORKLIST_KEY + userKey);
+    await storage.delete(key: COIN_LIST_KEY + userKey);
+    await storage.delete(key: SELECTED_COIN_KEY + userKey);
+    await storage.delete(key: ROOT_KEY + userKey);
+    await storage.delete(key: MNEMONIC_KEY + userKey);
+    await storage.delete(key: ADDRESSLIST_KEY + userKey);
+    await storage.delete(key: ADDRESS_KEY + userKey);
     userKey = '';
   }
 

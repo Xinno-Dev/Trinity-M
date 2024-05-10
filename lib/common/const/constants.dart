@@ -63,16 +63,17 @@ const String PORTONE_IMP_CODE = 'imp32281033'; // PortOne 가맹점 코드
 
 // const String EX_TEST_MAIL_00 = 'test00@exsino.com';
 // const String EX_TEST_PASS_00 = 'testpass00';
+const String EX_TEST_MAIL_EX = 'test00@exsino.com';
 // const String EX_TEST_ACCCOUNT_00 = 'tester00';
 // const String EX_TEST_ACCCOUNT_00_1 = 'tester00_1';
 const String EX_TEST_MAIL_00 = 'jubal2000@gmail.com';
-const String EX_TEST_MAIL_EX = 'test00@exsino.com';
 const String EX_TEST_PASS_00 = 'jubalpass00';
 const String EX_TEST_PASS_RC_00 = 'recoverpass00';
 const String EX_TEST_ACCCOUNT_00 = 'jubal0000';
 const String EX_TEST_ACCCOUNT_00_1 = 'jubal0000_1';
-const String EX_TEST_MN_00 = 'dwarf panel jeans timber stumble remind head cruise foil erosion success force'; // email: tester00
-const String EX_TEST_MN_01 = 'off buyer figure spirit video hill treat bicycle history raven devote weather'; // email: jubal2000@gmail.com
+const String EX_TEST_NAME_00 = 'jubal0000 입니다!';
+const String EX_TEST_MN_EX = 'weekend minimum ribbon sing destroy vacuum cherry cement sock shell wear result'; // email: tester00
+const String EX_TEST_MN_01 = 'frown gadget pattern black quality staff connect throw mercy rookie valid swim'; // email: jubal2000@gmail.com
 const String EX_TEST_MN_02 = 'random club drive delay snake ivory carbon critic lounge portion develop entry'; // kakao: jubal2000@hanmail.net
 
 

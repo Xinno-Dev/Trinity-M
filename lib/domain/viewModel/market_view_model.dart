@@ -12,16 +12,13 @@ import '../model/product_item_model.dart';
 import '../model/product_model.dart';
 
 class MarketViewModel {
-  factory MarketViewModel([MarketProvider? provider]) {
-    if (provider != null) {
-      _singleton.prov = provider;
-    }
+  factory MarketViewModel() {
     return _singleton;
   }
   static final _singleton = MarketViewModel._internal();
   MarketViewModel._internal();
 
-  late MarketProvider prov;
+  final prov = MarketProvider();
   late BuildContext context;
 
   showCategoryBar() {

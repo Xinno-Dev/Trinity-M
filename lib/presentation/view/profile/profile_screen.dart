@@ -31,10 +31,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   void initState() {
-    final prov = ref.read(loginProvider);
-    final marketProv = ref.read(marketProvider);
-    _viewModel = ProfileViewModel(prov);
-    _marketViewModel = MarketViewModel(marketProv);
+    _viewModel = ProfileViewModel();
+    _marketViewModel = MarketViewModel();
     super.initState();
   }
 

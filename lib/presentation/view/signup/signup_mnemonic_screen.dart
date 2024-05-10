@@ -185,7 +185,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                             if (address != null) {
                               // var keyJson = jsonEncode(keyPair.toJson());
                               var rwfStr = await RWFExportHelper.encrypt(pass, address, mnemonic);
-                              GoogleService.uploadKeyToGoogleDrive(context, rwfStr).then((result) {
+                              GoogleService.uploadKeyToGoogleDrive(context, loginProv.inputNick, rwfStr).then((result) {
                                 LOG('---> startGoogleDriveUpload result : $result');
                               });
                             }
