@@ -519,7 +519,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     LOG('---> _startRestore : $index');
     final loginProv = ref.read(loginProvider);
     // 기존 회원가입된 메일인지 체크..
-    loginProv.emailDupCheck().then((result) {
+    loginProv.emailDupCheck(loginProv.userEmail).then((result) {
       if (result) {
         // 니모닉 복구 화면으로 이동..
         Navigator.of(context).push(

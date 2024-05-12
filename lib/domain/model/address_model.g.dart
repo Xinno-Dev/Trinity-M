@@ -10,16 +10,14 @@ AddressModel _$AddressModelFromJson(Map<String, dynamic> json) => AddressModel(
       subTitle: json['subTitle'] as String?,
       description: json['description'] as String?,
       image: json['image'] as String?,
-      follower: json['follower'] as int?,
-      following: json['following'] as int?,
+      follower: (json['follower'] as num?)?.toInt(),
+      following: (json['following'] as num?)?.toInt(),
       keyPair: json['keyPair'] as String?,
       publicKey: json['publicKey'] as String?,
       accountName: json['accountName'] as String?,
       hasMnemonic: json['hasMnemonic'] as bool?,
-      orderIndex: json['orderIndex'] as int?,
+      orderIndex: (json['orderIndex'] as num?)?.toInt(),
       address: json['address'] as String?,
-      imageURL: json['imageURL'] as String?,
-      thumbURL: json['thumbURL'] as String?,
       createTime: json['createTime'] == null
           ? null
           : DateTime.parse(json['createTime'] as String),
@@ -45,8 +43,6 @@ Map<String, dynamic> _$AddressModelToJson(AddressModel instance) {
   writeNotNull('accountName', instance.accountName);
   writeNotNull('hasMnemonic', instance.hasMnemonic);
   writeNotNull('orderIndex', instance.orderIndex);
-  writeNotNull('imageURL', instance.imageURL);
-  writeNotNull('thumbURL', instance.thumbURL);
   writeNotNull('createTime', instance.createTime?.toIso8601String());
   return val;
 }

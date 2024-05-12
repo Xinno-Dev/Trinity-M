@@ -32,7 +32,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  biometric_storage: ^5.0.0+4
+  biometric_storage: ^5.0.1
   equatable: ^2.0.5
   http: ^1.1.0
   provider: ^6.0.5

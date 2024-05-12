@@ -136,7 +136,6 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
     var result = await loginProv.loginEmail();
     LOG('----> loginProv.loginEmail result : $result');
     hideLoadingDialog();
-
     if (result == true) {
       // 로그인 완료..
       Fluttertoast.showToast(msg: '로그인 성공');
@@ -151,7 +150,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
         });
       } else {
         // 이미 생성된 계정인지 체크..
-        loginProv.emailDupCheck().then((result) {
+        loginProv.inputEmailDupCheck().then((result) {
           if (result) {
             // 계정 복구..
             Navigator.of(context).push(

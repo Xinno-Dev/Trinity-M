@@ -12,8 +12,8 @@ SellerModel _$SellerModelFromJson(Map<String, dynamic> json) => SellerModel(
       subTitle: json['subTitle'] as String?,
       pfImg: json['pfImg'] as String?,
       desc: json['desc'] as String?,
-      follower: json['follower'] as int?,
-      following: json['following'] as int?,
+      follower: (json['follower'] as num?)?.toInt(),
+      following: (json['following'] as num?)?.toInt(),
       createTime: json['createTime'] == null
           ? null
           : DateTime.parse(json['createTime'] as String),

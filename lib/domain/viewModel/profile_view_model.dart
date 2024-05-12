@@ -49,6 +49,7 @@ class ProfileViewModel {
   get accountPic {
     final account  = loginProv.account;
     final userInfo = loginProv.userInfo;
+    LOG('--> accountPic : ${account?.image}');
     if (account?.image != null) {
       return showImage(account!.image!, profileSize);
     }

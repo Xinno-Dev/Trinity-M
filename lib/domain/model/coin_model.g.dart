@@ -21,7 +21,7 @@ CoinModel _$CoinModelFromJson(Map<String, dynamic> json) => CoinModel(
       logo_hash: json['logo_hash'] as String?,
       color: json['color'] as String?,
       hideToken: json['hideToken'] as bool?,
-      networkType: json['networkType'] as int?,
+      networkType: (json['networkType'] as num?)?.toInt(),
       balanceUpdateTime: json['balanceUpdateTime'] == null
           ? null
           : DateTime.parse(json['balanceUpdateTime'] as String),

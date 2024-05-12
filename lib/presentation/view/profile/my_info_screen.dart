@@ -55,7 +55,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                 children: [
                   SizedBox(height: 10.h),
                   _viewModel.myInfoEditItem('이메일',
-                    [[prov.userMail,'']]),
+                    [[prov.userEmail,'']]),
                   grayDivider(),
                   _viewModel.myInfoEditItem('ID(닉네임)',
                     [[prov.userId,'변경']], onEdit: () {

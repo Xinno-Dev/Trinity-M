@@ -8,7 +8,7 @@ part of 'account_model.dart';
 
 AccountModel _$AccountModelFromJson(Map<String, dynamic> json) => AccountModel(
       address: json['address'] as String?,
-      status: json['status'] as int?,
+      status: (json['status'] as num?)?.toInt(),
       nickId: json['nickId'] as String?,
       subTitle: json['subTitle'] as String?,
       description: json['description'] as String?,

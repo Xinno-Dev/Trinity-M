@@ -7,7 +7,7 @@ part of 'network_model.dart';
 // **************************************************************************
 
 NetworkModel _$NetworkModelFromJson(Map<String, dynamic> json) => NetworkModel(
-      index: json['index'] as int,
+      index: (json['index'] as num).toInt(),
       name: json['name'] as String,
       url: json['url'] as String,
       httpUrl: json['httpUrl'] as String,
@@ -16,7 +16,7 @@ NetworkModel _$NetworkModelFromJson(Map<String, dynamic> json) => NetworkModel(
       channel: json['channel'] as String?,
       symbol: json['symbol'] as String?,
       exploreUrl: json['exploreUrl'] as String?,
-      networkType: json['networkType'] as int?,
+      networkType: (json['networkType'] as num?)?.toInt(),
       chainList: json['chainList'] as List<dynamic>?,
       nameOrg: json['nameOrg'] as String?,
     );

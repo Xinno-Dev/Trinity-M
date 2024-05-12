@@ -24,8 +24,6 @@ class AddressModel {
   bool?   hasMnemonic;
   int?    orderIndex;
 
-  String? imageURL;
-  String? thumbURL;
   DateTime? createTime;
 
   AddressModel({
@@ -42,8 +40,6 @@ class AddressModel {
     this.orderIndex,
     this.address,
 
-    this.imageURL,
-    this.thumbURL,
     this.createTime,
   });
 

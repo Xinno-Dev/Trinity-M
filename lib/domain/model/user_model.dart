@@ -121,7 +121,7 @@ class UserModel {
           address:      STR(item['address']),
           subTitle:     STR(item['subTitle']),
           description:  STR(item['description']),
-          imageURL:     STR(item['pfImg']),
+          image:        STR(item['image']),
         ));
       }
     }
@@ -145,11 +145,11 @@ class UserModel {
     return await AesManager().encrypt(pass, Uri.encodeFull(jsonEncode(loginInfo.toJson())));
   }
 
-  static Future<UserModel?> createFromLocal(String encStr) async {
+  static Future<UserModel?> createFromLocalEnc(String encUser) async {
     try {
       var deviceId = await getDeviceId();
       var pass      = crypto.sha256.convert(utf8.encode(deviceId)).toString();
-      var encInfo   = await AesManager().decrypt(pass, encStr);
+      var encInfo   = await AesManager().decrypt(pass, encUser);
       var jsonInfo  = jsonDecode(Uri.decodeFull(encInfo));
       LOG('---> createFromLocal : $jsonInfo');
       return UserModel.fromJson(jsonInfo);

@@ -26,7 +26,7 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       optionList: (json['optionList'] as List<dynamic>?)
           ?.map((e) => ProductItemModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      showIndex: json['showIndex'] as int?,
+      showIndex: (json['showIndex'] as num?)?.toInt(),
       createTime: json['createTime'] == null
           ? null
           : DateTime.parse(json['createTime'] as String),

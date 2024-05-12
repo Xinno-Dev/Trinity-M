@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "143986862889-0hkkuakmlf86a48420h1854colj35t5t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.exino.larba_01",
+            "certificate_hash": "fb438841ddc60686cf1a491debf3c9bebade62e6"
+          }
+        },
+        {
           "client_id": "143986862889-91id1je9p99orputhqks0vkmlkqfgbl5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

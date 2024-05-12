@@ -8,7 +8,7 @@ part of 'user_model.dart';
 
 UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       uid: json['uid'] as String?,
-      status: json['status'] as int?,
+      status: (json['status'] as num?)?.toInt(),
       loginType: $enumDecodeNullable(_$LoginTypeEnumMap, json['loginType']),
       identityYN: json['identityYN'] as bool?,
       bioIdentityYN: json['bioIdentityYN'] as bool?,

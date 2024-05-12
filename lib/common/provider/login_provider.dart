@@ -199,7 +199,7 @@ class LoginProvider extends ChangeNotifier {
     return inputPass.first;
   }
 
-  get userMail {
+  get userEmail {
     return STR(userInfo?.email);
   }
 
@@ -209,6 +209,10 @@ class LoginProvider extends ChangeNotifier {
 
   get userName {
     return accountSubtitle;
+  }
+
+  get userNickId {
+    return STR(account?.accountName);
   }
 
   get userIdentityYN {
@@ -255,7 +259,7 @@ class LoginProvider extends ChangeNotifier {
       LOG('---------------------------------');
       for (var item in accountList) {
         var address = AddressModel.fromJson(item);
-        LOG('----> ${address.accountName} / ${address.address}');
+        LOG('----> ${address.toJson()}');
         userInfo!.addressList!.add(address);
       }
       LOG('---------------------------------');
@@ -290,59 +294,6 @@ class LoginProvider extends ChangeNotifier {
     if (isLogin || isLoginCheckDone) return true;
     var jwt  = await UserHelper().get_jwt();
     var info = await UserHelper().get_loginInfo();
-    // LOG('-----------> checkLogin');
-    // kakao login..
-    // if (startLoginType == LoginType.kakaotalk.name) {
-    //   if (await checkKakaoLogin()) {
-    //     // await loginKakao(true);
-    //     // kakao.User? user = await getKakaoUserInfo();
-    //     // userName = user?.kakaoAccount?.name;
-    //     // socialId = user?.id.toString();
-    //     // LOG('--> kakao login done ${userInfo?.socialToken}');
-    //     // try {
-    //     //   var token = await UserHelper().get_token();
-    //     //   LOG('--> kakao local token $token');
-    //     //   kakao.User? user;
-    //     //   if (token != null) {
-    //     //     user = await getKakaoUserInfo();
-    //     //   } else {
-    //     //     // 토큰이 없을 경우 다시 로그인..
-    //     //     user = await startKakaoLogin();
-    //     //   }
-    //     //   if (user != null) {
-    //     //     userName = user.kakaoAccount?.name;
-    //     //     socialId = user.id.toString();
-    //     //     // userInfo = UserModel.createFromKakao(user);
-    //     //   }
-    //     // } catch (error) {
-    //     //   LOG('--> kakao 로그인 실패 $error');
-    //     // }
-    //   }
-    // }
-    // // google login..
-    // if (startLoginType == LoginType.google.name) {
-    //   if (await checkGoogleLogin()) {
-    //     // await loginGoogle();
-    //     // User? user = await getGoogleUserInfo();
-    //     // if (user != null) {
-    //     //   userName = user.displayName;
-    //     //   socialId = user.uid;
-    //     //   // userInfo = UserModel.createFromGoogle(user);
-    //     // }
-    //   }
-    // }
-    // // email login..
-    // if (startLoginType == LoginType.email.name) {
-    //   var infoStr = await UserHelper().get_loginInfo();
-    //   LOG('------> infoStr : $infoStr');
-    //   if (infoStr != null) {
-    //     // await loginEmail();
-    //     // final user = await getEmailUserInfo(testEmail);
-    //     // if (user != null) {
-    //     //   // userInfo = UserModel.createFromEmail(user.ID!, user.email!);
-    //     // }
-    //   }
-    // }
     LOG('----------------------------- $info / $jwt');
     // auto login..
     if (STR(jwt).isNotEmpty && STR(info).isNotEmpty) {
@@ -353,11 +304,6 @@ class LoginProvider extends ChangeNotifier {
           notifyListeners();
         }
       });
-      // userInfo = await UserModel.createFromLocal(info!);
-      // LOG('---> auto login info : ${userInfo?.toJson()}');
-      // if (STR(userInfo?.email).isNotEmpty) {
-      //   await UserHelper().setUserKey(userInfo!.email!);
-      // }
     }
     isLoginCheckDone = true;
     return isLogin;
@@ -422,9 +368,9 @@ class LoginProvider extends ChangeNotifier {
 
   ////////////////////////////////////////////////////////////////////////
 
-  Future<bool?> loginAuto(String user) async {
+  Future<bool?> loginAuto(String encUser) async {
     init();
-    userInfo = await UserModel.createFromLocal(user);
+    userInfo = await UserModel.createFromLocalEnc(encUser);
     if (userInfo != null && STR(userInfo?.email).isNotEmpty) {
       if (userInfo?.loginType == LoginType.kakaotalk) {
         await loginKakao();
@@ -584,7 +530,7 @@ class LoginProvider extends ChangeNotifier {
           userName ?? '',
           socialId ?? '',
           email,
-          nickId, '', '',
+          inputNick, '', '',
           address,
           sig,
           type,
@@ -592,7 +538,7 @@ class LoginProvider extends ChangeNotifier {
           onError: onError
         );
         LOG('----> createNewUser result : $result');
-        if (result != null) {
+        if (result == true) {
           var loginResult = await startLoginWithKey(onError: onError);
           if (loginResult == true) {
             return userInfo;
@@ -614,11 +560,12 @@ class LoginProvider extends ChangeNotifier {
      Function(LoginErrorType, String?)? onError}) async {
     // set user key..
     userInfo ??= _createEmailUser();
+    LOG('--> recoverUser : ${userInfo?.toJson()}');
     inputNick = ''; // nickId unknown..
     await UserHelper().setUserKey(userInfo!.email!);
     var result  = await createNewAccount(
         userPass, mnemonic: mnemonic, privateKey: privateKey);
-    LOG('--> recoverUser : $result <= $mnemonic / $privateKey');
+    LOG('--> recoverUser create : $result <= $mnemonic / $privateKey');
     // create user info..
     if (result) {
       var loginResult = await startLoginWithKey(onError: onError);
@@ -647,7 +594,7 @@ class LoginProvider extends ChangeNotifier {
       var type    = STR(userInfo?.loginType?.name);
       var email   = STR(userInfo?.email);
       var token   = STR(userInfo?.socialToken);
-      LOG('--> startLogin info : $type / $email / $nickId / $userPass -> $token');
+      LOG('--> startLogin info : $type / $email / $nickId / $userPass');
       if (type == 'email') {
         if (key != null) {
           var pubKey = await getPublicKey(key.d);
@@ -668,12 +615,13 @@ class LoginProvider extends ChangeNotifier {
           if (onError != null) onError(LoginErrorType.loginFail, null);
         }
       }
-      LOG('--> startLogin token : $token');
       if (token.isNotEmpty) {
         var result = await apiService.loginUser(
             nickStr, type, email, token, onError: onError);
         if (result) {
-          userInfo      = await _setAccountListFromServer();
+          // if (STR(userNickId).isEmpty) {
+            userInfo = await _setAccountListFromServer();
+          // }
           userInfo!.uid = await UserHelper().get_uid();
           var userEnc   = await userInfo?.encryptAes;
           await UserHelper().setUser(loginInfo: userEnc);
@@ -703,11 +651,11 @@ class LoginProvider extends ChangeNotifier {
       var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
       result = await eccImpl.generateKeyPair(
           pass, nickId: inputNick, mnemonic: mnemonic);
-      LOG('--> createNewAccount : $inputNick / $passOrg => $result');
     }
     if (result) {
       await _refreshAccountList();
     }
+    LOG('--> createNewAccount : $result <= $inputNick / $passOrg / ${account?.toJson()}');
     return result;
   }
 
@@ -778,19 +726,16 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool> changeAccount(AddressModel select) async {
-    var key = await getAccountKey(tmpKeyStr: select.keyPair);
-    LOG('--> changeAccount : ${select.address} / ${select.keyPair} => ${key?.toJson()}');
-    if (key != null) {
-      selectAccount = select;
-      await _refreshSelectAccount(select.address);
-      var userEnc = await userInfo?.encryptAes;
-      await UserHelper().setUser(
-        loginInfo: userEnc,
-        address: select.address ?? '',
-      );
-      return true;
+    // var orgJson = account!.toJson();
+    selectAccount = select;
+    await UserHelper().setUser(address: select.address);
+    LOG('--> changeAccount : ${selectAccount?.toJson()}');
+    var result = await startLoginWithKey();
+    LOG('--> loginAuto result : $result');
+    if (result != true) {
+      return false;
     }
-    return false;
+    return true;
   }
 
   setAccountName(AddressModel account) async {
@@ -831,6 +776,7 @@ class LoginProvider extends ChangeNotifier {
       for (var item in accountList) {
         var itemModel = AddressModel.fromJson(item);
         if (account.address == itemModel.address) {
+          LOG('--> setLocalAccountName : ${account.toJson()} / ${accountList.length}');
           itemModel = itemModel.copyWithInfo(account);
         }
         addrList.add(itemModel);
@@ -852,7 +798,7 @@ class LoginProvider extends ChangeNotifier {
     try {
       passOrg ??= userPass;
       var keyData = tmpKeyStr ?? selectAccount?.keyPair;
-      LOG('--> getAccountKey [$passOrg] : $tmpKeyStr / ${selectAccount?.address}');
+      LOG('--> getAccountKey [$passOrg] : $keyData');
       if (passOrg != null && STR(keyData).isNotEmpty) {
         var keyStr = await decryptKey(passOrg, keyData!);
         // LOG('--> getAccountKey : $keyStr');
@@ -975,8 +921,12 @@ class LoginProvider extends ChangeNotifier {
     });
   }
 
-  Future<bool> emailDupCheck() async {
-    return !await apiService.checkEmail(STR(userInfo?.email));
+  Future<bool> inputEmailDupCheck() async {
+    return await emailDupCheck(inputEmail);
+  }
+
+  Future<bool> emailDupCheck(String checkMail) async {
+    return !await apiService.checkEmail(checkMail);
   }
 
   Future<bool> emailVfCheck({Function(LoginErrorType)? onError}) async {
@@ -1054,20 +1004,37 @@ class LoginProvider extends ChangeNotifier {
       var accountCount = INT(userInfo?.addressList?.length);
       var pass = crypto.sha256.convert(utf8.encode(userPass)).toString();
       var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
-      LOG('--> _setAccountListFromServer accountCount : $accountCount');
+      // crate empty keypair..
       for (var i = 0; i < tmpUserInfo!.addressList!.length; i++) {
         var item = tmpUserInfo.addressList![i];
-        if (i < accountCount) {
-          // LOG('--> _setAccountListFromServer set nick [$i] : ${item.accountName}');
-          await setLocalAccountInfo(item);
-        } else {
-          // LOG('--> _setAccountListFromServer addKeyPair [$i] : ${item.accountName}');
+        if (i >= accountCount) {
+          LOG('--> addKeyPair [$i] : ${item.accountName}');
           await eccImpl.addKeyPair(pass, nickId: item.accountName);
         }
       }
+      // update account list..
+      var addrListJson = [];
+      for (var item in tmpUserInfo.addressList!) {
+        var newItem = _computeAccount(item);
+        if (newItem != null) {
+          addrListJson.add(newItem.toJson());
+        }
+      }
+      LOG('--> addrListJson : $addrListJson');
+      await UserHelper().setUser(addressList: jsonEncode(addrListJson));
       await _refreshAccountList();
       // LOG('--> _setAccountListFromServer result : ${userInfo?.toJson()}');
       return userInfo;
+    }
+    return null;
+  }
+
+  AddressModel? _computeAccount(AddressModel newItem) {
+    for (var item in userInfo!.addressList!) {
+      if (item.address == newItem.address) {
+        LOG('--> _computeAccount item : ${item.image} / ${newItem.image}');
+        return item.copyWithInfo(newItem);
+      }
     }
     return null;
   }

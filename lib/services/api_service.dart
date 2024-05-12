@@ -48,6 +48,7 @@ class ApiService {
       if (isSuccess(response.statusCode)) {
         return BOL(jsonDecode(response.body)['result']);
       }
+      return true;
     } catch (e) {
       LOG('--> checkEmail error : $e');
     }
@@ -161,7 +162,7 @@ class ApiService {
   //  /user
   //
 
-  Future<String?> createUser(
+  Future<bool> createUser(
     String name,
     String socialNo,
     String email,
@@ -200,17 +201,17 @@ class ApiService {
       );
       LOG('--> createUser response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
+        return true; // null is success
+      } else {
         var resultJson = jsonDecode(response.body);
-        var uId   = STR(resultJson['result']);
-        var error = STR(resultJson['error' ]);
-        LOG('--> createUser result : $uId / $error');
-        if (error.isNotEmpty && onError != null) onError(LoginErrorType.signupFail, error);
-        return uId.isNotEmpty ? uId : null; // null is success
+        var errorCode  = STR(resultJson['err' ]?['code']);
+        LOG('--> API loginUser error : $errorCode');
+        if (onError != null) onError(LoginErrorType.code, errorCode);
       }
     } catch (e) {
       LOG('--> createUser error : $e');
     }
-    return 'createUser error';
+    return false;
   }
 
 
@@ -278,8 +279,8 @@ class ApiService {
         },
         body: jsonEncode({
           'type': type,
-          'authToken': authToken,
           'nickId': nickId,
+          'authToken': authToken,
         })
       );
       LOG('--> API loginUser response :'
