@@ -147,11 +147,10 @@ class UserModel {
 
   static Future<UserModel?> createFromLocalEnc(String encUser) async {
     try {
-      var deviceId = await getDeviceId();
+      var deviceId  = await getDeviceId();
       var pass      = crypto.sha256.convert(utf8.encode(deviceId)).toString();
       var encInfo   = await AesManager().decrypt(pass, encUser);
       var jsonInfo  = jsonDecode(Uri.decodeFull(encInfo));
-      LOG('---> createFromLocal : $jsonInfo');
       return UserModel.fromJson(jsonInfo);
     } catch (e) {
       LOG('---> createFromLocal error : $e');

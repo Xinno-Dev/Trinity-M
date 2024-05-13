@@ -24,7 +24,7 @@ class MarketRepository {
   var contentImgN = List.generate(6, (index) => 'banner_0$index.png');
 
   var pageCount = 0;
-  var lastId = '';
+  var lastId = -1;
   var isLastPage = false;
 
   init() {
@@ -45,42 +45,41 @@ class MarketRepository {
               '태안반도에 위치한 휴양형 고급 골프 리조트입니다.'
       );
       var newItem = ProductModel(
-        prodSaleId:   Uuid().v4(),
+        showIndex:    index,
+        prodSaleId:   titleN.indexOf(title).toString(),
         name:         title,
+        seller:       seller,
         repImg:       'banner_0$index.png',
         totalAmount:  '2000',
         remainAmount: '1000',
         itemPrice:    '1000',
         priceUnit:    'KRW',
         status:       '1',
-        showIndex:    index,
-
         repDetailImg: 'main_00.png',
+        externUrl:    'detail_00.png',
         desc: '이용권 1매 + 무료 증정 NFT Art 1개 (옵션 선택)',
         desc2:'주말 4인 기준\n'
               '총 36홀 : 1일차 18홀, 2일차 18홀\n'
               '2일차 조식 무료\n'
               '1일차, 2일차 카트 무료',
-        externUrl:    'detail_00.png',
-        seller:       seller,
       );
       // add sample options..
       for (var i=0; i<3; i++) {
         for (var j=0; j<12; j++) {
           var pic = 'item_${j > 9 ? j : '0$j'}.png';
           var newOpt = ProductItemModel(
-            itemId:   Uuid().v4(),
-            itemType: '1',
-            address:  'contAddr0000000001',
-            img:  pic,
-            name: title,
+            itemId:     Uuid().v4(),
+            img:        pic,
+            name:       title,
+            issuer:     seller,
+            itemType:   '1',
+            address:    'contAddr0000000001',
             desc:       'Ticket No.${(i * 12) + j}',
             desc2:      '티켓 번호 선택',
             tokenId:    '1',
             chainId:    'mainnet@rigo',
             type:       'ERC721',
             totalSupply:'2000',
-            issuer:     seller,
           );
           optionData[newOpt.itemId!] = newOpt;
           newItem.optionList ??= [];
@@ -89,7 +88,6 @@ class MarketRepository {
       }
       productData[newItem.prodSaleId!] = newItem;
       productList.add(newItem);
-      lastId = STR(newItem.prodSaleId);
     }
   }
 
@@ -116,18 +114,28 @@ class MarketRepository {
   }
 
   getProductList({int tagId = 0}) async {
-    final jsonData = await _apiService.getProductList(
-      tagId:  tagId,
-      lastId: lastId
-    );
-    if (jsonData?['data'] != null) {
-      var data = jsonData!['data'];
-      for (var item in data) {
-        var newItem = ProductModel.fromJson(item);
-        lastId = STR(newItem.prodSaleId);
+    try {
+      final jsonData = await _apiService.getProductList(
+          tagId: tagId,
+          lastId: lastId
+      );
+      if (jsonData?['data'] != null) {
+        var data = jsonData!['data'];
+        for (var item in data) {
+          var newItem = ProductModel.fromJson(item);
+          LOG('--> getProductList item : ${newItem.prodSaleId} / ${data.length}');
+          productList.add(newItem);
+          var itemId  = int.parse(STR(newItem.prodSaleId, defaultValue: '0'));
+          if (lastId < 0 || lastId < itemId) {
+            lastId = itemId;
+          }
+        }
       }
+      LOG('--> getProductList result : ${productList
+          .length} ==> lastId: $lastId');
+    } catch (e) {
+      LOG('--> getProductList error : $e');
     }
-    LOG('--> getProductList result : ${productList.length} / $lastId');
     return productList;
   }
 }

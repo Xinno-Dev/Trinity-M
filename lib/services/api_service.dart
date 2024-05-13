@@ -469,11 +469,12 @@ class ApiService {
   //
 
   Future<JSON?> getProductList(
-    {int tagId = 1, var lastId = '', int pageCnt = 20}) async {
+    {int tagId = 1, int lastId = -1, int pageCnt = 20}) async {
     try {
       LOG('--> getProductList : $tagId / $lastId / $pageCnt');
       final response = await http.get(
-        Uri.parse(httpUrl + '/prods?tagId=$tagId&lastId=$lastId&pageCnt=$pageCnt'),
+        // Uri.parse(httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt&lastId=$lastId'),
+        Uri.parse(httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt${lastId >= 0 ? '&lastId=$lastId' : ''}'),
       );
       LOG('--> getProductList response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {

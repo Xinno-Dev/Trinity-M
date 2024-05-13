@@ -256,13 +256,13 @@ class LoginProvider extends ChangeNotifier {
     if (accountListStr != 'NOT_ADDRESSLIST') {
       userInfo!.addressList = [];
       List<dynamic> accountList = json.decode(accountListStr);
-      LOG('---------------------------------');
+      LOG('------------- _refreshAccountList --------------------');
       for (var item in accountList) {
         var address = AddressModel.fromJson(item);
-        LOG('----> ${address.toJson()}');
+        LOG('----> [${address.accountName}] : ${address.address}');
         userInfo!.addressList!.add(address);
       }
-      LOG('---------------------------------');
+      LOG('------------------------------------------------------');
     }
     await _refreshSelectAccount();
     return userInfo;
@@ -619,9 +619,10 @@ class LoginProvider extends ChangeNotifier {
         var result = await apiService.loginUser(
             nickStr, type, email, token, onError: onError);
         if (result) {
-          // if (STR(userNickId).isEmpty) {
+          // get all account info when nickId empty..
+          if (STR(userNickId).isEmpty) {
             userInfo = await _setAccountListFromServer();
-          // }
+          }
           userInfo!.uid = await UserHelper().get_uid();
           var userEnc   = await userInfo?.encryptAes;
           await UserHelper().setUser(loginInfo: userEnc);
@@ -663,9 +664,9 @@ class LoginProvider extends ChangeNotifier {
   Future<bool> addNewAccount(String passOrg, String newNickId) async {
     var pass    = crypto.sha256.convert(utf8.encode(passOrg)).toString();
     var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
-    var result  = await eccImpl.addKeyPair(pass, nickId: newNickId);
-    LOG('--> addNewAccount : $newNickId / $passOrg => $result / $walletAddress');
-    if (result) {
+    var keyResult = await eccImpl.addKeyPair(pass, nickId: newNickId);
+    LOG('--> addNewAccount : $newNickId / $passOrg => $keyResult / $walletAddress');
+    if (keyResult) {
       await _refreshAccountList();
       var uid     = STR(await UserHelper().get_uid());
       var nickId  = Uri.encodeFull(newNickId);
@@ -675,6 +676,11 @@ class LoginProvider extends ChangeNotifier {
       var addResult = await apiService.addAccount(nickId, walletAddress, sig);
       if (addResult) {
         LOG('--> addNewAccount success !!');
+        var result = await startLoginWithKey();
+        LOG('--> loginAuto result : $result');
+        if (result != true) {
+          return false;
+        }
         notifyListeners();
         return true;
       } else {
@@ -1012,6 +1018,8 @@ class LoginProvider extends ChangeNotifier {
           await eccImpl.addKeyPair(pass, nickId: item.accountName);
         }
       }
+      // refresh account..
+      await _refreshAccountList();
       // update account list..
       var addrListJson = [];
       for (var item in tmpUserInfo.addressList!) {
@@ -1022,7 +1030,6 @@ class LoginProvider extends ChangeNotifier {
       }
       LOG('--> addrListJson : $addrListJson');
       await UserHelper().setUser(addressList: jsonEncode(addrListJson));
-      await _refreshAccountList();
       // LOG('--> _setAccountListFromServer result : ${userInfo?.toJson()}');
       return userInfo;
     }
@@ -1032,11 +1039,20 @@ class LoginProvider extends ChangeNotifier {
   AddressModel? _computeAccount(AddressModel newItem) {
     for (var item in userInfo!.addressList!) {
       if (item.address == newItem.address) {
-        LOG('--> _computeAccount item : ${item.image} / ${newItem.image}');
+        LOG('--> _computeAccount item [${newItem.address}] : ${newItem.image} / ${item.toJson()}');
         return item.copyWithInfo(newItem);
       }
     }
     return null;
+  }
+
+  bool checkHasAccount(AddressModel newItem) {
+    for (var item in userInfo!.addressList!) {
+      if (item.address == newItem.address) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Future<bool> _importPrivateKey(String privateKeyHex,

@@ -64,7 +64,7 @@ const String PORTONE_IMP_CODE = 'imp32281033'; // PortOne 가맹점 코드
 // const String EX_TEST_MAIL_00 = 'test00@exsino.com';
 // const String EX_TEST_PASS_00 = 'testpass00';
 const String EX_TEST_MAIL_EX = 'test00@exsino.com';
-const String EX_TEST_MAIL_00 = 'jubal2001@gmail.com';
+const String EX_TEST_MAIL_00 = 'jubal2000@gmail.com';
 const String EX_TEST_PASS_00 = 'jubalpass00';
 const String EX_TEST_PASS_RC_00 = 'recoverpass00';
 const String EX_TEST_ACCCOUNT_00 = 'jubal0000';
@@ -78,6 +78,7 @@ const String EX_TEST_MN_03 = 'apart sand present sunny destroy police either idl
 
 
 const int DECIMAL_PLACES = 8;
+const double PROFILE_RADIUS = 120.0;
 
 late List DEFAULT_COIN_LIST = [
   ['RIGO', 'RIGO', MAIN_NET_CHAIN_ID, DECIMAL_PLACES.toString()],

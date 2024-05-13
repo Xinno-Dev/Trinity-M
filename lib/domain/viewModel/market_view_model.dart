@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:larba_00/common/provider/market_provider.dart';
 import '../../common/common_package.dart';
+import '../../common/const/constants.dart';
 import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/uihelper.dart';
@@ -261,7 +262,7 @@ class MarketViewModel {
             ],
           ),
         ),
-        _contentFollowButton(),
+        // _contentFollowButton(),
       ],
     );
   }
@@ -403,21 +404,23 @@ class MarketViewModel {
     return Container(
       padding: padding,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(80),
-            child: Image.asset('assets/samples/${item.sellerImage}'),
+            borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
+            child: Image.asset('assets/samples/${item.sellerImage}',
+              width: PROFILE_RADIUS.r, height: PROFILE_RADIUS.r, fit: BoxFit.fill),
           ),
-          SizedBox(width: 20),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _contentFollowBox(TR(context, '팔로워'), CommaIntText(item.sellerFollower)),
-                _contentFollowBox(TR(context, '팔로잉'), CommaIntText(item.sellerFollowing)),
-              ],
-            ),
-          )
+          // SizedBox(width: 20),
+          // Expanded(
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //     children: [
+          //       _contentFollowBox(TR(context, '팔로워'), CommaIntText(item.sellerFollower)),
+          //       _contentFollowBox(TR(context, '팔로잉'), CommaIntText(item.sellerFollowing)),
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );

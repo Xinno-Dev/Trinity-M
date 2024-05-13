@@ -52,7 +52,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   void didChangeDependencies() {
-    _viewModel.setProfileContext(context);
     super.didChangeDependencies();
   }
 

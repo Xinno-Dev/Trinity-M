@@ -43,23 +43,19 @@ class ProfileViewModel {
   final fireProv  = FirebaseProvider();
   late BuildContext context;
 
-  final profileSize = Size(100.0, 100.0);
   AddressModel? accountOrg;
 
   get accountPic {
-    final account  = loginProv.account;
-    final userInfo = loginProv.userInfo;
-    LOG('--> accountPic : ${account?.image}');
-    if (account?.image != null) {
-      return showImage(account!.image!, profileSize);
+    return getAccountPic(loginProv.account);
+  }
+
+  getAccountPic(AddressModel? account) {
+    if (STR(account?.image).isNotEmpty) {
+      return showImage(account!.image!, Size(PROFILE_RADIUS.r, PROFILE_RADIUS.r));
     }
-    if (userInfo?.pic != null) {
-      return showImage(userInfo!.pic!, profileSize);
-    }
-    if (userInfo?.picThumb != null) {
-      return showImage(userInfo!.picThumb!, profileSize);
-    }
-    return Icon(Icons.account_circle, size: profileSize.height, color: GRAY_30);
+    return SvgPicture.asset('assets/svg/icon_profile_00.svg',
+        width: PROFILE_RADIUS.r, height: PROFILE_RADIUS.r.r,
+        colorFilter: ColorFilter.mode(GRAY_20, BlendMode.srcIn));
   }
 
   getPageTitle(BuildContext context) {
@@ -76,6 +72,7 @@ class ProfileViewModel {
               hideProfileSelectBox();
             } else {
               showProfileSelectBox(
+                context,
                 onSelect: _selectAccount,
                 onAdd: _startAccountAdd);
             }
@@ -204,7 +201,7 @@ class ProfileViewModel {
     if (loginProv.userInfo != null) {
       return Column(
         children: [
-          _profileTopBar(padding: EdgeInsets.only(bottom: 20)),
+          _profileImage(padding: EdgeInsets.only(bottom: 20)),
           _profileDescription(padding: EdgeInsets.only(bottom: 30)),
           _profileButtonBox(),
         ],
@@ -218,10 +215,6 @@ class ProfileViewModel {
 
   BuildContext? _accountContext;
 
-  setProfileContext(BuildContext context) {
-    _accountContext = context;
-  }
-
   hideProfileSelectBox() {
     loginProv.setMaskStatus(false);
     if (_accountContext != null && _accountContext!.mounted) {
@@ -229,7 +222,7 @@ class ProfileViewModel {
     }
   }
 
-  showProfileSelectBox({Function(AddressModel)? onSelect, Function()? onAdd}) {
+  showProfileSelectBox(BuildContext context, {Function(AddressModel)? onSelect, Function()? onAdd}) {
     if (loginProv.isShowMask || loginProv.userInfo == null) return false;
     _accountContext = context;
     loginProv.setMaskStatus(true);
@@ -315,8 +308,9 @@ class ProfileViewModel {
       return Container(
         child: Row(
           children: [
-            Text(TR(context, STR(item[0])), style: typo16regular, maxLines: 2),
-            Spacer(),
+            Expanded(
+              child: Text(TR(context, STR(item[0])), style: typo16regular, maxLines: 2),
+            ),
             if (STR(item[1]).isNotEmpty)...[
               if (STR(item[1]) != 'on' && STR(item[1]) != 'off')
                 OutlinedButton(
@@ -342,15 +336,16 @@ class ProfileViewModel {
 
   ////////////////////////////////////////////////////////////////////////
 
-  _profileItem(AddressModel item, Function(AddressModel)? onSelect) {
-    final iconSize = 40.0.r;
-    final color = item.address == loginProv.selectAccount?.address ? PRIMARY_100 : GRAY_50;
+  _profileItem(AddressModel account, Function(AddressModel)? onSelect) {
+    final iconSize = 32.0.r;
+    final color = account.address ==
+        loginProv.selectAccount?.address ? PRIMARY_100 : GRAY_50;
     return InkWell(
       onTap: () {
-        if (onSelect != null) onSelect(item);
+        if (onSelect != null) onSelect(account);
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
+        margin: EdgeInsets.only(bottom: 12.h),
         child: Row(
           children: [
             SizedBox(
@@ -358,8 +353,7 @@ class ProfileViewModel {
               height: iconSize,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(iconSize),
-                child: item.image != null ? showImage(item.image!, Size(iconSize, iconSize)) :
-                Icon(Icons.account_circle, size: iconSize, color: GRAY_40),
+                child: getAccountPic(account),
               ),
             ),
             SizedBox(width: 10),
@@ -367,9 +361,9 @@ class ProfileViewModel {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(STR(item.accountName),
+                  Text(STR(account.accountName),
                       style: typo16semibold.copyWith(color: color)),
-                  Text(ADDR(item.address),
+                  Text(ADDR(account.address),
                       style: typo11normal.copyWith(color: GRAY_40))
                 ],
               )
@@ -380,18 +374,22 @@ class ProfileViewModel {
     );
   }
 
-  _profileTopBar({EdgeInsets? padding}) {
+  _profileImage({EdgeInsets? padding}) {
     return Container(
       padding: padding,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
+            width:  PROFILE_RADIUS.r + 35,
+            height: PROFILE_RADIUS.r,
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(profileSize.height.r),
-                  child: accountPic,
+                Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
+                    child: accountPic,
+                  ),
                 ),
                 Positioned(
                   right: 0,
@@ -420,7 +418,7 @@ class ProfileViewModel {
                     },
                     child: Container(
                       margin: EdgeInsets.all(5),
-                      child: Icon(Icons.photo_camera, color: GRAY_50),
+                      child: Icon(Icons.photo_camera, color: GRAY_30),
                     ),
                   )
                 )
@@ -453,14 +451,19 @@ class ProfileViewModel {
   }
 
   _profileDescription({EdgeInsets? padding}) {
+    if (STR(loginProv.account?.description).isNotEmpty) {
+      return Container(
+        padding: padding,
+        margin: EdgeInsets.symmetric(horizontal: 30.w),
+        child: Text(STR(loginProv.account?.description ??
+            '이국적 풍치의 이탈리아 투스카니 스타일 클럽하우스와 '
+                '대저택 컨셉의 최고급 호텔 시설로 휴양과 메이저급 골프코스의 다이나믹을 함께 즐길 수'
+                ' 있는 태안반도에 위치한 휴양형 고급 골프 리조트입니다.'),
+            style: typo14medium, textAlign: TextAlign.center),
+      );
+    }
     return Container(
-      padding: padding,
-      margin: EdgeInsets.symmetric(horizontal: 30.w),
-      child: Text(STR(loginProv.account?.description ??
-          '이국적 풍치의 이탈리아 투스카니 스타일 클럽하우스와 '
-          '대저택 컨셉의 최고급 호텔 시설로 휴양과 메이저급 골프코스의 다이나믹을 함께 즐길 수'
-          ' 있는 태안반도에 위치한 휴양형 고급 골프 리조트입니다.'),
-          style: typo14medium, textAlign: TextAlign.center),
+      height: 20.h,
     );
   }
 
@@ -650,7 +653,12 @@ class ProfileViewModel {
       CropAspectRatioPreset.square,
     ];
     return await startImageCropper(
-      imageFilePath, CropStyle.circle, preset, CropAspectRatioPreset.square, false);
+      imageFilePath,
+      CropStyle.circle,
+      preset,
+      CropAspectRatioPreset.square,
+      false
+    );
   }
 
   Future<Uint8List?> _readFileByte(String filePath) async {
@@ -678,15 +686,15 @@ class ProfileViewModel {
         sourcePath: imageFilePath,
         aspectRatioPresets: preset,
         maxWidth: 1024,
+        maxHeight: 1024,
         uiSettings: [
           AndroidUiSettings(
-              toolbarTitle: 'Image Cropper',
-              toolbarColor: Colors.purple,
-              toolbarWidgetColor: Colors.white,
+              toolbarTitle: '이미지 자르기',
+              toolbarColor: Colors.white,
               initAspectRatio: initPreset,
               lockAspectRatio: lockAspectRatio),
           IOSUiSettings(
-            title: 'Image Cropper',
+            title: '이미지 자르기',
           ),
         ],
       );

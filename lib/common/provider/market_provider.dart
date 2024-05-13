@@ -32,6 +32,7 @@ class MarketProvider extends ChangeNotifier {
   var selectCategory = 0;
   var selectDetailTab = 0;
   var optionIndex = 0;
+  var isStartDataDone = false;
 
   get marketRepo {
     return _repo;
