@@ -6,6 +6,7 @@ import 'package:larba_00/common/provider/coin_provider.dart';
 import 'package:larba_00/common/provider/login_provider.dart';
 import 'package:larba_00/common/provider/temp_provider.dart';
 import 'package:larba_00/domain/model/coin_model.dart';
+import 'package:larba_00/domain/viewModel/market_view_model.dart';
 import 'package:larba_00/domain/viewModel/profile_view_model.dart';
 import 'package:larba_00/presentation/view/settings/settings_screen.dart';
 import 'package:larba_00/presentation/view/staking/staking_main_screen.dart';

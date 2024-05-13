@@ -1,11 +1,15 @@
 import 'package:animations/animations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:larba_00/common/provider/market_provider.dart';
+import 'package:larba_00/domain/viewModel/profile_view_model.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import '../../common/common_package.dart';
 import '../../common/const/constants.dart';
 import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/uihelper.dart';
+import '../../common/const/widget/image_widget.dart';
 import '../../common/const/widget/primary_button.dart';
 import '../../presentation/view/market/product_detail_screen.dart';
 import '../../presentation/view/market/seller_detail_screen.dart';
@@ -25,10 +29,9 @@ class MarketViewModel {
   showCategoryBar() {
     // LOG('--> prov.categoryList : ${prov.categoryList}');
     return Container(
-      margin: EdgeInsets.only(bottom: 5),
+      margin: EdgeInsets.only(bottom: 15),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: List<Widget>.of(prov.categoryList.map((e) =>
               _categoryItem(STR(e.value), prov.categoryList.indexOf(e)))),
@@ -43,7 +46,7 @@ class MarketViewModel {
       sliver: SliverList(
         delegate: SliverChildListDelegate(
         List.generate(prov.marketRepo.productList.length, (index) =>
-          _contentItem(prov.marketRepo.productList[index])),
+            productListItem(prov.marketRepo.productList[index])),
         ),
       ),
     );
@@ -54,9 +57,9 @@ class MarketViewModel {
     // LOG('--> detailPic : ${prov.optionIndex} / ${prov.selectProduct?.optionList?.length}');
     return Column(
       children: [
-        if (prov.detailPic != null)
-          Image.asset('assets/samples/${prov.detailPic}',
-            width: imageSize, height: imageSize, fit: BoxFit.fitWidth),
+        if (STR(prov.detailPic).isNotEmpty)
+          showImage(STR(prov.detailPic),
+            Size.square(imageSize.r), fit: BoxFit.fitWidth),
         Container(
           padding: EdgeInsets.all(15),
           margin: EdgeInsets.only(bottom: 20),
@@ -75,8 +78,11 @@ class MarketViewModel {
   }
 
   showProductInfoTab() {
+    if (prov.selectProduct?.optionList == null) {
+      prov.selectDetailTab = 1;
+    }
     return FutureBuilder(
-      future: getImageHeight('assets/samples/${prov.externalPic}'),
+      future: getNetworkImageSize(prov.externalPic),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var exSize = snapshot.data as Size;
@@ -86,7 +92,7 @@ class MarketViewModel {
                 final itemHeight = constraints.maxWidth / 4;
                 final itemLength = (prov.selectProduct?.optionList?.length ?? 0) / 4 +
                     ((prov.selectProduct?.optionList?.length ?? 0) % 4 > 0 ? 1 : 0);
-                final listHeight = itemHeight * itemLength + 5;
+                final listHeight = itemLength > 0 ? itemHeight * itemLength + 5 : 120.h;
                 final detailHeight = exSize.height * (constraints.maxWidth / exSize.width);
                 // LOG('---> listHeight : $listHeight / $itemHeight / $itemLength /'
                 //     ' $detailHeight (${constraints.maxWidth / exSize.width} / ${exSize.width})');
@@ -144,12 +150,11 @@ class MarketViewModel {
   }
 
   showOptionTab() {
-    // LOG('--> showOptionTab : $prov.selectProduct');
     if (prov.selectProduct?.optionList == null) {
       return Container(
-        height: 100,
+        height: 120.h,
         child: Center(
-          child: Text('No options..'),
+          child: Text(TR(context, 'No options..')),
         ),
       );
     }
@@ -188,9 +193,7 @@ class MarketViewModel {
     }
     return Container(
       alignment: Alignment.topCenter,
-      child: Image.asset(
-        'assets/samples/${prov.externalPic}',
-        fit: BoxFit.fitWidth),
+      child: CachedNetworkImage(imageUrl: prov.externalPic, fit: BoxFit.fitWidth),
     );
   }
 
@@ -273,11 +276,11 @@ class MarketViewModel {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-            padding: EdgeInsets.only(top: 20, bottom: 5),
+            padding: EdgeInsets.only(top: 20, bottom: 10),
             child: Text(title, style: typo16bold)
         ),
         ...List<Widget>.from(prov.marketRepo.productList.map((e) =>
-            _contentItem(e, isShowSeller, isCanBuy)).toList())
+            productListItem(e, isShowSeller, isCanBuy)).toList())
       ],
     );
   }
@@ -292,7 +295,7 @@ class MarketViewModel {
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-        margin: EdgeInsets.symmetric(horizontal: 5),
+        margin: EdgeInsets.only(right: 10),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
@@ -304,28 +307,33 @@ class MarketViewModel {
     );
   }
 
-  _contentItem(ProductModel item, [var isShowSeller = true, var isCanBuy = true]) {
+  productListItem(ProductModel item, [var isShowSeller = true, var isCanBuy = true]) {
     return OpenContainer(
       transitionType: ContainerTransitionType.fadeThrough,
       closedElevation: 0,
       closedBuilder: (context, builder) {
-        return Container(
-          margin: EdgeInsets.only(bottom: 25),
-          color: Colors.white,
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (isShowSeller)
-                _contentSellerBar(item),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Image.asset('assets/samples/${item.repImg}',
-                    height: 220, fit: BoxFit.fitHeight),
-              ),
-              _contentTitleBar(item),
-            ],
-          ),
+        return VisibilityDetector(
+          key: GlobalKey(),
+          onVisibilityChanged: (info) {
+            // if (info.visibleFraction > 0) {
+            //   prov.refreshProductList(item.saleProdId);
+            // }
+          },
+          child: Container(
+            margin: EdgeInsets.only(bottom: 25),
+            color: Colors.white,
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (isShowSeller)
+                  _contentSellerBar(item, padding: EdgeInsets.only(bottom: 10.h)),
+                showImage(STR(item.repImg),
+                    Size(MediaQuery.of(context).size.width, 220.r)),
+                _contentTitleBar(item),
+              ],
+            ),
+          )
         );
       },
       openBuilder: (context, builder) {
@@ -370,13 +378,20 @@ class MarketViewModel {
           padding: padding,
           child: Row(
             children: [
-              if (item.sellerImage != null)...[
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.white,
-                  child: Image.asset('assets/samples/${item.sellerImage}'),
+              if (STR(item.sellerImage).isNotEmpty)...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(PROFILE_RADIUS_S.r),
+                  child: showImage(item.sellerImage, Size.square(PROFILE_RADIUS_S.r),
+                    fit: BoxFit.fill),
                 ),
-                SizedBox(width: 10),
+                SizedBox(width: 10.w),
+              ],
+              if (STR(item.sellerImage).isEmpty)...[
+                SvgPicture.asset('assets/svg/icon_profile_00.svg',
+                  width: PROFILE_RADIUS_S.r, height: PROFILE_RADIUS_S.r, fit: BoxFit.fill,
+                  colorFilter: ColorFilter.mode(GRAY_20, BlendMode.srcIn),
+                ),
+                SizedBox(width: 10.w),
               ],
               Expanded(
                 child: Column(
@@ -384,7 +399,7 @@ class MarketViewModel {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(item.sellerName, style: typo16bold),
-                    if (item.sellerSubtitle != null)...[
+                    if (STR(item.sellerSubtitle).isNotEmpty)...[
                       Text(item.sellerSubtitle!, style: typo14normal),
                     ]
                   ],
@@ -406,11 +421,21 @@ class MarketViewModel {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
-            child: Image.asset('assets/samples/${item.sellerImage}',
-              width: PROFILE_RADIUS.r, height: PROFILE_RADIUS.r, fit: BoxFit.fill),
-          ),
+          if (STR(item.sellerImage).isNotEmpty)...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
+              child: showImage(item.sellerImage, Size.square(PROFILE_RADIUS.r),
+                  fit: BoxFit.fill),
+            ),
+            SizedBox(width: 10.w),
+          ],
+          if (STR(item.sellerImage).isEmpty)...[
+            SvgPicture.asset('assets/svg/icon_profile_00.svg',
+              width: PROFILE_RADIUS.r, height: PROFILE_RADIUS.r, fit: BoxFit.fill,
+              colorFilter: ColorFilter.mode(GRAY_20, BlendMode.srcIn),
+            ),
+            SizedBox(width: 10.w),
+          ],
           // SizedBox(width: 20),
           // Expanded(
           //   child: Row(
@@ -427,10 +452,14 @@ class MarketViewModel {
   }
 
   _contentSellerDescBox(ProductModel item, {EdgeInsets? padding}) {
-    return Container(
-      padding: padding,
-      child: Text(STR(item.sellerDesc), style: typo14normal, textAlign: TextAlign.center),
-    );
+    if (STR(item.sellerDesc).isNotEmpty) {
+      return Container(
+        padding: padding,
+        child: Text(STR(item.sellerDesc), style: typo14normal,
+            textAlign: TextAlign.center),
+      );
+    }
+    return Container();
   }
 
   _contentFollowBox(String title, String value) {

@@ -345,8 +345,8 @@ grayDivider() {
 }
 
 getImageHeight(String? path) async {
-  if (path != null) {
-    var data = await rootBundle.load(path);
+  if (STR(path).isNotEmpty) {
+    var data = await rootBundle.load(path!);
     var codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
     var fi = await codec.getNextFrame();
     return Size(fi.image.width.toDouble(), fi.image.height.toDouble());

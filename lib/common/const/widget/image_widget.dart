@@ -7,11 +7,12 @@ import 'package:larba_00/common/const/utils/uihelper.dart';
 import '../utils/convertHelper.dart';
 
 showImage(String imagePath, Size size, {BoxFit? fit}) {
+  if (imagePath.isEmpty) return Container();
   if (imagePath.contains('https:')) {
-    return FutureBuilder(future: _getNetworkImageSize(imagePath),
+    return FutureBuilder(future: getNetworkImageSize(imagePath),
       builder: (context, snapshot) {
       if (snapshot.hasData) {
-        LOG('---> showImage size : ${snapshot.data}');
+        // LOG('---> showImage size : ${imagePath} / ${snapshot.data}');
         var orgSize = snapshot.data as Size;
         return CachedNetworkImage(
           imageUrl: imagePath,
@@ -30,9 +31,10 @@ showImage(String imagePath, Size size, {BoxFit? fit}) {
     fit: fit);
 }
 
-Future<Size> _getNetworkImageSize(String imagePath) {
+Future<Size> getNetworkImageSize(String? imagePath) async {
+  if (STR(imagePath).isEmpty) return Size.zero;
   Completer<Size> completer = Completer();
-  Image image = new Image(image: CachedNetworkImageProvider(imagePath)); // I modified this line
+  Image image = new Image(image: CachedNetworkImageProvider(imagePath!)); // I modified this line
   image.image.resolve(ImageConfiguration()).addListener(
     ImageStreamListener(
           (ImageInfo image, bool synchronousCall) {

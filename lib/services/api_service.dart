@@ -40,17 +40,17 @@ class ApiService {
 
   Future<bool> checkEmail(String email) async {
     try {
-      LOG('--> checkEmail : $email');
+      LOG('--> API checkEmail : $email');
       final response = await http.get(
         Uri.parse(httpUrl + '/users/email/${email}/dup'),
       );
-      LOG('--> checkEmail response : ${response.statusCode} / ${response.body}');
+      LOG('--> API checkEmail response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         return BOL(jsonDecode(response.body)['result']);
       }
       return true;
     } catch (e) {
-      LOG('--> checkEmail error : $e');
+      LOG('--> API checkEmail error : $e');
     }
     return false;
   }
@@ -63,7 +63,7 @@ class ApiService {
 
   Future<bool> sendEmailVfCode(String email, String vfCode) async {
     try {
-      LOG('--> sendEmailVfCode : $email / $vfCode');
+      LOG('--> API sendEmailVfCode : $email / $vfCode');
       final response = await http.post(
         Uri.parse(httpUrl + '/users/email/vfcode'),
         headers: {
@@ -75,12 +75,12 @@ class ApiService {
           'vfCode': vfCode
         })
       );
-      LOG('--> sendEmailVfCode response : ${response.statusCode} / ${response.body}');
+      LOG('--> API sendEmailVfCode response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         return true;
       }
     } catch (e) {
-      LOG('--> sendEmailVfCode error : $e');
+      LOG('--> API sendEmailVfCode error : $e');
     }
     return false;
   }
@@ -93,17 +93,17 @@ class ApiService {
 
   sendEmailVfCodeLink(String sha256Token) async {
     try {
-      LOG('--> sendEmailVfCodeLink : $sha256Token');
+      LOG('--> API sendEmailVfCodeLink : $sha256Token');
       final response = await http.get(
           Uri.parse(httpUrl + '/users/email/vflink/{$sha256Token}'),
       );
-      LOG('--> sendEmailVfCodeLink response : ${response.statusCode} / ${response.body}');
+      LOG('--> API sendEmailVfCodeLink response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         var result = jsonDecode(response.body)['result'];
         return result;
       }
     } catch (e) {
-      LOG('--> sendEmailVfCodeLink error : $e');
+      LOG('--> API sendEmailVfCodeLink error : $e');
     }
     return null;
   }
@@ -116,19 +116,19 @@ class ApiService {
 
   Future<bool?> checkEmailVfComplete(String vfCode) async {
     try {
-      LOG('--> checkEmailVfComplete : $vfCode');
+      LOG('--> API checkEmailVfComplete : $vfCode');
       final response = await http.get(
         Uri.parse(httpUrl + '/users/email/vfcode/${vfCode}'),
       );
-      LOG('--> checkEmailVfComplete response : ${response.statusCode} / ${response.body}');
+      LOG('--> API checkEmailVfComplete response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         var json = jsonDecode(response.body);
         var result = json['result'] != null ? STR(json['result']['email']) : '';
-        LOG('--> checkEmailVfComplete result : ${json['result']}');
+        LOG('--> API checkEmailVfComplete result : ${json['result']}');
         return result.isNotEmpty;
       }
     } catch (e) {
-      LOG('--> checkEmailVfComplete error : $e');
+      LOG('--> API checkEmailVfComplete error : $e');
     }
     return null;
   }
@@ -141,17 +141,17 @@ class ApiService {
 
   checkNickname(String nickId) async {
     try {
-      LOG('--> checkNickname : $nickId');
+      LOG('--> API checkNickname : $nickId');
       final response = await http.get(
         Uri.parse(httpUrl + '/users/nick/$nickId/dup'),
       );
-      LOG('--> checkNickname response : ${response.statusCode} / ${response.body}');
+      LOG('--> API checkNickname response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         var result = BOL(jsonDecode(response.body)['result']);
         return !result;
       }
     } catch (e) {
-      LOG('--> checkNickname error : $e');
+      LOG('--> API checkNickname error : $e');
     }
     return null;
   }
@@ -178,7 +178,7 @@ class ApiService {
     }
   ) async {
     try {
-      LOG('--> createUser : $name, $socialNo, $email, $nickId, '
+      LOG('--> API createUser : $name, $socialNo, $email, $nickId, '
           '$subTitle, $desc, $address, $sig, $type, $authToken');
       final response = await http.post(
           Uri.parse(httpUrl + '/users/createUser'),
@@ -199,17 +199,17 @@ class ApiService {
             'authToken':    authToken,
           })
       );
-      LOG('--> createUser response : ${response.statusCode} / ${response.body}');
+      LOG('--> API createUser response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         return true; // null is success
       } else {
         var resultJson = jsonDecode(response.body);
         var errorCode  = STR(resultJson['err' ]?['code']);
-        LOG('--> API loginUser error : $errorCode');
+        LOG('--> API createUser error : $errorCode');
         if (onError != null) onError(LoginErrorType.code, errorCode);
       }
     } catch (e) {
-      LOG('--> createUser error : $e');
+      LOG('--> API createUser error : $e');
     }
     return false;
   }
@@ -227,7 +227,7 @@ class ApiService {
       String publicKey,
     ) async {
     try {
-      LOG('--> getSecretKey : $nickId / $email / $publicKey');
+      LOG('--> API getSecretKey : $nickId / $email / $publicKey');
       final response = await http.post(
         Uri.parse(httpUrl + '/auth/nick/$email/secret-key'),
         headers: {
@@ -239,7 +239,7 @@ class ApiService {
           'nickId': nickId
         })
       );
-      LOG('--> getSecretKey response : ${response.statusCode} / ${response.body}');
+      LOG('--> API getSecretKey response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         var resultJson = jsonDecode(response.body);
         if (resultJson['result'] != null) {
@@ -248,7 +248,7 @@ class ApiService {
         }
       }
     } catch (e) {
-      LOG('--> getSecretKey error : $e');
+      LOG('--> API getSecretKey error : $e');
     }
     return null;
   }
@@ -327,7 +327,7 @@ class ApiService {
     if (jwt == null) {
       return false;
     }
-    LOG('--> addAccount : $nickId (${Uri.encodeFull(nickId)}), $address, $sig / $subTitle, $desc - $jwt');
+    LOG('--> API addAccount : $nickId (${Uri.encodeFull(nickId)}), $address, $sig / $subTitle, $desc - $jwt');
     if (STR(jwt).isNotEmpty) {
       try {
         final response = await http.post(
@@ -344,14 +344,14 @@ class ApiService {
             'description' : desc ?? '',
           })
         );
-        LOG('--> addAddress response : ${response.statusCode} / ${response
+        LOG('--> API addAddress response : ${response.statusCode} / ${response
             .body}');
         if (isSuccess(response.statusCode)) {
           var result = jsonDecode(response.body)['result'];
           return STR(result['address']).isNotEmpty;
         }
       } catch (e) {
-        LOG('--> addAddress error : $e');
+        LOG('--> API addAddress error : $e');
       }
     }
     return false;
@@ -370,14 +370,14 @@ class ApiService {
       if (jwt == null) {
         return null;
       }
-      LOG('--> getUserInfo : $jwt');
+      LOG('--> API getUserInfo : $jwt');
       final response = await http.get(
         Uri.parse(httpUrl + '/users/info'),
         headers: {
           'Authorization': 'Bearer $jwt',
         },
       );
-      LOG('--> getUserInfo response : ${response.statusCode} / ${response.body}');
+      LOG('--> API getUserInfo response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         var resultJson = jsonDecode(response.body);
         if (resultJson['result'] != null) {
@@ -385,7 +385,7 @@ class ApiService {
         }
       }
     } catch (e) {
-      LOG('--> getUserInfo error : $e');
+      LOG('--> API getUserInfo error : $e');
     }
     return null;
   }
@@ -445,19 +445,19 @@ class ApiService {
 
   Future<List?> getCategory() async {
     try {
-      LOG('--> getCategory');
+      LOG('--> API getCategory');
       final response = await http.get(
         Uri.parse(
             httpUrl + '/tags'),
       );
-      LOG('--> getCategory response : ${response.statusCode} / '
+      LOG('--> API getCategory response : ${response.statusCode} / '
           '${response.body}');
       if (isSuccess(response.statusCode)) {
         var resultJson = jsonDecode(response.body);
         return resultJson['result'];
       }
     } catch (e) {
-      LOG('--> getCategory error : $e');
+      LOG('--> API getCategory error : $e');
     }
     return null;
   }
@@ -471,12 +471,12 @@ class ApiService {
   Future<JSON?> getProductList(
     {int tagId = 1, int lastId = -1, int pageCnt = 20}) async {
     try {
-      LOG('--> getProductList : $tagId / $lastId / $pageCnt');
+      LOG('--> API getProductList : $tagId / $lastId / $pageCnt');
       final response = await http.get(
         // Uri.parse(httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt&lastId=$lastId'),
         Uri.parse(httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt${lastId >= 0 ? '&lastId=$lastId' : ''}'),
       );
-      LOG('--> getProductList response : ${response.statusCode} / ${response.body}');
+      LOG('--> API getProductList response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         var resultJson = jsonDecode(response.body);
         if (resultJson['result'] != null) {
@@ -484,7 +484,32 @@ class ApiService {
         }
       }
     } catch (e) {
-      LOG('--> getUserInfo error : $e');
+      LOG('--> API getProductList error : $e');
+    }
+    return null;
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  상품 상세정보
+  //   /prods/{prodSaleId}
+  //
+
+  Future<JSON?> getProductDetail(String prodSaleId) async {
+    try {
+      LOG('--> API getProductDetail : $prodSaleId');
+      final response = await http.get(
+        Uri.parse(httpUrl + '/prods/$prodSaleId'),
+      );
+      LOG('--> API getProductDetail response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        if (resultJson['result'] != null) {
+          return resultJson['result'];
+        }
+      }
+    } catch (e) {
+      LOG('--> API getProductDetail error : $e');
     }
     return null;
   }

@@ -1437,6 +1437,13 @@
             </list>
           </value>
         </entry>
+        <entry key="pull_to_refresh">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/pull_to_refresh-2.0.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="qr">
           <value>
             <list>
@@ -1843,6 +1850,13 @@
             </list>
           </value>
         </entry>
+        <entry key="visibility_detector">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/visibility_detector-0.3.3/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="vm_service">
           <value>
             <list>
@@ -2124,6 +2138,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/provider-6.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pub_semver-2.1.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pubspec_parse-1.2.3/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pull_to_refresh-2.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/qr-3.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/qr_code_scanner-1.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/qr_flutter-4.1.0/lib" />
@@ -2181,6 +2196,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_graphics_codec-1.1.11+1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.1.11+1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_math-2.1.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/visibility_detector-0.3.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vm_service-13.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/wallet-0.0.13/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/watcher-1.1.0/lib" />

@@ -23,14 +23,14 @@ enum CD_SALE_ST {
   explicitToJson: true,
 )
 class ProductModel {
-  String?   prodSaleId;   // 판매상품 ID
+  String?   saleProdId;   // 판매상품 ID
   String?   type;         // 상품종류. CD_PROD_TYPE 값
   String?   name;         // 상품이름
 
   // 목록 정보..
   String?   repImg;       // 상품 목록 이미지
-  String?   totalAmount;  // 현재 상품의 전체 아이템 개수
-  String?   remainAmount; // 현재 상품의 잔여(미판매) 아이템 개수
+  int?      totalAmount;  // 현재 상품의 전체 아이템 개수
+  int?      remainAmount; // 현재 상품의 잔여(미판매) 아이템 개수
   String?   itemPrice;    // 아이템 개당 가격
   String?   priceUnit;    // 가격 단위
   String?   status;       // CD_SALE_ST
@@ -52,7 +52,7 @@ class ProductModel {
   DateTime?   updateTime;
 
   ProductModel({
-    this.prodSaleId,
+    this.saleProdId,
     this.type,
     this.name,
 
@@ -92,7 +92,7 @@ class ProductModel {
   }
 
   get sellerImage {
-    return seller?.pfImg;
+    return STR(seller?.pfImg);
   }
 
   get sellerName {

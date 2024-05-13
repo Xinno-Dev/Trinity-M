@@ -58,6 +58,14 @@ class MarketProvider extends ChangeNotifier {
     return selectProduct?.optionList?[optionIndex].desc2;
   }
 
+  get isLastPage {
+    return _repo.isLastPage;
+  }
+
+  refresh() {
+     notifyListeners();
+  }
+
   List<CategoryModel> get categoryList {
     return _repo.categoryList;
   }
@@ -80,7 +88,22 @@ class MarketProvider extends ChangeNotifier {
     return await _repo.getStartData();
   }
 
-  Future<List<ProductModel>> getProductList() async {
-    return await _repo.getProductList(tagId: selectCategory);
+  getProductList() async {
+    if (_repo.isLastPage) return;
+    await _repo.getProductList(tagId: selectCategory);
+    notifyListeners();
   }
+
+  getProductDetail() async {
+    selectProduct = await _repo.getProductDetail(selectProduct!);
+    return selectProduct != null;
+  }
+
+  refreshProductList(String? prodId) {
+    if (prodId == _repo.lastId.toString()) {
+      LOG('-------> update product list!! : $prodId');
+      notifyListeners();
+    }
+  }
+
 }

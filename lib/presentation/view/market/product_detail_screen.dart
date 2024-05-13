@@ -39,7 +39,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final prov = ref.watch(marketProvider);
+    final prov = ref.read(marketProvider);
     _viewModel.context = context;
     return SafeArea(
       top: false,
@@ -51,12 +51,21 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           backgroundColor: Colors.white,
         ),
         backgroundColor: Colors.white,
-        body: ListView(
-          shrinkWrap: true,
-          children: [
-            _viewModel.showProductDetail(widget.isShowSeller),
-            _viewModel.showProductInfoTab(),
-          ]
+        body: FutureBuilder(
+          future: prov.getProductDetail(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView(
+                shrinkWrap: true,
+                children: [
+                  _viewModel.showProductDetail(widget.isShowSeller),
+                  _viewModel.showProductInfoTab(),
+                ]
+              );
+            } else {
+              return showLoadingFull();
+            }
+          }
         ),
         bottomNavigationBar: widget.isCanBuy ? IS_DEV_MODE ?
         OpenContainer(
