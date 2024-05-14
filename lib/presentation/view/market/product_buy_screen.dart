@@ -25,11 +25,12 @@ class ProductBuyScreen extends ConsumerStatefulWidget {
 class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
   final controller  = ScrollController();
   late MarketViewModel _viewModel;
-  var selectTab = 0;
 
   @override
   void initState() {
     _viewModel = MarketViewModel();
+    final prov = ref.read(marketProvider);
+    prov.optionIndex = -1;
     super.initState();
   }
 

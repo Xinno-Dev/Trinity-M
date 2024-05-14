@@ -33,7 +33,7 @@ class MarketScreen extends ConsumerStatefulWidget {
 class _MarketScreenState extends ConsumerState<MarketScreen> {
   RefreshController _refreshController =
     RefreshController(initialRefresh: false);
-  // final controller  = ScrollController();
+  final _scrollController  = ScrollController();
   late MarketViewModel _viewModel;
 
   void _onRefresh() async{
@@ -65,80 +65,88 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
   }
 
   @override
+  void didChangeDependencies() async {
+    final prov = ref.read(marketProvider);
+    // prov.selectProduct!.
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
     _viewModel.context = context;
     return SafeArea(
       top: false,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15.w),
         margin: EdgeInsets.only(bottom: kToolbarHeight.h),
-        child: SmartRefresher(
-          enablePullDown: false,
-          enablePullUp: true,
-          // header: WaterDropHeader(),
-          footer: CustomFooter(
-            loadStyle: LoadStyle.ShowWhenLoading,
-            builder: (BuildContext context,LoadStatus? mode) {
-              Widget body;
-              if(mode == LoadStatus.idle){
-                body =  Text("pull up load");
-              }
-              else if(mode == LoadStatus.loading){
-                body =  CupertinoActivityIndicator();
-              }
-              else if(mode == LoadStatus.failed){
-                body = Text("Load Failed!Click retry!");
-              }
-              else if(mode == LoadStatus.canLoading){
-                body = Text("release to load more");
-              }
-              else{
-                body = Text("No more Data");
-                Fluttertoast.showToast(msg: TR(context, '마지막 입니다.'));
-              }
-              return Container(
-                height: 55.0,
-                child: Center(child:body),
-              );
-            },
-          ),
-          controller: _refreshController,
-          onRefresh: _onRefresh,
-          onLoading: _onLoading,
-          child: ListView.builder(
-            itemCount: prov.productList.length + 1,
-            itemBuilder: (c, i) => i == 0 ? _viewModel.showCategoryBar() :
-              _viewModel.productListItem(prov.marketRepo.productList[i - 1]),
-          ),
-        ),
-      )
-    );
-    //   child: CustomScrollView(
-    //     controller: controller,
-    //     physics: ClampingScrollPhysics(),
-    //     slivers: [
-    //       SliverAppBar(
-    //         // title: Text(TR(context, 'Market')),
-    //         // leading: IconButton(
-    //         //   onPressed: () {
-    //         //   },
-    //         //   icon: SvgPicture.asset('assets/svg/icon_ham.svg'),
-    //         // ),
-    //         // centerTitle: true,
-    //         // titleTextStyle: typo16bold,
-    //         toolbarHeight: 0,
-    //         automaticallyImplyLeading: false,
-    //         backgroundColor: Colors.white,
-    //         surfaceTintColor: Colors.white,
-    //         bottom: PreferredSize(
-    //           preferredSize: Size.fromHeight(40),
-    //           child: _viewModel.showCategoryBar(),
-    //         ),
+        // padding: EdgeInsets.symmetric(horizontal: 15.w),
+    //     child: SmartRefresher(
+    //       enablePullDown: false,
+    //       enablePullUp: true,
+    //       // header: WaterDropHeader(),
+    //       footer: CustomFooter(
+    //         loadStyle: LoadStyle.ShowWhenLoading,
+    //         builder: (BuildContext context,LoadStatus? mode) {
+    //           Widget body;
+    //           if(mode == LoadStatus.idle){
+    //             body =  Text("pull up load");
+    //           }
+    //           else if(mode == LoadStatus.loading){
+    //             body =  CupertinoActivityIndicator();
+    //           }
+    //           else if(mode == LoadStatus.failed){
+    //             body = Text("Load Failed!Click retry!");
+    //           }
+    //           else if(mode == LoadStatus.canLoading){
+    //             body = Text("release to load more");
+    //           }
+    //           else{
+    //             body = Text("No more Data");
+    //             Fluttertoast.showToast(msg: TR(context, '마지막 입니다.'));
+    //           }
+    //           return Container(
+    //             height: 55.0,
+    //             child: Center(child:body),
+    //           );
+    //         },
     //       ),
-    //       _viewModel.showProductList()
-    //     ],
+    //       controller: _refreshController,
+    //       onRefresh: _onRefresh,
+    //       onLoading: _onLoading,
+    //       child: ListView.builder(
+    //         itemCount: prov.productList.length + 1,
+    //         itemBuilder: (c, i) => i == 0 ? _viewModel.showCategoryBar() :
+    //           _viewModel.productListItem(prov.marketRepo.productList[i - 1]),
+    //       ),
+    //     ),
     //   )
     // );
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: ClampingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              // title: Text(TR(context, 'Market')),
+              // leading: IconButton(
+              //   onPressed: () {
+              //   },
+              //   icon: SvgPicture.asset('assets/svg/icon_ham.svg'),
+              // ),
+              // centerTitle: true,
+              // titleTextStyle: typo16bold,
+              toolbarHeight: 0,
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.white,
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(kToolbarHeight),
+                child: _viewModel.showCategoryBar(),
+              ),
+            ),
+            _viewModel.showProductList()
+          ],
+        )
+      )
+    );
   }
 }

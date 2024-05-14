@@ -201,6 +201,11 @@ String ADDR(dynamic value, {String defaultValue = ''}) {
   return result;
 }
 
+// ignore: non_constant_identifier_names
+LIST_NOT_EMPTY(dynamic data) {
+  return data != null && List.from(data).isNotEmpty;
+}
+
 typedef JSON = Map<String, dynamic>;
 
 

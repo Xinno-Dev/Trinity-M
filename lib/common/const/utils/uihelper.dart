@@ -221,12 +221,16 @@ Widget showLoadingItem([var itemHeight = 60.0]) {
 }
 
 Widget showLoadingFull([double size = 60.0]) {
+  var width = size / 15.0;
+  if (width < 1) width = 1;
+  if (width > 3) width = 3;
   return Center(
     child: SizedBox(
       width: size,
       height: size,
       child: CircularProgressIndicator(
         color: SECONDARY_90,
+        strokeWidth: width,
       ),
     ),
   );
@@ -535,6 +539,15 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
           )
         ],
       ),
+  );
+}
+
+showCheckBoxImg(bool isSelect) {
+  return SvgPicture.asset(
+    'assets/svg/check_box_0${isSelect ? '1' : '0'}.svg',
+    width: 20.r, height: 20.r, fit: BoxFit.fill,
+    colorFilter: !isSelect ?
+    ColorFilter.mode(WHITE, BlendMode.srcIn) : null,
   );
 }
 

@@ -31,7 +31,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   @override
   void initState() {
     final prov = ref.read(marketProvider);
-    prov.optionIndex = 0;
+    prov.optionIndex = -1;
+    prov.selectDetailTab = 0;
     _viewModel = MarketViewModel();
     LOG('---> reset index to 0');
     super.initState();
@@ -39,7 +40,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final prov = ref.read(marketProvider);
+    final prov = ref.watch(marketProvider);
     _viewModel.context = context;
     return SafeArea(
       top: false,
@@ -59,7 +60,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 shrinkWrap: true,
                 children: [
                   _viewModel.showProductDetail(widget.isShowSeller),
-                  _viewModel.showProductInfoTab(),
+                  _viewModel.showProductInfoTab(ref),
                 ]
               );
             } else {

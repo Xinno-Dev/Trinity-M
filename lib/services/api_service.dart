@@ -310,7 +310,7 @@ class ApiService {
 
   //////////////////////////////////////////////////////////////////////////
   //
-  //  유저 Nick 추가
+  //  유저 Nick 추가 (JWT)
   //  /users/nick/{newNickId}
   //
 
@@ -360,7 +360,7 @@ class ApiService {
 
   //////////////////////////////////////////////////////////////////////////
   //
-  //  유저 정보 조회
+  //  유저 정보 조회 (JWT)
   //  /users/{uid}
   //
 
@@ -392,7 +392,7 @@ class ApiService {
 
   //////////////////////////////////////////////////////////////////////////
   //
-  //  유저 정보 변경
+  //  유저 정보 변경 (JWT)
   //  /users/info
   //
 
@@ -469,12 +469,13 @@ class ApiService {
   //
 
   Future<JSON?> getProductList(
-    {int tagId = 1, int lastId = -1, int pageCnt = 20}) async {
+    {int tagId = 0, int lastId = -1, int pageCnt = 20}) async {
     try {
-      LOG('--> API getProductList : $tagId / $lastId / $pageCnt');
+      final lastStr = lastId >= 0 ? '&lastId=$lastId' : '';
+      LOG('--> API getProductList : $tagId / $lastId($lastStr) / $pageCnt');
       final response = await http.get(
         // Uri.parse(httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt&lastId=$lastId'),
-        Uri.parse(httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt${lastId >= 0 ? '&lastId=$lastId' : ''}'),
+        Uri.parse(httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt$lastStr'),
       );
       LOG('--> API getProductList response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
@@ -514,5 +515,101 @@ class ApiService {
     return null;
   }
 
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  상품 옵션 리스트
+  //  /items
+  //
 
+  Future<JSON?> getProductItems(String prodSaleId,
+    {int type = 1, int lastId = -1, int pageCnt = 30}) async {
+    try {
+      final lastStr = lastId >= 0 ? '&lastId=$lastId' : '';
+      LOG('--> API getProductItems : $prodSaleId / $lastStr');
+      final response = await http.get(
+        Uri.parse(httpUrl + '/items?prodSaleId=$prodSaleId&type=$type&pageCnt=$pageCnt$lastStr'),
+      );
+      LOG('--> API getProductItems response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        if (resultJson['result'] != null) {
+          return resultJson['result'];
+        }
+      }
+    } catch (e) {
+      LOG('--> API getProductItems error : $e');
+    }
+    return null;
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  상품 이미지 옵션 리스트
+  //  /prods/{prodSaleId}/imgs
+  //
+
+  Future<JSON?> getProductImageItems(String prodSaleId,
+      {int lastId = -1, int pageCnt = 10}) async {
+    try {
+      final lastStr = lastId >= 0 ? '&lastId=$lastId' : '';
+      LOG('--> API getProductImageItems : $prodSaleId / $lastStr');
+      final response = await http.get(
+        Uri.parse(httpUrl + '/prods/${prodSaleId}/imgs?pageCnt=$pageCnt$lastStr'),
+      );
+      LOG('--> API getProductImageItems response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        if (resultJson['result'] != null) {
+          return resultJson['result'];
+        }
+      }
+    } catch (e) {
+      LOG('--> API getProductImageItems error : $e');
+    }
+    return null;
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  구매 내역 조회 (JWT)
+  //  /purchases/{buyerAddr}
+  //
+
+  Future<JSON?> getPurchasesList(String buyerAddr,
+      {String? startDate, String? endDate, int lastId = -1, int pageCnt = 20}) async {
+    try {
+      var jwt = await AesManager().localJwt;
+      if (jwt == null) {
+        return null;
+      }
+      var urlStr = '/purchases/${buyerAddr}?pageCnt=$pageCnt';
+      if (STR(startDate).isNotEmpty) {
+        urlStr += '?startDate=$startDate';
+      }
+      if (STR(endDate).isNotEmpty) {
+        urlStr += '?startDate=$endDate';
+      }
+      if (lastId >= 0) {
+        urlStr += '?lastId=$lastId';
+      }
+      LOG('--> API getPurchasesList : $urlStr');
+      final response = await http.get(
+          Uri.parse(httpUrl + urlStr),
+          headers: {
+            'Authorization': 'Bearer $jwt',
+          },
+      );
+      LOG('--> API getPurchasesList response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        if (resultJson['result'] != null) {
+          return resultJson['result'];
+        }
+      }
+    } catch (e) {
+      LOG('--> API getPurchasesList error : $e');
+    }
+    return null;
+  }
 }

@@ -1,16 +1,19 @@
 import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:larba_00/common/provider/market_provider.dart';
 import 'package:larba_00/domain/viewModel/profile_view_model.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../common/common_package.dart';
 import '../../common/const/constants.dart';
 import '../../common/const/utils/convertHelper.dart';
+import '../../common/const/utils/dialogHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/uihelper.dart';
 import '../../common/const/widget/image_widget.dart';
 import '../../common/const/widget/primary_button.dart';
+import '../../presentation/view/market/item_select_screen.dart';
 import '../../presentation/view/market/product_detail_screen.dart';
 import '../../presentation/view/market/seller_detail_screen.dart';
 import '../model/product_item_model.dart';
@@ -29,12 +32,12 @@ class MarketViewModel {
   showCategoryBar() {
     // LOG('--> prov.categoryList : ${prov.categoryList}');
     return Container(
-      margin: EdgeInsets.only(bottom: 15),
+      margin: EdgeInsets.only(left: 15, bottom: 15),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: List<Widget>.of(prov.categoryList.map((e) =>
-              _categoryItem(STR(e.value), prov.categoryList.indexOf(e)))),
+            _categoryItem(STR(e.value), prov.categoryList.indexOf(e)))),
         ),
       ),
     );
@@ -42,7 +45,7 @@ class MarketViewModel {
 
   showProductList() {
     return SliverPadding(
-      padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
+      padding: EdgeInsets.fromLTRB(15, 10, 15, 0),
       sliver: SliverList(
         delegate: SliverChildListDelegate(
         List.generate(prov.marketRepo.productList.length, (index) =>
@@ -77,36 +80,35 @@ class MarketViewModel {
     );
   }
 
-  showProductInfoTab() {
-    if (prov.selectProduct?.optionList == null) {
-      prov.selectDetailTab = 1;
-    }
+  showProductInfoTab(ref) {
     return FutureBuilder(
-      future: getNetworkImageSize(prov.externalPic),
+      future: getNetworkImageInfo(prov.externalPic),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          var exSize = snapshot.data as Size;
+          var info = snapshot.data as NetworkImageInfo;
           return StatefulBuilder(
             builder: (context, setState) {
               return LayoutBuilder(builder: (context, constraints) {
-                final itemHeight = constraints.maxWidth / 4;
-                final itemLength = (prov.selectProduct?.optionList?.length ?? 0) / 4 +
-                    ((prov.selectProduct?.optionList?.length ?? 0) % 4 > 0 ? 1 : 0);
-                final listHeight = itemLength > 0 ? itemHeight * itemLength + 5 : 120.h;
-                final detailHeight = exSize.height * (constraints.maxWidth / exSize.width);
+                var itemHeight = constraints.maxWidth / 4;
+                var itemLength = (prov.selectProduct?.itemList?.length ?? 0) / 4 +
+                    ((prov.selectProduct?.itemList?.length ?? 0) % 4 > 0 ? 1 : 0);
+                var listHeight = itemLength > 0 ? itemHeight * itemLength + 5 : 120.h;
+                var screenWidth = MediaQuery.of(context).size.width;
+                var detailHeight = DBL(info.size?.width) <= 0 ? 0.0 :
+                    DBL(info.size?.height) * (screenWidth / DBL(info.size?.width));
                 // LOG('---> listHeight : $listHeight / $itemHeight / $itemLength /'
-                //     ' $detailHeight (${constraints.maxWidth / exSize.width} / ${exSize.width})');
+                //     ' $detailHeight (${screenWidth} / ${info.size})');
                 return DefaultTabController(
-                  initialIndex: prov.selectDetailTab,
                   length: 2,
+                  initialIndex: prov.selectDetailTab,
                   child: Column(
                     children: [
                       TabBar(
                         labelColor: GRAY_90,
                         labelStyle: typo16semibold,
-                        unselectedLabelColor: GRAY_40,
                         indicatorColor: GRAY_90,
                         indicatorSize: TabBarIndicatorSize.tab,
+                        unselectedLabelColor: GRAY_40,
                         onTap: (index) {
                           setState(() {
                             prov.selectDetailTab = index;
@@ -115,10 +117,10 @@ class MarketViewModel {
                         },
                         tabs: <Widget>[
                           Tab(
-                            text: TR(context, '옵션 정보'),
+                            text: TR(context, '상세 정보'),
                           ),
                           Tab(
-                            text: TR(context, '상세 정보'),
+                            text: TR(context, '옵션 정보'),
                           ),
                           // Tab(
                           //   text: TR(context, 'NFT 정보'),
@@ -127,14 +129,14 @@ class MarketViewModel {
                       ),
                       AnimatedContainer(
                         color: Colors.white,
-                        height: prov.selectDetailTab == 0 ? listHeight : detailHeight,
+                        height: prov.selectDetailTab == 1 ? listHeight : detailHeight,
                         margin: EdgeInsets.only(top: 2),
                         duration: Duration(milliseconds: 100),
                         child: TabBarView(
                           physics: NeverScrollableScrollPhysics(),
                           children: [
-                            showOptionTab(),
                             showDetailTab(),
+                            showOptionTab(),
                           ],
                         ),
                       )
@@ -149,8 +151,13 @@ class MarketViewModel {
       });
   }
 
-  showOptionTab() {
-    if (prov.selectProduct?.optionList == null) {
+  showOptionSelectList() {
+    return showOptionTab(isSelect: true);
+  }
+
+  showOptionTab({var isSelect = false}) {
+    var itemCount = prov.selectProduct?.itemList?.length ?? 0;
+    if (itemCount <= 0) {
       return Container(
         height: 120.h,
         child: Center(
@@ -158,36 +165,32 @@ class MarketViewModel {
         ),
       );
     }
-    return Container(
-      child: GridView.builder(
-        itemCount: prov.selectProduct?.optionList?.length ?? 0,
-        shrinkWrap: true,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            crossAxisSpacing: 2,
-            mainAxisSpacing: 2
-        ),
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return SizedBox(
-            // width: itemHeight,
-            // height: itemHeight,
-            child: _optionListItem(
-              prov.selectProduct!.optionList![index],
-              index,
-            ),
-          );
-        }
+    return GridView.builder(
+      shrinkWrap: true,
+      itemCount: itemCount,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          crossAxisSpacing: 2,
+          mainAxisSpacing: 2
       ),
+      physics: NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return _optionListItem(
+          prov.selectProduct!.itemList![index],
+          index,
+          isFirst: prov.selectProduct?.itemLastId == null,
+          isCanSelect: isSelect,
+        );
+      }
     );
   }
 
   showDetailTab() {
     if (STR(prov.externalPic).isEmpty) {
       return Container(
-        height: 100,
+        height: 100.h,
         child: Center(
-          child: Text('No detail info..'),
+          child: Text(TR(context, 'No detail info..')),
         ),
       );
     }
@@ -241,7 +244,7 @@ class MarketViewModel {
               ],
             ),
           ),
-          Text(TR(context!, '(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다. '
+          Text(TR(context, '(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다. '
               '이에 따라, 당사는 상품, 거래정보 및 거래에 대하여 책임을 지지 않습니다.'),
               style: typo14normal),
         ],
@@ -315,9 +318,9 @@ class MarketViewModel {
         return VisibilityDetector(
           key: GlobalKey(),
           onVisibilityChanged: (info) {
-            // if (info.visibleFraction > 0) {
-            //   prov.refreshProductList(item.saleProdId);
-            // }
+            if (info.visibleFraction > 0) {
+              prov.refreshProductList(context, item.saleProdId);
+            }
           },
           child: Container(
             margin: EdgeInsets.only(bottom: 25),
@@ -329,7 +332,7 @@ class MarketViewModel {
                 if (isShowSeller)
                   _contentSellerBar(item, padding: EdgeInsets.only(bottom: 10.h)),
                 showImage(STR(item.repImg),
-                    Size(MediaQuery.of(context).size.width, 220.r)),
+                    Size(MediaQuery.of(context).size.width, 220.r), fit: BoxFit.fitHeight),
                 _contentTitleBar(item),
               ],
             ),
@@ -520,27 +523,46 @@ class MarketViewModel {
     );
   }
 
-  _optionListItem(ProductItemModel option, int index, {EdgeInsets? padding}) {
+  _optionListItem(ProductItemModel option, int index,
+    {var isFirst = false, var isCanSelect = false, EdgeInsets? padding}) {
     return InkWell(
       onTap: () {
-        prov.setOptionIndex(index);
+        if (isCanSelect) {
+          prov.setOptionIndex(index);
+        } else {
+          showImageDialog(context, STR(option.img));
+        }
       },
-      child: Container(
-        padding: padding,
-        decoration: BoxDecoration(
-          border: Border.all(color: PRIMARY_100, width: prov.optionIndex == index ? 5 : 0),
-        ),
-        child: Stack(
-          children: [
-            SizedBox.expand(
-              child: Image.asset('assets/samples/${option.img}', fit: BoxFit.cover),
-            ),
-            Positioned(
-              top: 2,
-              left: 2,
-              child: Text(STR(option.desc), style: typo12shadowR.copyWith(fontSize: 10)),
-            ),
-          ],
+      child: VisibilityDetector(
+        key: GlobalKey(),
+        onVisibilityChanged: (info) {
+          if (info.visibleFraction > 0) {
+            prov.refreshProductItemList(context, option.itemId);
+          }
+        },
+        child: Container(
+          padding: padding,
+          decoration: isCanSelect ? BoxDecoration(
+            border: Border.all(color: PRIMARY_100, width: prov.optionIndex == index ? 3 : 0),
+          ) : null,
+          child: Stack(
+            children: [
+              SizedBox.expand(
+                child: showImage(STR(option.img), Size.zero, fit: BoxFit.cover),
+              ),
+              Positioned(
+                bottom: 3,
+                left: 3,
+                child: Text(STR(option.itemId), style: typo12shadowR.copyWith(fontSize: 10)),
+              ),
+              if (isCanSelect)
+                Positioned(
+                  top: 3,
+                  right: 3,
+                  child: showCheckBoxImg(prov.optionIndex == index),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -549,7 +571,7 @@ class MarketViewModel {
   _contentBuyDetailBox(ProductModel item) {
     return Container(
       height: 100,
-      margin: EdgeInsets.symmetric(vertical: 20),
+      margin: EdgeInsets.only(top: 20),
       child: Row(
         children: [
           if (prov.detailPic != null)
@@ -559,15 +581,16 @@ class MarketViewModel {
             margin: EdgeInsets.only(right: 15),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset('assets/samples/${prov.detailPic!}'),
+              child: showImage(STR(prov.detailPic), Size(100, 100)),
             )
           ),
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 5),
-                Text(TR(context, 'TICKET'), style: typo14bold),
+                // Text(TR(context, 'TICKET'), style: typo14bold),
                 // if (item.edition != null)...[
                 //   Row(
                 //     children: [
@@ -577,9 +600,9 @@ class MarketViewModel {
                 //     ],
                 //   )
                 // ],
-                Divider(),
-                Text(STR(item.name), style: typo14normal.copyWith(height: 1.0)),
-                SizedBox(height: 5),
+                Text(STR(item.name), style: typo14bold.copyWith(height: 1.0)),
+                Text(item.priceText, style: typo14bold),
+                Divider(color: GRAY_20),
               ],
             ),
           ),
@@ -589,26 +612,73 @@ class MarketViewModel {
   }
 
   _contentBuyOptionBar(ProductModel item) {
+    final height = 80.0.r;
     return Container(
+      margin: EdgeInsets.only(top: 10),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          PrimaryButton(
-            onTap: () {
-              LOG('---> option select');
-            },
-            width: 100,
-            round: 8,
-            color: Colors.white,
-            padding: EdgeInsets.zero,
-            isBorderShow: true,
-            isSmallButton: true,
-            textStyle: typo14bold.copyWith(color: GRAY_80),
-            text: TR(context, '옵션 선택'),
-          ),
-          Spacer(),
-          Text(item.priceText, style: typo14bold),
+          if (prov.optionIndex >= 0)...[
+            Container(
+              width:  height / 2,
+              height: height,
+              margin: EdgeInsets.only(right: 5),
+              child: SvgPicture.asset('assets/svg/sub_line_00.svg',
+                fit: BoxFit.fitHeight,
+                colorFilter: ColorFilter.mode(GRAY_40, BlendMode.srcIn)
+              ),
+            ),
+          ],
+          Expanded(child: Column(
+            children: [
+              if (prov.optionIndex >= 0)...[
+                Container(
+                  child: Row(
+                    children: [
+                      Container(
+                        width:  height,
+                        height: height,
+                        margin: EdgeInsets.only(right: 15),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: showImage(STR(prov.optionPic),
+                            Size.square(height), fit: BoxFit.fitHeight),
+                        )
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+              if (prov.optionIndex < 0)...[
+                SizedBox(height: 14),
+              ],
+              Row(
+                children: [
+                  PrimaryButton(
+                    onTap: () {
+                      Navigator.of(context).push(createAniRoute(ItemSelectScreen())).then((index) {
+                        if (index != null) {
+                          prov.setOptionIndex(index);
+                        }
+                      });
+                    },
+                    width: height,
+                    round: 8,
+                    color: Colors.white,
+                    padding: EdgeInsets.zero,
+                    isBorderShow: true,
+                    isSmallButton: true,
+                    textStyle: typo14bold.copyWith(color: GRAY_80),
+                    text: TR(context, '옵션 선택'),
+                  ),
+                  Spacer(),
+                ],
+              ),
+            ],
+          ))
         ],
-      ),
+      )
     );
   }
 

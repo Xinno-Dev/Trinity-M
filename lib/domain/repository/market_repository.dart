@@ -15,7 +15,7 @@ class MarketRepository {
 
   Map<String, ProductModel> productData = {};
   Map<String, ProductItemModel> optionData = {};
-  List<ProductModel> productList = [];
+  List<ProductModel>  productList = [];
   List<CategoryModel> categoryList = [];
 
   var titleN      = ['주말 1박 2일 36홀 (4인) 조식, 숙박, 카트 무료 지원','고메 겟어웨이','제주 봄 미식 프로모션','연박 특가 프로모션','연간 회원권 2024',];
@@ -26,6 +26,8 @@ class MarketRepository {
 
   var pageCount = 0;
   var lastId = -1;
+  var checkLastId = -2;
+  var checkDetailId = '';
   var isLastPage = false;
 
   init() {
@@ -115,19 +117,17 @@ class MarketRepository {
   }
 
   getProductList({int tagId = 0}) async {
-    LOG('--> getProductList : $tagId / $lastId / $isLastPage');
-    if (isLastPage) productList;
+    LOG('--> getProductList : $tagId / $lastId($checkLastId) / $isLastPage');
     try {
       final jsonData = await _apiService.getProductList(
         tagId: tagId,
         lastId: lastId,
         pageCnt: 3
       );
-      if (jsonData?['data'] != null) {
-        isLastPage = BOL(jsonData?['isLast']);
-        lastId = INT(jsonData?['lastId']);
-        var data = jsonData!['data'];
-        for (var item in data) {
+      if (jsonData != null && LIST_NOT_EMPTY(jsonData['data'])) {
+        isLastPage  = BOL(jsonData['isLast']);
+        lastId      = INT(jsonData['lastId']);
+        for (var item in jsonData['data']) {
           var newItem = ProductModel.fromJson(item);
           var isAdd = true;
           // checking duplicate..
@@ -136,17 +136,13 @@ class MarketRepository {
               var index = productList.indexOf(orgItem);
               productList[index] = newItem;
               isAdd = false;
-              LOG('--> getProductList update : ${newItem.saleProdId} / ${data.length}');
+              LOG('--> getProductList update : ${newItem.saleProdId}');
               break;
             }
           }
           if (isAdd) {
-            LOG('--> getProductList add : ${newItem.saleProdId} / ${data.length}');
+            LOG('--> getProductList add : ${newItem.saleProdId}');
             productList.add(newItem);
-            // var itemId = int.parse(STR(newItem.saleProdId, defaultValue: '0'));
-            // if (lastId < 0 || lastId < itemId) {
-            //   lastId = itemId;
-            // }
           }
         }
       }
@@ -160,12 +156,15 @@ class MarketRepository {
 
   Future<ProductModel?> getProductDetail(ProductModel prod) async {
     try {
-      final jsonData = await _apiService.getProductDetail(STR(prod.saleProdId));
+      var jsonData = await _apiService.getProductDetail(STR(prod.saleProdId));
       if (jsonData != null) {
+        prod.itemType     = STR(jsonData['itemType']);
         prod.desc         = STR(jsonData['desc']);
         prod.desc2        = STR(jsonData['desc2']);
         prod.externUrl    = STR(jsonData['externUrl']);
         prod.repDetailImg = STR(jsonData['repDetailImg']);
+        // update option items..
+        prod = await getProductImageItemList(prod);
         LOG('--> getProductDetail result : ${prod.toJson()}');
         return prod;
       }
@@ -173,5 +172,53 @@ class MarketRepository {
       LOG('--> getProductList error : $e');
     }
     return null;
+  }
+
+  Future<ProductModel> getProductItemList(ProductModel prod) async {
+    try {
+      var jsonData = await _apiService.getProductItems(STR(prod.saleProdId),
+        type: int.parse(STR(prod.itemType)), lastId: INT(prod.itemLastId));
+      if (jsonData != null && LIST_NOT_EMPTY(jsonData['data'])) {
+        prod.isLastItem     = BOL(jsonData['isLast']);
+        prod.itemLastId     = INT(jsonData['lastId'], defaultValue: -99);
+        prod.itemCountMax   = INT(jsonData['count']);
+        prod.itemList       ??= [];
+        for (var item in jsonData['data']) {
+          var newItem = ProductItemModel.fromJson(item);
+          prod.updateItem(newItem);
+        }
+        if (prod.itemLastId == -99 && LIST_NOT_EMPTY(prod.itemList)) {
+          prod.itemLastId = int.parse(STR(prod.itemList!.last.itemId));
+        }
+        LOG('--> getProductItemList result [${prod.itemLastId}] : ${prod.toJson()}');
+      }
+    } catch (e) {
+      LOG('--> getProductItemList error : $e');
+    }
+    return prod;
+  }
+
+  Future<ProductModel> getProductImageItemList(ProductModel prod) async {
+    try {
+      var lastId = INT(prod.itemLastId, defaultValue: -1);
+      LOG('--> getProductImageItemList : ${prod.saleProdId} / $lastId');
+      var jsonData = await _apiService.getProductImageItems(
+        STR(prod.saleProdId), lastId: lastId);
+      if (jsonData != null && LIST_NOT_EMPTY(jsonData['data'])) {
+        prod.isLastItem     = BOL(jsonData['isLast']);
+        prod.itemLastId     = INT(jsonData['lastId']);
+        prod.itemList       ??= [];
+        for (var item in jsonData['data']) {
+          var newItem = ProductItemModel();
+          newItem.itemId  = STR(item['imgId']);
+          newItem.img     = STR(item['img'  ]);
+          prod.updateItem(newItem);
+        }
+        LOG('--> getProductImageItemList result [${prod.itemLastId}] : ${prod.toJson()}');
+      }
+    } catch (e) {
+      LOG('--> getProductImageItemList error : $e');
+    }
+    return prod;
   }
 }

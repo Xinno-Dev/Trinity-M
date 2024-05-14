@@ -2,6 +2,7 @@
 import 'package:larba_00/common/common_package.dart';
 import 'package:flutter/material.dart';
 
+import '../widget/image_widget.dart';
 import '../widget/rounded_button.dart';
 import 'languageHelper.dart';
 
@@ -185,4 +186,36 @@ Future<int> showAppNoticeDialog(
           ],
         );
       });
+}
+
+Future showImageDialog(BuildContext context, String imagePath) async {
+  var _menuText = TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.blueAccent);
+  return await showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      var _imageSize = MediaQuery.of(context).size.width - 60;
+      return Container(
+        width: _imageSize,
+        height: _imageSize,
+        child: SimpleDialog(
+          contentPadding: EdgeInsets.all(16),
+          insetPadding: EdgeInsets.zero,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: showImage(imagePath, Size.square(_imageSize)),
+            ),
+            SizedBox(height: 15),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Exit', style: _menuText)
+            )
+          ],
+        ),
+      );
+    }
+  ) ?? '';
 }

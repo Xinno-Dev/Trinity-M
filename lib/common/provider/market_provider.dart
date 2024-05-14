@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:larba_00/common/const/utils/convertHelper.dart';
 import 'package:larba_00/common/const/widget/primary_button.dart';
 import 'package:larba_00/domain/model/product_model.dart';
@@ -31,7 +32,7 @@ class MarketProvider extends ChangeNotifier {
 
   var selectCategory = 0;
   var selectDetailTab = 0;
-  var optionIndex = 0;
+  var optionIndex = -1;
   var isStartDataDone = false;
 
   get marketRepo {
@@ -47,15 +48,18 @@ class MarketProvider extends ChangeNotifier {
   }
 
   get optionPic {
-    return selectProduct?.optionList?[optionIndex].img;
+    if (optionIndex < 0) return null;
+    return selectProduct?.itemList?[optionIndex].img;
   }
 
   get optionDesc {
-    return selectProduct?.optionList?[optionIndex].desc;
+    if (optionIndex < 0) return null;
+    return selectProduct?.itemList?[optionIndex].desc;
   }
 
   get optionDesc2 {
-    return selectProduct?.optionList?[optionIndex].desc2;
+    if (optionIndex < 0) return null;
+    return selectProduct?.itemList?[optionIndex].desc2;
   }
 
   get isLastPage {
@@ -89,21 +93,56 @@ class MarketProvider extends ChangeNotifier {
   }
 
   getProductList() async {
-    if (_repo.isLastPage) return;
+    if (_repo.isLastPage) {
+      return false;
+    }
     await _repo.getProductList(tagId: selectCategory);
     notifyListeners();
+    return true;
   }
 
   getProductDetail() async {
-    selectProduct = await _repo.getProductDetail(selectProduct!);
-    return selectProduct != null;
-  }
-
-  refreshProductList(String? prodId) {
-    if (prodId == _repo.lastId.toString()) {
-      LOG('-------> update product list!! : $prodId');
-      notifyListeners();
+    if (_repo.checkDetailId != STR(selectProduct?.saleProdId)) {
+      _repo.checkDetailId = STR(selectProduct?.saleProdId);
+      selectProduct = await _repo.getProductDetail(selectProduct!);
     }
+    return selectProduct ?? [];
   }
 
+  getProductOptionList() async {
+    if (BOL(selectProduct?.isLastItem)) {
+      return false;
+    }
+    selectProduct = await _repo.getProductImageItemList(selectProduct!);
+    notifyListeners();
+    return true;
+  }
+
+  refreshProductList(BuildContext context, String? prodId) async {
+    if (prodId == _repo.lastId.toString() &&
+        prodId != _repo.checkLastId.toString()) {
+      LOG('-------> update product list!! : $prodId');
+      _repo.checkLastId = int.parse(STR(prodId));
+      if (!await getProductList()) {
+        Fluttertoast.showToast(msg: TR(context, '상품 목록 마지막입니다.'),
+            toastLength: Toast.LENGTH_SHORT);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  refreshProductItemList(BuildContext context, String? itemId) async {
+    if (itemId == INT(selectProduct?.itemLastId).toString() &&
+        itemId != INT(selectProduct?.itemCheckId).toString()) {
+      LOG('-------> update product item list!! : $itemId');
+      selectProduct?.itemCheckId = int.parse(STR(itemId));
+      if (!await getProductOptionList()) {
+        Fluttertoast.showToast(msg: TR(context, '옵션 목록 마지막입니다.'),
+            toastLength: Toast.LENGTH_SHORT);
+        return true;
+      }
+    }
+    return false;
+  }
 }

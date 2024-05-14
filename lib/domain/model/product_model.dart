@@ -24,7 +24,8 @@ enum CD_SALE_ST {
 )
 class ProductModel {
   String?   saleProdId;   // 판매상품 ID
-  String?   type;         // 상품종류. CD_PROD_TYPE 값
+  String?   itemType;     // 아이템 종류. mk_item.CD_ITEM_TYPE 값
+  String?   type;         // 상품종류. mk_prod.CD_PROD_TYPE 값
   String?   name;         // 상품이름
 
   // 목록 정보..
@@ -44,15 +45,20 @@ class ProductModel {
   // 판매자 정보..
   SellerModel? seller;
 
-  // 옵션 정보..
-  List<ProductItemModel>? optionList;
-
   int?        showIndex;    // 상품 순서
   DateTime?   createTime;
   DateTime?   updateTime;
 
+  // 옵션 정보..
+  List<ProductItemModel>? itemList;
+  bool? isLastItem;
+  int?  itemLastId;     // 아이템 목록 마지막 ID
+  int?  itemCountMax;   // 아이템 전체 갯수
+  int?  itemCheckId;    // 아이템 목록 조회 마지막 ID
+
   ProductModel({
     this.saleProdId,
+    this.itemType,
     this.type,
     this.name,
 
@@ -69,10 +75,15 @@ class ProductModel {
     this.externUrl,
 
     this.seller,
-    this.optionList,
+    this.itemList,
     this.showIndex,
     this.createTime,
     this.updateTime,
+
+    this.isLastItem,
+    this.itemLastId,
+    this.itemCountMax,
+    this.itemCheckId,
   });
   
   get amountText {
@@ -113,6 +124,23 @@ class ProductModel {
 
   get sellerDesc {
     return STR(seller?.desc);
+  }
+
+  updateItem(ProductItemModel newItem) {
+    var isAdd = true;
+    itemList ??= [];
+    for (var orgItem in itemList!) {
+      if (orgItem.itemId == newItem.itemId) {
+        var index = itemList!.indexOf(orgItem);
+        itemList![index] = newItem;
+        isAdd = false;
+        break;
+      }
+    }
+    if (isAdd) {
+      itemList!.add(newItem);
+    }
+    return itemList;
   }
 
   factory ProductModel.fromJson(JSON json) => _$ProductModelFromJson(json);

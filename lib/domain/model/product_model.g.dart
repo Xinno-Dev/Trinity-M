@@ -8,6 +8,7 @@ part of 'product_model.dart';
 
 ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       saleProdId: json['saleProdId'] as String?,
+      itemType: json['itemType'] as String?,
       type: json['type'] as String?,
       name: json['name'] as String?,
       repImg: json['repImg'] as String?,
@@ -23,7 +24,7 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       seller: json['seller'] == null
           ? null
           : SellerModel.fromJson(json['seller'] as Map<String, dynamic>),
-      optionList: (json['optionList'] as List<dynamic>?)
+      itemList: (json['itemList'] as List<dynamic>?)
           ?.map((e) => ProductItemModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       showIndex: (json['showIndex'] as num?)?.toInt(),
@@ -33,6 +34,9 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       updateTime: json['updateTime'] == null
           ? null
           : DateTime.parse(json['updateTime'] as String),
+      isLastItem: json['isLastItem'] as bool?,
+      itemLastId: (json['itemLastId'] as num?)?.toInt(),
+      itemCountMax: (json['itemCountMax'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
@@ -45,6 +49,7 @@ Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
   }
 
   writeNotNull('saleProdId', instance.saleProdId);
+  writeNotNull('itemType', instance.itemType);
   writeNotNull('type', instance.type);
   writeNotNull('name', instance.name);
   writeNotNull('repImg', instance.repImg);
@@ -58,10 +63,12 @@ Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
   writeNotNull('desc2', instance.desc2);
   writeNotNull('externUrl', instance.externUrl);
   writeNotNull('seller', instance.seller?.toJson());
-  writeNotNull(
-      'optionList', instance.optionList?.map((e) => e.toJson()).toList());
   writeNotNull('showIndex', instance.showIndex);
   writeNotNull('createTime', instance.createTime?.toIso8601String());
   writeNotNull('updateTime', instance.updateTime?.toIso8601String());
+  writeNotNull('itemList', instance.itemList?.map((e) => e.toJson()).toList());
+  writeNotNull('isLastItem', instance.isLastItem);
+  writeNotNull('itemLastId', instance.itemLastId);
+  writeNotNull('itemCountMax', instance.itemCountMax);
   return val;
 }
