@@ -34,7 +34,6 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     prov.optionIndex = -1;
     prov.selectDetailTab = 0;
     _viewModel = MarketViewModel();
-    LOG('---> reset index to 0');
     super.initState();
   }
 

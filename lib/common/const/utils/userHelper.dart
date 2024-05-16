@@ -6,6 +6,7 @@ import 'package:larba_00/common/const/utils/md5Helper.dart';
 import 'package:larba_00/common/rlp/hash.dart';
 import 'package:crypto/crypto.dart' as crypto;
 
+import 'aesManager.dart';
 import 'convertHelper.dart';
 
 class UserHelper {
@@ -14,6 +15,8 @@ class UserHelper {
     return _singleton;
   }
   UserHelper._internal();
+  final storage = FlutterSecureStorage();
+
   var userKeyMail = ''; // for Dev..
   var userKey = '';
   var privateKey = '';
@@ -25,6 +28,12 @@ class UserHelper {
     userKey = crypto.sha256.convert(utf8.encode(email)).toString();
     LOG('---------> setUserKey : $email => $userKey');
     return userKey;
+  }
+
+  setJwt(String jwt) async {
+    var pass   = await AesManager().deviceIdPass;
+    var jwtEnc = await AesManager().encrypt(pass, jwt);
+    return await setUser(jwt: jwtEnc);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -66,6 +75,7 @@ class UserHelper {
     String? jwt,
     String? token,
     String? loginInfo,
+    String? loginKey,
     String? vfCode,
     String? address,
     String? uid,
@@ -88,7 +98,6 @@ class UserHelper {
     String networkList = '',
     String addressList = '',
   }) async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
 
     ////////////////////////////////////////////////////////////////////////////
     //
@@ -124,6 +133,14 @@ class UserHelper {
         await storage.write(key: LOGIN_INFO_KEY, value: loginInfo);
       } else {
         await storage.delete(key: LOGIN_INFO_KEY);
+      }
+    }
+
+    if (loginKey != null) {
+      if (loginKey.isNotEmpty) {
+        await storage.write(key: LOGIN_KEY, value: loginKey);
+      } else {
+        await storage.delete(key: LOGIN_KEY);
       }
     }
 
@@ -217,23 +234,35 @@ class UserHelper {
   //
 
   Future<String?> get_loginInfo() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: LOGIN_INFO_KEY);
   }
 
+  Future<String?> get_loginKey() async {
+    return await storage.read(key: LOGIN_KEY);
+  }
+
   Future<String?> get_token() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: TOKEN_KEY);
   }
 
   Future<String?> get_jwt() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: JWT_KEY);
   }
 
   Future<String?> get_uid() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: UID_KEY);
+  }
+
+  Future<String?> get_identity() async {
+    return await storage.read(key: IDENTITY_KEY);
+  }
+
+  Future<String?> get_bioIdentity() async {
+    return await storage.read(key: BIO_IDENTITY_KEY);
+  }
+
+  Future<bool> get_bioIdentityYN() async {
+    return BOL(await get_bioIdentity());
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -242,12 +271,10 @@ class UserHelper {
   //
 
   Future<String?> get_rwf() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: RWF_KEY + userKey);
   }
 
   Future<String?> get_vfCode() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: VFCODE_KEY + userKey);
   }
 
@@ -257,93 +284,74 @@ class UserHelper {
   //
 
   Future<String> get_userID({String? userKeyTmp}) async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: USERID_KEY + (userKeyTmp ?? userKey)) ?? 'NOT_USERID';
   }
 
   Future<String> get_publickey() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: PUB_KEY + userKey) ?? 'NOT_PUBKEY';
   }
 
   Future<String> get_fcmToken() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: FCM_KEY + userKey) ?? 'NOT_TOKEN';
   }
 
   Future<String> get_key({String? userKeyTmp, String? address}) async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     LOG('--> get_key : ${KEYPAIR_KEY + (userKeyTmp ?? userKey)}');
     return await storage.read(key: KEYPAIR_KEY + (userKeyTmp ?? userKey) + (address ?? '')) ?? 'NOT_KEY';
   }
 
   Future<String> get_address() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: ADDRESS_KEY + userKey) ?? 'NOT_ADDRESS';
   }
 
   Future<String> get_networkList() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: NETWORKLIST_KEY + userKey) ?? 'NOT_NETWORK_LIST';
   }
 
   Future<String> get_coinList() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: COIN_LIST_KEY + userKey) ?? 'NOT_COIN_LIST';
   }
 
   Future<String> get_selectedCoin() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: SELECTED_COIN_KEY + userKey) ?? 'NOT_SELECTED_COIN';
   }
 
   Future<String> get_selectedMainNetId() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: SELECTED_MAINNET_KEY + userKey) ?? 'NOT_SELECTED_MAIN';
   }
 
   Future<String> get_trash() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: TRASH_KEY + userKey) ?? 'NOT_TRASH';
   }
 
   Future<String> get_registDate() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: REGISTDATE_KEY + userKey) ?? 'NOT_REGISTDATE';
   }
 
   Future<String> get_useLocalAuth() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: USELOCALAUTH_KEY + userKey) ?? 'NOT_USELOCALAUTH';
   }
 
   Future<String> get_rootKey() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: ROOT_KEY + userKey) ?? 'NOT_ROOTKEY';
   }
 
   Future<String> get_mnemonic({String? userKeyTmp}) async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     LOG('--> get_mnemonic : ${MNEMONIC_KEY + (userKeyTmp ?? userKey)}');
     return await storage.read(key: MNEMONIC_KEY + (userKeyTmp ?? userKey)) ?? 'NOT_MNEMONIC';
   }
 
   Future<String> get_check_mnemonic({String? userKeyTmp}) async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     return await storage.read(key: CHECK_MNEMONIC_KEY + (userKeyTmp ?? userKey)) ?? 'NOT_CHECK_MNEMONIC';
   }
 
   Future<String> get_addressList() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     // LOG('--> get_addressList : ${ADDRESSLIST_KEY + userKey}');
     return await storage.read(key: ADDRESSLIST_KEY + userKey) ?? 'NOT_ADDRESSLIST';
   }
 
   Future<bool> get_loginDate() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
-
     String loginDateStr = await storage.read(key: LOGINDATE_KEY + userKey) ?? 'NOT_LOGIN';
-
     if (loginDateStr == 'NOT_LOGIN') {
       return false;
     } else {
@@ -360,12 +368,10 @@ class UserHelper {
 
   Future<void> clearAllUser() async {
     userKey = '';
-    FlutterSecureStorage storage = FlutterSecureStorage();
     await storage.deleteAll();
   }
 
   Future<void> clearUser() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     await storage.delete(key: USERID_KEY + userKey);
     await storage.delete(key: UID_KEY + userKey);
     await storage.delete(key: PUB_KEY + userKey);
@@ -382,12 +388,10 @@ class UserHelper {
   }
 
   Future<void> clearKey() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     await storage.delete(key: KEYPAIR_KEY);
   }
 
   Future<void> clearLoginDate() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
     await storage.delete(key: LOGINDATE_KEY);
   }
 }

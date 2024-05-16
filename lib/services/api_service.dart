@@ -288,13 +288,11 @@ class ApiService {
       var resultJson = jsonDecode(response.body);
       if (isSuccess(response.statusCode)) {
         if (resultJson['result'] != null) {
-          var jwt       = STR(resultJson['result']['jwt']);
-          var uid       = STR(resultJson['result']['uid']);
-          var pass      = await AesManager().deviceIdPass;
-          var jwtEnc    = await AesManager().encrypt(pass, jwt);
-          await UserHelper().setUser(jwt: jwtEnc);
+          var jwt = STR(resultJson['result']['jwt']);
+          var uid = STR(resultJson['result']['uid']);
           await UserHelper().setUser(uid: uid);
-          LOG('--> API loginUser success [$type] : $pass => $jwt');
+          await UserHelper().setJwt(jwt);
+          LOG('--> API loginUser success [$type] : $jwt');
           return true;
         }
       } else {

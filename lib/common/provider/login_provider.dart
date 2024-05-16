@@ -42,6 +42,7 @@ import '../const/constants.dart';
 import '../const/utils/appVersionHelper.dart';
 import '../const/utils/convertHelper.dart';
 import '../const/utils/eccManager.dart';
+import '../const/utils/identityHelper.dart';
 import '../const/utils/languageHelper.dart';
 import '../const/utils/walletHelper.dart';
 import '../const/widget/dialog_utils.dart';
@@ -178,6 +179,7 @@ class LoginProvider extends ChangeNotifier {
   var isLoginCheckDone = false;
   var isSignUpMode = false;
   var isShowMask = false;
+  var isScreenLocked = false;
 
   var mainPageIndex = 0;
   var mainPageIndexOrg = 0;
@@ -239,14 +241,25 @@ class LoginProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  setLockScreen(bool status) {
+    isScreenLocked = status;
+    notifyListeners();
+  }
+
   setBioIdentity(bool status) async {
     if (isLogin) {
       userInfo!.bioIdentityYN = status;
-      await UserHelper().setUser(bioIdentity: status ? 'y' : '');
+      await UserHelper().setUser(bioIdentity: status ? 'true' : '');
       notifyListeners();
       return true;
     }
     return false;
+  }
+
+  showBioIdentityCheck(BuildContext context) async {
+    return await showBioIdentity(context, onError: (err) {
+      showLoginErrorTextDialog(context, err);
+    });
   }
 
   // local에 있는 address 목록을 userInfo 에 추가 & 케싱 한다..
@@ -291,13 +304,12 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool> checkLogin([var isSignUp = false]) async {
-    if (isLogin || isLoginCheckDone) return true;
-    var jwt  = await UserHelper().get_jwt();
-    var info = await UserHelper().get_loginInfo();
-    LOG('----------------------------- $info / $jwt');
+    if (isLogin || isLoginCheckDone) return isLogin;
+    var user = await UserHelper().get_loginInfo();
+    LOG('----------------------------- $user');
     // auto login..
-    if (STR(jwt).isNotEmpty && STR(info).isNotEmpty) {
-      loginAuto(info!).then((result) {
+    if (STR(user).isNotEmpty) {
+      loginAuto(user!).then((result) {
         if (isLogin) {
           Fluttertoast.showToast(
               msg: "${account?.accountName} 로그인 완료");
@@ -372,18 +384,24 @@ class LoginProvider extends ChangeNotifier {
     init();
     userInfo = await UserModel.createFromLocalEnc(encUser);
     if (userInfo != null && STR(userInfo?.email).isNotEmpty) {
-      if (userInfo?.loginType == LoginType.kakaotalk) {
-        await loginKakao();
+      if (STR(userNickId).isEmpty) {
+        await UserHelper().setUserKey(STR(userInfo?.email));
+        await _refreshAccountList();
+        userInfo = await _setAccountListFromServer();
+        userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
       }
-      await UserHelper().setUserKey(userInfo!.email!);
-      await _refreshAccountList();
-      var result = await startLoginWithKey();
-      LOG('--> loginAuto result : $result');
-      if (result != true) {
-        userInfo = null;
-        return false;
-      }
-      return result;
+      // if (userInfo?.loginType == LoginType.kakaotalk) {
+      //   await loginKakao();
+      // }
+      // await UserHelper().setUserKey(userInfo!.email!);
+      // await _refreshAccountList();
+      // var result = await startLoginWithKey();
+      // LOG('--> loginAuto result : $result');
+      // if (result != true) {
+      //   userInfo = null;
+      //   return false;
+      // }
+      // return result;
     }
     return false;
   }
@@ -624,9 +642,10 @@ class LoginProvider extends ChangeNotifier {
             userInfo = await _setAccountListFromServer();
           }
           userInfo!.uid = await UserHelper().get_uid();
-          var userEnc   = await userInfo?.encryptAes;
+          userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
+          var userEnc = await userInfo?.encryptAes;
           await UserHelper().setUser(loginInfo: userEnc);
-          LOG('-----------> loginUser success : [${userInfo!.uid}] ${userInfo?.toJson()}');
+          LOG('-----------> loginUser success : [${userInfo!.uid}] ${userInfo!.bioIdentityYN} / ${userInfo?.toJson()}');
         }
         return result;
       }
@@ -795,7 +814,7 @@ class LoginProvider extends ChangeNotifier {
   // passOrg : 실제로 입력 받은 패스워드 문자열..
   Future<bool> checkWalletPass(String passOrg) async {
     var keyEnc = await getAccountKey(passOrg: passOrg);
-    LOG('--> checkWalletPass result : $keyEnc');
+    // LOG('--> checkWalletPass result : $keyEnc');
     return keyEnc != null;
   }
 
@@ -804,9 +823,9 @@ class LoginProvider extends ChangeNotifier {
     try {
       passOrg ??= userPass;
       var keyData = tmpKeyStr ?? selectAccount?.keyPair;
-      LOG('--> getAccountKey [$passOrg] : $keyData');
+      // LOG('--> getAccountKey [$passOrg] : $keyData');
       if (passOrg != null && STR(keyData).isNotEmpty) {
-        var keyStr = await decryptKey(passOrg, keyData!);
+        var keyStr = await decryptData(passOrg, keyData!);
         // LOG('--> getAccountKey : $keyStr');
         if (keyStr != 'fail') {
           var keyPair = EccKeyPair.fromJson(jsonDecode(keyStr));
@@ -819,10 +838,16 @@ class LoginProvider extends ChangeNotifier {
     return null;
   }
 
-  decryptKey(String passOrg, String keyData) async {
+  decryptData(String passOrg, String data) async {
     var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
-    var keyStr = await AesManager().decrypt(pass, keyData);
-    return keyStr;
+    var result = await AesManager().decrypt(pass, data);
+    return result;
+  }
+
+  encryptData(String passOrg, String data) async {
+    var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+    var result = await AesManager().encrypt(pass, data);
+    return result;
   }
 
   createSign(String msg) async {

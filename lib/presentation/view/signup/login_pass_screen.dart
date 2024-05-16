@@ -7,12 +7,14 @@ import 'package:larba_00/presentation/view/asset/networkScreens/network_input_sc
 
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/convertHelper.dart';
+import '../../../common/const/utils/identityHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/uihelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/viewModel/pass_view_model.dart';
+import '../main_screen.dart';
 import 'signup_terms_screen.dart';
 
 class LoginPassScreen extends ConsumerStatefulWidget {
@@ -34,18 +36,51 @@ class CloudPassScreen extends ConsumerStatefulWidget {
       _LoginPassScreenState(PassViewModel(PassType.cloudDown), false);
 }
 
+class OpenPassScreen extends ConsumerStatefulWidget {
+  const OpenPassScreen({Key? key}) : super(key: key);
+  static String get routeName => 'openPassScreen';
+
+  @override
+  ConsumerState createState() =>
+      _LoginPassScreenState(PassViewModel(PassType.open), false);
+}
+
 class _LoginPassScreenState extends ConsumerState {
   _LoginPassScreenState(this.viewModel, this.isFailBack);
   final passInputController = TextEditingController();
   PassViewModel viewModel;
   bool isFailBack;
   var inputPass = '';
+  var isCanBack = true;
+
+  _startMain(int page) {
+    LOG('---> _startMain');
+    final prov = ref.read(loginProvider);
+    prov.isScreenLocked = false;
+    prov.mainPageIndexOrg = 1;
+    context.pushReplacementNamed(
+        MainScreen.routeName, queryParams: {'selectedPage': page.toString()});
+  }
 
   @override
   void initState() {
     super.initState();
-    inputPass = IS_DEV_MODE ? ref.read(loginProvider).inputPass[0] : '';
+    var prov = ref.read(loginProvider);
+    isCanBack = viewModel.passType != PassType.open;
+    inputPass = IS_DEV_MODE ? prov.inputPass[0] : '';
     passInputController.text = inputPass;
+    LOG('--> _LoginPassScreenState : ${viewModel.passType} && ${prov.userBioYN}');
+    if (viewModel.passType == PassType.open && prov.userBioYN) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showBioIdentity(context, onError: (err) {
+          showLoginErrorTextDialog(context, err);
+        }).then((result) {
+          if (BOL(result)) {
+            _startMain(0);
+          }
+        });
+      });
+    }
   }
 
   @override
@@ -63,6 +98,11 @@ class _LoginPassScreenState extends ConsumerState {
               style: typo18semibold,
             ),
             titleSpacing: 0,
+            automaticallyImplyLeading: false,
+            leading: isCanBack ? IconButton(
+              onPressed: context.pop,
+              icon: Icon(Icons.close),
+            ) : null,
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -116,11 +156,17 @@ class _LoginPassScreenState extends ConsumerState {
                 } else {
                   loginProv.checkWalletPass(inputPass).then((result) async {
                     if (result) {
-                      Navigator.of(context).pop(inputPass);
-                    } else if (isFailBack) {
-                      Navigator.of(context).pop();
+                      if (viewModel.passType == PassType.open) {
+                        _startMain(0);
+                      } else {
+                        Navigator.of(context).pop(inputPass);
+                      }
                     } else {
-                      Fluttertoast.showToast(msg: TR(context, '잘못된 비밀번호입니다.'));
+                      if (isCanBack && isFailBack) {
+                        Navigator.of(context).pop();
+                      }
+                      Fluttertoast.showToast(
+                          msg: TR(context, '잘못된 비밀번호입니다.'));
                     }
                   });
                 }

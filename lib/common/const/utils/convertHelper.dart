@@ -166,6 +166,7 @@ bool BOL(dynamic value, {bool defaultValue = false}) {
     value != 'null' && value.toString().isNotEmpty ?
     value.toString() == '1' ||
     value.toLowerCase().toString() == 'on' ||
+    value.toLowerCase().toString() == 'y' ||
     value.toLowerCase().toString() == 'true' : defaultValue;
 }
 

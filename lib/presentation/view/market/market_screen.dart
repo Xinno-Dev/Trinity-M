@@ -78,7 +78,7 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
     return SafeArea(
       top: false,
       child: Container(
-        margin: EdgeInsets.only(bottom: kToolbarHeight.h),
+        child: _viewModel.showProductList()
         // padding: EdgeInsets.symmetric(horizontal: 15.w),
     //     child: SmartRefresher(
     //       enablePullDown: false,
@@ -121,31 +121,23 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
     //     ),
     //   )
     // );
-        child: CustomScrollView(
-          controller: _scrollController,
-          physics: ClampingScrollPhysics(),
-          slivers: [
-            SliverAppBar(
-              // title: Text(TR(context, 'Market')),
-              // leading: IconButton(
-              //   onPressed: () {
-              //   },
-              //   icon: SvgPicture.asset('assets/svg/icon_ham.svg'),
-              // ),
-              // centerTitle: true,
-              // titleTextStyle: typo16bold,
-              toolbarHeight: 0,
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.white,
-              surfaceTintColor: Colors.white,
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(kToolbarHeight),
-                child: _viewModel.showCategoryBar(),
-              ),
-            ),
-            _viewModel.showProductList()
-          ],
-        )
+    //     child: CustomScrollView(
+    //       controller: _scrollController,
+    //       physics: ClampingScrollPhysics(),
+    //       slivers: [
+    //         SliverAppBar(
+    //           toolbarHeight: 0,
+    //           automaticallyImplyLeading: false,
+    //           backgroundColor: Colors.white,
+    //           surfaceTintColor: Colors.white,
+    //           bottom: PreferredSize(
+    //             preferredSize: Size.fromHeight(kToolbarHeight),
+    //             child: _viewModel.showCategoryBar(),
+    //           ),
+    //         ),
+    //         _viewModel.showProductList()
+    //       ],
+    //     )
       )
     );
   }

@@ -32,26 +32,44 @@ class MarketViewModel {
   showCategoryBar() {
     // LOG('--> prov.categoryList : ${prov.categoryList}');
     return Container(
-      margin: EdgeInsets.only(left: 15, bottom: 15),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: List<Widget>.of(prov.categoryList.map((e) =>
-            _categoryItem(STR(e.value), prov.categoryList.indexOf(e)))),
+      margin: EdgeInsets.only(left: 15, bottom: 5),
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List<Widget>.of(prov.categoryList.map((e) =>
+                _categoryItem(STR(e.value), prov.categoryList.indexOf(e),
+                  onChanged: (index) {
+                    setState(() {});
+                }))),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  showSliverProductList() {
+    return SliverPadding(
+      padding: EdgeInsets.fromLTRB(15, 10, 15, 0),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+        List.generate(prov.marketList.length, (index) =>
+            productListItem(prov.marketList[index])),
         ),
       ),
     );
   }
 
   showProductList() {
-    return SliverPadding(
-      padding: EdgeInsets.fromLTRB(15, 10, 15, 0),
-      sliver: SliverList(
-        delegate: SliverChildListDelegate(
-        List.generate(prov.marketRepo.productList.length, (index) =>
-            productListItem(prov.marketRepo.productList[index])),
-        ),
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.fromLTRB(15, 10, 15, kToolbarHeight.h),
+      itemCount: prov.marketList.length,
+      itemBuilder: (context, index) {
+        return productListItem(prov.marketList[index]);
+      }
     );
   }
 
@@ -290,11 +308,12 @@ class MarketViewModel {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  _categoryItem(String title, int index) {
+  _categoryItem(String title, int index, {Function(int)? onChanged}) {
     final isSelected = index == prov.selectCategory;
     return GestureDetector(
       onTap: () {
         prov.setCategory(index);
+        if (onChanged != null) onChanged(index);
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
@@ -332,7 +351,8 @@ class MarketViewModel {
                 if (isShowSeller)
                   _contentSellerBar(item, padding: EdgeInsets.only(bottom: 10.h)),
                 showImage(STR(item.repImg),
-                    Size(MediaQuery.of(context).size.width, 220.r), fit: BoxFit.fitHeight),
+                    Size(MediaQuery.of(context).size.width, 220.r),
+                    fit: BoxFit.fitHeight),
                 _contentTitleBar(item),
               ],
             ),

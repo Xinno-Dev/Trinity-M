@@ -29,6 +29,7 @@ class MarketProvider extends ChangeNotifier {
   MarketProvider._internal();
 
   ProductModel? selectProduct;
+  List<ProductModel> showList = [];
 
   var selectCategory = 0;
   var selectDetailTab = 0;
@@ -37,6 +38,27 @@ class MarketProvider extends ChangeNotifier {
 
   get marketRepo {
     return _repo;
+  }
+
+  get marketList {
+    showList.clear();
+    LOG('---> marketList : $selectCategory / ${_repo.productList}');
+    if (selectCategory > 0) {
+      for (var item in _repo.productList) {
+        if (item.tagId == selectCategory) {
+          showList.add(item);
+        }
+      }
+      return showList;
+    }
+    return showList = _repo.productList.map((e) =>
+        ProductModel.fromJson(e.toJson())).toList();
+  }
+
+  checkLastProduct(String? saleProdId) {
+    if (showList.isEmpty || STR(saleProdId).isEmpty) return true;
+    var result = STR(showList.last.saleProdId) == saleProdId;
+    return result;
   }
 
   get detailPic {
@@ -96,7 +118,7 @@ class MarketProvider extends ChangeNotifier {
     if (_repo.isLastPage) {
       return false;
     }
-    await _repo.getProductList(tagId: selectCategory);
+    await _repo.getProductList();
     notifyListeners();
     return true;
   }
@@ -119,8 +141,8 @@ class MarketProvider extends ChangeNotifier {
   }
 
   refreshProductList(BuildContext context, String? prodId) async {
-    if (prodId == _repo.lastId.toString() &&
-        prodId != _repo.checkLastId.toString()) {
+    if (((selectCategory == 0 && prodId == _repo.lastId.toString()) ||
+        checkLastProduct(prodId)) && prodId != _repo.checkLastId.toString()) {
       LOG('-------> update product list!! : $prodId');
       _repo.checkLastId = int.parse(STR(prodId));
       if (!await getProductList()) {

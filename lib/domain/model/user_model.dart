@@ -22,25 +22,25 @@ part 'user_model.g.dart';
     includeIfNull: false
 )
 class UserModel {
-  String?     uid;            // user id from login
-  int?        status;         // status 1: login done, 0: login not yet..
-  LoginType?  loginType;      // login type ['kakao', 'email'..]
-  bool?   identityYN;     // 본인인증 여부
-  bool?   bioIdentityYN;  // 생체인증 여부
+  String?     uid;          // user id from login
+  int?        status;       // status 1: login done, 0: login not yet..
+  LoginType?  loginType;    // login type ['kakao', 'email'..]
+  bool?   identityYN;       // 본인인증 여부
+  bool?   bioIdentityYN;    // 생체인증 여부
 
-  String? mnemonic;       // main mnemonic
-  String? keyPair;        // main wallet keyPair
+  String? mnemonic;         // main mnemonic
+  String? keyPair;          // main wallet keyPair
 
-  String? socialId;       // login user social id
-  String? socialToken;    // social login token
-  String? userName;       // login user name
-  String? email;          // login user email
-  String? mobile;         // mobile number
-  String? country;        // user country (from mobile)
-  String? pic;            // profile image
-  String? picThumb;       // thumbnail image
-  String? deviceId;       // device uuid
-  String? deviceType;     // device type ['android', 'ios'...]
+  String? socialId;         // login user social id
+  String? socialToken;      // social login token
+  String? userName;         // login user name
+  String? email;            // login user email
+  String? mobile;           // mobile number
+  String? country;          // user country (from mobile)
+  String? pic;              // profile image
+  String? picThumb;         // thumbnail image
+  String? deviceId;         // device uuid
+  String? deviceType;       // device type ['android', 'ios'...]
 
   DateTime? createTime;
   DateTime? loginTime;
@@ -69,7 +69,6 @@ class UserModel {
     this.deviceId,
     this.deviceType,
     this.addressList,
-
 
     this.createTime,
     this.loginTime,
@@ -137,6 +136,7 @@ class UserModel {
     var deviceId = await getDeviceId();
     var pass = crypto.sha256.convert(utf8.encode(deviceId)).toString();
     var loginInfo = UserModel(
+      uid:       this.uid,
       status:    this.status,
       email:     this.email,
       loginType: this.loginType,

@@ -202,7 +202,7 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
                     Padding(
                       padding: EdgeInsets.only(left: 20.r, right: 20.r),
                       child: Text(
-                        TR(context, '본인확인 목적으로 기기에 등록된 모든 생체정보를\n'
+                        TR(context, '본인 확인 목적으로 기기에 등록된 생체정보를\n'
                           '이용하여 로그인 및 인증작업을 진행하며\n서버로 전송/저장되지 않습니다.'),
                         style: typo16medium150,
                       ),

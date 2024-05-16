@@ -13,6 +13,7 @@ import 'package:larba_00/presentation/view/registMnemonic_screen.dart';
 import 'package:larba_00/presentation/view/settings/settings_policy_screent.dart';
 import 'package:larba_00/presentation/view/settings/settings_security_screen.dart';
 import 'package:larba_00/presentation/view/sign_password_screen.dart';
+import 'package:larba_00/presentation/view/signup/login_pass_screen.dart';
 import 'package:larba_00/presentation/view/signup/signup_terms_screen.dart';
 import 'package:larba_00/presentation/view/staking/select_staking_list_screen.dart';
 import 'package:larba_00/presentation/view/staking/staking_confirm_screen.dart';
@@ -83,6 +84,11 @@ class TempProvider extends ChangeNotifier {
           builder: (context, state) => LoginScreen(
             isAppStart: BOL(state.queryParams['isAppStart']),
           ),
+        ),
+        GoRoute(
+          path: '/' + OpenPassScreen.routeName,
+          name: OpenPassScreen.routeName,
+          builder: (context, state) => OpenPassScreen(),
         ),
         GoRoute(
           path: '/signUpTerms',

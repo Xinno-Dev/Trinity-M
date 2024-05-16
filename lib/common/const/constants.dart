@@ -25,6 +25,8 @@ const String ACCOUNT_KEY = 'ACCOUNT_KEY';
 const String LOGIN_TYPE_KEY = 'LOGIN_TYPE_KEY';
 const String LOGIN_INFO_KEY = 'LOGIN_INFO_KEY';
 const String USERID_KEY = 'USERID_KEY';
+const String LOGIN_KEY = 'LOGIN_KEY';
+const String IDENTITY_KEY = 'IDENTITY_KEY';
 const String BIO_IDENTITY_KEY = 'BIO_IDENTITY_KEY';
 const String UID_KEY = 'UID_KEY';
 const String PUB_KEY = 'PUB_KEY';
@@ -52,6 +54,7 @@ const String APP_NOTICE_KEY = 'APP_NOTICE_KEY';
 const bool IS_DEV_MODE = kDebugMode && true;
 const bool IS_EMAIL_CHECK = !kDebugMode || false;
 const bool IS_AUTO_LOCK_MODE = false;
+const bool IS_AUTO_LOGIN_MODE = true; // 로컬에 패스워드 저장
 const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc API 이용
 const bool IS_SWAP_ON = false;
 

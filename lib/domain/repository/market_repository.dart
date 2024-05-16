@@ -15,7 +15,7 @@ class MarketRepository {
 
   Map<String, ProductModel> productData = {};
   Map<String, ProductItemModel> optionData = {};
-  List<ProductModel>  productList = [];
+  List<ProductModel> productList = [];
   List<CategoryModel> categoryList = [];
 
   var titleN      = ['주말 1박 2일 36홀 (4인) 조식, 숙박, 카트 무료 지원','고메 겟어웨이','제주 봄 미식 프로모션','연박 특가 프로모션','연간 회원권 2024',];
@@ -117,7 +117,7 @@ class MarketRepository {
   }
 
   getProductList({int tagId = 0}) async {
-    LOG('--> getProductList : $tagId / $lastId($checkLastId) / $isLastPage');
+    LOG('--> getProductList : $tagId / $lastId($checkLastId) / $isLastPage / ${categoryList.length}');
     try {
       final jsonData = await _apiService.getProductList(
         tagId: tagId,
@@ -136,12 +136,12 @@ class MarketRepository {
               var index = productList.indexOf(orgItem);
               productList[index] = newItem;
               isAdd = false;
-              LOG('--> getProductList update : ${newItem.saleProdId}');
+              LOG('--> getProductList update : ${newItem.saleProdId} / ${newItem.tagId}');
               break;
             }
           }
           if (isAdd) {
-            LOG('--> getProductList add : ${newItem.saleProdId}');
+            LOG('--> getProductList add : ${newItem.saleProdId} / ${newItem.tagId}');
             productList.add(newItem);
           }
         }

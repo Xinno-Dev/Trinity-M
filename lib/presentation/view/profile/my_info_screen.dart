@@ -77,11 +77,14 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                     [['계정 복구 단어 보기','보기']], onEdit: _showMnemonic),
                   grayDivider(),
                   _viewModel.myInfoEditItem('인증',
-                    [['생체 인증', prov.userBioYN ? 'on' : 'off']], onToggle: (value) {
+                    [['생체 인증 사용', prov.userBioYN ? 'on' : 'off']], onToggle: (value) {
                       if (value) {
                         Navigator.of(context).push(
                           createAniRoute(SignUpBioScreen(isShowNext: false))).then((result) {
-                            prov.refresh();
+                            LOG('--> SignUpBioScreen result : $result');
+                            if (BOL(result)) {
+                              prov.setBioIdentity(true);
+                            }
                         });
                       } else {
                         prov.setBioIdentity(false);
@@ -103,9 +106,9 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
         final prov = ref.read(loginProvider);
         Navigator.of(context).push(
           createAniRoute(SignUpMnemonicScreen(isShowNext: false))).
-            then((result) {
-              prov.refresh();
-            });
+          then((result) {
+            prov.refresh();
+          });
       }
     });
   }

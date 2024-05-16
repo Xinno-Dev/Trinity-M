@@ -9,6 +9,7 @@ import 'package:larba_00/domain/model/coin_model.dart';
 import 'package:larba_00/domain/viewModel/market_view_model.dart';
 import 'package:larba_00/domain/viewModel/profile_view_model.dart';
 import 'package:larba_00/presentation/view/settings/settings_screen.dart';
+import 'package:larba_00/presentation/view/signup/login_pass_screen.dart';
 import 'package:larba_00/presentation/view/staking/staking_main_screen.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart' as provider;
@@ -33,7 +34,8 @@ class MainScreen extends ConsumerStatefulWidget {
   ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends ConsumerState<MainScreen> {
+class _MainScreenState extends ConsumerState<MainScreen>
+  with WidgetsBindingObserver {
   final _pageController = PageController();
   final _scaffoldController = GlobalKey<ScaffoldState>();
   late ProfileViewModel _viewModel;
@@ -48,12 +50,34 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final prov = ref.read(loginProvider);
     prov.mainPageIndex = widget.selectedPage;
     _viewModel = ProfileViewModel();
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final prov = ref.read(loginProvider);
+    LOG('--> App Status : ${state.toString()}');
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (prov.isScreenLocked) {
+          context.pushReplacementNamed(OpenPassScreen.routeName);
+        }
+        break;
+      case AppLifecycleState.inactive:
+        prov.setLockScreen(true);
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -62,7 +86,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     _movePage();
     return SafeArea(
       top: false,
-      child: Scaffold(
+      child: prov.isScreenLocked ? _viewModel.lockScreen(context) :
+      Scaffold(
         key: _scaffoldController,
         drawerEnableOpenDragGesture: false,
         appBar: AppBar(
@@ -88,6 +113,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               ),
             )
           ),
+          bottom: prov.mainPageIndex == 0 ? PreferredSize(
+            preferredSize: Size.fromHeight(35),
+            child: MarketViewModel().showCategoryBar(),
+          ) : null,
           actions: [
             // InkWell(
             //   onTap: () {
@@ -210,7 +239,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       prov.mainPageIndexOrg = prov.mainPageIndex;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _pageController.animateToPage(prov.mainPageIndex,
-            duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+            duration: Duration(milliseconds: 200), curve: Curves.linear);
       });
     }
   }

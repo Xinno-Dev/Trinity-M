@@ -101,10 +101,21 @@ class ProfileViewModel {
 
   ////////////////////////////////////////////////////////////////////////
 
+  lockScreen(BuildContext context) {
+    return Container(
+      color: WHITE,
+      child: Center(
+        child: SvgPicture.asset(
+          'assets/svg/logo.svg',
+        ),
+      ),
+    );
+  }
+
   mainDrawer(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
+      backgroundColor: WHITE,
+      surfaceTintColor: WHITE,
       child: Container(
         padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: Column(
@@ -222,7 +233,8 @@ class ProfileViewModel {
     }
   }
 
-  showProfileSelectBox(BuildContext context, {Function(AddressModel)? onSelect, Function()? onAdd}) {
+  showProfileSelectBox(BuildContext context,
+    {Function(AddressModel)? onSelect, Function()? onAdd}) {
     if (loginProv.isShowMask || loginProv.userInfo == null) return false;
     _accountContext = context;
     loginProv.setMaskStatus(true);

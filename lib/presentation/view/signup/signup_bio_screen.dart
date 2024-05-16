@@ -19,6 +19,7 @@ import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
+import '../../../common/const/utils/identityHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import 'signup_mnemonic_screen.dart';
 
@@ -75,81 +76,82 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
     });
   }
 
-  Future<void> _authenticateWithBiometrics(context) async {
-    bool authenticated = false;
-    try {
-      setState(() {
-        _isAuthenticating = true;
-        _authorized = 'Authenticating';
-      });
-
-      var iosStrings = IOSAuthMessages(
-        // cancelButton: '취소',
-        // goToSettingsButton: '설정',
-        // goToSettingsDescription: '생체인증 설정을 해주세요.',
-        // lockOut: 'Please reenable your Touch ID',
-        // localizedFallbackTitle: '암호입력',
-      );
-
-      var androidStrings = AndroidAuthMessages(
-        signInTitle: '생체인증 사용 동의',
-        biometricHint: '지문',
-        cancelButton: '닫기',
-      );
-
-      authenticated = await auth.authenticate(
-        localizedReason: TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
-        authMessages: <AuthMessages>[
-          androidStrings,
-          iosStrings,
-        ],
-        options: AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-          useErrorDialogs: false,
-        ),
-      );
-      setState(() {
-        _isAuthenticating = false;
-        _authorized = 'Authenticating';
-      });
-    } on PlatformException catch (e) {
-      LOG('--> Authentication error : $e');
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleCheckDialog(
-            titleString: TR(context, '등록에 실패했습니다.'),
-            infoString: TR(context, e.toString()),
-          );
-        },
-      );
-      setState(() {
-        _localAuthAgree = false;
-        _isAuthenticating = false;
-        _authorized = 'Error - ${e.message}';
-      });
-      return;
-    }
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      final String message = authenticated ? 'Authorized' : 'Not Authorized';
-      if (authenticated) {
-        _localAuthAgree = true;
-      }
-      LOG('----> authenticated result : $message');
-      ref.read(loginProvider).setBioIdentity(authenticated);
-      if (!widget.isShowNext && authenticated) {
-        Navigator.of(context).pop(true);
-      }
-    });
-  }
+  // Future<void> _authenticateWithBiometrics(context) async {
+  //   bool authenticated = false;
+  //   try {
+  //     setState(() {
+  //       _isAuthenticating = true;
+  //       _authorized = 'Authenticating';
+  //     });
+  //
+  //     var iosStrings = IOSAuthMessages(
+  //       // cancelButton: '취소',
+  //       // goToSettingsButton: '설정',
+  //       // goToSettingsDescription: '생체인증 설정을 해주세요.',
+  //       // lockOut: 'Please reenable your Touch ID',
+  //       // localizedFallbackTitle: '암호입력',
+  //     );
+  //
+  //     var androidStrings = AndroidAuthMessages(
+  //       signInTitle: '생체인증 사용 동의',
+  //       biometricHint: '지문',
+  //       cancelButton: '닫기',
+  //     );
+  //
+  //     authenticated = await auth.authenticate(
+  //       localizedReason: TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
+  //       authMessages: <AuthMessages>[
+  //         androidStrings,
+  //         iosStrings,
+  //       ],
+  //       options: AuthenticationOptions(
+  //         stickyAuth: true,
+  //         biometricOnly: true,
+  //         useErrorDialogs: false,
+  //       ),
+  //     );
+  //     setState(() {
+  //       _isAuthenticating = false;
+  //       _authorized = 'Authenticating';
+  //     });
+  //   } on PlatformException catch (e) {
+  //     LOG('--> Authentication error : $e');
+  //     showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return SimpleCheckDialog(
+  //           titleString: TR(context, '등록에 실패했습니다.'),
+  //           infoString: TR(context, e.toString()),
+  //         );
+  //       },
+  //     );
+  //     setState(() {
+  //       _localAuthAgree = false;
+  //       _isAuthenticating = false;
+  //       _authorized = 'Error - ${e.message}';
+  //     });
+  //     return;
+  //   }
+  //   if (!mounted) {
+  //     return;
+  //   }
+  //
+  //   setState(() {
+  //     final String message = authenticated ? 'Authorized' : 'Not Authorized';
+  //     if (authenticated) {
+  //       _localAuthAgree = true;
+  //     }
+  //     LOG('----> authenticated result : $message');
+  //     ref.read(loginProvider).setBioIdentity(authenticated);
+  //     if (!widget.isShowNext && authenticated) {
+  //       Navigator.of(context).pop(true);
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final prov = ref.watch(loginProvider);
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -183,7 +185,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      TR(context, '본인확인 목적으로 기기에 등록된 모든 생체정보를\n'
+                      TR(context, '본인 확인 목적으로 기기에 등록된 생체정보를\n'
                           '이용하여 로그인 및 인증작업을 진행하며,\n서버로 전송/저장되지 않습니다.'),
                       style: typo16medium150,
                     ),
@@ -201,13 +203,27 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                   pushed: false,
                   localAuth: true,
                   onChanged: (agree) async {
-                    setState(() {
-                      if (_localAuthAgree == true) {
+                    if (_localAuthAgree == true) {
+                      setState(() {
                         _localAuthAgree = false;
-                      } else {
-                        _authenticateWithBiometrics(context);
-                      }
-                    });
+                      });
+                    } else {
+                      showBioIdentity(context, onError: (err) {
+                        setState(() {
+                          _localAuthAgree = false;
+                          showLoginErrorTextDialog(context, err);
+                        });
+                      }).then((result) {
+                        prov.isScreenLocked = false;
+                        if (BOL(result)) {
+                          setState(() {
+                            _localAuthAgree = true;
+                            prov.setBioIdentity(_localAuthAgree);
+                            context.pop(result);
+                          });
+                        }
+                      });
+                    }
                   },
                 ),
               ),

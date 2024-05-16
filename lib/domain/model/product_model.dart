@@ -27,6 +27,7 @@ class ProductModel {
   String?   itemType;     // 아이템 종류. mk_item.CD_ITEM_TYPE 값
   String?   type;         // 상품종류. mk_prod.CD_PROD_TYPE 값
   String?   name;         // 상품이름
+  int?      tagId;        // 상품타입 CD_TAG 값
 
   // 목록 정보..
   String?   repImg;       // 상품 목록 이미지
@@ -34,7 +35,7 @@ class ProductModel {
   int?      remainAmount; // 현재 상품의 잔여(미판매) 아이템 개수
   String?   itemPrice;    // 아이템 개당 가격
   String?   priceUnit;    // 가격 단위
-  String?   status;       // CD_SALE_ST
+  String?   status;       // CD_SALE_ST 값
 
   // 상세 정보..
   String?   repDetailImg; // 상품 디테일 이미지
@@ -61,6 +62,7 @@ class ProductModel {
     this.itemType,
     this.type,
     this.name,
+    this.tagId,
 
     this.repImg,
     this.totalAmount,
