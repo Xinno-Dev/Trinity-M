@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:larba_00/common/const/utils/convertHelper.dart';
-import 'package:larba_00/domain/model/rpc/delegateInfo.dart';
-import 'package:larba_00/presentation/view/staking/staking_caution_screen.dart';
-import 'package:larba_00/presentation/view/staking/staking_confirm_screen.dart';
+import '../../../common/const/utils/convertHelper.dart';
+import '../../../domain/model/rpc/delegateInfo.dart';
+import '../../../presentation/view/staking/staking_caution_screen.dart';
+import '../../../presentation/view/staking/staking_confirm_screen.dart';
 import 'package:flutter_multi_formatter/formatters/currency_input_formatter.dart';
 import 'package:flutter_multi_formatter/formatters/money_input_enums.dart';
 import 'package:provider/provider.dart' as provider;

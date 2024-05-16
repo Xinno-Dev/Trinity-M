@@ -1,5 +1,5 @@
-import 'package:larba_00/domain/model/storage_model.dart';
-import 'package:larba_00/domain/repository/storage_repository.dart';
+import '../../domain/model/storage_model.dart';
+import '../../domain/repository/storage_repository.dart';
 import 'storage_usecase.dart';
 
 class StorageUseCaseImpl implements StorageUseCase {

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:larba_00/common/const/widget/basic_appBar.dart';
-import 'package:larba_00/common/const/widget/wrong_password_dialog.dart';
-import 'package:larba_00/presentation/view/registLocalAuth_screen.dart';
+import '../../../common/const/widget/basic_appBar.dart';
+import '../../../common/const/widget/wrong_password_dialog.dart';
+import '../../../presentation/view/registLocalAuth_screen.dart';
 import 'package:crypto/crypto.dart';
 
 import '../../common/common_package.dart';

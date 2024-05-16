@@ -1,9 +1,9 @@
 
-import 'package:larba_00/common/const/constants.dart';
-import 'package:larba_00/domain/model/coin_model.dart';
-import 'package:larba_00/domain/model/network_model.dart';
-import 'package:larba_00/domain/model/swap_model.dart';
-import 'package:larba_00/presentation/view/sign_password_screen.dart';
+import '../../../../common/const/constants.dart';
+import '../../../../domain/model/coin_model.dart';
+import '../../../../domain/model/network_model.dart';
+import '../../../../domain/model/swap_model.dart';
+import '../../../../presentation/view/sign_password_screen.dart';
 import 'package:provider/provider.dart' as provider;
 
 import '../../../../common/common_package.dart';

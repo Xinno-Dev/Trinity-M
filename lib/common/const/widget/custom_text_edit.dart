@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 
 import '../../common_package.dart';
+import '../../style/colors.dart';
+import '../../style/textStyle.dart';
 import '../utils/convertHelper.dart';
 import '../utils/languageHelper.dart';
 

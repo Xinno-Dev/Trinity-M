@@ -1,24 +1,22 @@
 import 'dart:io';
 
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/common/const/widget/SimpleCheckDialog.dart';
-import 'package:larba_00/common/const/widget/settingsMenu.dart';
-import 'package:larba_00/common/const/widget/warning_icon.dart';
-import 'package:larba_00/common/provider/temp_provider.dart';
-import 'package:larba_00/presentation/view/signup/login_screen.dart';
-import 'package:larba_00/presentation/view/settings/settings_language_screen.dart';
-import 'package:larba_00/presentation/view/settings/settings_policy_screent.dart';
-import 'package:larba_00/presentation/view/settings/settings_security_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:store_redirect/store_redirect.dart';
 
+import '../../../common/common_package.dart';
 import '../../../common/const/constants.dart';
-import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
+import '../../../common/const/utils/userHelper.dart';
+import '../../../common/const/widget/settingsMenu.dart';
+import '../../../common/const/widget/warning_icon.dart';
 import '../../../common/provider/firebase_provider.dart';
-import '../../../domain/model/app_start_model.dart';
+import '../../../common/provider/temp_provider.dart';
+import '../signup/login_screen.dart';
+
+import 'settings_language_screen.dart';
+import 'settings_policy_screent.dart';
+import 'settings_security_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});

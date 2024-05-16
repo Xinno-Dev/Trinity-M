@@ -1,4 +1,4 @@
-import 'package:larba_00/common/common_package.dart';
+import '../../common/common_package.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';

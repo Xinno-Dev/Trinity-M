@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/widget/primary_button.dart';
-import 'package:larba_00/common/provider/temp_provider.dart';
-import 'package:larba_00/presentation/view/main_screen.dart';
+import '../../../common/common_package.dart';
+import '../../../common/const/widget/primary_button.dart';
+import '../../../common/provider/temp_provider.dart';
+import '../../../presentation/view/main_screen.dart';
 
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/uihelper.dart';

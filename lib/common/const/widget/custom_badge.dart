@@ -1,4 +1,6 @@
 import '../../common_package.dart';
+import '../../style/colors.dart';
+import '../../style/textStyle.dart';
 
 class CustomBadge extends StatelessWidget {
   const CustomBadge({

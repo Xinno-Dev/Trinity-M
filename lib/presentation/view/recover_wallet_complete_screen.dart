@@ -1,4 +1,4 @@
-import 'package:larba_00/common/const/widget/primary_button.dart';
+import '../../../common/const/widget/primary_button.dart';
 
 import '../../common/common_package.dart';
 import '../../common/const/utils/languageHelper.dart';

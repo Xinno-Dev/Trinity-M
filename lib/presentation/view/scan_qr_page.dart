@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:larba_00/common/common_package.dart';
+import '../../../common/common_package.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../../common/const/utils/languageHelper.dart';

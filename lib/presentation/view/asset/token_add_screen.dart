@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' as math;
 
-import 'package:larba_00/common/const/widget/disabled_button.dart';
-import 'package:larba_00/domain/model/coin_model.dart';
-import 'package:larba_00/services/mdl_rpc_service.dart';
+import '../../../../common/const/widget/disabled_button.dart';
+import '../../../../domain/model/coin_model.dart';
+import '../../../../services/mdl_rpc_service.dart';
 
 import '../../../common/common_package.dart';
 import '../../../common/const/constants.dart';

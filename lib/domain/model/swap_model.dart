@@ -1,5 +1,5 @@
-import 'package:larba_00/domain/model/coin_model.dart';
-import 'package:larba_00/domain/model/network_model.dart';
+import '../../domain/model/coin_model.dart';
+import '../../domain/model/network_model.dart';
 
 import '../../common/const/utils/convertHelper.dart';
 

@@ -1,10 +1,10 @@
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/constants.dart';
-import 'package:larba_00/common/const/utils/eccManager.dart';
-import 'package:larba_00/common/const/utils/uihelper.dart';
-import 'package:larba_00/common/const/widget/SimpleCheckDialog.dart';
-import 'package:larba_00/common/const/widget/disabled_button.dart';
-import 'package:larba_00/presentation/view/authpassword_screen.dart';
+import '../../../common/common_package.dart';
+import '../../../common/const/constants.dart';
+import '../../../common/const/utils/eccManager.dart';
+import '../../../common/const/utils/uihelper.dart';
+import '../../../common/const/widget/SimpleCheckDialog.dart';
+import '../../../common/const/widget/disabled_button.dart';
+import '../../../presentation/view/authpassword_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

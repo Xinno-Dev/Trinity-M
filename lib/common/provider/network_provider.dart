@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/constants.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/domain/model/network_model.dart';
+import '../../../common/common_package.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../domain/model/network_model.dart';
+import '../const/constants.dart';
 import '../const/utils/convertHelper.dart';
+import '../const/utils/userHelper.dart';
 
 // final networkProvider = ChangeNotifierProvider<NetworkProvider>((_) {
 //   return NetworkProvider();

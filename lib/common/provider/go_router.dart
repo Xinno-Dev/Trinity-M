@@ -1,6 +1,5 @@
-import 'package:go_router/go_router.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:larba_00/common/provider/temp_provider.dart';
+import '../../../common/common_package.dart';
+import 'temp_provider.dart';
 
 final routerProvider = Provider<GoRouter>(
   (ref) {

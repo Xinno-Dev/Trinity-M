@@ -9,13 +9,13 @@ import 'package:intl/intl.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:firebase_auth/firebase_auth.dart' as google;
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:larba_00/common/const/utils/md5Helper.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/common/provider/login_provider.dart';
-import 'package:larba_00/common/rlp/hash.dart';
+import '../../../common/const/utils/md5Helper.dart';
+import '../../../common/const/utils/userHelper.dart';
+import '../../../common/provider/login_provider.dart';
+import '../../../common/rlp/hash.dart';
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:larba_00/domain/model/user_model.dart';
-import 'package:larba_00/services/google_service.dart';
+import '../../../domain/model/user_model.dart';
+import '../../../services/google_service.dart';
 import 'package:uuid/uuid.dart';
 
 import '../common/const/constants.dart';
@@ -54,8 +54,8 @@ Future<String?> startEmailSend(String emailAddr, Function(LoginErrorType) onErro
       var acs = ActionCodeSettings(
           url: '${host}/users/email/vflink/$vfCodeEnc',
           handleCodeInApp: true,
-          iOSBundleId: 'com.exino.larba_00',
-          androidPackageName: 'com.exino.larba_00',
+          iOSBundleId: 'com.xinno.trinity_m_00',
+          androidPackageName: 'com.xinno.trinity_m_00',
           androidInstallApp: true,
           androidMinimumVersion: '12');
       await FirebaseAuth.instance.sendSignInLinkToEmail(

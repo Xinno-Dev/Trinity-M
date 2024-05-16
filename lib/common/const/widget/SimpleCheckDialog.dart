@@ -1,5 +1,4 @@
-import 'package:larba_00/common/common_package.dart';
-
+import '../../../common/common_package.dart';
 import '../utils/languageHelper.dart';
 
 class SimpleCheckDialog extends StatelessWidget {

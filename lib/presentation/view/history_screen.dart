@@ -1,6 +1,6 @@
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/domain/model/history_model.dart';
+import '../../common/common_package.dart';
+import '../../common/const/utils/userHelper.dart';
+import '../../domain/model/history_model.dart';
 
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/widget/back_button.dart';

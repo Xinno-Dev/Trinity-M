@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/common/const/widget/PageNumbers.dart';
-import 'package:larba_00/common/const/widget/SimpleCheckDialog.dart';
-import 'package:larba_00/data/repository/storage_repository_impl.dart';
-import 'package:larba_00/domain/repository/storage_repository.dart';
-import 'package:larba_00/domain/usecase/storage_usecase.dart';
-import 'package:larba_00/domain/usecase/storage_usecase_impl.dart';
-import 'package:larba_00/presentation/view/registPassword_screen.dart';
-import 'package:larba_00/services/storage_api_services.dart';
+import '../../../common/common_package.dart';
+import '../../../common/const/utils/userHelper.dart';
+import '../../../common/const/widget/PageNumbers.dart';
+import '../../../common/const/widget/SimpleCheckDialog.dart';
+import '../../../data/repository/storage_repository_impl.dart';
+import '../../../domain/repository/storage_repository.dart';
+import '../../../domain/usecase/storage_usecase.dart';
+import '../../../domain/usecase/storage_usecase_impl.dart';
+import '../../../presentation/view/registPassword_screen.dart';
+import '../../../services/storage_api_services.dart';
 import 'package:email_validator/email_validator.dart';
 
 import '../../common/const/utils/languageHelper.dart';

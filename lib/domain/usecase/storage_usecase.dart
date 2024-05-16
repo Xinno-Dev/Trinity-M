@@ -1,4 +1,4 @@
-import 'package:larba_00/domain/model/storage_model.dart';
+import '../../domain/model/storage_model.dart';
 
 abstract class StorageUseCase {
   Future<StorageModel> read(String uid);

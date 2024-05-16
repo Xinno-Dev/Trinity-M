@@ -1,7 +1,7 @@
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/common/const/widget/settingsMenu.dart';
-import 'package:larba_00/presentation/view/authpassword_screen.dart';
+import '../../../common/common_package.dart';
+import '../../../common/const/utils/userHelper.dart';
+import '../../../common/const/widget/settingsMenu.dart';
+import '../../../presentation/view/authpassword_screen.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../common/const/utils/languageHelper.dart';

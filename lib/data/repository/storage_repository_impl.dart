@@ -1,7 +1,7 @@
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/domain/model/storage_model.dart';
-import 'package:larba_00/domain/repository/storage_repository.dart';
-import 'package:larba_00/services/storage_api_services.dart';
+import '../../common/common_package.dart';
+import '../../domain/model/storage_model.dart';
+import '../../domain/repository/storage_repository.dart';
+import '../../services/storage_api_services.dart';
 
 class StorageRepositoryImpl implements StorageRepository {
   final StorageAPIServices storageAPIServices;

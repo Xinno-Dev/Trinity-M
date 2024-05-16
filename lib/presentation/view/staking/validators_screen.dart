@@ -1,5 +1,5 @@
-import 'package:larba_00/common/const/widget/validators_list_column.dart';
-import 'package:larba_00/services/json_rpc_service.dart';
+import '../../../common/const/widget/validators_list_column.dart';
+import '../../../services/json_rpc_service.dart';
 import 'package:provider/provider.dart' as provider;
 
 import '../../../common/common_package.dart';

@@ -1,8 +1,8 @@
-import 'package:larba_00/common/const/widget/button_with_image.dart';
-import 'package:larba_00/common/const/widget/gray_divider.dart';
-import 'package:larba_00/presentation/view/asset/receive_asset_screen.dart';
-import 'package:larba_00/presentation/view/asset/send_asset_screen.dart';
-import 'package:larba_00/presentation/view/asset/tabBarViewScreens/trx_history_list_screen.dart';
+import '../../../../common/const/widget/button_with_image.dart';
+import '../../../../common/const/widget/gray_divider.dart';
+import '../../../../presentation/view/asset/receive_asset_screen.dart';
+import '../../../../presentation/view/asset/send_asset_screen.dart';
+import '../../../../presentation/view/asset/tabBarViewScreens/trx_history_list_screen.dart';
 
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/languageHelper.dart';

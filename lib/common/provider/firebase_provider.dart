@@ -1,10 +1,9 @@
 
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/domain/model/app_start_model.dart';
-import 'package:larba_00/domain/model/mdl_check_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../../../common/common_package.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import '../../domain/model/app_start_model.dart';
+import '../../domain/model/mdl_check_model.dart';
 import '../../services/firebase_api_service.dart';
 import '../const/utils/convertHelper.dart';
 

@@ -1,4 +1,5 @@
 import '../../common_package.dart';
+import '../../style/colors.dart';
 
 class ColorTitleColumn extends StatelessWidget {
   const ColorTitleColumn({

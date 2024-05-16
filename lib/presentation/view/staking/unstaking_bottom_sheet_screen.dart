@@ -1,6 +1,6 @@
-import 'package:larba_00/common/const/widget/detail_row.dart';
-import 'package:larba_00/common/const/widget/gray_5_round_container.dart';
-import 'package:larba_00/common/const/widget/quantity_column.dart';
+import '../../../common/const/widget/detail_row.dart';
+import '../../../common/const/widget/gray_5_round_container.dart';
+import '../../../common/const/widget/quantity_column.dart';
 
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/languageHelper.dart';

@@ -1,6 +1,6 @@
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/provider/language_provider.dart';
-import 'package:larba_00/services/localization_service.dart';
+import '../../../../common/common_package.dart';
+import '../../../../common/provider/language_provider.dart';
+import '../../../../services/localization_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';

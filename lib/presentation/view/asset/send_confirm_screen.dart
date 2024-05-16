@@ -1,7 +1,7 @@
 import 'package:auto_size_text_plus/auto_size_text.dart';
-import 'package:larba_00/common/provider/coin_provider.dart';
-import 'package:larba_00/domain/model/rpc/staking_type.dart';
-import 'package:larba_00/presentation/view/sign_password_screen.dart';
+import '../../../../common/provider/coin_provider.dart';
+import '../../../../domain/model/rpc/staking_type.dart';
+import '../../../../presentation/view/sign_password_screen.dart';
 import 'package:provider/provider.dart' as provider;
 
 import '../../../common/common_package.dart';

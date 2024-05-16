@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iamport_flutter/iamport_payment.dart';
 import 'package:iamport_flutter/model/payment_data.dart';
-import 'package:larba_00/common/common_package.dart';
+import '../../../common/common_package.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
 

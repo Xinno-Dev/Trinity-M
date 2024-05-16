@@ -1,8 +1,10 @@
-import 'package:larba_00/common/const/constants.dart';
-import 'package:larba_00/common/const/utils/convertHelper.dart';
+import '../../../common/const/constants.dart';
+import '../../../common/const/utils/convertHelper.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../common_package.dart';
+import '../../style/colors.dart';
+import '../../style/textStyle.dart';
 
 class BalanceRow extends StatelessWidget {
   BalanceRow({

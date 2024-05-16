@@ -1,7 +1,8 @@
 
-import 'package:larba_00/common/common_package.dart';
+import '../../../common/common_package.dart';
 import 'package:flutter/material.dart';
 
+import '../../style/colors.dart';
 import '../widget/image_widget.dart';
 import '../widget/rounded_button.dart';
 import 'languageHelper.dart';

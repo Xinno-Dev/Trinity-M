@@ -1,7 +1,7 @@
-import 'package:larba_00/common/const/widget/network_error_screen.dart';
-import 'package:larba_00/common/provider/temp_provider.dart';
-import 'package:larba_00/presentation/view/staking/staking_screen.dart';
-import 'package:larba_00/presentation/view/staking/validators_screen.dart';
+import '../../../common/const/widget/network_error_screen.dart';
+import '../../../common/provider/temp_provider.dart';
+import '../../../presentation/view/staking/staking_screen.dart';
+import '../../../presentation/view/staking/validators_screen.dart';
 
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/languageHelper.dart';

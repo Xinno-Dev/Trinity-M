@@ -1,6 +1,6 @@
 
-import 'package:larba_00/common/const/utils/uihelper.dart';
-import 'package:larba_00/domain/model/network_model.dart';
+import '../../../../common/const/utils/uihelper.dart';
+import '../../../../domain/model/network_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart' as provider;
 

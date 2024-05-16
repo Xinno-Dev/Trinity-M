@@ -1,13 +1,13 @@
-import 'package:larba_00/common/const/utils/convertHelper.dart';
-import 'package:larba_00/common/const/widget/disabled_button.dart';
-import 'package:larba_00/common/const/widget/primary_10_button.dart';
-import 'package:larba_00/common/const/widget/primary_button.dart';
-import 'package:larba_00/common/provider/stakes_data.dart';
-import 'package:larba_00/common/provider/temp_provider.dart';
-import 'package:larba_00/domain/model/rpc/governance_rule.dart';
-import 'package:larba_00/presentation/view/staking/select_staking_list_screen.dart';
-import 'package:larba_00/presentation/view/staking/staking_input_screen.dart';
-import 'package:larba_00/services/json_rpc_service.dart';
+import '../../../common/const/utils/convertHelper.dart';
+import '../../../common/const/widget/disabled_button.dart';
+import '../../../common/const/widget/primary_10_button.dart';
+import '../../../common/const/widget/primary_button.dart';
+import '../../../common/provider/stakes_data.dart';
+import '../../../common/provider/temp_provider.dart';
+import '../../../domain/model/rpc/governance_rule.dart';
+import '../../../presentation/view/staking/select_staking_list_screen.dart';
+import '../../../presentation/view/staking/staking_input_screen.dart';
+import '../../../services/json_rpc_service.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart' as provider;
 

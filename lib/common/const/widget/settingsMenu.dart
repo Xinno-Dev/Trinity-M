@@ -1,6 +1,8 @@
 import 'package:auto_size_text_plus/auto_size_text.dart';
-import 'package:larba_00/common/common_package.dart';
 
+import '../../common_package.dart';
+import '../../style/colors.dart';
+import '../../style/textStyle.dart';
 import '../utils/languageHelper.dart';
 
 class SettingsMenu extends StatelessWidget {

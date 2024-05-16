@@ -1,9 +1,9 @@
-import 'package:larba_00/common/const/widget/CustomCheckBox.dart';
-import 'package:larba_00/common/const/widget/PageNumbers.dart';
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/widget/primary_button.dart';
-import 'package:larba_00/presentation/view/registPassword_screen.dart';
-import 'package:larba_00/presentation/view/terms_detail_screen.dart';
+import '../../../common/const/widget/CustomCheckBox.dart';
+import '../../../common/const/widget/PageNumbers.dart';
+import '../../../common/common_package.dart';
+import '../../../common/const/widget/primary_button.dart';
+import '../../../presentation/view/registPassword_screen.dart';
+import '../../../presentation/view/terms_detail_screen.dart';
 
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/uihelper.dart';

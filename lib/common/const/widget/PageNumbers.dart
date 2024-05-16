@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:larba_00/common/common_package.dart';
+import '../../../common/common_package.dart';
 
 class PageNumbers extends StatelessWidget {
   PageNumbers({super.key, required this.select});

@@ -1,5 +1,5 @@
 import 'package:auto_size_text_plus/auto_size_text.dart';
-import 'package:larba_00/common/common_package.dart';
+import '../../../common/common_package.dart';
 
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/widget/back_button.dart';

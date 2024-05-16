@@ -8,11 +8,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/common/const/widget/dialog_utils.dart';
-import 'package:larba_00/common/provider/login_provider.dart';
-import 'package:larba_00/domain/model/account_model.dart';
-import 'package:larba_00/domain/model/user_model.dart';
+import '../../../common/const/utils/userHelper.dart';
+import '../../../common/const/widget/dialog_utils.dart';
+import '../../../common/provider/login_provider.dart';
+import '../../../domain/model/account_model.dart';
+import '../../../domain/model/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as IMG;
 

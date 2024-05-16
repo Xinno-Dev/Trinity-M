@@ -1,20 +1,20 @@
 import 'dart:convert';
 
-import 'package:larba_00/common/const/utils/aesManager.dart';
-import 'package:larba_00/common/const/widget/wrong_password_dialog.dart';
-import 'package:larba_00/presentation/view/registMnemonic_screen.dart';
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/common/const/widget/PageNumbers.dart';
-import 'package:larba_00/common/const/widget/PinBox.dart';
-import 'package:larba_00/common/const/widget/SimpleCheckDialog.dart';
-import 'package:larba_00/common/const/widget/num_pad.dart';
-import 'package:larba_00/common/provider/storage_data_provider.dart';
-import 'package:larba_00/data/repository/ecc_repository_impl.dart';
-import 'package:larba_00/domain/repository/ecc_repository.dart';
-import 'package:larba_00/domain/usecase/ecc_usecase.dart';
-import 'package:larba_00/domain/usecase/ecc_usecase_impl.dart';
-import 'package:larba_00/presentation/view/registComplete_screen.dart';
+import '../../../common/const/utils/aesManager.dart';
+import '../../../common/const/widget/wrong_password_dialog.dart';
+import '../../../presentation/view/registMnemonic_screen.dart';
+import '../../../common/common_package.dart';
+import '../../../common/const/utils/userHelper.dart';
+import '../../../common/const/widget/PageNumbers.dart';
+import '../../../common/const/widget/PinBox.dart';
+import '../../../common/const/widget/SimpleCheckDialog.dart';
+import '../../../common/const/widget/num_pad.dart';
+import '../../../common/provider/storage_data_provider.dart';
+import '../../../data/repository/ecc_repository_impl.dart';
+import '../../../domain/repository/ecc_repository.dart';
+import '../../../domain/usecase/ecc_usecase.dart';
+import '../../../domain/usecase/ecc_usecase_impl.dart';
+import '../../../presentation/view/registComplete_screen.dart';
 import 'package:crypto/crypto.dart';
 
 import '../../common/const/constants.dart';

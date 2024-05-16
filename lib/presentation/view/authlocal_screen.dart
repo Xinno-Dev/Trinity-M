@@ -1,14 +1,14 @@
 import 'package:flutter/services.dart';
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/common/const/utils/aesManager.dart';
-import 'package:larba_00/common/provider/temp_provider.dart';
+import '../../common/common_package.dart';
+import '../../common/const/utils/userHelper.dart';
+import '../../common/const/utils/aesManager.dart';
+import '../../common/provider/temp_provider.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'dart:async';
 
-import 'package:larba_00/presentation/view/authpassword_screen.dart';
+import '../../presentation/view/authpassword_screen.dart';
 
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/widget/back_button.dart';

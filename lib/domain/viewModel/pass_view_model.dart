@@ -1,7 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:larba_00/common/provider/login_provider.dart';
+import '../../../common/provider/login_provider.dart';
 import 'package:provider/provider.dart' as provider;
 
 import '../../common/const/utils/convertHelper.dart';

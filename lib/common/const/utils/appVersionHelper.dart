@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:client_information/client_information.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/provider/language_provider.dart';
+import '../../../common/common_package.dart';
+import '../../../common/provider/language_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';

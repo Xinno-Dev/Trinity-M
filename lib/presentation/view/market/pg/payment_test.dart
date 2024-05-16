@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:iamport_flutter/model/payment_data.dart';
 import 'package:iamport_flutter/model/pg/naver/naver_pay_products.dart';
 import 'package:iamport_flutter/model/pg/kcp/kcp_products.dart';
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/uihelper.dart';
-import 'package:larba_00/presentation/view/market/pg/quota.dart';
-import 'package:larba_00/presentation/view/market/payment_screen.dart';
+import '../../../../common/common_package.dart';
+import '../../../../common/const/utils/uihelper.dart';
+import '../../../../presentation/view/market/pg/quota.dart';
+import '../../../../presentation/view/market/payment_screen.dart';
 
 import '../../../../common/const/constants.dart';
 import 'method.dart';

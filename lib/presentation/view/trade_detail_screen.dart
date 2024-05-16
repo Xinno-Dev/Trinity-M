@@ -1,5 +1,5 @@
 import 'package:auto_size_text_plus/auto_size_text.dart';
-import 'package:larba_00/domain/model/network_model.dart';
+import '../../../domain/model/network_model.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';

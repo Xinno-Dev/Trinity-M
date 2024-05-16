@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:larba_00/common/const/constants.dart';
-import 'package:larba_00/common/const/utils/rwfExportHelper.dart';
-import 'package:larba_00/common/provider/login_provider.dart';
-import 'package:larba_00/presentation/view/asset/networkScreens/network_input_screen.dart';
-import 'package:larba_00/presentation/view/registMnemonic_screen.dart';
-import 'package:larba_00/services/google_service.dart';
+import '../../../../common/const/constants.dart';
+import '../../../../common/const/utils/rwfExportHelper.dart';
+import '../../../../common/provider/login_provider.dart';
+import '../../../../presentation/view/asset/networkScreens/network_input_screen.dart';
+import '../../../../presentation/view/registMnemonic_screen.dart';
+import '../../../../services/google_service.dart';
 import 'package:crypto/crypto.dart' as crypto;
 
 import '../../../common/common_package.dart';

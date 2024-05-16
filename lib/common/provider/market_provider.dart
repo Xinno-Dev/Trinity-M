@@ -1,11 +1,11 @@
 import 'package:animations/animations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:larba_00/common/const/utils/convertHelper.dart';
-import 'package:larba_00/common/const/widget/primary_button.dart';
-import 'package:larba_00/domain/model/product_model.dart';
-import 'package:larba_00/domain/repository/market_repository.dart';
-import 'package:larba_00/presentation/view/market/seller_detail_screen.dart';
-import 'package:larba_00/services/api_service.dart';
+import '../../../../common/const/utils/convertHelper.dart';
+import '../../../../common/const/widget/primary_button.dart';
+import '../../../../domain/model/product_model.dart';
+import '../../../../domain/repository/market_repository.dart';
+import '../../../../presentation/view/market/seller_detail_screen.dart';
+import '../../../../services/api_service.dart';
 
 import '../../domain/model/category_model.dart';
 import '../../domain/model/product_item_model.dart';

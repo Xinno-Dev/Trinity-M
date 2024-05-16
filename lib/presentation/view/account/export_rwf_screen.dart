@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:larba_00/common/common_package.dart';
+import '../../../common/common_package.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';

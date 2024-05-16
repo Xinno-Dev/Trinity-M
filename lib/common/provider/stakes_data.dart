@@ -1,6 +1,6 @@
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/domain/model/rpc/delegateInfo.dart';
-import 'package:larba_00/domain/model/rpc/staking_type.dart';
+import '../../../common/common_package.dart';
+import '../../domain/model/rpc/delegateInfo.dart';
+import '../../domain/model/rpc/staking_type.dart';
 
 class StakesData extends ChangeNotifier {
   late Stakes _stakes;

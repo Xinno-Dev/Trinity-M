@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:larba_00/common/const/constants.dart';
-import 'package:larba_00/common/provider/login_provider.dart';
-import 'package:larba_00/domain/viewModel/profile_view_model.dart';
-import 'package:larba_00/presentation/view/asset/networkScreens/network_input_screen.dart';
+import '../../../common/const/constants.dart';
+import '../../../../common/provider/login_provider.dart';
+import '../../../../domain/viewModel/profile_view_model.dart';
+import '../../../../presentation/view/asset/networkScreens/network_input_screen.dart';
 
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/convertHelper.dart';

@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:larba_00/common/common_package.dart';
+import '../../../common/common_package.dart';
 
 // KeyPad widget
 // This widget is reusable and its buttons are customizable (color, size)

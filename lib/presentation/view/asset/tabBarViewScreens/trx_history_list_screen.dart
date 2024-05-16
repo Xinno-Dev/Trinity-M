@@ -1,6 +1,6 @@
-import 'package:larba_00/common/trxHelper.dart';
-import 'package:larba_00/domain/model/coin_model.dart';
-import 'package:larba_00/services/mdl_rpc_service.dart';
+import '../../../../common/trxHelper.dart';
+import '../../../../domain/model/coin_model.dart';
+import '../../../../services/mdl_rpc_service.dart';
 
 import '../../../../common/common_package.dart';
 import '../../../../common/const/utils/convertHelper.dart';

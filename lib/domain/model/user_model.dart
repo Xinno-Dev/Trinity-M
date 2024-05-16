@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:larba_00/common/const/utils/aesManager.dart';
-import 'package:larba_00/common/provider/login_provider.dart';
+import '../../common/const/utils/aesManager.dart';
+import '../../common/provider/login_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 
-import 'package:larba_00/domain/model/ecckeypair.dart';
+import '../../domain/model/ecckeypair.dart';
 import 'package:uuid/uuid.dart';
 import '../../common/const/constants.dart';
 import '../../common/const/utils/appVersionHelper.dart';

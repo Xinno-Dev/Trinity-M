@@ -1,6 +1,6 @@
 // import 'package:flutter_gif/flutter_gif.dart';
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/convertHelper.dart';
+import '../../common/common_package.dart';
+import '../../common/const/utils/convertHelper.dart';
 import 'package:flutter/cupertino.dart';
 // import 'package:gif/gif.dart';
 

@@ -1,12 +1,14 @@
 import 'dart:developer';
 
-import 'package:larba_00/common/const/utils/uihelper.dart';
-import 'package:larba_00/common/const/widget/primary_button.dart';
-import 'package:larba_00/common/provider/coin_provider.dart';
-import 'package:larba_00/domain/model/coin_model.dart';
-import 'package:larba_00/presentation/view/asset/coin_detail_screen.dart';
+import '../../../common/const/utils/uihelper.dart';
+import '../../../common/const/widget/primary_button.dart';
+import '../../../common/provider/coin_provider.dart';
+import '../../../domain/model/coin_model.dart';
+import '../../../presentation/view/asset/coin_detail_screen.dart';
 
 import '../../common_package.dart';
+import '../../style/colors.dart';
+import '../../style/textStyle.dart';
 import '../utils/convertHelper.dart';
 import '../utils/languageHelper.dart';
 import 'balance_row.dart';

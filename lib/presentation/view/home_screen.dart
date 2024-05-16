@@ -1,9 +1,9 @@
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/common/const/widget/mainBox.dart';
-import 'package:larba_00/presentation/view/history_screen.dart';
-import 'package:larba_00/presentation/view/signup/login_screen.dart';
-import 'package:larba_00/presentation/view/settings/settings_screen.dart';
+import '../../common/common_package.dart';
+import '../../common/const/utils/userHelper.dart';
+import '../../common/const/widget/mainBox.dart';
+import '../../presentation/view/history_screen.dart';
+import '../../presentation/view/signup/login_screen.dart';
+import '../../presentation/view/settings/settings_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

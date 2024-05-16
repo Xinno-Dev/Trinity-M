@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:larba_00/common/const/widget/dialog_utils.dart';
-import 'package:larba_00/domain/model/coin_model.dart';
+import '../../../../common/const/widget/dialog_utils.dart';
+import '../../../../domain/model/coin_model.dart';
 import 'package:web3dart/credentials.dart';
 
 import '../../../../common/common_package.dart';

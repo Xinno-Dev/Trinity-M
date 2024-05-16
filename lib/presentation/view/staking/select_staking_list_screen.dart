@@ -1,10 +1,10 @@
 import 'dart:developer';
 
-import 'package:larba_00/common/const/utils/convertHelper.dart';
-import 'package:larba_00/domain/model/rpc/delegateInfo.dart';
-import 'package:larba_00/domain/model/rpc/validator.dart';
-import 'package:larba_00/presentation/view/staking/staking_input_screen.dart';
-import 'package:larba_00/presentation/view/staking/unstaking_input_screen.dart';
+import '../../../common/const/utils/convertHelper.dart';
+import '../../../domain/model/rpc/delegateInfo.dart';
+import '../../../domain/model/rpc/validator.dart';
+import '../../../presentation/view/staking/staking_input_screen.dart';
+import '../../../presentation/view/staking/unstaking_input_screen.dart';
 import 'package:provider/provider.dart' as provider;
 
 import '../../../common/common_package.dart';

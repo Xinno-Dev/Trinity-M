@@ -1,6 +1,8 @@
 import 'package:auto_size_text_plus/auto_size_text.dart';
 
 import '../../common_package.dart';
+import '../../style/colors.dart';
+import '../../style/textStyle.dart';
 
 class ButtonWithImage extends StatelessWidget {
   const ButtonWithImage({

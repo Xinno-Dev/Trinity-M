@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:larba_00/common/style/textStyle.dart';
-import 'package:larba_00/data/repository/ecc_repository_impl.dart';
-import 'package:larba_00/domain/repository/ecc_repository.dart';
-import 'package:larba_00/domain/usecase/ecc_usecase.dart';
-import 'package:larba_00/domain/usecase/ecc_usecase_impl.dart';
+import '../../../common/style/textStyle.dart';
+import '../../../data/repository/ecc_repository_impl.dart';
+import '../../../domain/repository/ecc_repository.dart';
+import '../../../domain/usecase/ecc_usecase.dart';
+import '../../../domain/usecase/ecc_usecase_impl.dart';
 
 class MyHomePage extends StatefulWidget {
   static String get routeName => 'init';

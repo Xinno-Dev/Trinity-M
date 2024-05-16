@@ -1,5 +1,5 @@
-import 'package:larba_00/domain/repository/ecc_repository.dart';
-import 'package:larba_00/domain/usecase/ecc_usecase.dart';
+import '../../domain/repository/ecc_repository.dart';
+import '../../domain/usecase/ecc_usecase.dart';
 
 import '../model/account_model.dart';
 import '../model/ecckeypair.dart';

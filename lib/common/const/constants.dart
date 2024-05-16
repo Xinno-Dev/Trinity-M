@@ -65,11 +65,12 @@ const String PAYMENT_PG = 'danal_tpay'; // PG사
 // const String PORTONE_IMP_CODE = 'imp32281033'; // PortOne 가맹점 코드 // jubal2000@gmail.comI(test)
 const String PORTONE_IMP_CODE = 'imp08730114'; // PortOne 가맹점 코드 // dev@xinno.io
 
-// const String EX_TEST_MAIL_00 = 'test00@exsino.com';
-// const String EX_TEST_PASS_00 = 'testpass00';
+const String EX_TEST_MAIL_00 = 'test00@exsino.com';
+const String EX_TEST_PASS_00 = 'testpass00';
 const String EX_TEST_MAIL_EX = 'test00@exsino.com';
-const String EX_TEST_MAIL_00 = 'jubal2000@gmail.com';
-const String EX_TEST_PASS_00 = 'jubalpass00';
+// const String EX_TEST_MAIL_00 = 'jubal2000@gmail.com';
+// const String EX_TEST_PASS_00 = 'jubalpass00';
+
 const String EX_TEST_PASS_RC_00 = 'recoverpass00';
 const String EX_TEST_ACCCOUNT_00 = 'jubal0000';
 const String EX_TEST_ACCCOUNT_00_1 = 'jubal0000_1';

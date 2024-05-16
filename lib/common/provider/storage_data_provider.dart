@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/data/repository/storage_state.dart';
-import 'package:larba_00/domain/model/storage_model.dart';
-import 'package:larba_00/services/storage_api_services.dart';
+import '../../../common/common_package.dart';
+import '../../data/repository/storage_state.dart';
+import '../../domain/model/storage_model.dart';
+import '../../services/storage_api_services.dart';
 
 class RegistController extends StateNotifier<RegistState> {
   RegistController(this.ref) : super(RegistState.initial());

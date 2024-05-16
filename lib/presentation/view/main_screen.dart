@@ -2,15 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:larba_00/common/provider/coin_provider.dart';
-import 'package:larba_00/common/provider/login_provider.dart';
-import 'package:larba_00/common/provider/temp_provider.dart';
-import 'package:larba_00/domain/model/coin_model.dart';
-import 'package:larba_00/domain/viewModel/market_view_model.dart';
-import 'package:larba_00/domain/viewModel/profile_view_model.dart';
-import 'package:larba_00/presentation/view/settings/settings_screen.dart';
-import 'package:larba_00/presentation/view/signup/login_pass_screen.dart';
-import 'package:larba_00/presentation/view/staking/staking_main_screen.dart';
+import '../../../common/provider/coin_provider.dart';
+import '../../../common/provider/login_provider.dart';
+import '../../../common/provider/temp_provider.dart';
+import '../../../domain/model/coin_model.dart';
+import '../../../domain/viewModel/market_view_model.dart';
+import '../../../domain/viewModel/profile_view_model.dart';
+import '../../../presentation/view/settings/settings_screen.dart';
+import '../../../presentation/view/signup/login_pass_screen.dart';
+import '../../../presentation/view/staking/staking_main_screen.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart' as provider;
 

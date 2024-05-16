@@ -1,12 +1,15 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
-import 'package:larba_00/domain/model/coin_model.dart';
-import 'package:larba_00/domain/model/network_model.dart';
+import '../../../domain/model/coin_model.dart';
+import '../../../domain/model/network_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../common_package.dart';
 import '../../provider/login_provider.dart';
+import '../../style/buttonStyle.dart';
+import '../../style/colors.dart';
+import '../../style/textStyle.dart';
 import '../widget/custom_text_form_field.dart';
 import 'convertHelper.dart';
 import 'languageHelper.dart';

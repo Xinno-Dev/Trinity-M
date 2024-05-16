@@ -1,10 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/uihelper.dart';
-import 'package:larba_00/common/provider/market_provider.dart';
-import 'package:larba_00/domain/model/product_model.dart';
+import '../../../../common/common_package.dart';
+import '../../../../common/const/utils/uihelper.dart';
+import '../../../../common/provider/market_provider.dart';
+import '../../../../domain/model/product_model.dart';
 
 import '../../../common/const/constants.dart';
 import '../../../common/const/utils/languageHelper.dart';

@@ -1,7 +1,7 @@
-import 'package:larba_00/common/const/widget/disabled_button.dart';
-import 'package:larba_00/common/provider/firebase_provider.dart';
-import 'package:larba_00/presentation/view/asset/networkScreens/network_list_screen.dart';
-import 'package:larba_00/services/mdl_rpc_service.dart';
+import '../../../../common/const/widget/disabled_button.dart';
+import '../../../../common/provider/firebase_provider.dart';
+import '../../../../presentation/view/asset/networkScreens/network_list_screen.dart';
+import '../../../../services/mdl_rpc_service.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:uuid/uuid.dart';

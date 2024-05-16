@@ -1,8 +1,8 @@
 
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/uihelper.dart';
-import 'package:larba_00/common/const/widget/primary_button.dart';
-import 'package:larba_00/common/dartapi/lib/trx_pb.pb.dart';
+import '../../../common/common_package.dart';
+import '../../../common/const/utils/uihelper.dart';
+import '../../../common/const/widget/primary_button.dart';
+import '../../../common/dartapi/lib/trx_pb.pb.dart';
 import 'package:provider/provider.dart' as provider;
 
 import '../../common/const/constants.dart';

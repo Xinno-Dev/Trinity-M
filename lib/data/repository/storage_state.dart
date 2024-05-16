@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import 'package:larba_00/domain/model/storage_model.dart';
+import '../../domain/model/storage_model.dart';
 
 enum StorageStatus {
   initial,

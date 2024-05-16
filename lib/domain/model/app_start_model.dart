@@ -1,4 +1,4 @@
-import 'package:larba_00/common/common_package.dart';
+import '../../common/common_package.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:provider/provider.dart' as provider;
 

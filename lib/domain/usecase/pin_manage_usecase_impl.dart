@@ -1,5 +1,5 @@
 import 'package:biometric_storage/biometric_storage.dart';
-import 'package:larba_00/domain/usecase/pin_manage_usecase.dart';
+import '../../domain/usecase/pin_manage_usecase.dart';
 
 class PinManageUseCaseImpl implements PinManageUseCase {
   final String storageName = 'pin_manage';

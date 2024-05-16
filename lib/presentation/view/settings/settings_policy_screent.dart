@@ -1,6 +1,6 @@
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/widget/settingsMenu.dart';
-import 'package:larba_00/presentation/view/terms_detail_screen.dart';
+import '../../../../common/common_package.dart';
+import '../../../../common/const/widget/settingsMenu.dart';
+import '../../../../presentation/view/terms_detail_screen.dart';
 
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/back_button.dart';

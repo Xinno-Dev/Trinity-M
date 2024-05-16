@@ -1,7 +1,7 @@
-import 'package:larba_00/common/const/widget/custom_text_form_field.dart';
-import 'package:larba_00/common/const/widget/disabled_button.dart';
-import 'package:larba_00/common/const/widget/primary_button.dart';
-import 'package:larba_00/presentation/view/recover_wallet_register_password.dart';
+import '../../../common/const/widget/custom_text_form_field.dart';
+import '../../../common/const/widget/disabled_button.dart';
+import '../../../common/const/widget/primary_button.dart';
+import '../../../presentation/view/recover_wallet_register_password.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 import '../../common/common_package.dart';

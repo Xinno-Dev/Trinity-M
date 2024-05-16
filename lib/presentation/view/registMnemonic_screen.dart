@@ -1,13 +1,13 @@
 import 'dart:developer';
 
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/utils/userHelper.dart';
-import 'package:larba_00/common/const/widget/PageNumbers.dart';
-import 'package:larba_00/common/const/widget/SimpleCheckDialog.dart';
-import 'package:larba_00/common/const/widget/custom_toast.dart';
-import 'package:larba_00/common/const/widget/primary_button.dart';
-import 'package:larba_00/presentation/view/registLocalAuth_screen.dart';
-import 'package:larba_00/presentation/view/registMnemonic_check_screen.dart';
+import '../../../common/common_package.dart';
+import '../../../common/const/utils/userHelper.dart';
+import '../../../common/const/widget/PageNumbers.dart';
+import '../../../common/const/widget/SimpleCheckDialog.dart';
+import '../../../common/const/widget/custom_toast.dart';
+import '../../../common/const/widget/primary_button.dart';
+import '../../../presentation/view/registLocalAuth_screen.dart';
+import '../../../presentation/view/registMnemonic_check_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';

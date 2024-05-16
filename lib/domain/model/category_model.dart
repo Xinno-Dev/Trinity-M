@@ -1,7 +1,5 @@
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:larba_00/domain/model/product_item_model.dart';
-import 'package:larba_00/domain/model/seller_model.dart';
 import '../../common/const/utils/convertHelper.dart';
 
 part 'category_model.g.dart';

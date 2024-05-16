@@ -1,6 +1,6 @@
 
-import 'package:larba_00/domain/model/coin_model.dart';
-import 'package:larba_00/domain/model/swap_model.dart';
+import '../../../../domain/model/coin_model.dart';
+import '../../../../domain/model/swap_model.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart' as provider;
 

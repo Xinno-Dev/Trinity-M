@@ -45,7 +45,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
-                    android:host="exion.com"
+                    android:host="xinno.com"
                     android:scheme="https"/>
             </intent-filter>
 

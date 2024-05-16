@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:iamport_flutter/iamport_certification.dart';
 import 'package:iamport_flutter/model/certification_data.dart';
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/constants.dart';
-import 'package:larba_00/common/provider/login_provider.dart';
-import 'package:larba_00/domain/viewModel/profile_view_model.dart';
+import '../../../../common/common_package.dart';
+import '../../../../common/const/constants.dart';
+import '../../../../common/provider/login_provider.dart';
+import '../../../../domain/viewModel/profile_view_model.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
 

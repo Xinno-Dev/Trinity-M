@@ -1,6 +1,4 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:larba_00/common/common_package.dart';
+import '../../../common/common_package.dart';
 
 class MainBox extends StatelessWidget {
   const MainBox({

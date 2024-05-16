@@ -1,7 +1,7 @@
-import 'package:larba_00/common/common_package.dart';
-import 'package:larba_00/common/const/widget/line_button.dart';
-import 'package:larba_00/common/const/widget/primary_button.dart';
-import 'package:larba_00/common/const/widget/warning_icon.dart';
+import '../../../../common/common_package.dart';
+import '../../../../common/const/widget/line_button.dart';
+import '../../../../common/const/widget/primary_button.dart';
+import '../../../../common/const/widget/warning_icon.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';

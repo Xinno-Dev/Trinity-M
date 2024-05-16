@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:larba_00/common/style/colors.dart';
+import '../../../../common/style/colors.dart';
 
 var typo28bold = TextStyle(
   color: GRAY_90,
