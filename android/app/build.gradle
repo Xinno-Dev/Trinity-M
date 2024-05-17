@@ -12,16 +12,6 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
-
 android {
     namespace "com.xinno.trinity_m_00"
     compileSdk flutter.compileSdkVersion
@@ -44,13 +34,16 @@ android {
         applicationId "com.xinno.trinity_m_00"
         minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionName "1.0.0"
+        versionCode 2
     }
 
     buildTypes {
         release {
             signingConfig signingConfigs.debug
+            minifyEnabled true
+//            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }

@@ -35,7 +35,7 @@ Future<String?> startEmailSend(String emailAddr, Function(LoginErrorType) onErro
   var vfCodeEnc = crypto.sha256.convert(utf8.encode(vfCodeStr));
   if (IS_EMAIL_CHECK) {
     try {
-      var host = IS_DEV_MODE ? LARBA_API_HOST_DEV : LARBA_API_HOST;
+      var host = IS_DEV_MODE ? API_HOST_DEV : API_HOST;
       LOG('--> startEmailSend [$host] : $vfCodeStr => $vfCodeEnc');
       // final email = Email(
       //   body: 'Email body',

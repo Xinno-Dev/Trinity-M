@@ -98,9 +98,9 @@ class GoogleService extends GoogleAccount {
   // Google Drive Utils..
   //
 
-  static uploadKeyToGoogleDrive(context, String nickId, String privateKey) async {
+  static uploadKeyToGoogleDrive(context, String privateKey) async {
     var formatter = DateFormat('yyyyMMdd-HHmmss');
-    var fileName = '${nickId.substring(0, 2)}_${formatter.format(DateTime.now())}.rwf';
+    var fileName = 'tr_${formatter.format(DateTime.now())}.rwf';
     return await _startGoogleDriveUpload(context, privateKey, fileName);
   }
 

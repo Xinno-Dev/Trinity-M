@@ -142,10 +142,10 @@ enum DrawerActionType {
   terms,
   privacy,
   version,
-  logout,
+  logout;
 
-  test_identity,
-  test_delete;
+  // test_identity,
+  // test_delete;
 
   String get title {
     return drawerTitleN[this.index];
@@ -402,21 +402,20 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool?> loginEmail(
-      {Function(LoginErrorType, String?)? onError, var isAutoLogin = false})
-  async {
+    {Function(LoginErrorType, String?)? onError, var isAutoLogin = false})
+    async {
     init();
     LOG('------> loginEmail : $inputEmail / $userPass');
     userInfo = UserModel.createFromEmail(inputEmail);
     if (STR(userInfo?.email).isNotEmpty) {
       await UserHelper().setUserKey(userInfo!.email!);
       await _refreshAccountList();
-      var result = await startLoginWithKey(
-          onError: !isAutoLogin ? onError : null);
+      var result = await startLoginWithKey();
       LOG('--> loginEmail result : $result');
       if (result != true) {
         userInfo = null;
         if (!isAutoLogin && onError != null) {
-          onError(LoginErrorType.loginFail, null);
+          onError(LoginErrorType.signupRequire, '회원가입이 필요한 계정입니다.');
         }
         return result;
       }
@@ -426,8 +425,8 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool?> loginKakao(
-      {Function(LoginErrorType, String?)? onError, var isAutoLogin = false})
-  async {
+    {Function(LoginErrorType, String?)? onError, var isAutoLogin = false})
+    async {
     init();
     final user = await startKakaoLogin();
     LOG('----> loginKakao user : $user');
@@ -437,12 +436,12 @@ class LoginProvider extends ChangeNotifier {
       if (STR(userInfo?.email).isNotEmpty) {
         await UserHelper().setUserKey(userInfo!.email!);
         await _refreshAccountList();
-        var result = await startLoginWithKey(onError: onError);
+        var result = await startLoginWithKey();
         if (result != true) {
           // 로그인 실패시 카카오 로그아웃..
           await logout(false);
           if (!isAutoLogin && onError != null) {
-            onError(LoginErrorType.loginFail, '회원가입이 필요한 계정입니다.');
+            onError(LoginErrorType.signupRequire, '회원가입이 필요한 계정입니다.');
           }
           return result;
         }
@@ -458,7 +457,7 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool> initSignUpKakao(
-      {Function(LoginErrorType, String?)? onError}) async {
+    {Function(LoginErrorType, String?)? onError}) async {
     init();
     final user = await startKakaoLogin();
     LOG('----> initSignUpKakao user : $user');
@@ -482,7 +481,8 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool?> loginGoogle(
-    {Function(LoginErrorType, String?)? onError}) async {
+    {Function(LoginErrorType, String?)? onError, var isAutoLogin = false})
+    async {
     init();
     var result = await startGoogleLogin();
     if (result != null) {
@@ -493,9 +493,13 @@ class LoginProvider extends ChangeNotifier {
         await _refreshAccountList();
         userInfo!.loginType = LoginType.google;
         userInfo!.socialToken = await UserHelper().get_token();
-        var result = await startLoginWithKey(onError: onError);
+        var result = await startLoginWithKey();
         if (result != true) {
           userInfo = null;
+          await logout(false);
+          if (!isAutoLogin && onError != null) {
+            onError(LoginErrorType.signupRequire, '회원가입이 필요한 계정입니다.');
+          }
           return false;
         }
         return result;

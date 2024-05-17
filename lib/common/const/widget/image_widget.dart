@@ -10,10 +10,11 @@ import '../utils/convertHelper.dart';
 
 showImage(String imagePath, Size size, {BoxFit? fit}) {
   if (imagePath.isEmpty) return Container();
-  if (imagePath.contains('https:')) {
+  if (imagePath.contains('http')) {
     return CachedNetworkImage(
       imageUrl: imagePath,
-      width: size.width, height: size.height,
+      width:  size.width  > 0 ? size.width  : null,
+      height: size.height > 0 ? size.height : null,
       placeholder: (context, _) => Container(
         width: size.width,
         height: size.height,
@@ -48,7 +49,8 @@ showImage(String imagePath, Size size, {BoxFit? fit}) {
   }
   return Image.asset(
     imagePath,
-    width: size.width, height: size.height,
+    width:  size.width  > 0 ? size.width  : null,
+    height: size.height > 0 ? size.height : null,
     fit: fit);
 }
 
@@ -60,19 +62,25 @@ class NetworkImageInfo {
 
 Future<NetworkImageInfo> getNetworkImageInfo(
   String? imagePath, {Size? showSize, var fit = BoxFit.fill}) async {
-  var result = NetworkImageInfo();
-  if (STR(imagePath).isEmpty) return result;
-  var completer = Completer<NetworkImageInfo>();
-  result.image = Image(image: CachedNetworkImageProvider(imagePath!),
-      width: showSize?.width, height: showSize?.height, fit: fit); // I modified this line
-  result.image!.image.resolve(ImageConfiguration()).addListener(
-    ImageStreamListener(
-          (ImageInfo image, bool synchronousCall) {
-        var myImage = image.image;
-        result.size = Size(myImage.width.toDouble(), myImage.height.toDouble());
-        completer.complete(result);
-      },
-    ),
-  );
-  return completer.future;
+  if (STR(imagePath).contains('http')) {
+    var result = NetworkImageInfo();
+    if (STR(imagePath).isEmpty) return result;
+    var completer = Completer<NetworkImageInfo>();
+    result.image = Image(image: CachedNetworkImageProvider(imagePath!),
+        width: showSize?.width,
+        height: showSize?.height,
+        fit: fit); // I modified this line
+    result.image!.image.resolve(ImageConfiguration()).addListener(
+      ImageStreamListener(
+            (ImageInfo image, bool synchronousCall) {
+          var myImage = image.image;
+          result.size =
+              Size(myImage.width.toDouble(), myImage.height.toDouble());
+          completer.complete(result);
+        },
+      ),
+    );
+    return completer.future;
+  }
+  return NetworkImageInfo();
 }

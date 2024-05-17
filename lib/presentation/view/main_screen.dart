@@ -60,12 +60,14 @@ class _MainScreenState extends ConsumerState<MainScreen>
     LOG('--> App Status : ${state.toString()}');
     switch (state) {
       case AppLifecycleState.resumed:
-        if (prov.isScreenLocked) {
+        if (prov.isLogin && prov.isScreenLocked) {
           context.pushReplacementNamed(OpenPassScreen.routeName);
         }
         break;
       case AppLifecycleState.inactive:
-        prov.setLockScreen(true);
+        // if (prov.isLogin) {
+        //   prov.setLockScreen(true);
+        // }
         break;
       case AppLifecycleState.paused:
         break;
@@ -113,10 +115,10 @@ class _MainScreenState extends ConsumerState<MainScreen>
               ),
             )
           ),
-          bottom: prov.mainPageIndex == 0 ? PreferredSize(
-            preferredSize: Size.fromHeight(35),
-            child: MarketViewModel().showCategoryBar(),
-          ) : null,
+          // bottom: prov.mainPageIndex == 0 ? PreferredSize(
+          //   preferredSize: Size.fromHeight(35),
+          //   child: MarketViewModel().showCategoryBar(),
+          // ) : null,
           actions: [
             // InkWell(
             //   onTap: () {

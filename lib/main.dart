@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_app_check/firebase_app_check.dart';
+
 import '../../../common/const/constants.dart';
 import '../../../common/const/utils/uihelper.dart';
 import '../../../common/provider/coin_provider.dart';
@@ -95,6 +97,12 @@ Future<void> main() async {
   // init firebase..
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform
+  );
+
+  await FirebaseAppCheck.instance.activate(
+    webProvider: ReCaptchaV3Provider('6Ldzot8pAAAAAFreQ89tKciFuJV9assNxUWDJpR-'),
+    androidProvider: AndroidProvider.debug,
+    appleProvider: AppleProvider.appAttest,
   );
 
   //background

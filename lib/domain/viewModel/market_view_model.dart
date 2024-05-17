@@ -32,10 +32,12 @@ class MarketViewModel {
   showCategoryBar() {
     // LOG('--> prov.categoryList : ${prov.categoryList}');
     return Container(
-      margin: EdgeInsets.only(left: 15, bottom: 5),
+      height: 40.h,
+      color: WHITE,
       child: StatefulBuilder(
         builder: (context, setState) {
           return SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(15, 5, 0, 5),
             scrollDirection: Axis.horizontal,
             child: Row(
               children: List<Widget>.of(prov.categoryList.map((e) =>
@@ -75,7 +77,7 @@ class MarketViewModel {
 
   showProductDetail([var isShowSeller = true]) {
     final imageSize = MediaQuery.of(context).size.width;
-    // LOG('--> detailPic : ${prov.optionIndex} / ${prov.selectProduct?.optionList?.length}');
+    LOG('--> showProductDetail : ${prov.detailPic} / ${prov.selectProduct?.toJson()}');
     return Column(
       children: [
         if (STR(prov.detailPic).isNotEmpty)
@@ -204,7 +206,7 @@ class MarketViewModel {
   }
 
   showDetailTab() {
-    if (STR(prov.externalPic).isEmpty) {
+    if (!STR(prov.externalPic).contains('http')) {
       return Container(
         height: 100.h,
         child: Center(
@@ -214,7 +216,7 @@ class MarketViewModel {
     }
     return Container(
       alignment: Alignment.topCenter,
-      child: CachedNetworkImage(imageUrl: prov.externalPic, fit: BoxFit.fitWidth),
+      child: showImage(prov.externalPic, Size.zero, fit: BoxFit.fitWidth),
     );
   }
 

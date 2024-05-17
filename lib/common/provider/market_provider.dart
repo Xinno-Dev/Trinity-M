@@ -19,13 +19,14 @@ final marketProvider = ChangeNotifierProvider<MarketProvider>((_) {
 });
 
 class MarketProvider extends ChangeNotifier {
-  static final _singleton  = MarketProvider._internal();
+  static final _singleton = MarketProvider._internal();
   static final _repo = MarketRepository();
 
   factory MarketProvider() {
     _repo.init();
     return _singleton;
   }
+
   MarketProvider._internal();
 
   ProductModel? selectProduct;
@@ -42,17 +43,14 @@ class MarketProvider extends ChangeNotifier {
 
   get marketList {
     showList.clear();
-    LOG('---> marketList : $selectCategory / ${_repo.productList}');
-    if (selectCategory > 0) {
-      for (var item in _repo.productList) {
-        if (item.tagId == selectCategory) {
-          showList.add(item);
-        }
+    for (var item in _repo.productList) {
+      if (selectCategory == 0 || item.tagId == selectCategory) {
+        var newItem = ProductModel.fromJson(item.toJson());
+        showList.add(newItem);
       }
-      return showList;
     }
-    return showList = _repo.productList.map((e) =>
-        ProductModel.fromJson(e.toJson())).toList();
+    LOG('---> marketList : $selectCategory / ${_repo.productList.length}');
+    return showList;
   }
 
   checkLastProduct(String? saleProdId) {
@@ -89,7 +87,7 @@ class MarketProvider extends ChangeNotifier {
   }
 
   refresh() {
-     notifyListeners();
+    notifyListeners();
   }
 
   List<CategoryModel> get categoryList {

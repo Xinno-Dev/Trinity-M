@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 
-const String API_HOST = 'http://192.168.252.51:19000';
-const String DEVELOP_NET_URI = 'ws://192.168.252.60:26657/websocket';
+// const String API_HOST = 'http://192.168.252.51:19000';
+// const String DEVELOP_NET_URI = 'ws://192.168.252.60:26657/websocket';
 
-const String LARBA_API_HOST = 'http://3.36.51.253';
-const String LARBA_API_HOST_DEV = 'http://3.36.51.253';
+const String API_HOST = 'http://3.36.51.253';
+const String API_HOST_DEV = 'http://3.36.51.253';
 
 const String MAIN_NET_URI = 'wss://mainnet.rigochain.io/websocket';
 const String MAIN_HTTP_URL = 'https://mainnet.rigochain.io';

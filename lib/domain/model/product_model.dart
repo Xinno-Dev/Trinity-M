@@ -87,7 +87,12 @@ class ProductModel {
     this.itemCountMax,
     this.itemCheckId,
   });
-  
+
+  get itHasDetail {
+    return STR(repDetailImg).isNotEmpty || STR(desc).isNotEmpty ||
+           STR(desc2).isNotEmpty || STR(externUrl).isNotEmpty;
+  }
+
   get amountText {
     return '${CommaIntText(remainAmount)}${INT(totalAmount) > 0 ? ' / ${CommaIntText(totalAmount)}' : ''}';
   }

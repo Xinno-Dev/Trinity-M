@@ -26,7 +26,7 @@ class ApiService {
   }
   ApiService._internal();
 
-  var httpUrl = IS_DEV_MODE ? LARBA_API_HOST_DEV : LARBA_API_HOST;
+  var httpUrl = IS_DEV_MODE ? API_HOST_DEV : API_HOST;
 
   isSuccess(statusCode) {
     return INT(statusCode) == 200 || INT(statusCode) == 201;

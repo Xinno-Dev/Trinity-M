@@ -134,7 +134,12 @@ class MarketRepository {
           for (var orgItem in productList) {
             if (orgItem.saleProdId == newItem.saleProdId) {
               var index = productList.indexOf(orgItem);
-              productList[index] = newItem;
+              var tmp = ProductModel.fromJson(orgItem.toJson());
+              newItem.repDetailImg  = tmp.repDetailImg;
+              newItem.desc          = tmp.desc;
+              newItem.desc2         = tmp.desc2;
+              newItem.externUrl     = tmp.externUrl;
+              productList[index]    = newItem;
               isAdd = false;
               LOG('--> getProductList update : ${newItem.saleProdId} / ${newItem.tagId}');
               break;
@@ -165,13 +170,13 @@ class MarketRepository {
         prod.repDetailImg = STR(jsonData['repDetailImg']);
         // update option items..
         prod = await getProductImageItemList(prod);
+        prod = setProductListItem(prod);
         LOG('--> getProductDetail result : ${prod.toJson()}');
-        return prod;
       }
     } catch (e) {
       LOG('--> getProductList error : $e');
     }
-    return null;
+    return prod;
   }
 
   Future<ProductModel> getProductItemList(ProductModel prod) async {
@@ -220,5 +225,16 @@ class MarketRepository {
       LOG('--> getProductImageItemList error : $e');
     }
     return prod;
+  }
+
+  setProductListItem(ProductModel newItem) {
+    for (var item in productList) {
+      if (item.saleProdId == newItem.saleProdId) {
+        var index = productList.indexOf(item);
+        productList[index] = ProductModel.fromJson(newItem.toJson());
+        return productList[index];
+      }
+    }
+    return null;
   }
 }

@@ -60,7 +60,18 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
     return SafeArea(
       top: false,
       child: Container(
-        child: _viewModel.showProductList()
+        child: Stack(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 40.h),
+              child: _viewModel.showProductList(),
+            ),
+            Align(
+              alignment: Alignment.topLeft,
+              child: _viewModel.showCategoryBar(),
+            ),
+          ]
+        )
         // padding: EdgeInsets.symmetric(horizontal: 15.w),
     //     child: SmartRefresher(
     //       enablePullDown: false,

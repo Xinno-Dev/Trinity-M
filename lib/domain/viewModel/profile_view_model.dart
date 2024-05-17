@@ -151,7 +151,7 @@ class ProfileViewModel {
             Spacer(),
             ListTile(
               title: Text(
-                '사업자명: 주식회사 엑시노\n'
+                '사업자명: Xinno Inc.\n'
                 '대표이사: 이지민\n'
                 '등록번호: 644-86-03081\n'
                 '대표번호: 070-4304-5778\n'
@@ -187,18 +187,18 @@ class ProfileViewModel {
               Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
             });
             break;
-          case DrawerActionType.test_identity:
-            Navigator.of(context).push(
-              createAniRoute(ProfileIdentityScreen()));
-            break;
-          case DrawerActionType.test_delete:
-            UserHelper().clearAllUser().then((_) {
-              loginProv.logout().then((_) {
-                loginProv.setMainPageIndex(0);
-              });
-              Fluttertoast.showToast(msg: TR(context, '로컬정보 삭제 완료'));
-            });
-            break;
+          // case DrawerActionType.test_identity:
+          //   Navigator.of(context).push(
+          //     createAniRoute(ProfileIdentityScreen()));
+          //   break;
+          // case DrawerActionType.test_delete:
+          //   UserHelper().clearAllUser().then((_) {
+          //     loginProv.logout().then((_) {
+          //       loginProv.setMainPageIndex(0);
+          //     });
+          //     Fluttertoast.showToast(msg: TR(context, '로컬정보 삭제 완료'));
+          //   });
+          //   break;
           default:
             break;
         }
