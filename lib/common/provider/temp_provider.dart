@@ -1,3 +1,5 @@
+import 'package:trinity_m_00/presentation/view/market/payment_done_screen.dart';
+
 import '../../../common/common_package.dart';
 
 import '../../main.dart';
@@ -355,6 +357,11 @@ class TempProvider extends ChangeNotifier {
           path: '/network_list',
           name: NetworkListScreen.routeName,
           builder: (context, state) => NetworkListScreen(),
+        ),
+        GoRoute(
+          path: '/${PaymentDoneScreen.routeName}',
+          name: PaymentDoneScreen.routeName,
+          builder: (context, state) => PaymentDoneScreen(),
         ),
       ];
 

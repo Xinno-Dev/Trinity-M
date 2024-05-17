@@ -50,6 +50,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   TextEditingController _textEditingController = TextEditingController();
   bool hasAddress = false;
   var isAppUpdateCheckDone = false;
+  var isShowToast = true;
   late FToast fToast;
 
   final loginButtonH = 40.0;
@@ -260,14 +261,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     });
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   final loginProv  = ref.read(loginProvider);
-  //   final marketProv = ref.read(marketProvider);
-  //   loginProv.context  = context;
-  //   marketProv.context = context;
-  //   super.didChangeDependencies();
-  // }
+  @override
+  void didChangeDependencies() {
+    if (!widget.isAppStart && isShowToast) {
+      showToast(TR(context, '로그인이 필요한 서비스입니다.'));
+      isShowToast = false;
+    }
+    super.didChangeDependencies();
+  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {

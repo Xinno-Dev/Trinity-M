@@ -109,20 +109,17 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
             ],
           )
         ),
-        bottomNavigationBar: Padding(
-          padding: EdgeInsets.symmetric(vertical: 40.h),
-          child: IS_DEV_MODE || isNextReady ?
-            PrimaryButton(
-              text: TR(context, '다음'),
-              round: 0,
-              onTap: () {
-                _startEmailLogin();
-              },
-            ) : DisabledButton(
-              text: TR(context, '다음'),
-            ),
-        ),
-      )
+        bottomNavigationBar: IS_DEV_MODE || isNextReady ?
+          PrimaryButton(
+            text: TR(context, '다음'),
+            round: 0,
+            onTap: () {
+              _startEmailLogin();
+            },
+          ) : DisabledButton(
+            text: TR(context, '다음'),
+          ),
+      ),
     );
   }
 

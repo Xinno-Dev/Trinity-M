@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:trinity_m_00/common/provider/login_provider.dart';
+import 'package:trinity_m_00/presentation/view/market/payment_done_screen.dart';
 import '../../../../common/common_package.dart';
 import '../../../../common/const/utils/uihelper.dart';
 import '../../../../common/provider/market_provider.dart';
 import '../../../../domain/model/product_model.dart';
 
 import '../../../common/const/constants.dart';
+import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
@@ -57,22 +60,38 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
           ),
         ),
         backgroundColor: Colors.white,
-        body: ListView(
-          shrinkWrap: true,
+        body: Column(
           children: [
-            _viewModel.showBuyBox(),
-          ]
+            Expanded(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  _viewModel.showBuyBox(),
+                ]
+              ),
+            ),
+            if (!prov.purchaseReady)
+              Padding(padding: EdgeInsets.all(10),
+              child: Text(TR(context, '* 옵션을 선택해 주세요.'),
+                style: typo12bold.copyWith(color: Colors.red))),
+          ],
         ),
-        bottomNavigationBar: IS_DEV_MODE
-            ? PrimaryButton(
-          text: TR(context, '결제하기'),
-          round: 0,
-          onTap: () {
-            Navigator.of(context).push(createAniRoute(PaymentTest()));
-          },
-        ) : DisabledButton(
-          text: TR(context, '결제하기'),
-        )
+        bottomNavigationBar: prov.purchaseReady ?
+          PrimaryButton(
+            text: TR(context, '결제하기'),
+            round: 0,
+            onTap: () {
+              prov.createPurchaseInfo();
+              var data = prov.createPurchaseData(
+                userInfo: ref.read(loginProvider).userInfo!);
+              if (data != null) {
+                Navigator.of(context).push(
+                  createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data)));
+              }
+            },
+          ) : DisabledButton(
+            text: TR(context, '결제하기'),
+          )
       ),
     );
   }

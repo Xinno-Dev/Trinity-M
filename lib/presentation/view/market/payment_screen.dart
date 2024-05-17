@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:iamport_flutter/iamport_payment.dart';
 import 'package:iamport_flutter/model/payment_data.dart';
+import 'package:trinity_m_00/common/const/utils/uihelper.dart';
+import 'package:trinity_m_00/common/provider/market_provider.dart';
+import 'package:trinity_m_00/presentation/view/market/payment_done_screen.dart';
 import '../../../common/common_package.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
+import '../../../common/const/utils/languageHelper.dart';
 
-class PaymentScreen extends StatelessWidget {
+class PaymentScreen extends ConsumerStatefulWidget {
   PaymentScreen(this.userCode, this.data);
   String userCode;
   PaymentData data;
+  static String get routeName => 'paymentScreen';
+
+  @override
+  ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
+}
+
+class _PaymentScreenState extends ConsumerState<PaymentScreen> {
+  final controller  = ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    // String userCode = Get.arguments['userCode'] as String;
-    // PaymentData data = Get.arguments['data'] as PaymentData;
-
+    final prov = ref.watch(marketProvider);
     return IamportPayment(
       appBar: AppBar(
-        title: Text('결제'),
+        title: Text('결제하기'),
         centerTitle: true,
         titleTextStyle: TextStyle(
           fontSize: 24,
@@ -34,17 +44,24 @@ class PaymentScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Image.asset('assets/images/iamport-logo.png'),
-              // Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-              Text('잠시만 기다려주세요...', style: TextStyle(fontSize: 20.0)),
+              showLoadingFull(60),
+              SizedBox(height: 40),
+              Text(TR(context, '잠시만 기다려주세요...'), style: typo18semibold),
             ],
           ),
         ),
       ),
-      userCode: userCode,
-      data: data,
+      userCode: widget.userCode,
+      data: widget.data,
       callback: (Map<String, String> result) {
         LOG('--> show payment result : $result');
+        if (BOL(result['success'])) {
+          prov.updatePurchaseInfo(result);
+          context.pushReplacementNamed(PaymentDoneScreen.routeName);
+        } else {
+          showLoginErrorTextDialog(context, TR(context, '결제에 실패했습니다!'));
+          context.pop();
+        }
       },
     );
   }

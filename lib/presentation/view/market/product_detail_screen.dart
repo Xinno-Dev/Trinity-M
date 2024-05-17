@@ -1,6 +1,9 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trinity_m_00/common/provider/login_provider.dart';
+import 'package:trinity_m_00/presentation/view/signup/login_screen.dart';
 import '../../../../common/common_package.dart';
 import '../../../../common/const/utils/uihelper.dart';
 import '../../../../common/provider/market_provider.dart';
@@ -40,7 +43,6 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
-    _viewModel.context = context;
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -67,7 +69,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             }
           }
         ),
-        bottomNavigationBar: widget.isCanBuy ? IS_DEV_MODE ?
+        bottomNavigationBar: widget.isCanBuy ?
         OpenContainer(
           transitionType: ContainerTransitionType.fadeThrough,
           closedBuilder: (context, builder) {
@@ -77,11 +79,15 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             );
           },
           openBuilder: (context, builder) {
-            return ProductBuyScreen();
+            if (ref.read(loginProvider).isLogin) {
+              return ProductBuyScreen();
+            } else {
+              return LoginScreen(isAppStart: false);
+            }
           },
         ) : DisabledButton(
           text: TR(context, '구매하기'),
-        ) : null
+        )
       ),
     );
   }

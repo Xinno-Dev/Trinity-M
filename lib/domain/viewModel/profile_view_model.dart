@@ -6,6 +6,7 @@ import 'package:auto_size_text_plus/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import '../../../common/const/utils/userHelper.dart';
@@ -26,9 +27,11 @@ import '../../common/const/widget/image_widget.dart';
 import '../../common/const/widget/primary_button.dart';
 import '../../common/provider/firebase_provider.dart';
 import '../../presentation/view/main_screen.dart';
+import '../../presentation/view/market/payment_list_screen.dart';
 import '../../presentation/view/profile/my_info_screen.dart';
 import '../../presentation/view/profile/profile_Identity_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
+import '../../presentation/view/signup/login_screen.dart';
 import '../../services/google_service.dart';
 import '../model/address_model.dart';
 
@@ -138,11 +141,32 @@ class ProfileViewModel {
                       ],
                     ),
                     SizedBox(height: 15),
-                    Text(loginProv.accountName, style: typo18bold),
-                    if (loginProv.accountSubtitle.isNotEmpty)
-                      Text(loginProv.accountSubtitle, style: typo14normal, maxLines: 1, overflow: TextOverflow.fade),
-                    SizedBox(height: 10),
-                    Text(loginProv.accountMail, style: typo14semibold),
+                    if (loginProv.isLogin)...[
+                      Text(loginProv.accountName, style: typo18bold),
+                      if (loginProv.accountSubtitle.isNotEmpty)
+                        Text(loginProv.accountSubtitle, style: typo14normal, maxLines: 1, overflow: TextOverflow.fade),
+                      SizedBox(height: 10),
+                      Text(loginProv.accountMail, style: typo14semibold),
+                    ],
+                    if (!loginProv.isLogin)...[
+                      InkWell(
+                        onTap: () {
+                          context.pop();
+                          Navigator.of(context).push(createAniRoute(LoginScreen(isAppStart: false)));
+                        },
+                        child: Container(
+                          height: 35,
+                          margin: EdgeInsets.only(top: 40),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(width: 1, color: GRAY_50),
+                          ),
+                          child: Text(TR(context, '로그인하기'), style: typo12bold),
+                        ),
+                      )
+                    ]
                   ],
                 ),
               ),
@@ -170,22 +194,48 @@ class ProfileViewModel {
     if (type.title == '-') {
       return Divider();
     }
+    var isTest = type.title.contains('(test)');
+    var isEnable = (type == DrawerActionType.terms ||
+        type == DrawerActionType.privacy || type == DrawerActionType.version) ||
+        loginProv.isLogin;
     return ListTile(
       title: Text(type.title,
         style: typo16bold.copyWith(
-        color: type.title.contains('(test)') ? Colors.blueAccent : GRAY_80)),
+        color: isTest ? Colors.blueAccent : isEnable ? GRAY_80 : GRAY_20)),
+      enabled: isEnable,
       onTap: () {
         LOG('--> _mainDrawerItem: $type');
         context.pop();
         switch (type) {
           case DrawerActionType.my:
-            Navigator.of(context).push(createAniRoute(MyInfoScreen()));
+            if (loginProv.isLogin) {
+              Navigator.of(context).push(createAniRoute(MyInfoScreen()));
+            } else {
+              Navigator.of(context).push(createAniRoute(LoginScreen(isAppStart: false)));
+            }
+            break;
+          case DrawerActionType.history:
+            if (loginProv.isLogin) {
+              Navigator.of(context).push(createAniRoute(PaymentListScreen()));
+            } else {
+              Navigator.of(context).push(createAniRoute(LoginScreen(isAppStart: false)));
+            }
             break;
           case DrawerActionType.logout:
-            loginProv.logout().then((_) {
-              loginProv.setMainPageIndex(0);
-              Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
-            });
+            if (loginProv.isLogin) {
+              loginProv.logout().then((_) {
+                loginProv.setMainPageIndex(0);
+                Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
+              });
+            }
+            break;
+          case DrawerActionType.withdrawal:
+            if (loginProv.isLogin) {
+              loginProv.logout().then((_) {
+                loginProv.setMainPageIndex(0);
+                Fluttertoast.showToast(msg: TR(context, '회원탈퇴 완료'));
+              });
+            }
             break;
           // case DrawerActionType.test_identity:
           //   Navigator.of(context).push(

@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../../domain/model/coin_model.dart';
 import '../../../domain/model/network_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -560,4 +561,8 @@ getLoginErrorCodeText(String codeText) {
       return ['잘못된 서명입니다.', '복구한 계정일 경우,\n복구파일 or 복구단어를 확인해 주세요.'];
   }
   return null;
+}
+
+showToast(String text) {
+  Fluttertoast.showToast(msg: text, toastLength: Toast.LENGTH_SHORT);
 }

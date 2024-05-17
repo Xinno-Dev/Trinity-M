@@ -51,7 +51,7 @@ const String MNEMONIC_CHECK = 'MNEMONIC_CHECK';
 const String APP_VERSION_KEY = 'APP_VERSION_KEY';
 const String APP_NOTICE_KEY = 'APP_NOTICE_KEY';
 
-const bool IS_DEV_MODE = kDebugMode && true;
+const bool IS_DEV_MODE = kDebugMode && false;
 const bool IS_EMAIL_CHECK = !kDebugMode || false;
 const bool IS_AUTO_LOCK_MODE = false;
 const bool IS_AUTO_LOGIN_MODE = true; // 로컬에 패스워드 저장

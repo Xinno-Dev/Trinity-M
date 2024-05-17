@@ -143,37 +143,34 @@ class _LoginPassScreenState extends ConsumerState {
               ],
             )
           ),
-          bottomNavigationBar: Padding(
-            padding: EdgeInsets.symmetric(vertical: 40.h),
-            child: IS_DEV_MODE || inputPass.isNotEmpty
-                ? PrimaryButton(
-              text: TR(context, '확인'),
-              round: 0,
-              onTap: () {
-                LOG('--> viewModel.passType : [$inputPass] ${viewModel.passType}');
-                if (viewModel.passType == PassType.cloudDown) {
-                  Navigator.of(context).pop(inputPass);
-                } else {
-                  loginProv.checkWalletPass(inputPass).then((result) async {
-                    if (result) {
-                      if (viewModel.passType == PassType.open) {
-                        _startMain(0);
-                      } else {
-                        Navigator.of(context).pop(inputPass);
-                      }
+          bottomNavigationBar: IS_DEV_MODE || inputPass.isNotEmpty
+              ? PrimaryButton(
+            text: TR(context, '확인'),
+            round: 0,
+            onTap: () {
+              LOG('--> viewModel.passType : [$inputPass] ${viewModel.passType}');
+              if (viewModel.passType == PassType.cloudDown) {
+                Navigator.of(context).pop(inputPass);
+              } else {
+                loginProv.checkWalletPass(inputPass).then((result) async {
+                  if (result) {
+                    if (viewModel.passType == PassType.open) {
+                      _startMain(0);
                     } else {
-                      if (isCanBack && isFailBack) {
-                        Navigator.of(context).pop();
-                      }
-                      Fluttertoast.showToast(
-                          msg: TR(context, '잘못된 비밀번호입니다.'));
+                      Navigator.of(context).pop(inputPass);
                     }
-                  });
-                }
-              },
-            ) : DisabledButton(
-              text: TR(context, '확인'),
-            ),
+                  } else {
+                    if (isCanBack && isFailBack) {
+                      Navigator.of(context).pop();
+                    }
+                    Fluttertoast.showToast(
+                        msg: TR(context, '잘못된 비밀번호입니다.'));
+                  }
+                });
+              }
+            },
+          ) : DisabledButton(
+            text: TR(context, '확인'),
           ),
         )
     );

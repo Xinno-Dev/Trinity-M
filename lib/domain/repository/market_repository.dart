@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:trinity_m_00/domain/model/purchase_model.dart';
+
 import '../../../../domain/model/product_item_model.dart';
 import '../../../../domain/model/product_model.dart';
 import '../../../../domain/model/seller_model.dart';
@@ -223,6 +225,24 @@ class MarketRepository {
       }
     } catch (e) {
       LOG('--> getProductImageItemList error : $e');
+    }
+    return prod;
+  }
+
+
+  Future<ProductModel?> getProductDetailFromId(String saleProdId) async {
+    var prod = ProductModel();
+    try {
+      var jsonData = await _apiService.getProductDetail(saleProdId);
+      if (jsonData != null) {
+        prod = ProductModel.fromJson(jsonData);
+        // update option items..
+        prod = await getProductImageItemList(prod);
+        prod = setProductListItem(prod);
+        LOG('--> getProductDetailFromId result : ${prod.toJson()}');
+      }
+    } catch (e) {
+      LOG('--> getProductDetailFromId error : $e');
     }
     return prod;
   }

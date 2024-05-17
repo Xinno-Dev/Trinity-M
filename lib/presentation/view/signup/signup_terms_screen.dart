@@ -164,19 +164,16 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: Padding(
-          padding: EdgeInsets.symmetric(vertical: 40.h),
-          child: IS_DEV_MODE || agreeEnable
-              ? PrimaryButton(
-            text: TR(context, '다음'),
-            round: 0,
-            onTap: () {
-              Navigator.of(context).push(
-                  createAniRoute(SignUpNickScreen()));
-            },
-          ) : DisabledButton(
-            text: TR(context, '다음'),
-          ),
+        bottomNavigationBar: IS_DEV_MODE || agreeEnable
+            ? PrimaryButton(
+          text: TR(context, '다음'),
+          round: 0,
+          onTap: () {
+            Navigator.of(context).push(
+                createAniRoute(SignUpNickScreen()));
+          },
+        ) : DisabledButton(
+          text: TR(context, '다음'),
         ),
       ),
     );

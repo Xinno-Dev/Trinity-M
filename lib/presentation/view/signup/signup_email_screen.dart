@@ -121,29 +121,26 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
             ],
           )
         ),
-        bottomNavigationBar: Padding(
-          padding: EdgeInsets.symmetric(vertical: 40.h),
-          child: loginProv.isEmailCheckDone
-              ? PrimaryButton(
-            text: TR(context, '인증 완료'),
-            round: 0,
-            onTap: () {
-              loginProv.emailVfCheck(onError: (error) {
-                showLoginErrorTextDialog(context, error.errorText);
-              }).then((result) {
-                if (result == true) {
-                  Navigator.of(context).push(
-                      createAniRoute(SignUpPassScreen()));
-                } else if (result == false) {
-                  showLoginErrorDialog(context, LoginErrorType.mailNotVerified);
-                }
-              });
-            },
-          ) : DisabledButton(
-            text: TR(context, '다음'),
-          ),
+        bottomNavigationBar: loginProv.isEmailCheckDone
+            ? PrimaryButton(
+          text: TR(context, '인증 완료'),
+          round: 0,
+          onTap: () {
+            loginProv.emailVfCheck(onError: (error) {
+              showLoginErrorTextDialog(context, error.errorText);
+            }).then((result) {
+              if (result == true) {
+                Navigator.of(context).push(
+                    createAniRoute(SignUpPassScreen()));
+              } else if (result == false) {
+                showLoginErrorDialog(context, LoginErrorType.mailNotVerified);
+              }
+            });
+          },
+        ) : DisabledButton(
+          text: TR(context, '다음'),
         ),
-      )
+      ),
     );
   }
 }

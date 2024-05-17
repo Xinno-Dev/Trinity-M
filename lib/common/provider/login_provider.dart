@@ -132,7 +132,7 @@ enum LoginErrorType {
 }
 
 final drawerTitleN = [
-  '내 정보','구매 내역','-','이용약관','개인정보처리방침', '버전 정보', '로그아웃',
+  '내 정보','구매 내역','-','이용약관','개인정보처리방침', '버전 정보', '로그아웃', '회원탈퇴',
   '본인인증(test)', '로컬정보 삭제(test)'];
 
 enum DrawerActionType {
@@ -142,7 +142,8 @@ enum DrawerActionType {
   terms,
   privacy,
   version,
-  logout;
+  logout,
+  withdrawal;
 
   // test_identity,
   // test_delete;
@@ -385,18 +386,6 @@ class LoginProvider extends ChangeNotifier {
         userInfo = await _setAccountListFromServer();
         userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
       }
-      // if (userInfo?.loginType == LoginType.kakaotalk) {
-      //   await loginKakao();
-      // }
-      // await UserHelper().setUserKey(userInfo!.email!);
-      // await _refreshAccountList();
-      // var result = await startLoginWithKey();
-      // LOG('--> loginAuto result : $result');
-      // if (result != true) {
-      //   userInfo = null;
-      //   return false;
-      // }
-      // return result;
     }
     return false;
   }

@@ -7,17 +7,19 @@ import '../../../../common/provider/market_provider.dart';
 import '../../../../domain/model/product_model.dart';
 
 import '../../../common/const/constants.dart';
+import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
+import '../../../domain/model/seller_model.dart';
 import '../../../domain/viewModel/market_view_model.dart';
 import 'product_buy_screen.dart';
 
 class SellerDetailScreen extends ConsumerStatefulWidget {
-  SellerDetailScreen(this.product, {super.key});
+  SellerDetailScreen(this.seller, {super.key});
   static String get routeName => 'sellerDetailScreen';
-  final ProductModel product;
+  final SellerModel seller;
 
   @override
   ConsumerState<SellerDetailScreen> createState() => _SellerDetailScreenState();
@@ -35,12 +37,11 @@ class _SellerDetailScreenState extends ConsumerState<SellerDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
-    _viewModel.context = context;
     return SafeArea(
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(TR(context, widget.product.sellerName)),
+          title: Text(TR(context, STR(widget.seller.nickId))),
           centerTitle: true,
           titleTextStyle: typo16bold,
           backgroundColor: Colors.white,
@@ -55,7 +56,7 @@ class _SellerDetailScreenState extends ConsumerState<SellerDetailScreen> {
           shrinkWrap: true,
           padding: EdgeInsets.symmetric(horizontal: 20),
           children: [
-            _viewModel.showStoreDetail(widget.product),
+            _viewModel.showStoreDetail(widget.seller),
             _viewModel.showStoreProductList(TR(context, 'Market'),
                 isShowSeller: false, isCanBuy: true),
           ]

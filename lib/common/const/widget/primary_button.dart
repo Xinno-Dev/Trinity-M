@@ -7,6 +7,7 @@ class PrimaryButton extends StatelessWidget {
     this.icon,
     this.afterIcon,
     this.width,
+    this.height,
     this.round,
     this.color,
     this.hoverColor,
@@ -28,6 +29,7 @@ class PrimaryButton extends StatelessWidget {
   final TextStyle? textStyle;
   final bool isSmallButton;
   final bool isBorderShow;
+  final double? height;
   final Function()? onTap;
 
   @override
@@ -45,7 +47,7 @@ class PrimaryButton extends StatelessWidget {
         focusColor: hoverColor ?? Colors.white,
         child: Container(
           width: width,
-          height: isSmallButton ? 40.h : 56.h,
+          height: height ?? (isSmallButton ? 40.h : 56.h),
           padding: padding,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(round ?? 8),

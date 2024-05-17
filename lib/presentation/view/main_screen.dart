@@ -226,7 +226,6 @@ class _MainScreenState extends ConsumerState<MainScreen>
     _viewModel.hideProfileSelectBox();
     final prov = ref.read(loginProvider);
     if (index == 1 && !prov.isLogin) {
-      Fluttertoast.showToast(msg: TR(context, '로그인이 필요한 서비스입니다.'));
       Navigator.of(context).push(
           createAniRoute(LoginScreen(isAppStart: false)));
     } else {

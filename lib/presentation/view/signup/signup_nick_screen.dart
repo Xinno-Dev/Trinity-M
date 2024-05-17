@@ -127,30 +127,27 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
             ],
           )
         ),
-        bottomNavigationBar: Padding(
-          padding: EdgeInsets.symmetric(vertical: 40.h),
-          child: loginProv.isNickCheckDone
-              ? PrimaryButton(
-            text: TR(context, '다음'),
-            round: 0,
-            onTap: () {
-              FocusScope.of(context).requestFocus(FocusNode()); //remove focus
-              showLoadingDialog(context, '회원 가입중입니다...');
-              Future.delayed(Duration(milliseconds: 200)).then((_) {
-                loginProv.signUpUser().then((result) {
-                  hideLoadingDialog();
-                  if (loginProv.isLogin) {
-                    Navigator.of(context).push(
-                        createAniRoute(SignUpBioScreen()));
-                  }
-                  Fluttertoast.showToast(msg: TR(context,
-                    loginProv.isLogin ? '회원가입 성공' : '회원가입 실패'));
-                });
+        bottomNavigationBar: loginProv.isNickCheckDone
+            ? PrimaryButton(
+          text: TR(context, '다음'),
+          round: 0,
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode()); //remove focus
+            showLoadingDialog(context, '회원 가입중입니다...');
+            Future.delayed(Duration(milliseconds: 200)).then((_) {
+              loginProv.signUpUser().then((result) {
+                hideLoadingDialog();
+                if (loginProv.isLogin) {
+                  Navigator.of(context).push(
+                      createAniRoute(SignUpBioScreen()));
+                }
+                Fluttertoast.showToast(msg: TR(context,
+                  loginProv.isLogin ? '회원가입 성공' : '회원가입 실패'));
               });
-            },
-          ) : DisabledButton(
-            text: TR(context, '다음'),
-          ),
+            });
+          },
+        ) : DisabledButton(
+          text: TR(context, '다음'),
         ),
       )
     );

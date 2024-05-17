@@ -114,24 +114,21 @@ class _SignUpPassScreenState extends ConsumerState {
               ],
             )
           ),
-          bottomNavigationBar: Padding(
-            padding: EdgeInsets.symmetric(vertical: 40.h),
-            child: IS_DEV_MODE || loginProv.isPassCheckDone
-                ? PrimaryButton(
-              text: TR(context, '다음'),
-              round: 0,
-              onTap: () async {
-                if (viewModel.comparePass) {
-                  if (viewModel.passType == PassType.signUp) {
-                    Navigator.of(context).push(createAniRoute(SignUpTermsScreen()));
-                  } else {
-                    context.pop(viewModel.password);
-                  }
+          bottomNavigationBar: IS_DEV_MODE || loginProv.isPassCheckDone
+              ? PrimaryButton(
+            text: TR(context, '다음'),
+            round: 0,
+            onTap: () async {
+              if (viewModel.comparePass) {
+                if (viewModel.passType == PassType.signUp) {
+                  Navigator.of(context).push(createAniRoute(SignUpTermsScreen()));
+                } else {
+                  context.pop(viewModel.password);
                 }
-              },
-            ) : DisabledButton(
-              text: TR(context, '다음'),
-            ),
+              }
+            },
+          ) : DisabledButton(
+            text: TR(context, '다음'),
           ),
         )
     );
