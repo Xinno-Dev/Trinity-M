@@ -508,8 +508,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   _startRestore(index) {
-    LOG('---> _startRestore : $index');
     final loginProv = ref.read(loginProvider);
+    LOG('---> _startRestore : $index / ${loginProv.userEmail}');
     // 기존 회원가입된 메일인지 체크..
     loginProv.emailDupCheck(loginProv.userEmail).then((result) {
       if (result) {
@@ -619,7 +619,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final loginProv = ref.read(loginProvider);
     bool? result = false;
     switch(index) {
-      case 0: result = await loginProv.loginKakao(onError: _loginError); break;
+      case 0: result = await loginProv.loginKakao(context, onError: _loginError); break;
       case 1: result = await loginProv.loginGoogle(onError: _loginError); break;
       // case 2:  loginProv.loginNaver(); break;
       // case 3:  loginProv.loginApple(); break;

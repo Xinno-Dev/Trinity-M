@@ -57,6 +57,7 @@ const bool IS_AUTO_LOCK_MODE = false;
 const bool IS_AUTO_LOGIN_MODE = true; // 로컬에 패스워드 저장
 const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc API 이용
 const bool IS_SWAP_ON = false;
+const bool IS_PAYMENT_ON = true;
 
 String CURRENT_CHAIN_ID = TEST_NET_CHAIN_ID;
 
@@ -65,20 +66,19 @@ const String PAYMENT_PG = 'danal_tpay'; // PG사
 // const String PORTONE_IMP_CODE = 'imp32281033'; // PortOne 가맹점 코드 // jubal2000@gmail.comI(test)
 const String PORTONE_IMP_CODE = 'imp08730114'; // PortOne 가맹점 코드 // dev@xinno.io
 
-const String EX_TEST_MAIL_00 = 'test00@exsino.com';
-const String EX_TEST_PASS_00 = 'testpass00';
-const String EX_TEST_MAIL_EX = 'test00@exsino.com';
-// const String EX_TEST_MAIL_00 = 'jubal2000@gmail.com';
-// const String EX_TEST_PASS_00 = 'jubalpass00';
+// const String EX_TEST_MAIL_00 = 'test00@exsino.com';
+// const String EX_TEST_PASS_00 = 'testpass00';
+const String EX_TEST_MAIL_00 = 'jubal2000@gmail.com';
+const String EX_TEST_PASS_00 = 'jubalpass00';
 
-const String EX_TEST_PASS_RC_00 = 'recoverpass00';
+const String EX_TEST_MAIL_EX = 'test00@exsino.com';
 const String EX_TEST_ACCCOUNT_00 = 'jubal0000';
 const String EX_TEST_ACCCOUNT_00_1 = 'jubal0000_1';
 const String EX_TEST_NAME_00 = 'jubal0000 입니다!';
 const String EX_TEST_MN_EX = 'weekend minimum ribbon sing destroy vacuum cherry cement sock shell wear result'; // email: tester00
 const String EX_TEST_MN_00 = 'weekend minimum ribbon sing destroy vacuum cherry cement sock shell wear result'; // email: tester00
 const String EX_TEST_MN_01 = 'frown gadget pattern black quality staff connect throw mercy rookie valid swim'; // email: jubal2000@gmail.com
-const String EX_TEST_MN_02 = 'random club drive delay snake ivory carbon critic lounge portion develop entry'; // kakao: jubal2000@hanmail.net
+const String EX_TEST_MN_02 = 'layer replace clay dinosaur agree jazz unit peace roast combine chase relief'; // kakao: jubal2000@hanmail.net
 const String EX_TEST_MN_03 = 'apart sand present sunny destroy police either idle gospel anxiety ranch junk'; // kakao: jubal2001@gmail.com(from home)
 
 

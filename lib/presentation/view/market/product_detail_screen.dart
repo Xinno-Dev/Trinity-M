@@ -19,7 +19,7 @@ import '../../../domain/viewModel/market_view_model.dart';
 import 'product_buy_screen.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
-  ProductDetailScreen({super.key, required this.isShowSeller, required this.isCanBuy});
+  ProductDetailScreen({super.key, this.isShowSeller = true, this.isCanBuy = true});
   static String get routeName => 'productDetailScreen';
   final bool isShowSeller;
   final bool isCanBuy;
@@ -60,7 +60,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               return ListView(
                 shrinkWrap: true,
                 children: [
-                  _viewModel.showProductDetail(widget.isShowSeller),
+                  _viewModel.showProductDetail(context, widget.isShowSeller),
                   _viewModel.showProductInfoTab(ref),
                 ]
               );
@@ -85,9 +85,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               return LoginScreen(isAppStart: false);
             }
           },
-        ) : DisabledButton(
-          text: TR(context, '구매하기'),
-        )
+        ) : null
       ),
     );
   }

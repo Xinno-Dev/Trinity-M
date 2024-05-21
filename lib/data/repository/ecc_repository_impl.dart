@@ -28,8 +28,7 @@ class EccRepositoryImpl implements EccRepository {
   }) async {
     String encodeJson = '';
     UserHelper userHelper = UserHelper();
-    LOG('--> generateKeyPair : $nickId, ${userHelper.userKey}');
-
+    LOG('--> generateKeyPair : [$pin] $nickId, ${userHelper.userKey}');
     _eccManager = EccManager();
 
     AsymmetricKeyPair<PublicKey, PrivateKey> keyResult =

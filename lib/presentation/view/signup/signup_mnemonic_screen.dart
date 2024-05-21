@@ -180,7 +180,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         Navigator.of(context).push(
                           createAniRoute(CloudPassCreateScreen())).then((pass) async {
                           if (STR(pass).isNotEmpty) {
-                            var address = loginProv.accountAddress;
+                            var address = loginProv.accountFirstAddress;
                             // var keyPair = await loginProv.getAccountKey();
                             if (address != null) {
                               // var keyJson = jsonEncode(keyPair.toJson());

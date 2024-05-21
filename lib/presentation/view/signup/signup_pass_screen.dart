@@ -36,6 +36,16 @@ class SignUpPassScreen extends ConsumerStatefulWidget {
   );
 }
 
+class RecoverPassScreen extends ConsumerStatefulWidget {
+  RecoverPassScreen({Key? key}) : super(key: key);
+  static String get routeName => 'recoverPassScreen';
+
+  @override
+  ConsumerState createState() => _SignUpPassScreenState(
+    PassViewModel(PassType.recover),
+  );
+}
+
 class CloudPassCreateScreen extends ConsumerStatefulWidget {
   CloudPassCreateScreen({Key? key}) : super(key: key);
   static String get routeName => 'cloudPassCreateScreen';
@@ -49,7 +59,6 @@ class CloudPassCreateScreen extends ConsumerStatefulWidget {
 class _SignUpPassScreenState extends ConsumerState {
   _SignUpPassScreenState(this.viewModel);
 
-  var inputPass = List.generate(2, (index) => '');
   PassViewModel viewModel;
 
   @override
@@ -60,7 +69,7 @@ class _SignUpPassScreenState extends ConsumerState {
 
   @override
   Widget build(BuildContext context) {
-    final loginProv = ref.watch(loginProvider);
+    final prov = ref.watch(loginProvider);
     return SafeArea(
         top: false,
         child: Scaffold(
@@ -114,11 +123,15 @@ class _SignUpPassScreenState extends ConsumerState {
               ],
             )
           ),
-          bottomNavigationBar: IS_DEV_MODE || loginProv.isPassCheckDone
+          bottomNavigationBar: IS_DEV_MODE || prov.isPassCheckDone
               ? PrimaryButton(
             text: TR(context, '다음'),
             round: 0,
             onTap: () async {
+              if (!viewModel.checkPassLength) {
+                showToast(TR(context, '4자 이상 입력해주세요.'));
+                return;
+              }
               if (viewModel.comparePass) {
                 if (viewModel.passType == PassType.signUp) {
                   Navigator.of(context).push(createAniRoute(SignUpTermsScreen()));
@@ -135,6 +148,7 @@ class _SignUpPassScreenState extends ConsumerState {
   }
 
   _buildInputBox(int index) {
+    final prov = ref.read(loginProvider);
     return Padding(
       padding: EdgeInsets.only(bottom: 40),
       child: TextField(
@@ -146,7 +160,7 @@ class _SignUpPassScreenState extends ConsumerState {
       obscureText: true,
       scrollPadding: EdgeInsets.only(bottom: 200),
       onChanged: (text) {
-        inputPass[index] = viewModel.passInputController[index].text;
+        prov.inputPass[index] = viewModel.passInputController[index].text;
       },
     ));
   }

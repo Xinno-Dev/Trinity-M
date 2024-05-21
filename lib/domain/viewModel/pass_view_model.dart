@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../common/provider/login_provider.dart';
 import 'package:provider/provider.dart' as provider;
 
+import '../../common/const/constants.dart';
 import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/uihelper.dart';
 import '../../presentation/view/signup/signup_terms_screen.dart';
@@ -13,7 +14,8 @@ enum PassType {
   signIn,
   signUp,
   cloudUp,
-  cloudDown;
+  cloudDown,
+  recover;
 
   get title {
     switch(this) {
@@ -34,6 +36,8 @@ enum PassType {
         return '복구 비밀번호를\n등록해 주세요.';
       case PassType.cloudDown:
         return '복구 비밀번호를\n입력해 주세요.';
+      case PassType.recover:
+        return '새 비밀번호를\n입력해 주세요.';
       default: return '비밀번호를\n등록해 주세요.';
     }
   }
@@ -61,16 +65,21 @@ class PassViewModel {
 
   init(WidgetRef ref) {
     this.ref = ref;
-    final loginProv = ref.read(loginProvider);
-    loginProv.emailStep   = EmailSignUpStep.none;
-    loginProv.recoverStep = RecoverPassStep.none;
-    passInputController[0].text = loginProv.inputPass[0];
-    passInputController[1].text = loginProv.inputPass[1];
+    final prov = ref.read(loginProvider);
+    prov.emailStep   = EmailSignUpStep.none;
+    prov.recoverStep = RecoverPassStep.none;
+    prov.inputPass = List.generate(2, (index) => IS_DEV_MODE ? EX_TEST_PASS_00 : '');
+    passInputController[0].text = prov.inputPass[0];
+    passInputController[1].text = prov.inputPass[1];
+  }
+
+  get checkPassLength {
+    return passInputController[0].text.length > 4;
   }
 
   get comparePass {
     LOG('--> comparePass : ${passInputController[0].text} / ${passInputController[1].text}');
-    return passInputController[0].text.length > 4 &&
+    return checkPassLength &&
       passInputController[0].text == passInputController[1].text;
   }
 

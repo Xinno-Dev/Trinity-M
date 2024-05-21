@@ -4,8 +4,10 @@ import 'package:iamport_flutter/model/payment_data.dart';
 import 'package:trinity_m_00/common/const/utils/uihelper.dart';
 import 'package:trinity_m_00/common/provider/market_provider.dart';
 import 'package:trinity_m_00/presentation/view/market/payment_done_screen.dart';
+import 'package:trinity_m_00/presentation/view/market/product_detail_screen.dart';
 import '../../../common/common_package.dart';
 
+import '../../../common/const/constants.dart';
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 
@@ -21,6 +23,11 @@ class PaymentScreen extends ConsumerStatefulWidget {
 
 class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   final controller  = ScrollController();
+
+  _showFailMessage(BuildContext context) {
+    showToast(TR(context, '결제에 실패했습니다.'));
+    context.pop();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +63,21 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       callback: (Map<String, String> result) {
         LOG('--> show payment result : $result');
         if (BOL(result['success'])) {
-          prov.updatePurchaseInfo(result);
-          context.pushReplacementNamed(PaymentDoneScreen.routeName);
+          if (IS_PAYMENT_ON) {
+            prov.checkPurchase(result).then((checkResult) {
+              LOG('--> checkResult : $checkResult');
+              if (checkResult) {
+                context.pushReplacementNamed(PaymentDoneScreen.routeName);
+              } else {
+                _showFailMessage(context);
+              }
+            });
+          } else {
+            prov.updatePurchaseInfo(result);
+            context.pushReplacementNamed(PaymentDoneScreen.routeName);
+          }
         } else {
-          showLoginErrorTextDialog(context, TR(context, '결제에 실패했습니다!'));
-          context.pop();
+          _showFailMessage(context);
         }
       },
     );

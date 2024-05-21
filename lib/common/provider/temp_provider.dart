@@ -21,6 +21,7 @@ import '../../presentation/view/history_screen.dart';
 import '../../presentation/view/home_screen.dart';
 import '../../presentation/view/main_screen.dart';
 import '../../presentation/view/market/market_screen.dart';
+import '../../presentation/view/market/product_detail_screen.dart';
 import '../../presentation/view/myhome_screen.dart';
 import '../../presentation/view/recover_wallet_complete_screen.dart';
 import '../../presentation/view/recover_wallet_input_screen.dart';
@@ -362,6 +363,14 @@ class TempProvider extends ChangeNotifier {
           path: '/${PaymentDoneScreen.routeName}',
           name: PaymentDoneScreen.routeName,
           builder: (context, state) => PaymentDoneScreen(),
+        ),
+        GoRoute(
+          path: '/${ProductDetailScreen.routeName}',
+          name: ProductDetailScreen.routeName,
+          builder: (context, state) => ProductDetailScreen(
+            isShowSeller: BOL(state.queryParams['isShowSeller']),
+            isCanBuy: BOL(state.queryParams['isCanBuy']),
+          ),
         ),
       ];
 

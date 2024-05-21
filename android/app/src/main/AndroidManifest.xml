@@ -2,7 +2,9 @@
     <application
         android:label="TRINITY M"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"
+        >
         <activity
             android:name="io.flutter.embedding.android.FlutterFragmentActivity"
             android:exported="true"

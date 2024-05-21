@@ -240,15 +240,14 @@ class MarketProvider extends ChangeNotifier {
     if (purchaseInfo != null) {
       var name    = STR(purchaseInfo?.name);
       var amount  = num.parse(STR(purchaseInfo?.buyPrice));
-      var uId     = STR(purchaseInfo?.purchaseId);
-      LOG('--> createPurchaseData : $name / $amount / $uId');
+      LOG('--> createPurchaseData : $name / $amount');
       payData = PaymentData(
         pg: PAYMENT_PG,
         payMethod: payMethod,
         escrow: false,
         name: name,
         amount: amount,
-        merchantUid: uId,
+        merchantUid: '',
         buyerName:  userInfo.userName,
         buyerEmail: userInfo.email,
         buyerTel:   STR(userInfo.mobile),
@@ -273,14 +272,41 @@ class MarketProvider extends ChangeNotifier {
     return null;
   }
 
+
+  requestPurchaseWithImageId() async {
+    var result = await _repo.requestPurchase(
+        STR(purchaseInfo?.saleProdId), imgId: STR(optionId));
+    if (result != null) {
+      purchaseInfo!.itemId      = result.itemId;
+      purchaseInfo!.merchantUid = result.merchantUid;
+      purchaseInfo!.buyPrice    = result.price; // price -> buyPrice 로 변환
+      purchaseInfo!.priceUnit   = result.priceUnit;
+      payData.merchantUid       = STR(result.merchantUid);
+    }
+    LOG('--> requestPurchaseWithImageId result : ${payData.merchantUid} <= ${result?.toJson()}');
+    return result;
+  }
+
+  Future<bool> checkPurchase(JSON info) async {
+    var impUid      = STR(info['imp_uid']);
+    var status      = STR(info['status']);
+    var merchantId  = STR(purchaseInfo!.merchantUid);
+    var result = await _repo.checkPurchase(impUid, merchantId, status);
+    LOG('--> checkPurchase result : ${STR(result?['status'])}');
+    if (result != null && STR(result['status']) == '4') {
+      return updatePurchaseInfo(result);
+    }
+    return false;
+  }
+
   updatePurchaseInfo(JSON result) {
     if (purchaseInfo != null) {
-      purchaseInfo!.cardType  = STR(result['card_name']);
+      purchaseInfo!.cardType  = STR(result['card_name'  ]);
       purchaseInfo!.cardNum   = STR(result['card_number']);
       purchaseInfo!.payPrice  = STR(result['paid_amount']);
-      purchaseInfo!.priceUnit = STR(result['currency']);
-      purchaseList.add(purchaseInfo!);
+      purchaseInfo!.priceUnit = STR(result['currency'   ]);
+      return true;
     }
-    return purchaseInfo;
+    return false;
   }
 }

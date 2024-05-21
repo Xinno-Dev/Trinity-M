@@ -29,17 +29,16 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
   final controller  = ScrollController();
   late MarketViewModel _viewModel;
 
+  _showFailMessage(BuildContext context) {
+    showLoginErrorTextDialog(context, TR(context, '결제준비에 실패했습니다!'));
+  }
+
   @override
   void initState() {
     _viewModel = MarketViewModel();
     final prov = ref.read(marketProvider);
     prov.optionIndex = -1;
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
   }
 
   @override
@@ -85,8 +84,14 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
               var data = prov.createPurchaseData(
                 userInfo: ref.read(loginProvider).userInfo!);
               if (data != null) {
-                Navigator.of(context).push(
-                  createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data)));
+                prov.requestPurchaseWithImageId().then((info) {
+                  if (info != null) {
+                    Navigator.of(context).push(
+                        createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data)));
+                  } else {
+                    _showFailMessage(context);
+                  }
+                });
               }
             },
           ) : DisabledButton(

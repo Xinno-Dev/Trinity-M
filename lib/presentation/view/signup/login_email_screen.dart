@@ -97,7 +97,8 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                       decoration: InputDecoration(
                         hintText: TR(context, '비밀번호 입력'),
                       ),
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType: TextInputType.visiblePassword,
+                      obscureText: true,
                       scrollPadding: EdgeInsets.only(bottom: 200),
                       onChanged: (text) {
                         checkNextReady();

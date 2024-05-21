@@ -50,7 +50,6 @@ class _LoginPassScreenState extends ConsumerState {
   final passInputController = TextEditingController();
   PassViewModel viewModel;
   bool isFailBack;
-  var inputPass = '';
   var isCanBack = true;
 
   _startMain(int page) {
@@ -66,9 +65,9 @@ class _LoginPassScreenState extends ConsumerState {
   void initState() {
     super.initState();
     var prov = ref.read(loginProvider);
+    prov.inputPass = List.generate(2, (index) => IS_DEV_MODE ? EX_TEST_PASS_00 : '');
     isCanBack = viewModel.passType != PassType.open;
-    inputPass = IS_DEV_MODE ? prov.inputPass[0] : '';
-    passInputController.text = inputPass;
+    passInputController.text = IS_DEV_MODE ? EX_TEST_PASS_00 : '';
     LOG('--> _LoginPassScreenState : ${viewModel.passType} && ${prov.userBioYN}');
     if (viewModel.passType == PassType.open && prov.userBioYN) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -85,7 +84,7 @@ class _LoginPassScreenState extends ConsumerState {
 
   @override
   Widget build(BuildContext context) {
-    final loginProv = ref.watch(loginProvider);
+    final prov = ref.watch(loginProvider);
     return SafeArea(
         top: false,
         child: Scaffold(
@@ -143,21 +142,21 @@ class _LoginPassScreenState extends ConsumerState {
               ],
             )
           ),
-          bottomNavigationBar: IS_DEV_MODE || inputPass.isNotEmpty
+          bottomNavigationBar: IS_DEV_MODE || prov.userPassReady
               ? PrimaryButton(
             text: TR(context, '확인'),
             round: 0,
             onTap: () {
-              LOG('--> viewModel.passType : [$inputPass] ${viewModel.passType}');
+              LOG('--> viewModel.passType : [${prov.userPass}] ${viewModel.passType}');
               if (viewModel.passType == PassType.cloudDown) {
-                Navigator.of(context).pop(inputPass);
+                Navigator.of(context).pop(prov.userPass);
               } else {
-                loginProv.checkWalletPass(inputPass).then((result) async {
+                prov.checkWalletPass(prov.userPass).then((result) async {
                   if (result) {
                     if (viewModel.passType == PassType.open) {
                       _startMain(0);
                     } else {
-                      Navigator.of(context).pop(inputPass);
+                      Navigator.of(context).pop(prov.userPass);
                     }
                   } else {
                     if (isCanBack && isFailBack) {
@@ -177,6 +176,7 @@ class _LoginPassScreenState extends ConsumerState {
   }
 
   _buildInputBox() {
+    final prov = ref.read(loginProvider);
     return Padding(
       padding: EdgeInsets.only(bottom: 40),
       child: TextField(
@@ -189,7 +189,7 @@ class _LoginPassScreenState extends ConsumerState {
         scrollPadding: EdgeInsets.only(bottom: 200),
         onChanged: (text) {
           setState(() {
-            inputPass = passInputController.text;
+            prov.inputPass.first = passInputController.text;
           });
         },
       )

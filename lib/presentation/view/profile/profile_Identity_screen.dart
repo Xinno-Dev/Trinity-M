@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:iamport_flutter/iamport_certification.dart';
 import 'package:iamport_flutter/model/certification_data.dart';
+import 'package:trinity_m_00/common/const/utils/uihelper.dart';
 import '../../../../common/common_package.dart';
 import '../../../../common/const/constants.dart';
 import '../../../../common/provider/login_provider.dart';
 import '../../../../domain/viewModel/profile_view_model.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
+import '../../../common/const/utils/languageHelper.dart';
 
 class ProfileIdentityScreen extends ConsumerStatefulWidget {
   ProfileIdentityScreen({super.key});
@@ -62,6 +64,11 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
       /* [필수입력] 콜백 함수 */
       callback: (Map<String, String> result) {
         LOG('--> IamportCertification result : $result');
+        if (BOL(result['success'])) {
+          showResultDialog(context, TR(context, '본인인증 성공'));
+        } else {
+          showResultDialog(context, TR(context, '본인인증 실패'));
+        }
         // Navigator.pushReplacementNamed(
         //   context,
         //   '/result',

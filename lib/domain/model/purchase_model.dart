@@ -13,14 +13,16 @@ part 'purchase_model.g.dart';
 class PurchaseModel {
   String?   purchaseId;   // 구매 ID
   String?   saleProdId;   // 판매상품 ID
+  String?   merchantUid;  // 주문번호
   String?   itemType;     // 아이템 종류. mk_item.CD_ITEM_TYPE 값
   String?   name;         // 상품이름
   String?   itemId;       // 상품 옵션 id
   String?   itemImg;      // 상품에 이미지 Url
 
   // 구매 정보..
-  String?   buyPrice;
-  String?   payPrice;
+  String?   price;        // 서버에서 회신된 가격
+  String?   buyPrice;     // 구매 가격
+  String?   payPrice;     // 상품 가격
   String?   priceUnit;
   String?   txDateTime;
   String?   payType;
@@ -36,11 +38,13 @@ class PurchaseModel {
   PurchaseModel({
     this.purchaseId,
     this.saleProdId,
+    this.merchantUid,
     this.itemType,
     this.name,
     this.itemId,
     this.itemImg,
 
+    this.price,
     this.buyPrice,
     this.payPrice,
     this.priceUnit,

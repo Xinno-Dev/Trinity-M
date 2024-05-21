@@ -87,6 +87,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   cupertino_icons: ^1.0.2
   pull_to_refresh: ^2.0.0
+  webview_flutter: ^4.7.0
 
   # image..
   image_picker: ^1.1.1

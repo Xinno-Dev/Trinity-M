@@ -132,7 +132,8 @@ enum LoginErrorType {
 }
 
 final drawerTitleN = [
-  '내 정보','구매 내역','-','이용약관','개인정보처리방침', '버전 정보', '로그아웃', '회원탈퇴',
+  '내 정보', '구매 내역', '-',
+  '이용약관', '개인정보처리방침', '버전 정보', '로그아웃', '회원탈퇴',
   '본인인증(test)', '로컬정보 삭제(test)'];
 
 enum DrawerActionType {
@@ -143,10 +144,9 @@ enum DrawerActionType {
   privacy,
   version,
   logout,
-  withdrawal;
-
-  // test_identity,
-  // test_delete;
+  withdrawal,
+  test_identity,
+  test_delete;
 
   String get title {
     return drawerTitleN[this.index];
@@ -221,6 +221,10 @@ class LoginProvider extends ChangeNotifier {
     return BOL(userInfo?.bioIdentityYN);
   }
 
+  get userPassReady {
+    return userPass.length > 4;
+  }
+
   refresh() {
     notifyListeners();
   }
@@ -281,7 +285,7 @@ class LoginProvider extends ChangeNotifier {
     selectAccount = null;
     if (userInfo?.addressList != null) {
       address ??= await UserHelper().get_address();
-      // LOG('--> _refreshSelectAccount : $address');
+      LOG('--> _refreshSelectAccount : $address');
       if (address != 'NOT_ADDRESS') {
         for (var item in userInfo!.addressList!) {
           if (item.address == address) {
@@ -328,6 +332,14 @@ class LoginProvider extends ChangeNotifier {
 
   get accountAddress {
     return account?.address;
+  }
+
+  AddressModel? get accountFirst {
+    return userInfo?.addressList?.first;
+  }
+
+  get accountFirstAddress {
+    return accountFirst?.address;
   }
 
   get accountName {
@@ -399,13 +411,13 @@ class LoginProvider extends ChangeNotifier {
     if (STR(userInfo?.email).isNotEmpty) {
       await UserHelper().setUserKey(userInfo!.email!);
       await _refreshAccountList();
-      var result = await startLoginWithKey();
-      LOG('--> loginEmail result : $result');
+      var result = await startLoginWithKey(onError: (type, text) {
+        if (!isAutoLogin && onError != null) {
+          onError(type, text);
+        }
+      });
       if (result != true) {
         userInfo = null;
-        if (!isAutoLogin && onError != null) {
-          onError(LoginErrorType.signupRequire, '회원가입이 필요한 계정입니다.');
-        }
         return result;
       }
       return true;
@@ -413,7 +425,7 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool?> loginKakao(
+  Future<bool?> loginKakao(BuildContext context,
     {Function(LoginErrorType, String?)? onError, var isAutoLogin = false})
     async {
     init();
@@ -421,25 +433,30 @@ class LoginProvider extends ChangeNotifier {
     LOG('----> loginKakao user : $user');
     if (user != null) {
       userInfo = await UserModel.createFromKakao(user);
-      LOG('----> loginKakao userInfo : ${userInfo?.toJson()}');
+      LOG('----> loginKakao email : ${userInfo?.email}');
       if (STR(userInfo?.email).isNotEmpty) {
         await UserHelper().setUserKey(userInfo!.email!);
         await _refreshAccountList();
-        var result = await startLoginWithKey();
-        if (result != true) {
-          // 로그인 실패시 카카오 로그아웃..
-          await logout(false);
-          if (!isAutoLogin && onError != null) {
-            onError(LoginErrorType.signupRequire, '회원가입이 필요한 계정입니다.');
+        if (await getAccountKey() != null) {
+          var pass = await Navigator.of(context).push(
+              createAniRoute(LoginPassScreen()));
+          if (STR(pass).isNotEmpty) {
+            inputPass.first = pass!;
+            var result = await startLoginWithKey(onError: (type, text) {
+              if (!isAutoLogin && onError != null) {
+                onError(type, text);
+              }
+            });
+            if (result != true) {
+              // 로그인 실패시 카카오 로그아웃..
+              await startKakaoLogout();
+              return result;
+            }
+            return true;
           }
-          return result;
+        } else {
+          return null;
         }
-        return true;
-      }
-      return null;
-    } else {
-      if (!isAutoLogin && onError != null) {
-        onError(LoginErrorType.loginKakaoFail, null);
       }
     }
     return false;
@@ -527,34 +544,37 @@ class LoginProvider extends ChangeNotifier {
       }
       if (token.isNotEmpty) {
         // signing..
-        var nickId  = Uri.encodeFull(inputNick);
-        var msg     = email + nickId + address + token;
-        var sig     = await createSign(msg);
-        LOG('----> createNewUser : $msg');
-        // create user from server..
-        var result = await apiService.createUser(
-          userName ?? '',
-          socialId ?? '',
-          email,
-          inputNick, '', '',
-          address,
-          sig,
-          type,
-          token,
-          onError: onError
-        );
-        LOG('----> createNewUser result : $result');
-        if (result == true) {
-          var loginResult = await startLoginWithKey(onError: onError);
-          if (loginResult == true) {
-            return userInfo;
+        var nickId = Uri.encodeFull(inputNick);
+        var msg = email + nickId + address + token;
+        var sig = await createSign(msg);
+        if (sig != null) {
+          // create user from server..
+          var result = await apiService.createUser(
+              userName ?? '',
+              socialId ?? '',
+              email,
+              inputNick,
+              '',
+              '',
+              address,
+              sig,
+              type,
+              token,
+              onError: onError
+          );
+          LOG('----> createNewUser result : $result');
+          if (result == true) {
+            var loginResult = await startLoginWithKey(onError: onError);
+            if (loginResult == true) {
+              return userInfo;
+            }
           }
+        } else {
+          LOG('--> createNewUser token error');
         }
       } else {
-        LOG('--> createNewUser token error');
+        LOG('--> createNewUser info error');
       }
-    } else {
-      LOG('--> createNewUser info error');
     }
     // 회원가입 실패시 소셜 로그아웃..
     await logout(false);
@@ -576,6 +596,9 @@ class LoginProvider extends ChangeNotifier {
     if (result) {
       var loginResult = await startLoginWithKey(onError: onError);
       if (loginResult == true) {
+        // '복구' 일경우 첫번째 계정을 디폴트로 지정..
+        selectAccount = accountFirst;
+        await UserHelper().setUser(address: accountFirstAddress);
         return userInfo;
       }
     }
@@ -651,6 +674,7 @@ class LoginProvider extends ChangeNotifier {
 
   // add new wallet & account..
   Future<bool> createNewAccount(String passOrg, {String? mnemonic, String? privateKey}) async {
+    LOG('--> createNewAccount : $passOrg');
     var result  = false;
     if (STR(privateKey).isNotEmpty) {
       result = await _importPrivateKey(privateKey!);
@@ -663,7 +687,7 @@ class LoginProvider extends ChangeNotifier {
     if (result) {
       await _refreshAccountList();
     }
-    LOG('--> createNewAccount : $result <= $inputNick / $passOrg / ${account?.toJson()}');
+    LOG('--> createNewAccount result : $result <= $inputNick / ${account?.toJson()}');
     return result;
   }
 
@@ -680,19 +704,21 @@ class LoginProvider extends ChangeNotifier {
       var message = uid + nickId + walletAddress;
       LOG('--> addNewAccount message : $uid + $nickId + $walletAddress');
       var sig = await createSign(message);
-      var addResult = await apiService.addAccount(nickId, walletAddress, sig);
-      if (addResult) {
-        LOG('--> addNewAccount success !!');
-        var result = await startLoginWithKey();
-        LOG('--> loginAuto result : $result');
-        if (result != true) {
-          return false;
+      if (sig != null) {
+        var addResult = await apiService.addAccount(nickId, walletAddress, sig);
+        if (addResult) {
+          LOG('--> addNewAccount success !!');
+          var result = await startLoginWithKey();
+          LOG('--> loginAuto result : $result');
+          if (result != true) {
+            return false;
+          }
+          notifyListeners();
+          return true;
+        } else {
+          // restore org address..
+          await removeAccountFromAddr(walletAddress);
         }
-        notifyListeners();
-        return true;
-      } else {
-        // restore org address..
-        await removeAccountFromAddr(walletAddress);
       }
     }
     return false;
@@ -705,10 +731,12 @@ class LoginProvider extends ChangeNotifier {
     var message = uid + nickId + walletAddress;
     LOG('--> setUserNickId : [$newNickId] / $message');
     var sig = await createSign(message);
-    var addResult = await apiService.addAccount(nickId, walletAddress, sig);
-    if (addResult == true) {
-      LOG('--> setUserNickId success !!');
-      return true;
+    if (sig != null) {
+      var addResult = await apiService.addAccount(nickId, walletAddress, sig);
+      if (addResult == true) {
+        LOG('--> setUserNickId success !!');
+        return true;
+      }
     }
     return false;
   }
@@ -720,14 +748,17 @@ class LoginProvider extends ChangeNotifier {
     var message = uid + nickId + walletAddress;
     LOG('--> setUserInfo : $message / ${info.toJson()}');
     var sig = await createSign(message);
-    var addResult = await apiService.setUserInfo(walletAddress, sig,
+    if (sig != null) {
+      LOG('--> setUserInfo ready : $walletAddress / $sig / ${info.subTitle} / ${info.description} / ${info.image}');
+      var addResult = await apiService.setUserInfo(walletAddress, sig,
         subTitle: info.subTitle,
-        desc:     info.description,
+        desc: info.description,
         imageUrl: info.image,
-    );
-    if (addResult == true) {
-      LOG('--> setUserInfo success !!');
-      return true;
+      );
+      if (addResult == true) {
+        LOG('--> setUserInfo success !!');
+        return true;
+      }
     }
     return false;
   }
@@ -807,14 +838,13 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<EccKeyPair?> getAccountKey({String? passOrg, String? tmpKeyStr}) async {
-    // LOG('--> getAccountKey : ${selectAccount?.toJson()}');
     try {
       passOrg ??= userPass;
+      LOG('--> getAccountKey : [$passOrg] / ${selectAccount?.toJson()}');
       var keyData = tmpKeyStr ?? selectAccount?.keyPair;
-      // LOG('--> getAccountKey [$passOrg] : $keyData');
       if (passOrg != null && STR(keyData).isNotEmpty) {
         var keyStr = await decryptData(passOrg, keyData!);
-        // LOG('--> getAccountKey : $keyStr');
+        LOG('--> getAccountKey : $keyStr');
         if (keyStr != 'fail') {
           var keyPair = EccKeyPair.fromJson(jsonDecode(keyStr));
           return keyPair;
@@ -841,9 +871,9 @@ class LoginProvider extends ChangeNotifier {
   createSign(String msg) async {
     try {
       var privateKey = await getAccountKey();
+      LOG('---> createSign : $privateKey');
       if (privateKey != null) {
         var signature = await EccManager().signingEx(privateKey.d, msg);
-        LOG('---> createSign : $privateKey / $signature <= $msg');
         return signature;
       }
     } catch (e) {

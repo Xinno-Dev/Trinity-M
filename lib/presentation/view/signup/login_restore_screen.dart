@@ -121,14 +121,17 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
       LOG('--> RecoverWalletInputScreen result : $mnemonic');
       if (STR(mnemonic).isNotEmpty) {
         showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
-        loginProv.recoverUser(mnemonic: mnemonic,
-          onError: (type, code) {
-            hideLoadingDialog();
-            showLoginErrorDialog(context, type, code);
-            UserHelper().clearUser();
-          }).then((result) {
+        Navigator.of(context).push(createAniRoute(RecoverPassScreen())).then((newPass) {
+          loginProv.inputPass.first = newPass;
+          loginProv.recoverUser(mnemonic: mnemonic,
+              onError: (type, code) {
+                hideLoadingDialog();
+                showLoginErrorDialog(context, type, code);
+                UserHelper().clearUser();
+              }).then((result) {
             LOG('--> recoverUser mn result : $result');
-            _moveToMainProfile();
+            _recoverResult(result);
+          });
         });
       }
     });
@@ -137,27 +140,51 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
   // 클라우드로 계정 복구..
   startRecoverCloud() {
     final loginProv = ref.read(loginProvider);
+    // downlaod from google drive..
     GoogleService.downloadKeyFromGoogleDrive(context).then((rwfStr) {
       if (STR(rwfStr).isNotEmpty) {
+        // cloud pass check..
         Navigator.of(context).push(
           createAniRoute(CloudPassScreen())).then((pass) async {
           LOG('--> CloudPassScreen result : $pass');
           if (STR(pass).isNotEmpty) {
-            showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
+            showLoadingDialog(context, TR(context, '복구단어 복원중입니다...'));
+            // recover mnemonic..
             var mnemonic = await RWFExportHelper.decrypt(pass, rwfStr);
-            loginProv.recoverUser(mnemonic: mnemonic,
-              onError: (type, code) {
-                hideLoadingDialog();
-                showLoginErrorDialog(context, type, code);
-                UserHelper().clearUser();
-              }).then((result) {
-                LOG('--> recoverUser mn result : $result');
-                _moveToMainProfile();
-            });
+            hideLoadingDialog();
+            if (mnemonic != null) {
+              // new pass create..
+              Navigator.of(context)
+                  .push(createAniRoute(RecoverPassScreen()))
+                  .then((newPass) async {
+                loginProv.inputPass.first = newPass;
+                showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
+                // start recover user..
+                loginProv.recoverUser(mnemonic: mnemonic,
+                    onError: (type, code) {
+                      hideLoadingDialog();
+                      showLoginErrorDialog(context, type, code);
+                      UserHelper().clearUser();
+                    }).then((result) {
+                  LOG('--> recoverUser mn result : $result');
+                  _recoverResult(result);
+                });
+              });
+            } else {
+              showLoginErrorTextDialog(context, TR(context, ''));
+            }
           }
         });
       }
     });
+  }
+
+  _recoverResult(result) {
+    if (result != null) {
+      _moveToMainProfile();
+    } else {
+      showToast('복구 실패');
+    }
   }
 
   _recoverRwfKey(String pass, String rwfStr) async {

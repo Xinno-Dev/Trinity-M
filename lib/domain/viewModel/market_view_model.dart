@@ -78,7 +78,7 @@ class MarketViewModel {
     );
   }
 
-  showProductDetail([var isShowSeller = true]) {
+  showProductDetail(BuildContext context, [var isShowSeller = true]) {
     final imageSize = MediaQuery.of(context).size.width;
     LOG('--> showProductDetail : ${prov.detailPic} / ${prov.selectProduct?.toJson()}');
     return Column(
@@ -603,7 +603,12 @@ class MarketViewModel {
     );
     // return InkWell(
     //   onTap: () {
-    //     if (onSelect != null) onSelect(item);
+    //     prov.selectProduct = item;
+    //     ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+    //     Navigator.of(context).push(createAniRoute(ProductDetailScreen(
+    //       isShowSeller: isShowSeller,
+    //       isCanBuy: isCanBuy,
+    //     );
     //   },
     //   child: Container(
     //     margin: EdgeInsets.all(15),

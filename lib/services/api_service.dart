@@ -548,7 +548,7 @@ class ApiService {
   //
 
   Future<JSON?> getProductImageItems(String prodSaleId,
-      {int lastId = -1, int pageCnt = 10}) async {
+    {int lastId = -1, int pageCnt = 10}) async {
     try {
       final lastStr = lastId >= 0 ? '&lastId=$lastId' : '';
       LOG('--> API getProductImageItems : $prodSaleId / $lastStr');
@@ -571,11 +571,11 @@ class ApiService {
   //////////////////////////////////////////////////////////////////////////
   //
   //  구매 내역 조회 (JWT)
-  //  /purchases/{buyerAddr}
+  //  GET: /purchases/{buyerAddr}
   //
 
   Future<JSON?> getPurchasesList(String buyerAddr,
-      {String? startDate, String? endDate, int lastId = -1, int pageCnt = 20}) async {
+    {String? startDate, String? endDate, int lastId = -1, int pageCnt = 20}) async {
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
@@ -610,4 +610,83 @@ class ApiService {
     }
     return null;
   }
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  구매 요청 (JWT)
+  //  POST: /purchases/{saleProdId}
+  //
+
+  Future<JSON?> requestPurchase(
+    String saleProdId, {String? itemId, String? imgId}) async {
+    try {
+      var jwt = await AesManager().localJwt;
+      if (jwt == null) {
+        return null;
+      }
+      var urlStr = '/purchases/$saleProdId';
+      LOG('--> API requestPurchase : $urlStr');
+      final response = await http.post(
+        Uri.parse(httpUrl + urlStr),
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwt',
+          },
+          body: jsonEncode({
+            'itemId' : itemId,
+            'imgId'  : imgId,
+          })
+      );
+      LOG('--> API requestPurchase response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        if (resultJson['result'] != null) {
+          return resultJson['result'];
+        }
+      }
+    } catch (e) {
+      LOG('--> API requestPurchase error : $e');
+    }
+    return null;
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  구매 확인 (JWT)
+  //  PUT: /purchases/vf
+  //
+
+  Future<JSON?> checkPurchase(String impUid, String merchantId, String status) async {
+    try {
+      var jwt = await AesManager().localJwt;
+      if (jwt == null) {
+        return null;
+      }
+      var urlStr = '/purchases/vf';
+      LOG('--> API checkPurchase : $impUid / $merchantId / $status');
+      final response = await http.put(
+          Uri.parse(httpUrl + urlStr),
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwt',
+          },
+          body: jsonEncode({
+            'imp_uid'       : impUid,
+            'merchant_uid'  : merchantId,
+            'status'        : status,
+          })
+      );
+      LOG('--> API checkPurchase response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        return resultJson['result'];
+      }
+    } catch (e) {
+      LOG('--> API checkPurchase error : $e');
+    }
+    return null;
+  }
+
 }

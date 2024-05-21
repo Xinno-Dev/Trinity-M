@@ -175,6 +175,7 @@ class UserHelper {
     };
 
     if (address != null) {
+      LOG('--> setUser address : ${KEYPAIR_KEY + userKey} => $address');
       if (address.isNotEmpty) {
         await storage.write(key: ADDRESS_KEY + userKey, value: address);
       } else {
@@ -296,7 +297,6 @@ class UserHelper {
   }
 
   Future<String> get_key({String? userKeyTmp, String? address}) async {
-    LOG('--> get_key : ${KEYPAIR_KEY + (userKeyTmp ?? userKey)}');
     return await storage.read(key: KEYPAIR_KEY + (userKeyTmp ?? userKey) + (address ?? '')) ?? 'NOT_KEY';
   }
 

@@ -257,4 +257,20 @@ class MarketRepository {
     }
     return null;
   }
+
+  Future<PurchaseModel?> requestPurchase(
+    String saleProdId, {String? itemId, String? imgId}) async {
+    if (STR(saleProdId).isNotEmpty) {
+      var result = await _apiService.requestPurchase(
+          saleProdId, itemId: itemId, imgId: imgId);
+      if (result != null) {
+        return PurchaseModel.fromJson(result);
+      }
+    }
+    return null;
+  }
+
+  Future<JSON?> checkPurchase(String impUid, String merchantId, String status) async {
+    return await _apiService.checkPurchase(impUid, merchantId, status);
+  }
 }

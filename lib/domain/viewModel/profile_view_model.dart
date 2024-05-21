@@ -30,6 +30,7 @@ import '../../presentation/view/main_screen.dart';
 import '../../presentation/view/market/payment_list_screen.dart';
 import '../../presentation/view/profile/my_info_screen.dart';
 import '../../presentation/view/profile/profile_Identity_screen.dart';
+import '../../presentation/view/profile/webview_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
 import '../../presentation/view/signup/login_screen.dart';
 import '../../services/google_service.dart';
@@ -206,52 +207,70 @@ class ProfileViewModel {
       onTap: () {
         LOG('--> _mainDrawerItem: $type');
         context.pop();
-        switch (type) {
-          case DrawerActionType.my:
-            if (loginProv.isLogin) {
-              Navigator.of(context).push(createAniRoute(MyInfoScreen()));
-            } else {
-              Navigator.of(context).push(createAniRoute(LoginScreen(isAppStart: false)));
-            }
+        Future.delayed(Duration(milliseconds: 200)).then((_) {
+          switch (type) {
+            case DrawerActionType.my:
+              if (loginProv.isLogin) {
+                Navigator.of(context).push(
+                    createAniRoute(MyInfoScreen()));
+              } else {
+                Navigator.of(context).push(
+                    createAniRoute(LoginScreen(isAppStart: false)));
+              }
+              break;
+            case DrawerActionType.history:
+              if (loginProv.isLogin) {
+                Navigator.of(context).push(
+                    createAniRoute(PaymentListScreen()));
+              } else {
+                Navigator.of(context).push(
+                    createAniRoute(LoginScreen(isAppStart: false)));
+              }
+              break;
+            case DrawerActionType.terms:
+              Navigator.of(context).push(
+                  createAniRoute(WebviewScreen(
+                      title: TR(context, '이용약관'),
+                      url: '$API_HOST/terms/1')));
+              break;
+            case DrawerActionType.privacy:
+              Navigator.of(context).push(
+                  createAniRoute(WebviewScreen(
+                      title: TR(context, '개인정보처리방침'),
+                      url: '$API_HOST/terms/2')));
+              break;
+            case DrawerActionType.logout:
+              if (loginProv.isLogin) {
+                loginProv.logout().then((_) {
+                  loginProv.setMainPageIndex(0);
+                  Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
+                });
+              }
+              break;
+            case DrawerActionType.withdrawal:
+              if (loginProv.isLogin) {
+                loginProv.logout().then((_) {
+                  loginProv.setMainPageIndex(0);
+                  Fluttertoast.showToast(msg: TR(context, '회원탈퇴 완료'));
+                });
+              }
+              break;
+          case DrawerActionType.test_identity:
+            Navigator.of(context).push(
+              createAniRoute(ProfileIdentityScreen()));
             break;
-          case DrawerActionType.history:
-            if (loginProv.isLogin) {
-              Navigator.of(context).push(createAniRoute(PaymentListScreen()));
-            } else {
-              Navigator.of(context).push(createAniRoute(LoginScreen(isAppStart: false)));
-            }
-            break;
-          case DrawerActionType.logout:
-            if (loginProv.isLogin) {
+          case DrawerActionType.test_delete:
+            UserHelper().clearAllUser().then((_) {
               loginProv.logout().then((_) {
                 loginProv.setMainPageIndex(0);
-                Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
               });
-            }
+              Fluttertoast.showToast(msg: TR(context, '로컬정보 삭제 완료'));
+            });
             break;
-          case DrawerActionType.withdrawal:
-            if (loginProv.isLogin) {
-              loginProv.logout().then((_) {
-                loginProv.setMainPageIndex(0);
-                Fluttertoast.showToast(msg: TR(context, '회원탈퇴 완료'));
-              });
-            }
-            break;
-          // case DrawerActionType.test_identity:
-          //   Navigator.of(context).push(
-          //     createAniRoute(ProfileIdentityScreen()));
-          //   break;
-          // case DrawerActionType.test_delete:
-          //   UserHelper().clearAllUser().then((_) {
-          //     loginProv.logout().then((_) {
-          //       loginProv.setMainPageIndex(0);
-          //     });
-          //     Fluttertoast.showToast(msg: TR(context, '로컬정보 삭제 완료'));
-          //   });
-          //   break;
-          default:
-            break;
-        }
+            default:
+              break;
+          }
+        });
       });
   }
 
@@ -789,6 +808,7 @@ class ProfileViewModel {
     var passOrg = await Navigator.of(context).push(
         createAniRoute(LoginPassScreen()));
     if (STR(passOrg).isNotEmpty) {
+      loginProv.inputPass.first = passOrg;
       var result = await loginProv.setAccountName(loginProv.selectAccount!);
       Fluttertoast.showToast(
         msg: result == true ? "내정보 변경 성공" : "내정보 변경 실패",
@@ -802,9 +822,9 @@ class ProfileViewModel {
   }
 
   _setAccountInfo() async {
-    var passOrg = await Navigator.of(context).push(
-        createAniRoute(LoginPassScreen()));
-    if (STR(passOrg).isNotEmpty) {
+    // var passOrg = await Navigator.of(context).push(
+    //     createAniRoute(LoginPassScreen()));
+    // if (STR(passOrg).isNotEmpty) {
       var result = await loginProv.setAccountInfo(loginProv.selectAccount!);
       Fluttertoast.showToast(
         msg: result == true ? "내정보 변경 성공" : "내정보 변경 실패",
@@ -813,7 +833,7 @@ class ProfileViewModel {
         _restoreAccount();
       }
       return result;
-    }
-    return false;
+    // }
+    // return false;
   }
 }

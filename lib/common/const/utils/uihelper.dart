@@ -558,9 +558,11 @@ showCheckBoxImg(bool isSelect) {
 getLoginErrorCodeText(String codeText) {
   switch(codeText) {
     case '__invalid_signature__':
-      return ['잘못된 서명입니다.', '복구한 계정일 경우,\n복구파일 or 복구단어를 확인해 주세요.'];
+      return ['잘못된 서명입니다.', '복구한 계정일 경우,\n복구 파일 or 단어를 확인해 주세요.'];
+    case '__invalid_token__':
+      return ['잘못된 토큰입니다.', '로그아웃후 다시 로그인 해 주세요.'];
   }
-  return null;
+  return codeText;
 }
 
 showToast(String text) {
