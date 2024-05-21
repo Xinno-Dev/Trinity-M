@@ -55,25 +55,25 @@ class MarketViewModel {
     );
   }
 
-  showSliverProductList() {
+  showSliverProductList(BuildContext context) {
     return SliverPadding(
       padding: EdgeInsets.fromLTRB(15, 10, 15, 0),
       sliver: SliverList(
         delegate: SliverChildListDelegate(
         List.generate(prov.marketList.length, (index) =>
-            productListItem(prov.marketList[index])),
+            productListItem(context, prov.marketList[index])),
         ),
       ),
     );
   }
 
-  showProductList() {
+  showProductList(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.fromLTRB(15, 10, 15, kToolbarHeight.h),
       itemCount: prov.marketList.length,
       itemBuilder: (context, index) {
-        return productListItem(prov.marketList[index]);
+        return productListItem(context, prov.marketList[index]);
       }
     );
   }
@@ -199,11 +199,7 @@ class MarketViewModel {
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return _optionListItem(
-          prov.selectProduct!.itemList![index],
-          index,
-          isFirst: prov.selectProduct?.itemLastId == null,
-          isCanSelect: isSelect,
-        );
+          prov.selectProduct!.itemList![index], index, isCanSelect: isSelect);
       }
     );
   }
@@ -296,7 +292,8 @@ class MarketViewModel {
     );
   }
 
-  showStoreProductList(String title, {var isShowSeller = true, var isCanBuy = true}) {
+  showStoreProductList(BuildContext context, String title,
+    {var isShowSeller = true, var isCanBuy = true}) {
     // TODO: seller product list change..
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,7 +303,7 @@ class MarketViewModel {
             child: Text(title, style: typo16bold)
         ),
         ...List<Widget>.from(prov.marketRepo.productList.map((e) =>
-            productListItem(e, isShowSeller, isCanBuy)).toList())
+            productListItem(context, e, isShowSeller: isShowSeller, isCanBuy: isCanBuy)).toList())
       ],
     );
   }
@@ -324,23 +321,107 @@ class MarketViewModel {
   }
 
   showPurchaseList(BuildContext context) {
-    if (prov.purchaseList.isNotEmpty) {
-      return ListView.builder(
-        shrinkWrap: true,
-        itemCount: prov.purchaseList.length,
-        itemBuilder: (context, index) {
-          return _purchaseItem(context, prov.purchaseList[index], isShowDetail: true);
+    return FutureBuilder(
+        future: prov.getPurchaseList(),
+        builder: (context, snapShot) {
+          if (snapShot.hasData) {
+            if (prov.purchaseList.isNotEmpty) {
+              return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: prov.purchaseList.length,
+                  itemBuilder: (context, index) {
+                    return _purchaseItem(context, prov.purchaseList[index], isShowDetail: true);
+                  }
+              );
+            } else {
+              return Container(
+                height: 140.h,
+                alignment: Alignment.center,
+                child: Text('No purchase data..'),
+              );
+            }
+          } else {
+            return showLoadingFull();
+          }
         }
-      );
-    } else {
-      return Container(
-        height: 140.h,
-        alignment: Alignment.center,
-        child: Text('No purchase data..'),
-      );
-    }
+    );
   }
-  
+
+  showUserItemListShowType() {
+    return Container(
+      child: Row(
+        children: [
+          Spacer(),
+          InkWell(
+            onTap: () {
+              prov.userItemShowGrid = false;
+              prov.refresh();
+            },
+            child: Container(
+              padding: EdgeInsets.all(5),
+              color: Colors.transparent,
+              child: Icon(Icons.view_agenda_outlined, color: !prov.userItemShowGrid ? GRAY_80 : GRAY_20),
+            )),
+          InkWell(
+            onTap: () {
+              prov.userItemShowGrid = true;
+              prov.refresh();
+            },
+            child: Container(
+              padding: EdgeInsets.all(5),
+              color: Colors.transparent,
+              child: Icon(Icons.grid_view, color: prov.userItemShowGrid ? GRAY_80 : GRAY_20),
+            )),
+        ],
+      ),
+    );
+  }
+
+  showUserItemList(BuildContext context) {
+    return FutureBuilder(
+      future: prov.getUserItemList(),
+      builder: (context, snapShot) {
+        if (snapShot.hasData) {
+          if (prov.userItemList.isNotEmpty) {
+            if (prov.userItemShowGrid) {
+              return GridView.builder(
+                  shrinkWrap: true,
+                  itemCount: prov.userItemList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 2,
+                      mainAxisSpacing: 2
+                  ),
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return _optionListItem(
+                      prov.userItemList[index], index, isCanSelect: false);
+                  }
+              );
+            } else {
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: prov.userItemList.length,
+                itemBuilder: (context, index) {
+                  return _userProductListItem(
+                      context, prov.userItemList[index]);
+                }
+              );
+            }
+          } else {
+            return Container(
+              height: 140.h,
+              alignment: Alignment.center,
+              child: Text('No user item data..'),
+            );
+          }
+        } else {
+          return showLoadingFull();
+        }
+      }
+    );
+  }
+
   showPurchaseDate(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
@@ -561,8 +642,8 @@ class MarketViewModel {
     );
   }
 
-  productListItem(ProductModel item,
-    [var isShowSeller = true, var isCanBuy = true]) {
+  productListItem(BuildContext context, ProductModel item,
+    {var isShowSeller = true, var isCanBuy = true}) {
     return OpenContainer(
       transitionType: ContainerTransitionType.fadeThrough,
       closedElevation: 0,
@@ -628,6 +709,71 @@ class MarketViewModel {
     //     ),
     //   ),
     // );
+  }
+
+  _userProductListItem(BuildContext context, ProductItemModel item,
+      {EdgeInsets? margin}) {
+    return Container(
+      margin: margin ?? EdgeInsets.symmetric(vertical: 15),
+      color: Colors.transparent,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          InkWell(
+            onTap: () {
+              prov.selectUserProductItem = item;
+            },
+            child: Row(
+              children: [
+                if (STR(item.img).isNotEmpty)
+                  Container(
+                    width: 80,
+                    height: 80,
+                    margin: EdgeInsets.only(right: 15),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: showImage(STR(item.img), Size(80, 80)),
+                    )
+                  ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(STR(item.name), style: typo14bold.copyWith(height: 1.0)),
+                      SizedBox(height: 10),
+                      Text(STR(item.desc), style: typo14normal),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          ),
+          // Padding(
+          //   padding: EdgeInsets.only(top: 15),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //     children: [
+          //       InkWell(
+          //         onTap: () {
+          //           prov.selectUserProductItem = item;
+          //           Navigator.of(context).push(createAniRoute(PaymentItemScreen()));
+          //         },
+          //         child: Text(TR(context, '상품 정보'), style: typo14normal),
+          //       ),
+          //       Container(
+          //         width: 1,
+          //         height: 16.h,
+          //         color: GRAY_50,
+          //       ),
+          //       Text(TR(context, '구매 상세'), style: typo14normal),
+          //     ],
+          //   ),
+          // ),
+          Divider()
+        ],
+      )
+    );
   }
 
   _contentSellerBar(SellerModel info, {EdgeInsets? padding}) {
@@ -787,7 +933,7 @@ class MarketViewModel {
   }
 
   _optionListItem(ProductItemModel option, int index,
-    {var isFirst = false, var isCanSelect = false, EdgeInsets? padding}) {
+    {var isCanSelect = false, EdgeInsets? padding}) {
     return InkWell(
       onTap: () {
         if (isCanSelect) {

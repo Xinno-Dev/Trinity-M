@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iamport_flutter/model/payment_data.dart';
 import 'package:intl/intl.dart';
+import 'package:trinity_m_00/common/const/utils/userHelper.dart';
 import 'package:trinity_m_00/domain/model/user_model.dart';
 import 'package:uuid/uuid.dart';
 
@@ -41,9 +42,9 @@ class MarketProvider extends ChangeNotifier {
   ProductModel? selectProduct;
   PurchaseModel? purchaseInfo;
   PurchaseModel? selectPurchaseItem;
+  ProductItemModel? selectUserProductItem;
 
   List<ProductModel> showList = [];
-  List<PurchaseModel> purchaseList = [];
 
   late DateTime purchaseStartDate;
   late DateTime purchaseEndDate;
@@ -53,6 +54,7 @@ class MarketProvider extends ChangeNotifier {
   var selectDetailTab = 0;
   var optionIndex = -1;
   var isStartDataDone = false;
+  var userItemShowGrid = false;
 
   get marketRepo {
     return _repo;
@@ -85,7 +87,7 @@ class MarketProvider extends ChangeNotifier {
   }
 
   get detailPic {
-    return selectProduct?.repDetailImg;
+    return selectProduct?.img ?? selectProduct?.repDetailImg;
   }
 
   get externalPic {
@@ -180,11 +182,28 @@ class MarketProvider extends ChangeNotifier {
     return true;
   }
 
+  getPurchaseList() async {
+    var address = await UserHelper().get_address();
+    return await _repo.getPurchaseList(address);
+  }
+
+  getUserItemList() async {
+    return await _repo.getUserItemList();
+  }
+
+  List<PurchaseModel> get purchaseList {
+    return _repo.purchaseList;
+  }
+
+  List<ProductItemModel> get userItemList {
+    return _repo.userItemList;
+  }
+
   refreshProductList(BuildContext context, String? prodId) async {
     if (((selectCategory == 0 && prodId == _repo.lastId.toString()) ||
         checkLastProduct(prodId)) && prodId != _repo.checkLastId.toString()) {
       LOG('-------> update product list!! : $prodId');
-      _repo.checkLastId = int.parse(STR(prodId));
+      _repo.checkLastId = int.parse(STR(prodId, defaultValue: '0'));
       if (!await getProductList()) {
         Fluttertoast.showToast(msg: TR(context, '상품 목록 마지막입니다.'),
             toastLength: Toast.LENGTH_SHORT);

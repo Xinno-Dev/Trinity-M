@@ -30,6 +30,7 @@ import '../../presentation/view/main_screen.dart';
 import '../../presentation/view/market/payment_list_screen.dart';
 import '../../presentation/view/profile/my_info_screen.dart';
 import '../../presentation/view/profile/profile_Identity_screen.dart';
+import '../../presentation/view/profile/user_item_list_screen.dart';
 import '../../presentation/view/profile/webview_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
 import '../../presentation/view/signup/login_screen.dart';
@@ -571,7 +572,7 @@ class ProfileViewModel {
                 textStyle: typo14semibold,
                 isSmallButton: true,
                 onTap: () {
-
+                  Navigator.of(context).push(createAniRoute(UserItemListScreen()));
                 },
                 text: TR(context, '보유 상품'),
               )

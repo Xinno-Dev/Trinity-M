@@ -39,6 +39,7 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       itemLastId: (json['itemLastId'] as num?)?.toInt(),
       itemCountMax: (json['itemCountMax'] as num?)?.toInt(),
       itemCheckId: (json['itemCheckId'] as num?)?.toInt(),
+      img: json['img'] as String?,
     );
 
 Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
@@ -74,5 +75,6 @@ Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
   writeNotNull('itemLastId', instance.itemLastId);
   writeNotNull('itemCountMax', instance.itemCountMax);
   writeNotNull('itemCheckId', instance.itemCheckId);
+  writeNotNull('img', instance.img);
   return val;
 }

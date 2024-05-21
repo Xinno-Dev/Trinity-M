@@ -64,7 +64,7 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
           children: [
             Container(
               margin: EdgeInsets.only(top: 40.h),
-              child: _viewModel.showProductList(),
+              child: _viewModel.showProductList(context),
             ),
             Align(
               alignment: Alignment.topLeft,

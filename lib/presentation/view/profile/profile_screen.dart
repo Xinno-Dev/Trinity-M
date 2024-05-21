@@ -55,6 +55,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   if (prov.isLogin)...[
                     _viewModel.showProfile(context),
                     _marketViewModel.showStoreProductList(
+                        context,
                         TR(context, 'Market'),
                         isShowSeller: false, isCanBuy: false),
                   ]

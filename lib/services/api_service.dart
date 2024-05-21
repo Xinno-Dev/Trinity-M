@@ -437,6 +437,38 @@ class ApiService {
 
   //////////////////////////////////////////////////////////////////////////
   //
+  //  유저 보유 상품 조회 (JWT)
+  //  GET: /items/owner
+  //
+
+  Future<JSON?> getUserItemList() async {
+    try {
+      var jwt = await AesManager().localJwt;
+      if (jwt == null) {
+        return null;
+      }
+      LOG('--> API getUserItemList : $jwt');
+      final response = await http.get(
+        Uri.parse(httpUrl + '/items/owner'),
+        headers: {
+          'Authorization': 'Bearer $jwt',
+        },
+      );
+      LOG('--> API getUserItemList response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        if (resultJson['result'] != null) {
+          return resultJson['result'];
+        }
+      }
+    } catch (e) {
+      LOG('--> API getUserItemList error : $e');
+    }
+    return null;
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  //
   //  상품 카테고리 리스트
   //  /tags
   //
@@ -574,19 +606,20 @@ class ApiService {
   //  GET: /purchases/{buyerAddr}
   //
 
-  Future<JSON?> getPurchasesList(String buyerAddr,
-    {String? startDate, String? endDate, int lastId = -1, int pageCnt = 20}) async {
+  Future<JSON?> getPurchasesList(
+    String buyerAddr, String? startDate, String? endDate,
+    {int lastId = -1, int pageCnt = 20}) async {
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
         return null;
       }
-      var urlStr = '/purchases/${buyerAddr}?pageCnt=$pageCnt';
+      var urlStr = '/purchases/${buyerAddr}';
       if (STR(startDate).isNotEmpty) {
         urlStr += '?startDate=$startDate';
       }
       if (STR(endDate).isNotEmpty) {
-        urlStr += '?startDate=$endDate';
+        urlStr += '?endDate=$endDate';
       }
       if (lastId >= 0) {
         urlStr += '?lastId=$lastId';

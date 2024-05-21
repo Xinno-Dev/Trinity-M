@@ -57,6 +57,9 @@ class ProductModel {
   int?  itemCountMax;   // 아이템 전체 갯수
   int?  itemCheckId;    // 아이템 목록 조회 마지막 ID
 
+  // 구매 정보..
+  String?   img;        // 상품 목록 이미지
+
   ProductModel({
     this.saleProdId,
     this.itemType,
@@ -86,6 +89,8 @@ class ProductModel {
     this.itemLastId,
     this.itemCountMax,
     this.itemCheckId,
+
+    this.img,
   });
 
   get itHasDetail {

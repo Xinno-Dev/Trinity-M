@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:trinity_m_00/common/const/utils/userHelper.dart';
 import 'package:trinity_m_00/domain/model/purchase_model.dart';
 
 import '../../../../domain/model/product_item_model.dart';
@@ -17,8 +18,10 @@ class MarketRepository {
 
   Map<String, ProductModel> productData = {};
   Map<String, ProductItemModel> optionData = {};
-  List<ProductModel> productList = [];
+  List<ProductModel>  productList = [];
   List<CategoryModel> categoryList = [];
+  List<PurchaseModel> purchaseList = [];  // 구매 목록 (구매완료, 취소)
+  List<ProductItemModel> userItemList = [];  // 구매한 아이템 목록
 
   var titleN      = ['주말 1박 2일 36홀 (4인) 조식, 숙박, 카트 무료 지원','고메 겟어웨이','제주 봄 미식 프로모션','연박 특가 프로모션','연간 회원권 2024',];
   var sellerN     = ['GoldenBAY Golf & Resort','PARK HYATT Seoul','PARNAS HOTEL JEJU','PARK HYATT Seoul','PARNAS HOTEL JEJU'];
@@ -36,6 +39,7 @@ class MarketRepository {
     productData = {}; // product cache data..
     optionData  = {}; // product item cache data..
     productList = [];
+    userItemList = [];
 
     // // add sample products..
     // for (var title in titleN) {
@@ -233,9 +237,9 @@ class MarketRepository {
   Future<ProductModel?> getProductDetailFromId(String saleProdId) async {
     var prod = ProductModel();
     try {
-      var jsonData = await _apiService.getProductDetail(saleProdId);
-      if (jsonData != null) {
-        prod = ProductModel.fromJson(jsonData);
+      var result = await _apiService.getProductDetail(saleProdId);
+      if (result != null) {
+        prod = ProductModel.fromJson(result);
         // update option items..
         prod = await getProductImageItemList(prod);
         prod = setProductListItem(prod);
@@ -245,6 +249,50 @@ class MarketRepository {
       LOG('--> getProductDetailFromId error : $e');
     }
     return prod;
+  }
+
+  Future<List<PurchaseModel>> getPurchaseList(address, {String? startDate, String? endDate}) async {
+    var jsonData = await _apiService.getPurchasesList(address, startDate, endDate);
+    if (jsonData != null) {
+      var data = jsonData['data'];
+      for (var item in data) {
+        var newItem = PurchaseModel.fromJson(item);
+        var isAdd = true;
+        for (var orgItem in purchaseList) {
+          if (orgItem.merchantUid == newItem.merchantUid) {
+            isAdd = false;
+            purchaseList[purchaseList.indexOf(orgItem)] = newItem;
+            break;
+          }
+        }
+        if (isAdd) {
+          purchaseList.add(newItem);
+        }
+      }
+    }
+    return purchaseList;
+  }
+
+  Future<List<ProductItemModel>> getUserItemList() async {
+    var jsonData = await _apiService.getUserItemList();
+    if (jsonData != null) {
+      var data = jsonData['data'];
+      for (var item in data) {
+        var newItem = ProductItemModel.fromJson(item);
+        var isAdd = true;
+        for (var orgItem in userItemList) {
+          if (orgItem.itemId == newItem.itemId) {
+            isAdd = false;
+            userItemList[userItemList.indexOf(orgItem)] = newItem;
+            break;
+          }
+        }
+        if (isAdd) {
+          userItemList.add(newItem);
+        }
+      }
+    }
+    return userItemList;
   }
 
   setProductListItem(ProductModel newItem) {
