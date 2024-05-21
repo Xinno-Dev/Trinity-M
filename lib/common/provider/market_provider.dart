@@ -291,6 +291,7 @@ class MarketProvider extends ChangeNotifier {
     var impUid      = STR(info['imp_uid']);
     var status      = STR(info['status']);
     var merchantId  = STR(purchaseInfo!.merchantUid);
+    await Future.delayed(Duration(seconds: 1)); // 딜레이.. 1초..
     var result = await _repo.checkPurchase(impUid, merchantId, status);
     LOG('--> checkPurchase result : ${STR(result?['status'])}');
     if (result != null && STR(result['status']) == '4') {
