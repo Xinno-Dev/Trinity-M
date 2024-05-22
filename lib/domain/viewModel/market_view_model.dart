@@ -158,7 +158,7 @@ class MarketViewModel {
                         child: TabBarView(
                           physics: NeverScrollableScrollPhysics(),
                           children: [
-                            showDetailTab(),
+                            showDetailTab(prov.externalPic),
                             showOptionTab(),
                           ],
                         ),
@@ -204,18 +204,20 @@ class MarketViewModel {
     );
   }
 
-  showDetailTab() {
-    if (!STR(prov.externalPic).contains('http')) {
+  showDetailTab(String? externalUrl, {double? height}) {
+    LOG('--> showDetailTab : $externalUrl');
+    if (STR(externalUrl).isEmpty) {
       return Container(
         height: 100.h,
         child: Center(
-          child: Text(TR(context, 'No detail info..')),
+          child: Text('No detail info..'),
         ),
       );
     }
     return Container(
+      height: height,
       alignment: Alignment.topCenter,
-      child: showImage(prov.externalPic, Size.zero, fit: BoxFit.fitWidth),
+      child: showImage(STR(externalUrl), Size.zero, fit: BoxFit.fitWidth),
     );
   }
 
@@ -349,6 +351,7 @@ class MarketViewModel {
 
   showUserItemListShowType() {
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 15),
       child: Row(
         children: [
           Spacer(),
@@ -394,8 +397,9 @@ class MarketViewModel {
                   ),
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
-                    return _optionListItem(
-                      prov.userItemList[index], index, isCanSelect: false);
+                    final image = getUserItemImage(prov.userItemList[index]);
+                    return _userOptionListItem(
+                      prov.userItemList[index], index, image: image);
                   }
               );
             } else {
@@ -418,6 +422,128 @@ class MarketViewModel {
         } else {
           return showLoadingFull();
         }
+      }
+    );
+  }
+
+  showUserItemDetail(BuildContext context, ProductItemModel item) {
+    final width  = MediaQuery.of(context).size.width * 0.9;
+    final height = MediaQuery.of(context).size.height * 0.9;
+    final image  = getUserItemImage(item, isShowEmpty: false);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: WHITE,
+      builder: (context) {
+        return Container(
+          height: height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.0.sp),
+              topRight: Radius.circular(16.0.sp),
+            ),
+            color: WHITE,
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+            children: [
+              Container(
+                height: 30,
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(bottom: 12),
+                child: Container(
+                  width: 60,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: GRAY_20,
+                  ),
+                ),
+              ),
+              if (item.issuer != null)...[
+                _contentSellerBar(item.issuer!),
+              ],
+              SizedBox(height: 10),
+              if (image.isNotEmpty)...[
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: showImage(image, Size.square(width))
+                ),
+              ],
+              _barcodeButtonBox(context, item),
+              _contentTitleBarFromItem(item, isShowAmount: false),
+              _contextExternalImage('assets/samples/detail_00.png',
+                  padding: EdgeInsets.only(top: 10)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _barcodeButtonBox(BuildContext context, ProductItemModel item) {
+    final width = MediaQuery.of(context).size.width * 0.8;
+    return StatefulBuilder(
+      builder: (context, setState) {
+        final isQR = prov.userItemShowQR;
+        return Container(
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          prov.userItemShowQR = false;
+                        });
+                      },
+                      child: Container(
+                        height: 30,
+                        color: Colors.transparent,
+                        alignment: Alignment.center,
+                        child: Text(TR(context, '바코드'),
+                            style: typo14bold.copyWith(
+                                color: !isQR ? GRAY_80 : GRAY_20)),
+                      ),
+                    )),
+                    Container(
+                      width: 1,
+                      height: 30,
+                      color: GRAY_50,
+                    ),
+                    Expanded(child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          prov.userItemShowQR = true;
+                        });
+                      },
+                      child: Container(
+                        height: 30,
+                        color: Colors.transparent,
+                        alignment: Alignment.center,
+                        child: Text(TR(context, 'QR'),
+                            style: typo14bold.copyWith(
+                              color: isQR ? GRAY_80 : GRAY_20))
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+              if (!prov.userItemShowQR)
+                showImage(
+                  'assets/samples/barcode_00.png', Size(width, width / 4)),
+              if (prov.userItemShowQR)
+                Padding(padding: EdgeInsets.symmetric(vertical: 10),
+                child :showImage(
+                  'assets/samples/qr_00.png', Size.square(width / 1.5)),
+                )
+            ],
+          )
+        );
       }
     );
   }
@@ -711,42 +837,51 @@ class MarketViewModel {
     // );
   }
 
+  getUserItemImage(ProductItemModel item, {var isShowEmpty = true}) {
+    if (STR(item.img).isNotEmpty) return STR(item.img);
+    var img = prov.marketRepo.getProductImgFromData(item.itemId);
+    return img ?? (isShowEmpty ? EMPTY_IMAGE : '');
+  }
+
   _userProductListItem(BuildContext context, ProductItemModel item,
       {EdgeInsets? margin}) {
+    final image = getUserItemImage(item);
     return Container(
-      margin: margin ?? EdgeInsets.symmetric(vertical: 15),
       color: Colors.transparent,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           InkWell(
             onTap: () {
               prov.selectUserProductItem = item;
+              showUserItemDetail(context, item);
             },
-            child: Row(
-              children: [
-                if (STR(item.img).isNotEmpty)
-                  Container(
-                    width: 80,
-                    height: 80,
-                    margin: EdgeInsets.only(right: 15),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: showImage(STR(item.img), Size(80, 80)),
-                    )
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 15),
+              child: Row(
+                children: [
+                  if (image.isNotEmpty)
+                    Container(
+                      width: 80,
+                      height: 80,
+                      margin: EdgeInsets.only(right: 15),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: showImage(image, Size(80, 80)),
+                      )
+                    ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(STR(item.name), style: typo14bold.copyWith(height: 1.0)),
+                        SizedBox(height: 10),
+                        Text(STR(item.desc), style: typo12normal),
+                      ],
+                    ),
                   ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(STR(item.name), style: typo14bold.copyWith(height: 1.0)),
-                      SizedBox(height: 10),
-                      Text(STR(item.desc), style: typo14normal),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             )
           ),
           // Padding(
@@ -770,7 +905,7 @@ class MarketViewModel {
           //     ],
           //   ),
           // ),
-          Divider()
+          Divider(height: 1)
         ],
       )
     );
@@ -883,6 +1018,29 @@ class MarketViewModel {
   }
 
   _contentTitleBar(ProductModel item, {EdgeInsets? padding, var isShowAmount = true}) {
+    var priceStr = CommaIntText(INT(item.itemPrice).toString());
+    var unitStr = ' ${item.priceUnit}';
+    var amountStr = '[수량 ${item.amountText}]';
+    return _contentTitleTextBar(
+      STR(item.name),
+      price: priceStr,
+      unit: unitStr,
+      amount: amountStr,
+      padding: padding,
+      isShowAmount: isShowAmount
+    );
+  }
+
+  _contentTitleBarFromItem(ProductItemModel item, {EdgeInsets? padding, var isShowAmount = true}) {
+    return _contentTitleTextBar(
+        STR(item.name),
+        padding: padding,
+        isShowAmount: isShowAmount
+    );
+  }
+
+  _contentTitleTextBar(String title,
+    {String? price, String? unit, String? amount, EdgeInsets? padding, var isShowAmount = true}) {
     return Container(
       padding: padding,
       child: Column(
@@ -890,14 +1048,17 @@ class MarketViewModel {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 10),
-          Text(STR(item.name), style: typo16bold),
+          Text(title, style: typo16bold),
           Row(
             children: [
-              Text(CommaIntText(INT(item.itemPrice).toString()), style: typo18bold),
-              Text(' ${item.priceUnit}', style: typo14medium),
-              if (isShowAmount)...[
+              if (price != null)...[
+                Text(price, style: typo18bold),
+                if (unit != null)
+                  Text(unit, style: typo14medium),
+              ],
+              if (isShowAmount && amount != null)...[
                 SizedBox(width: 10),
-                Text('[수량 ${item.amountText}]', style: typo14medium),
+                Text(amount, style: typo14medium),
               ],
             ],
           )
@@ -906,34 +1067,62 @@ class MarketViewModel {
     );
   }
 
+  _contextExternalImage(String imageUrl, {EdgeInsets? padding}) {
+    return FutureBuilder(
+      future: getNetworkImageInfo(imageUrl),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          var info = snapshot.data as NetworkImageInfo;
+          return Container(
+            padding: padding,
+            height: info.size?.height,
+            child: showDetailTab(imageUrl, height: info.size?.height)
+          );
+        } else {
+          return showLoadingItem(30);
+        }
+      }
+    );
+  }
+
   _contentDescription(ProductModel item, {EdgeInsets? padding}) {
+    return _contentDescriptionStr(
+        STR(item.description), desc2: item.description2, padding: padding);
+  }
+
+  _contentDescriptionFromItem(ProductItemModel item, {EdgeInsets? padding}) {
+    return _contentDescriptionStr(
+        STR(item.desc), desc2: item.desc2, padding: padding);
+  }
+
+  _contentDescriptionStr(String desc, {String? desc2, EdgeInsets? padding}) {
     return Container(
-      padding: padding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(STR(item.description), style: typo14medium),
-          if (STR(item.description2).isNotEmpty)...[
-            SizedBox(height: 10),
-            Text(STR(item.description2), style: typo14medium),
+        padding: padding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(desc, style: typo14medium),
+            if (STR(desc2).isNotEmpty)...[
+              SizedBox(height: 10),
+              Text(STR(desc2), style: typo14medium),
+            ],
+            if (STR(prov.optionDesc).isNotEmpty || STR(prov.optionDesc2).isNotEmpty)...[
+              Divider(height: 50),
+            ],
+            if (STR(prov.optionDesc).isNotEmpty)...[
+              Text(STR(prov.optionDesc), style: typo14medium),
+              SizedBox(height: 10),
+            ],
+            if (STR(prov.optionDesc2).isNotEmpty)...[
+              Text(STR(prov.optionDesc2), style: typo14medium),
+            ],
           ],
-          if (STR(prov.optionDesc).isNotEmpty || STR(prov.optionDesc2).isNotEmpty)...[
-            Divider(height: 50),
-          ],
-          if (STR(prov.optionDesc).isNotEmpty)...[
-            Text(STR(prov.optionDesc), style: typo14medium),
-            SizedBox(height: 10),
-          ],
-          if (STR(prov.optionDesc2).isNotEmpty)...[
-            Text(STR(prov.optionDesc2), style: typo14medium),
-          ],
-        ],
-      )
+        )
     );
   }
 
   _optionListItem(ProductItemModel option, int index,
-    {var isCanSelect = false, EdgeInsets? padding}) {
+    {var isCanSelect = false, EdgeInsets? padding, String? image}) {
     return InkWell(
       onTap: () {
         if (isCanSelect) {
@@ -957,7 +1146,7 @@ class MarketViewModel {
           child: Stack(
             children: [
               SizedBox.expand(
-                child: showImage(STR(option.img), Size.zero, fit: BoxFit.cover),
+                child: showImage(image ?? STR(option.img), Size.zero, fit: BoxFit.cover),
               ),
               Positioned(
                 bottom: 3,
@@ -972,6 +1161,30 @@ class MarketViewModel {
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+
+  _userOptionListItem(ProductItemModel option, int index,
+      {EdgeInsets? padding, String? image}) {
+    return InkWell(
+      onTap: () {
+      },
+      child: Container(
+        padding: padding,
+        child: Stack(
+          children: [
+            SizedBox.expand(
+              child: showImage(image ?? STR(option.img), Size.zero, fit: BoxFit.cover),
+            ),
+            Positioned(
+              bottom: 3,
+              left: 3,
+              child: Text(STR(option.itemId), style: typo12shadowR.copyWith(fontSize: 10)),
+            ),
+          ],
         ),
       ),
     );

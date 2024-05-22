@@ -31,6 +31,7 @@ class ProductItemModel {
   String?   type;
   String?   symbol;
   String?   totalSupply;  // 총 발행량
+  String?   externalUrl;
 
   SellerModel?  issuer;
 
@@ -51,6 +52,7 @@ class ProductItemModel {
     this.symbol,
     this.totalSupply,
     this.issuer,
+    this.externalUrl,
 
     this.createTime,
     this.updateTime,

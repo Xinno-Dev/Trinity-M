@@ -19,8 +19,8 @@ showImage(String imagePath, Size size, {BoxFit? fit}) {
         width: size.width,
         height: size.height,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: GRAY_20
+            borderRadius: BorderRadius.circular(8),
+            color: GRAY_20
         ),
         alignment: Alignment.center,
         child: showLoadingFull(min(size.height, size.width) * 0.25),

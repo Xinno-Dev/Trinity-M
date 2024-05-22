@@ -81,6 +81,7 @@ const String EX_TEST_MN_01 = 'frown gadget pattern black quality staff connect t
 const String EX_TEST_MN_02 = 'layer replace clay dinosaur agree jazz unit peace roast combine chase relief'; // kakao: jubal2000@hanmail.net
 const String EX_TEST_MN_03 = 'apart sand present sunny destroy police either idle gospel anxiety ranch junk'; // kakao: jubal2001@gmail.com(from home)
 
+const String EMPTY_IMAGE = 'assets/images/app_icon_128_g.png';
 
 const int DECIMAL_PLACES = 8;
 const double PROFILE_RADIUS = 120.0;

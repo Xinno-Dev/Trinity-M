@@ -100,6 +100,22 @@ class MarketRepository {
     // }
   }
 
+  getProductFromData(String itemId) {
+    for (var p in productList) {
+      for (var item in p.itemList ?? []) {
+        if (item.itemId == itemId) {
+          return p;
+        }
+      }
+    }
+    return null;
+  }
+
+  getProductImgFromData(String itemId) {
+    ProductModel? p = getProductFromData(itemId);
+    return p?.repImg ?? p?.repDetailImg ?? p?.img;
+  }
+
   getStartData() async {
     categoryList = [
       CategoryModel(

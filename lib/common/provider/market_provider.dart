@@ -55,6 +55,7 @@ class MarketProvider extends ChangeNotifier {
   var optionIndex = -1;
   var isStartDataDone = false;
   var userItemShowGrid = false;
+  var userItemShowQR = false;
 
   get marketRepo {
     return _repo;

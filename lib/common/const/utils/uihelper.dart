@@ -207,7 +207,7 @@ Widget getCoinIcon(CoinModel? coin, {var size = 30.0}) {
   );
 }
 
-Widget showLoadingItem([var itemHeight = 60.0]) {
+Widget showLoadingItem([double itemHeight = 60.0]) {
   return Container(
     height: itemHeight,
     width: double.infinity,

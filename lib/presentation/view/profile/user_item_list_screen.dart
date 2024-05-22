@@ -37,24 +37,24 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(TR(context, '보유 상품')),
-          centerTitle: true,
-          titleTextStyle: typo16bold,
-          backgroundColor: Colors.white,
-          // leading: IconButton(
-          //   onPressed: context.pop,
-          //   icon: Icon(Icons.close),
-          // ),
-        ),
-        backgroundColor: Colors.white,
-        body: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            children: [
-              _viewModel.showUserItemListShowType(),
-              _viewModel.showUserItemList(context),
-            ]
+        appBar: defaultAppBar(TR(context, '보유 상품')),
+        backgroundColor: WHITE,
+        body: Stack(
+          children: [
+            Container(
+              padding: EdgeInsets.fromLTRB(15, 40, 15, 10),
+              child: _viewModel.showUserItemList(context),
+            ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Column(
+                children: [
+                  _viewModel.showUserItemListShowType(),
+                  Divider(),
+                ],
+              )
+            )
+          ]
         ),
       ),
     );
