@@ -18,6 +18,7 @@ import '../../../domain/model/address_model.dart';
 import '../signup/login_pass_screen.dart';
 import '../signup/signup_bio_screen.dart';
 import '../signup/signup_mnemonic_screen.dart';
+import 'profile_Identity_screen.dart';
 
 class MyInfoScreen extends ConsumerStatefulWidget {
   MyInfoScreen({super.key});
@@ -70,7 +71,11 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                   _viewModel.myInfoEditItem('본인인증',
                     [[prov.userIdentityYN ? '인증완료' : '미완료',
                       prov.userIdentityYN ? '' : '인증']], onEdit: () {
-
+                        Navigator.of(context).push(
+                          createAniRoute(ProfileIdentityScreen())).then((result) {
+                          prov.userInfo!.identityYN = result;
+                          prov.refresh();
+                        });
                     }),
                   grayDivider(),
                   _viewModel.myInfoEditItem('계정',

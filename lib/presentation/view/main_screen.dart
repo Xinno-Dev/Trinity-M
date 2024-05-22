@@ -15,6 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart' as provider;
 
 import '../../common/common_package.dart';
+import '../../common/const/utils/appVersionHelper.dart';
 import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/uihelper.dart';

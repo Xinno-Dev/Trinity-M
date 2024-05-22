@@ -1,6 +1,8 @@
 
 import 'dart:convert';
 
+import 'package:package_info_plus/package_info_plus.dart';
+
 import '../../../common/common_package.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -134,7 +136,7 @@ enum LoginErrorType {
 final drawerTitleN = [
   '내 정보', '구매 내역', '-',
   '이용약관', '개인정보처리방침', '버전 정보', '로그아웃', '회원탈퇴',
-  '본인인증(test)', '로컬정보 삭제(test)'];
+  '로컬정보 삭제(test)'];
 
 enum DrawerActionType {
   my,
@@ -145,7 +147,6 @@ enum DrawerActionType {
   version,
   logout,
   withdrawal,
-  test_identity,
   test_delete;
 
   String get title {
@@ -192,6 +193,7 @@ class LoginProvider extends ChangeNotifier {
   String? socialName;
   String? socialId;
   String? emailVfCode;
+  String  appVersion = '1,0.0(0)';
 
   get userPass {
     return inputPass.first;
@@ -231,9 +233,14 @@ class LoginProvider extends ChangeNotifier {
 
   init() {
     selectAccount = null;
-    userInfo    = null;
-    socialName  = null;
-    socialId    = null;
+    userInfo      = null;
+    socialName    = null;
+    socialId      = null;
+    emailStep     = IS_DEV_MODE ? EmailSignUpStep.ready : EmailSignUpStep.none;
+    PackageInfo.fromPlatform().then((info) {
+      appVersion = info.version;
+      LOG('--> appVersion: $appVersion');
+    });
   }
 
   setMaskStatus(bool status) {
@@ -396,7 +403,10 @@ class LoginProvider extends ChangeNotifier {
         await UserHelper().setUserKey(STR(userInfo?.email));
         await _refreshAccountList();
         userInfo = await _setAccountListFromServer();
-        userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
+        if (userInfo != null) {
+          userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
+          return true;
+        }
       }
     }
     return false;
@@ -623,7 +633,7 @@ class LoginProvider extends ChangeNotifier {
       var type    = STR(userInfo?.loginType?.name);
       var email   = STR(userInfo?.email);
       var token   = STR(userInfo?.socialToken);
-      LOG('--> startLogin info : $type / $email / $nickId / $userPass');
+      LOG('--> startLogin info : $type / $email / $nickId / $userPass / $token');
       if (type == 'email') {
         if (key != null) {
           var pubKey = await getPublicKey(key.d);
@@ -643,6 +653,9 @@ class LoginProvider extends ChangeNotifier {
         } else {
           if (onError != null) onError(LoginErrorType.loginFail, null);
         }
+      } else if (type == 'kakaotalk' && token.isEmpty) {
+        final user = await startKakaoLogin();
+        token = STR(user.properties?['token']);
       }
       if (token.isNotEmpty) {
         var result = await apiService.loginUser(
@@ -707,9 +720,8 @@ class LoginProvider extends ChangeNotifier {
       if (sig != null) {
         var addResult = await apiService.addAccount(nickId, walletAddress, sig);
         if (addResult) {
-          LOG('--> addNewAccount success !!');
           var result = await startLoginWithKey();
-          LOG('--> loginAuto result : $result');
+          LOG('--> addNewAccount result : $result');
           if (result != true) {
             return false;
           }
@@ -840,7 +852,7 @@ class LoginProvider extends ChangeNotifier {
   Future<EccKeyPair?> getAccountKey({String? passOrg, String? tmpKeyStr}) async {
     try {
       passOrg ??= userPass;
-      LOG('--> getAccountKey : [$passOrg] / ${selectAccount?.toJson()}');
+      LOG('--> getAccountKey : [$passOrg] / ${selectAccount?.address}');
       var keyData = tmpKeyStr ?? selectAccount?.keyPair;
       if (passOrg != null && STR(keyData).isNotEmpty) {
         var keyStr = await decryptData(passOrg, keyData!);
@@ -914,10 +926,6 @@ class LoginProvider extends ChangeNotifier {
     return emailStep == EmailSignUpStep.check;
   }
 
-  get isPassCheckDone {
-    return inputPass[0] == inputPass[1];
-  }
-
   get isNickCheckReady {
     return nickStep == NickCheckStep.ready;
   }
@@ -955,7 +963,6 @@ class LoginProvider extends ChangeNotifier {
               if (result) {
                 emailStep = EmailSignUpStep.check;
                 emailVfCode = vfCode;
-                await UserHelper().setUserKey(inputEmail);
                 await UserHelper().setUser(vfCode: vfCode);
                 notifyListeners();
               } else {

@@ -8,6 +8,7 @@ import '../../../../presentation/view/signup/login_pass_screen.dart';
 import '../../../common/common_package.dart';
 import '../../../common/const/constants.dart';
 import '../../../common/const/utils/languageHelper.dart';
+import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
@@ -30,7 +31,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
   void initState() {
     super.initState();
     emailInputController.text = ref.read(loginProvider).inputEmail;
-    ref.read(loginProvider).emailStep = IS_DEV_MODE ? EmailSignUpStep.ready : EmailSignUpStep.none;
+    // ref.read(loginProvider).emailStep = IS_DEV_MODE ? EmailSignUpStep.ready : EmailSignUpStep.none;
   }
 
   @override
@@ -121,15 +122,17 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
             ],
           )
         ),
-        bottomNavigationBar: loginProv.isEmailCheckDone
+        bottomNavigationBar: loginProv.inputEmail.isNotEmpty
             ? PrimaryButton(
           text: TR(context, '인증 완료'),
           round: 0,
-          onTap: () {
+          onTap: () async {
+            await UserHelper().setUserKey(loginProv.inputEmail);
             loginProv.emailVfCheck(onError: (error) {
               showLoginErrorTextDialog(context, error.errorText);
             }).then((result) {
               if (result == true) {
+                showToast(TR(context, '이메일 인증 완료'));
                 Navigator.of(context).push(
                     createAniRoute(SignUpPassScreen()));
               } else if (result == false) {

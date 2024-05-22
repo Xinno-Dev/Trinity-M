@@ -1,6 +1,8 @@
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../common/common_package.dart';
+import '../../../common/const/utils/appVersionHelper.dart';
+import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/provider/market_provider.dart';
 import '../../../domain/viewModel/market_view_model.dart';
 
@@ -43,15 +45,12 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
     final prov = ref.read(marketProvider);
     prov.getProductList();
     _viewModel = MarketViewModel();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      checkAppUpdate(context);
+    });
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() async {
-    final prov = ref.read(marketProvider);
-    // prov.selectProduct!.
-    super.didChangeDependencies();
-  }
 
   @override
   Widget build(BuildContext context) {

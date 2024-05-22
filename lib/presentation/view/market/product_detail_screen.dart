@@ -69,7 +69,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             }
           }
         ),
-        bottomNavigationBar: widget.isCanBuy ?
+        bottomNavigationBar: (widget.isCanBuy && ref.read(loginProvider).isLogin) ?
         OpenContainer(
           transitionType: ContainerTransitionType.fadeThrough,
           closedBuilder: (context, builder) {
@@ -79,13 +79,23 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             );
           },
           openBuilder: (context, builder) {
-            if (ref.read(loginProvider).isLogin) {
-              return ProductBuyScreen();
-            } else {
-              return LoginScreen(isAppStart: false);
-            }
+            return ProductBuyScreen();
           },
-        ) : null
+        ) : PrimaryButton(
+          onTap: () {
+            Navigator.of(context).push(
+              createAniRoute(LoginScreen(isAppStart: false, isWillReturn: true)))
+              .then((result) {
+                if (BOL(result)) {
+                  prov.refresh();
+                  Navigator.of(context).push(
+                    createAniRoute(ProductBuyScreen()));
+                }
+            });
+          },
+          text: TR(context, '구매하기'),
+          round: 0,
+        )
       ),
     );
   }

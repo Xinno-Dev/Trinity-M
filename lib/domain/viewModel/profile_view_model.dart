@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/provider/login_provider.dart';
@@ -35,6 +36,7 @@ import '../../presentation/view/profile/webview_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
 import '../../presentation/view/signup/login_screen.dart';
 import '../../services/google_service.dart';
+import '../../services/iamport_service.dart';
 import '../model/address_model.dart';
 
 class ProfileViewModel {
@@ -138,7 +140,8 @@ class ProfileViewModel {
                       children: [
                         InkWell(
                           onTap: context.pop,
-                          child: Icon(Icons.close, size: 30, color: GRAY_30, weight: 1),
+                          child: Icon(Icons.close, size: 30,
+                            color: GRAY_30, weight: 1),
                         )
                       ],
                     ),
@@ -146,7 +149,9 @@ class ProfileViewModel {
                     if (loginProv.isLogin)...[
                       Text(loginProv.accountName, style: typo18bold),
                       if (loginProv.accountSubtitle.isNotEmpty)
-                        Text(loginProv.accountSubtitle, style: typo14normal, maxLines: 1, overflow: TextOverflow.fade),
+                        Text(loginProv.accountSubtitle,
+                          style: typo14normal, maxLines: 1,
+                          overflow: TextOverflow.fade),
                       SizedBox(height: 10),
                       Text(loginProv.accountMail, style: typo14semibold),
                     ],
@@ -154,7 +159,8 @@ class ProfileViewModel {
                       InkWell(
                         onTap: () {
                           context.pop();
-                          Navigator.of(context).push(createAniRoute(LoginScreen(isAppStart: false)));
+                          Navigator.of(context).push(
+                            createAniRoute(LoginScreen(isAppStart: false)));
                         },
                         child: Container(
                           height: 35,
@@ -173,7 +179,8 @@ class ProfileViewModel {
                 ),
               ),
             ),
-            ...DrawerActionType.values.map((e) => _mainDrawerItem(context, e)).toList(),
+            ...DrawerActionType.values.map((e) =>
+              _mainDrawerItem(context, e)).toList(),
             Spacer(),
             ListTile(
               title: Text(
@@ -196,12 +203,16 @@ class ProfileViewModel {
     if (type.title == '-') {
       return Divider();
     }
+    var showTitle = type.title;
+    if (type == DrawerActionType.version) {
+      showTitle += ' ${loginProv.appVersion}';
+    }
     var isTest = type.title.contains('(test)');
     var isEnable = (type == DrawerActionType.terms ||
         type == DrawerActionType.privacy || type == DrawerActionType.version) ||
         loginProv.isLogin;
     return ListTile(
-      title: Text(type.title,
+      title: Text(showTitle,
         style: typo16bold.copyWith(
         color: isTest ? Colors.blueAccent : isEnable ? GRAY_80 : GRAY_20)),
       enabled: isEnable,
@@ -256,16 +267,19 @@ class ProfileViewModel {
                 });
               }
               break;
-          case DrawerActionType.test_identity:
-            Navigator.of(context).push(
-              createAniRoute(ProfileIdentityScreen()));
-            break;
+          // case DrawerActionType.test_identity:
+          //   // Navigator.of(context).push(
+          //   //   createAniRoute(ProfileIdentityScreen()));
+          //   IamPortApiService().checkCert('imp_809435080073').then((result2) {
+          //     LOG('--> checkCert result : $result2');
+          //   });
+          //   break;
           case DrawerActionType.test_delete:
             UserHelper().clearAllUser().then((_) {
               loginProv.logout().then((_) {
                 loginProv.setMainPageIndex(0);
+                Fluttertoast.showToast(msg: TR(context, '로컬정보 삭제 완료'));
               });
-              Fluttertoast.showToast(msg: TR(context, '로컬정보 삭제 완료'));
             });
             break;
             default:
@@ -391,14 +405,16 @@ class ProfileViewModel {
         child: Row(
           children: [
             Expanded(
-              child: Text(TR(context, STR(item[0])), style: typo16regular, maxLines: 2),
+              child: Text(TR(context, STR(item[0])),
+                style: typo16regular, maxLines: 2),
             ),
             if (STR(item[1]).isNotEmpty)...[
               if (STR(item[1]) != 'on' && STR(item[1]) != 'off')
                 OutlinedButton(
                   onPressed: onEdit,
                   style: darkBorderButtonStyle,
-                  child: Text(TR(context, STR(item[1])), style: typo14semibold),
+                  child: Text(TR(context, STR(item[1])),
+                    style: typo14semibold),
                 ),
               if (STR(item[1]) == 'on' || STR(item[1]) == 'off')
                 CupertinoSwitch(
@@ -485,7 +501,8 @@ class ProfileViewModel {
                             'id': loginProv.walletAddress,
                             'data': data,
                           };
-                          showLoadingDialog(context, TR(context, '이미지 업로드 중입니다...'));
+                          showLoadingDialog(context,
+                            TR(context, '이미지 업로드 중입니다...'));
                           fireProv.uploadProfileImage(imageInfo).then((picUrl) async {
                             LOG('---> uploadProfileImage result : $picUrl');
                             if (STR(picUrl).isNotEmpty) {
@@ -538,10 +555,10 @@ class ProfileViewModel {
         padding: padding,
         margin: EdgeInsets.symmetric(horizontal: 30.w),
         child: Text(STR(loginProv.account?.description ??
-            '이국적 풍치의 이탈리아 투스카니 스타일 클럽하우스와 '
-                '대저택 컨셉의 최고급 호텔 시설로 휴양과 메이저급 골프코스의 다이나믹을 함께 즐길 수'
-                ' 있는 태안반도에 위치한 휴양형 고급 골프 리조트입니다.'),
-            style: typo14medium, textAlign: TextAlign.center),
+          '이국적 풍치의 이탈리아 투스카니 스타일 클럽하우스와 '
+              '대저택 컨셉의 최고급 호텔 시설로 휴양과 메이저급 골프코스의 다이나믹을 함께 즐길 수'
+              ' 있는 태안반도에 위치한 휴양형 고급 골프 리조트입니다.'),
+          style: typo14medium, textAlign: TextAlign.center),
       );
     }
     return Container(
@@ -572,7 +589,8 @@ class ProfileViewModel {
                 textStyle: typo14semibold,
                 isSmallButton: true,
                 onTap: () {
-                  Navigator.of(context).push(createAniRoute(UserItemListScreen()));
+                  Navigator.of(context).push(
+                    createAniRoute(UserItemListScreen()));
                 },
                 text: TR(context, '보유 상품'),
               )
@@ -684,7 +702,7 @@ class ProfileViewModel {
     LOG('---> showImagePicker : $pickImage');
     if (pickImage != null) {
       var imageUrl  = await showProfileImageCropper(pickImage.path);
-      LOG('---> imageUrl : $imageUrl');
+      LOG('--> showImagePicker imageUrl : $imageUrl');
       if (imageUrl != null) {
         var dataOrg = await _readFileByte(imageUrl);
         if (dataOrg != null) {
@@ -718,14 +736,14 @@ class ProfileViewModel {
           }
         }
         if (isResized) {
-          LOG('--> resize : ${img.width} x ${img.height} => $nWidth x $nHeight');
+          LOG('--> resizeImage : ${img.width} x ${img.height} => $nWidth x $nHeight');
           img = IMG.copyResize(img, width: nWidth.toInt(), height: nHeight.toInt());
         }
         resizedData = IMG.encodeJpg(img, quality: 100) as Uint8List?;
         return resizedData;
       }
     } catch (e) {
-      LOG('--> resize error : $e');
+      LOG('--> resizeImage error : $e');
       return resizedData;
     }
   }
@@ -749,9 +767,9 @@ class ProfileViewModel {
     Uint8List? bytes;
     await audioFile.readAsBytes().then((value) {
       bytes = Uint8List.fromList(value);
-      LOG('--> reading of bytes is completed');
+      LOG('--> _readFileByte completed');
     }).catchError((onError) {
-      LOG('--> Exception Error while reading audio from path: ${onError.toString()}');
+      LOG('--> _readFileByte Error : ${onError.toString()}');
     });
     return bytes;
   }

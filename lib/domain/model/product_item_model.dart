@@ -4,16 +4,6 @@ import '../../common/const/utils/convertHelper.dart';
 
 part 'product_item_model.g.dart';
 
-enum CD_ITEM_ST {
-  live,
-  deleted,
-}
-
-enum CD_ITEM_TYPE {
-  ticket,
-  art,
-}
-
 @JsonSerializable(
   includeIfNull: false,
   explicitToJson: true,

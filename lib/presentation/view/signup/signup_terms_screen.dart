@@ -14,6 +14,7 @@ import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/provider/login_provider.dart';
+import '../profile/webview_screen.dart';
 import '../registMnemonic_screen.dart';
 import 'signup_nick_screen.dart';
 
@@ -84,7 +85,8 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      TR(context, 'Trinity M 을 이용해주셔서 감사합니다.\n서비스 이용을 위해 약관 동의가 필요합니다.'),
+                      TR(context, 'Trinity M 을 이용해주셔서 감사합니다.\n'
+                        '서비스 이용을 위해 약관 동의가 필요합니다.'),
                       style: typo16medium150.copyWith(
                         color: GRAY_70,
                       ),
@@ -126,7 +128,8 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                             ),
                             SizedBox(height: 16.h),
                             CustomCheckbox(
-                              title: TR(context, title[0]) + ' ${TR(context, '(필수)')}',
+                              title: TR(context, title[0]) +
+                                  ' ${TR(context, '(필수)')}',
                               checked: agree_1,
                               onChanged: (agree) {
                                 setState(() {
@@ -135,13 +138,18 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                                 });
                               },
                               onPushnamed: () {
-                                context.pushNamed(TermsDetailScreen.routeName,
-                                  queryParams: {'title': title[0], 'type': '0'});
+                                // context.pushNamed(TermsDetailScreen.routeName,
+                                //   queryParams: {'title': title[0], 'type': '0'});
+                                Navigator.of(context).push(
+                                  createAniRoute(WebviewScreen(
+                                    title: TR(context, title[0]),
+                                    url: '$API_HOST/terms/1')));
                               },
                             ),
                             SizedBox(height: 4.h),
                             CustomCheckbox(
-                              title: TR(context, title[1]) + ' ${TR(context, '(필수)')}',
+                              title: TR(context, title[1]) +
+                                  ' ${TR(context, '(필수)')}',
                               checked: agree_2,
                               onChanged: (agree) {
                                 setState(() {
@@ -150,8 +158,12 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                                 });
                               },
                               onPushnamed: () {
-                                context.pushNamed(TermsDetailScreen.routeName,
-                                  queryParams: {'title': title[1], 'type': '1'});
+                                // context.pushNamed(TermsDetailScreen.routeName,
+                                //   queryParams: {'title': title[1], 'type': '1'});
+                                Navigator.of(context).push(
+                                  createAniRoute(WebviewScreen(
+                                    title: TR(context, title[1]),
+                                    url: '$API_HOST/terms/2')));
                               },
                             ),
                           ],

@@ -157,18 +157,22 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
               Navigator.of(context)
                   .push(createAniRoute(RecoverPassScreen()))
                   .then((newPass) async {
-                loginProv.inputPass.first = newPass;
-                showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
-                // start recover user..
-                loginProv.recoverUser(mnemonic: mnemonic,
-                    onError: (type, code) {
-                      hideLoadingDialog();
-                      showLoginErrorDialog(context, type, code);
-                      UserHelper().clearUser();
-                    }).then((result) {
-                  LOG('--> recoverUser mn result : $result');
-                  _recoverResult(result);
-                });
+                if (STR(newPass).isNotEmpty) {
+                  loginProv.inputPass.first = newPass;
+                  showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
+                  // start recover user..
+                  loginProv.recoverUser(mnemonic: mnemonic,
+                      onError: (type, code) {
+                        hideLoadingDialog();
+                        showLoginErrorDialog(context, type, code);
+                        UserHelper().clearUser();
+                      }).then((result) {
+                    LOG('--> recoverUser mn result : $result');
+                    _recoverResult(result);
+                  });
+                } else {
+                  LOG('--> recoverUser mn cancel');
+                }
               });
             } else {
               showLoginErrorTextDialog(context, TR(context, ''));

@@ -18,7 +18,7 @@ class AddressModel {
 
   // for Byffin..
   String? address;
-  String? keyPair;
+  String? keyPair;    // encrypted KeyPair
   String? publicKey;
   String? accountName;
   bool?   hasMnemonic;

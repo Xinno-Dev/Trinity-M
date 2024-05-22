@@ -7,7 +7,7 @@ part of 'product_model.dart';
 // **************************************************************************
 
 ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
-      saleProdId: json['saleProdId'] as String?,
+      prodSaleId: json['prodSaleId'] as String?,
       itemType: json['itemType'] as String?,
       type: json['type'] as String?,
       name: json['name'] as String?,
@@ -39,7 +39,7 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       itemLastId: (json['itemLastId'] as num?)?.toInt(),
       itemCountMax: (json['itemCountMax'] as num?)?.toInt(),
       itemCheckId: (json['itemCheckId'] as num?)?.toInt(),
-      img: json['img'] as String?,
+      itemImg: json['itemImg'] as String?,
     );
 
 Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
@@ -51,7 +51,7 @@ Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
     }
   }
 
-  writeNotNull('saleProdId', instance.saleProdId);
+  writeNotNull('prodSaleId', instance.prodSaleId);
   writeNotNull('itemType', instance.itemType);
   writeNotNull('type', instance.type);
   writeNotNull('name', instance.name);
@@ -75,6 +75,6 @@ Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
   writeNotNull('itemLastId', instance.itemLastId);
   writeNotNull('itemCountMax', instance.itemCountMax);
   writeNotNull('itemCheckId', instance.itemCheckId);
-  writeNotNull('img', instance.img);
+  writeNotNull('itemImg', instance.itemImg);
   return val;
 }

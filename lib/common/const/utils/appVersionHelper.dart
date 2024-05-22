@@ -18,8 +18,14 @@ import 'convertHelper.dart';
 import 'dialogHelper.dart';
 import 'localStorageHelper.dart';
 
+bool isUpdateCheckDone = false;
+
 Future<bool> checkAppUpdate(BuildContext context) async {
-  AppStartModel? startInfo = await provider.Provider.of<FirebaseProvider>(context,
+  LOG('--> checkAppUpdate start : $isUpdateCheckDone');
+  if (isUpdateCheckDone) return true;
+  isUpdateCheckDone = true;
+
+  var startInfo = await provider.Provider.of<FirebaseProvider>(context,
       listen: false).getAppStartInfo();
 
   if (startInfo == null) return false;
@@ -30,63 +36,68 @@ Future<bool> checkAppUpdate(BuildContext context) async {
   final versionApp    = packageInfo.version;
   if (versionServer != null) {
     final isForceUpdate = versionServer.force_update;
-    final dlgMessage = versionServer.message.getText(context);
     // final version = ''; // for Dev..
     LOG('--> checkAppUpdate : $versionApp / $versionLocal / ${versionServer.version} [$isForceUpdate]');
     if (checkVersionString(versionApp, versionServer.version, versionLocal ?? '')) {
-      var dlgResult = await showAppUpdateDialog(context,
-        dlgMessage.isNotEmpty ? dlgMessage : '스토어에 새 버전이 출시되었습니다!',
-        '${versionApp} > ${versionServer.version}',
-        isForceUpdate: isForceUpdate,
-      );
-      LOG('----> showAppUpdateDialog result : $dlgResult');
-      switch (dlgResult) {
-        case 1: // move market..
-          if (Platform.isAndroid || Platform.isIOS) {
-            Future.delayed(Duration(milliseconds: 300)).then((_) {
-              StoreRedirect.redirect(
-                  androidAppId: "com.medium.byffinwallet",
-                  iOSAppId: "6469018232"
-              );
-            });
-          }
-          return !isForceUpdate;
-        case 2: // never show again..
-          LocalStorageManager.saveData(APP_VERSION_KEY, versionServer.version);
-          break;
+      if (versionServer.message != null) {
+        final dlgMessage = STR(versionServer.message?.text_us);
+        var dlgResult = await showAppUpdateDialog(context,
+          dlgMessage.isNotEmpty ? dlgMessage : '스토어에 새 버전이 출시되었습니다!',
+          '${versionApp} > ${versionServer.version}',
+          isForceUpdate: isForceUpdate,
+        );
+        LOG('----> showAppUpdateDialog result : $dlgResult');
+        switch (dlgResult) {
+          case 1: // move market..
+            if (Platform.isAndroid || Platform.isIOS) {
+              Future.delayed(Duration(milliseconds: 300)).then((_) {
+                StoreRedirect.redirect(
+                    androidAppId: "com.xinno.trinity_m_00",
+                    iOSAppId: "6469018232"
+                );
+              });
+            }
+            return !isForceUpdate;
+          case 2: // never show again..
+            LocalStorageManager.saveData(APP_VERSION_KEY, versionServer.version);
+            break;
+        }
       }
     } else {
-      final noticeMessage = startInfo.notice_message.message.getText(context);
-      final isImageReady = startInfo.notice_message.image != null &&
-          startInfo.notice_message.image!.url.isNotEmpty;
-      if (startInfo.notice_message.show && (noticeMessage.isNotEmpty || isImageReady)) {
-        final infoLocal  = await LocalStorageManager.readData(APP_NOTICE_KEY);
-        LOG('----> notice check : $infoLocal / ${startInfo.notice_message.id}');
-        if (infoLocal != startInfo.notice_message.id) {
-          Widget? imageWidget;
-          if (isImageReady) {
-            imageWidget = CachedNetworkImage(
-              imageUrl: startInfo.notice_message.image!.url,
-              progressIndicatorBuilder: (context, widget, _) =>
-                SizedBox(
-                  height: 150.h,
-                  child: Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                ),
-              errorWidget: (context, error, stackTrace) => const Icon(Icons.error),
-            );
-          }
-          showAppNoticeDialog(context,
-              noticeMessage, imageWidget: imageWidget).then((dlgResult) {
-            switch (dlgResult) {
-              case 2: // never show again..
-                LocalStorageManager.saveData(
-                    APP_NOTICE_KEY,
-                    startInfo.notice_message.id);
-                break;
+      if (startInfo.notice_message != null) {
+        final noticeMessage = startInfo.notice_message!.message.getText(context);
+        final isImageReady = startInfo.notice_message?.image != null &&
+            startInfo.notice_message!.image!.url.isNotEmpty;
+        if (startInfo.notice_message!.show && (noticeMessage.isNotEmpty || isImageReady)) {
+          final infoLocal = await LocalStorageManager.readData(APP_NOTICE_KEY);
+          LOG('----> notice check : $infoLocal / ${startInfo.notice_message!.id}');
+          if (infoLocal != startInfo.notice_message!.id) {
+            Widget? imageWidget;
+            if (isImageReady) {
+              imageWidget = CachedNetworkImage(
+                imageUrl: startInfo.notice_message!.image!.url,
+                progressIndicatorBuilder: (context, widget, _) =>
+                    SizedBox(
+                      height: 150.h,
+                      child: Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                errorWidget: (context, error, stackTrace) =>
+                const Icon(Icons.error),
+              );
             }
-          });
+            showAppNoticeDialog(context,
+                noticeMessage, imageWidget: imageWidget).then((dlgResult) {
+              switch (dlgResult) {
+                case 2: // never show again..
+                  LocalStorageManager.saveData(
+                      APP_NOTICE_KEY,
+                      startInfo.notice_message!.id);
+                  break;
+              }
+            });
+          }
         }
       }
     }

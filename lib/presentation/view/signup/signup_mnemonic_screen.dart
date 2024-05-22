@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:trinity_m_00/presentation/view/signup/login_pass_screen.dart';
+
 import '../../../../common/common_package.dart';
 import '../../../../common/const/utils/userHelper.dart';
 import '../../../../common/const/widget/PageNumbers.dart';
@@ -180,13 +182,29 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         Navigator.of(context).push(
                           createAniRoute(CloudPassCreateScreen())).then((pass) async {
                           if (STR(pass).isNotEmpty) {
-                            var address = loginProv.accountFirstAddress;
-                            // var keyPair = await loginProv.getAccountKey();
-                            if (address != null) {
-                              // var keyJson = jsonEncode(keyPair.toJson());
-                              var rwfStr = await RWFExportHelper.encrypt(pass, address, mnemonic);
-                              GoogleService.uploadKeyToGoogleDrive(context, rwfStr).then((result) {
-                                LOG('---> startGoogleDriveUpload result : $result');
+                            if (IS_EXPORT_MN) {
+                              var address = loginProv.accountFirstAddress;
+                              if (address != null) {
+                                var rwfStr = await RWFExportHelper.encrypt(
+                                    pass, address, mnemonic);
+                                // var rwfStr = await RWFExportHelper.encrypt(pass, address, mnemonic);
+                                LOG('---> rwfStr : $rwfStr / $mnemonic');
+                                GoogleService.uploadKeyToGoogleDrive(context, rwfStr);
+                              }
+                            } else {
+                              Navigator.of(context).push(
+                                createAniRoute(LoginPassScreen())).then((
+                                userPass) async {
+                                if (STR(userPass).isNotEmpty) {
+                                  var address = loginProv.accountAddress;
+                                  var keyPair = await loginProv.getAccountKey(passOrg: userPass);
+                                  if (address != null && keyPair != null) {
+                                    var rwfStr = await RWFExportHelper.encrypt(
+                                        pass, address, keyPair.d);
+                                    LOG('---> rwfStr : $rwfStr / ${keyPair.d}');
+                                    GoogleService.uploadKeyToGoogleDrive(context, rwfStr);
+                                  }
+                                }
                               });
                             }
                           }

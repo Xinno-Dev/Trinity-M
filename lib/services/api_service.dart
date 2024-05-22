@@ -434,6 +434,43 @@ class ApiService {
     return null;
   }
 
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  본인인증 저장
+  //  POST: /auth/cert
+  //
+
+  Future<bool> setCertInfo(
+    String name, String phone, String ci, String di) async {
+    try {
+      var jwt = await AesManager().localJwt;
+      if (jwt == null) {
+        return false;
+      }
+      final response = await http.post(
+          Uri.parse(httpUrl + '/auth/cert'),
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwt',
+          },
+          body: jsonEncode({
+            'name'  : name,
+            'phone' : phone,
+            'ci'    : ci,
+            'di'    : di,
+          })
+      );
+      LOG('--> API setCertInfo response : ${response.statusCode} / ${response.body}');
+      if (isSuccess(response.statusCode)) {
+        var resultJson = jsonDecode(response.body);
+        return BOL(resultJson['result']);
+      }
+    } catch (e) {
+      LOG('--> API setCertInfo error : $e');
+    }
+    return false;
+  }
 
   //////////////////////////////////////////////////////////////////////////
   //
@@ -647,17 +684,17 @@ class ApiService {
   //////////////////////////////////////////////////////////////////////////
   //
   //  구매 요청 (JWT)
-  //  POST: /purchases/{saleProdId}
+  //  POST: /purchases/{prodSaleId}
   //
 
   Future<JSON?> requestPurchase(
-    String saleProdId, {String? itemId, String? imgId}) async {
+    String prodSaleId, {String? itemId, String? imgId}) async {
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
         return null;
       }
-      var urlStr = '/purchases/$saleProdId';
+      var urlStr = '/purchases/$prodSaleId';
       LOG('--> API requestPurchase : $urlStr');
       final response = await http.post(
         Uri.parse(httpUrl + urlStr),

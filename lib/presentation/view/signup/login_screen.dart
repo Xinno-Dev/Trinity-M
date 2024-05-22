@@ -36,9 +36,10 @@ import 'signup_terms_screen.dart';
 import '../terms_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  LoginScreen({this.isAppStart = true, super.key});
+  LoginScreen({this.isAppStart = true, this.isWillReturn = false, super.key});
   static String get routeName => 'loginScreen';
   bool isAppStart;
+  bool isWillReturn;
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -254,11 +255,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     fToast = FToast();
     fToast.init(context);
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      checkAppUpdate(context).then((result) {
-        LOG('----> checkAppUpdate result 1 : $result');
-      });
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   checkAppUpdate(context).then((result) {
+    //     LOG('----> checkAppUpdate result 1 : $result');
+    //   });
+    // });
   }
 
   @override
@@ -270,17 +271,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     super.didChangeDependencies();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print('---> didChangeAppLifecycleState : $state');
-    if (state == AppLifecycleState.resumed) {
-      setState(() {
-        checkAppUpdate(context).then((result) {
-          LOG('----> checkAppUpdate result 2 : $result');
-        });
-      });
-    }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   print('---> didChangeAppLifecycleState : $state');
+  //   if (state == AppLifecycleState.resumed) {
+  //     setState(() {
+  //       checkAppUpdate(context).then((result) {
+  //         LOG('----> checkAppUpdate result 2 : $result');
+  //       });
+  //     });
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -500,11 +501,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   _startWallet() {
-    LOG('---> startWallet');
+    LOG('---> startWallet : ${widget.isWillReturn}');
     final loginProv = ref.read(loginProvider);
     loginProv.mainPageIndexOrg = 0;
-    context.pushReplacementNamed(
-        MainScreen.routeName, queryParams: {'selectedPage': '1'});
+    if (widget.isWillReturn) {
+      context.pop(true);
+    } else {
+      context.pushReplacementNamed(
+          MainScreen.routeName, queryParams: {'selectedPage': '1'});
+    }
   }
 
   _startRestore(index) {

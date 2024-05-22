@@ -203,6 +203,20 @@ String ADDR(dynamic value, {String defaultValue = ''}) {
 }
 
 // ignore: non_constant_identifier_names
+String SERVER_TIME_STR(String? value, {String defaultValue = ''}) {
+  try {
+    if (STR(value).isNotEmpty) {
+      var dateTime = DateTime.parse(value!);
+      var format   = DateFormat('yyyy-MM-dd HH:mm:ss');
+      return format.format(dateTime).toString();
+    }
+  } catch (e) {
+    LOG('--> SERVER_TIME error : $e / $value');
+  }
+  return defaultValue;
+}
+
+// ignore: non_constant_identifier_names
 LIST_NOT_EMPTY(dynamic data) {
   return data != null && List.from(data).isNotEmpty;
 }

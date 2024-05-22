@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:iamport_flutter/iamport_certification.dart';
 import 'package:iamport_flutter/model/certification_data.dart';
 import 'package:trinity_m_00/common/const/utils/uihelper.dart';
+import 'package:trinity_m_00/common/const/utils/userHelper.dart';
+import 'package:trinity_m_00/services/api_service.dart';
+
 import '../../../../common/common_package.dart';
 import '../../../../common/const/constants.dart';
 import '../../../../common/provider/login_provider.dart';
@@ -11,6 +16,7 @@ import '../../../../domain/viewModel/profile_view_model.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
+import '../../../services/iamport_service.dart';
 
 class ProfileIdentityScreen extends ConsumerStatefulWidget {
   ProfileIdentityScreen({super.key});
@@ -34,9 +40,7 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
     final prov = ref.watch(loginProvider);
     LOG('--> ProfileIdentityScreen');
     return IamportCertification(
-      appBar: new AppBar(
-        title: new Text('본인인증'),
-      ),
+      appBar: defaultAppBar(TR(context, '본인인증')),
       /* 웹뷰 로딩 컴포넌트 */
       initialChild: Container(
         child: Center(
@@ -65,16 +69,32 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
       callback: (Map<String, String> result) {
         LOG('--> IamportCertification result : $result');
         if (BOL(result['success'])) {
-          showResultDialog(context, TR(context, '본인인증 성공'));
+          var name  = 'test user 00';
+          var phone = '010-1111-2222';
+          var ci    = 'ci_00000000';
+          var di    = 'di_00000000';
+          ApiService().setCertInfo(name, phone, ci, di).then((result2) {
+            LOG('--> checkCert result : $result2');
+            if (result2) {
+              _identitySuccess();
+            } else {
+              _identityFail();
+            }
+          });
         } else {
-          showResultDialog(context, TR(context, '본인인증 실패'));
+          _identityFail();
         }
-        // Navigator.pushReplacementNamed(
-        //   context,
-        //   '/result',
-        //   arguments: result,
-        // );
       },
     );
+  }
+
+  _identitySuccess() {
+    showToast(TR(context, '본인인증 성공'));
+    context.pop(true);
+  }
+
+  _identityFail() {
+    showToast(TR(context, '본인인증 실패'));
+    context.pop();
   }
 }

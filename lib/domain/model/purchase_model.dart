@@ -12,7 +12,7 @@ part 'purchase_model.g.dart';
 )
 class PurchaseModel {
   String?   purchaseId;   // 구매 ID
-  String?   saleProdId;   // 판매상품 ID
+  String?   prodSaleId;   // 판매상품 ID
   String?   merchantUid;  // 주문번호
   String?   itemType;     // 아이템 종류. mk_item.CD_ITEM_TYPE 값
   String?   name;         // 상품이름
@@ -28,6 +28,7 @@ class PurchaseModel {
   String?   payType;
   String?   cardType;
   String?   cardNum;
+  String?   status;       // 상품 상태 CD_PAY_ST
 
   // 판매자 정보..
   SellerModel? seller;
@@ -37,7 +38,7 @@ class PurchaseModel {
 
   PurchaseModel({
     this.purchaseId,
-    this.saleProdId,
+    this.prodSaleId,
     this.merchantUid,
     this.itemType,
     this.name,
@@ -52,6 +53,7 @@ class PurchaseModel {
     this.payType,
     this.cardType,
     this.cardNum,
+    this.status,
 
     this.seller,
     this.createTime,
@@ -60,6 +62,10 @@ class PurchaseModel {
 
   get priceText {
     return '${CommaIntText(buyPrice)} $priceUnit';
+  }
+
+  get payText {
+    return '${CommaIntText(payPrice)} $priceUnit';
   }
 
   get sellerImage {

@@ -47,7 +47,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
-                    android:host="xinno.com"
+                    android:host="xinno.page.link"
                     android:scheme="https"/>
             </intent-filter>
 

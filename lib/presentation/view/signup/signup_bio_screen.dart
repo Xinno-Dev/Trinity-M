@@ -219,7 +219,9 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                           setState(() {
                             _localAuthAgree = true;
                             prov.setBioIdentity(_localAuthAgree);
-                            context.pop(result);
+                            if (!widget.isShowNext) {
+                              context.pop(result);
+                            }
                           });
                         }
                       });

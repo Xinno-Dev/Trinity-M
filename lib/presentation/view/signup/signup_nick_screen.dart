@@ -8,6 +8,7 @@ import '../../../../presentation/view/asset/networkScreens/network_input_screen.
 
 import '../../../common/common_package.dart';
 import '../../../common/const/constants.dart';
+import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
@@ -106,7 +107,12 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode()); //remove focus
                         if (loginProv.isNickCheckReady) {
-                          loginProv.checkNickId(onError: (type) => showLoginErrorDialog(context, type));
+                          loginProv.checkNickId(onError: (type) =>
+                            showLoginErrorDialog(context, type)).then((result) {
+                            if (BOL(result)) {
+                              showToast(TR(context, '중복 확인 완료'));
+                            }
+                          });
                         }
                       },
                       child: Container(
@@ -114,9 +120,9 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                         padding: EdgeInsets.symmetric(vertical: 10.h),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: !loginProv.isNickCheckReady ? Border.all(width: 2, color: GRAY_20) : null,
-                            color: loginProv.isNickCheckReady ? PRIMARY_90 : WHITE
+                          borderRadius: BorderRadius.circular(10),
+                          border: !loginProv.isNickCheckReady ? Border.all(width: 2, color: GRAY_20) : null,
+                          color: loginProv.isNickCheckReady ? PRIMARY_90 : WHITE
                         ),
                         child: Text(TR(context, '중복 확인'), style: typo16bold),
                       ),

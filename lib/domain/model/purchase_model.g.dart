@@ -9,7 +9,7 @@ part of 'purchase_model.dart';
 PurchaseModel _$PurchaseModelFromJson(Map<String, dynamic> json) =>
     PurchaseModel(
       purchaseId: json['purchaseId'] as String?,
-      saleProdId: json['saleProdId'] as String?,
+      prodSaleId: json['prodSaleId'] as String?,
       merchantUid: json['merchantUid'] as String?,
       itemType: json['itemType'] as String?,
       name: json['name'] as String?,
@@ -23,6 +23,7 @@ PurchaseModel _$PurchaseModelFromJson(Map<String, dynamic> json) =>
       payType: json['payType'] as String?,
       cardType: json['cardType'] as String?,
       cardNum: json['cardNum'] as String?,
+      status: json['status'] as String?,
       seller: json['seller'] == null
           ? null
           : SellerModel.fromJson(json['seller'] as Map<String, dynamic>),
@@ -44,7 +45,7 @@ Map<String, dynamic> _$PurchaseModelToJson(PurchaseModel instance) {
   }
 
   writeNotNull('purchaseId', instance.purchaseId);
-  writeNotNull('saleProdId', instance.saleProdId);
+  writeNotNull('prodSaleId', instance.prodSaleId);
   writeNotNull('merchantUid', instance.merchantUid);
   writeNotNull('itemType', instance.itemType);
   writeNotNull('name', instance.name);
@@ -58,6 +59,7 @@ Map<String, dynamic> _$PurchaseModelToJson(PurchaseModel instance) {
   writeNotNull('payType', instance.payType);
   writeNotNull('cardType', instance.cardType);
   writeNotNull('cardNum', instance.cardNum);
+  writeNotNull('status', instance.status);
   writeNotNull('seller', instance.seller?.toJson());
   writeNotNull('createTime', instance.createTime?.toIso8601String());
   writeNotNull('updateTime', instance.updateTime?.toIso8601String());

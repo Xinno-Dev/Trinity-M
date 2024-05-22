@@ -12,14 +12,14 @@ part 'app_start_model.g.dart';
 )
 class AppStartModel {
   String id;
-  String update_time;
-  NoticeMessageData notice_message;
   Map<String, AppVersionData> version_info;
+  String? update_time;
+  NoticeMessageData? notice_message;
   AppStartModel({
     required this.id,
-    required this.update_time,
-    required this.notice_message,
     required this.version_info,
+    this.update_time,
+    this.notice_message,
   });
 
   get versionInfo {
@@ -34,13 +34,13 @@ class AppStartModel {
   explicitToJson: true,
 )
 class AppVersionData {
-  bool    force_update;
-  String  version;
-  LanguageTextData message;
+  bool force_update;
+  String version;
+  LanguageTextData? message;
   AppVersionData({
     required this.force_update,
-    required this.message,
     required this.version,
+    this.message,
   });
 
   factory AppVersionData.fromJson(JSON json) => _$AppVersionDataFromJson(json);
@@ -127,7 +127,7 @@ class LanguageTextData {
   Map<String, String>? text_data;
   LanguageTextData({
     required this.text_us,
-    required this.text_data,
+    this.text_data,
   });
 
   String getText(BuildContext context) {

@@ -2,7 +2,9 @@ import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:trinity_m_00/common/const/cd_enum_const.dart';
 import 'package:trinity_m_00/domain/model/purchase_model.dart';
+import 'package:trinity_m_00/presentation/view/market/payment_done_screen.dart';
 import '../../../common/provider/market_provider.dart';
 import '../../../domain/viewModel/profile_view_model.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -332,7 +334,8 @@ class MarketViewModel {
                   shrinkWrap: true,
                   itemCount: prov.purchaseList.length,
                   itemBuilder: (context, index) {
-                    return _purchaseItem(context, prov.purchaseList[index], isShowDetail: true);
+                    return _purchaseItem(context, prov.purchaseList[index],
+                      isShowDetail: true);
                   }
               );
             } else {
@@ -571,28 +574,25 @@ class MarketViewModel {
 
   showPurchaseDetail(BuildContext context, [var isShowSeller = true]) {
     final imageSize = MediaQuery.of(context).size.width;
-    LOG('--> showPurchaseInfo : ${prov.detailPic} / ${prov.selectProduct?.toJson()}');
+    LOG('--> showPurchaseInfo : ${prov.selectPurchaseItem?.prodSaleId}');
     return FutureBuilder(
       future: prov.getPurchaseProductInfo(),
       builder: (context, snapShot) {
         if (snapShot.hasData) {
           var productInfo = snapShot.data as ProductModel;
+          LOG('--> productInfo : ${productInfo.toJson()}');
           return Column(
             children: [
-              if (STR(prov.selectPurchaseItem!.itemImg).isEmpty &&
-                  STR(productInfo.repDetailImg).isNotEmpty)
+              if (STR(productInfo.repDetailImg).isNotEmpty)
                 showImage(STR(productInfo.repDetailImg),
-                  Size.square(imageSize.r), fit: BoxFit.fitWidth),
-              if (STR(prov.selectPurchaseItem!.itemImg).isNotEmpty)
-                showImage(STR(prov.selectPurchaseItem!.itemImg),
                     Size.square(imageSize.r), fit: BoxFit.fitWidth),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (isShowSeller)
-                      _contentSellerBar(prov.selectPurchaseItem!.seller!,
+                    if (isShowSeller && productInfo.seller != null)
+                      _contentSellerBar(productInfo.seller!,
                         padding: EdgeInsets.symmetric(vertical: 10)
                       ),
                     _contentTitleBar(productInfo, isShowAmount: false),
@@ -611,7 +611,7 @@ class MarketViewModel {
                       style: typo14bold,
                     ),
                     Text(
-                      STR(prov.selectPurchaseItem!.txDateTime),
+                      SERVER_TIME_STR(prov.selectPurchaseItem!.txDateTime),
                       style: typo14bold,
                     ),
                   ],
@@ -673,48 +673,57 @@ class MarketViewModel {
     );
   }
 
-
   _purchaseItem(BuildContext context, PurchaseModel item,
     {EdgeInsets? margin, var isShowDetail = false}) {
     return Container(
       margin: margin ?? EdgeInsets.only(top: 15),
       color: Colors.transparent,
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () {
-                if (isShowDetail) {
-                  prov.selectPurchaseItem = item;
-                  Navigator.of(context).push(createAniRoute(PaymentItemScreen()));
-                }
-              },
-              child: Container(
-                  child: Row(
-                    children: [
-                      if (prov.detailPic != null)
-                        Container(
-                            width: 80,
-                            height: 80,
-                            margin: EdgeInsets.only(right: 15),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: showImage(STR(prov.detailPic), Size(100, 100)),
-                            )
-                        ),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(STR(item.name), style: typo14bold.copyWith(height: 1.0)),
-                            SizedBox(height: 10),
-                            Text(item.priceText, style: typo16bold),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              if (isShowDetail) {
+                prov.getProductDetailFromId(STR(item.prodSaleId)).then((result) {
+                  if (result != null) {
+                    prov.selectProduct = result;
+                    Navigator.of(context).push(createAniRoute(ProductDetailScreen()));
+                  }
+                });
+              }
+            },
+            child: Container(
+                child: Row(
+                  children: [
+                    Container(
+                    width: 100,
+                    height: 100,
+                    margin: EdgeInsets.only(right: 15),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: showImage(item.itemImg ?? EMPTY_IMAGE, Size(100, 100)),
+                    )
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (isShowDetail)...[
+                          Text(_purchaseStatusTitle(item.status),
+                              style: typo14bold.copyWith(
+                                  color: _purchaseStatusColor(item.status))),
+                          Text(SERVER_TIME_STR(item.txDateTime), style: typo12normal),
+                          SizedBox(height: 5),
+                        ],
+                        Text(STR(item.name), style: typo14normal.copyWith(height: 1.0)),
+                        SizedBox(height: 5),
+                        Text(item.priceText, style: typo14bold),
+                      ],
+                    ),
+                  ),
+                ],
               )
+            )
           ),
           if (isShowDetail)...[
             Padding(
@@ -724,17 +733,29 @@ class MarketViewModel {
                 children: [
                   InkWell(
                     onTap: () {
-                      prov.selectPurchaseItem = item;
-                      Navigator.of(context).push(createAniRoute(PaymentItemScreen()));
+                      prov.getProductDetailFromId(STR(item.prodSaleId)).then((result) {
+                        if (result != null) {
+                          prov.selectProduct = result;
+                          Navigator.of(context).push(createAniRoute(ProductDetailScreen()));
+                        }
+                      });
                     },
-                    child: Text(TR(context, '상품 정보'), style: typo14normal),
+                    child: Text(TR(context, '상품 정보'), style: typo14semibold),
                   ),
                   Container(
                     width: 1,
                     height: 16.h,
                     color: GRAY_50,
                   ),
-                  Text(TR(context, '구매 상세'), style: typo14normal),
+                  InkWell(
+                    onTap: () {
+                      prov.purchaseInfo = item;
+                      Navigator.of(context).push(createAniRoute(PaymentDetailScreen(
+                        title: _purchaseStatusTitle(item.status),
+                      )));
+                    },
+                    child: Text(TR(context, '구매 상세'), style: typo14semibold),
+                  ),
                 ],
               ),
             ),
@@ -743,6 +764,36 @@ class MarketViewModel {
         ],
       )
     );
+  }
+
+  _purchaseStatusTitle(String? num) {
+      switch(num) {
+        case '1':
+          return CD_PAY_ST.ready.title;
+        case '2':
+          return CD_PAY_ST.done.title;
+        case '3':
+          return CD_PAY_ST.verify.title;
+        case '4':
+          return CD_PAY_ST.complete.title;
+        default:
+          return CD_PAY_ST.cancel.title;
+      }
+  }
+
+  _purchaseStatusColor(String? num) {
+    switch(num) {
+      case '1':
+        return CD_PAY_ST.ready.color;
+      case '2':
+        return CD_PAY_ST.done.color;
+      case '3':
+        return CD_PAY_ST.verify.color;
+      case '4':
+        return CD_PAY_ST.complete.color;
+      default:
+        return CD_PAY_ST.cancel.color;
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -778,7 +829,7 @@ class MarketViewModel {
           key: GlobalKey(),
           onVisibilityChanged: (info) {
             if (info.visibleFraction > 0) {
-              prov.refreshProductList(context, item.saleProdId);
+              prov.refreshProductList(context, item.prodSaleId);
             }
           },
           child: Container(

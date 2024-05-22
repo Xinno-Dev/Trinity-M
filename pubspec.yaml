@@ -97,6 +97,7 @@ dependencies:
 
   # email..
   flutter_email_sender: ^6.0.3
+  flutter_mailer: ^2.1.2
 
   # networking..
   dio: ^5.4.3+1

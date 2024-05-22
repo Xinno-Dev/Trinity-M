@@ -55,7 +55,7 @@ class MarketRepository {
     //   );
     //   var newItem = ProductModel(
     //     showIndex:    index,
-    //     saleProdId:   titleN.indexOf(title).toString(),
+    //     prodSaleId:   titleN.indexOf(title).toString(),
     //     name:         title,
     //     seller:       seller,
     //     repImg:       'assets/samples/banner_0$index.png',
@@ -95,7 +95,7 @@ class MarketRepository {
     //       newItem.optionList!.add(newOpt);
     //     }
     //   }
-    //   productData[newItem.saleProdId!] = newItem;
+    //   productData[newItem.prodSaleId!] = newItem;
     //   productList.add(newItem);
     // }
   }
@@ -113,7 +113,7 @@ class MarketRepository {
 
   getProductImgFromData(String itemId) {
     ProductModel? p = getProductFromData(itemId);
-    return p?.repImg ?? p?.repDetailImg ?? p?.img;
+    return p?.repImg ?? p?.repDetailImg ?? p?.itemImg;
   }
 
   getStartData() async {
@@ -151,10 +151,11 @@ class MarketRepository {
         lastId      = INT(jsonData['lastId']);
         for (var item in jsonData['data']) {
           var newItem = ProductModel.fromJson(item);
+          // newItem.prodSaleId = STR(item['saleProdId']);
           var isAdd = true;
           // checking duplicate..
           for (var orgItem in productList) {
-            if (orgItem.saleProdId == newItem.saleProdId) {
+            if (orgItem.prodSaleId == newItem.prodSaleId) {
               var index = productList.indexOf(orgItem);
               var tmp = ProductModel.fromJson(orgItem.toJson());
               newItem.repDetailImg  = tmp.repDetailImg;
@@ -163,12 +164,12 @@ class MarketRepository {
               newItem.externUrl     = tmp.externUrl;
               productList[index]    = newItem;
               isAdd = false;
-              LOG('--> getProductList update : ${newItem.saleProdId} / ${newItem.tagId}');
+              LOG('--> getProductList update : ${newItem.prodSaleId} / ${newItem.tagId}');
               break;
             }
           }
           if (isAdd) {
-            LOG('--> getProductList add : ${newItem.saleProdId} / ${newItem.tagId}');
+            LOG('--> getProductList add : ${newItem.prodSaleId} / ${newItem.tagId}');
             productList.add(newItem);
           }
         }
@@ -183,7 +184,7 @@ class MarketRepository {
 
   Future<ProductModel?> getProductDetail(ProductModel prod) async {
     try {
-      var jsonData = await _apiService.getProductDetail(STR(prod.saleProdId));
+      var jsonData = await _apiService.getProductDetail(STR(prod.prodSaleId));
       if (jsonData != null) {
         prod.itemType     = STR(jsonData['itemType']);
         prod.desc         = STR(jsonData['desc']);
@@ -201,9 +202,26 @@ class MarketRepository {
     return prod;
   }
 
+  Future<ProductModel?> getProductDetailFromId(String prodSaleId) async {
+    var prod = ProductModel();
+    try {
+      var result = await _apiService.getProductDetail(prodSaleId);
+      if (result != null) {
+        prod = ProductModel.fromJson(result);
+        // update option items..
+        prod = await getProductImageItemList(prod);
+        prod = setProductListItem(prod);
+        LOG('--> getProductDetailFromId result : ${prod.toJson()}');
+      }
+    } catch (e) {
+      LOG('--> getProductDetailFromId error : $e');
+    }
+    return prod;
+  }
+
   Future<ProductModel> getProductItemList(ProductModel prod) async {
     try {
-      var jsonData = await _apiService.getProductItems(STR(prod.saleProdId),
+      var jsonData = await _apiService.getProductItems(STR(prod.prodSaleId),
         type: int.parse(STR(prod.itemType)), lastId: INT(prod.itemLastId));
       if (jsonData != null && LIST_NOT_EMPTY(jsonData['data'])) {
         prod.isLastItem     = BOL(jsonData['isLast']);
@@ -228,9 +246,9 @@ class MarketRepository {
   Future<ProductModel> getProductImageItemList(ProductModel prod) async {
     try {
       var lastId = INT(prod.itemLastId, defaultValue: -1);
-      LOG('--> getProductImageItemList : ${prod.saleProdId} / $lastId');
+      LOG('--> getProductImageItemList : ${prod.prodSaleId} / $lastId');
       var jsonData = await _apiService.getProductImageItems(
-        STR(prod.saleProdId), lastId: lastId);
+        STR(prod.prodSaleId), lastId: lastId);
       if (jsonData != null && LIST_NOT_EMPTY(jsonData['data'])) {
         prod.isLastItem     = BOL(jsonData['isLast']);
         prod.itemLastId     = INT(jsonData['lastId']);
@@ -249,33 +267,16 @@ class MarketRepository {
     return prod;
   }
 
-
-  Future<ProductModel?> getProductDetailFromId(String saleProdId) async {
-    var prod = ProductModel();
-    try {
-      var result = await _apiService.getProductDetail(saleProdId);
-      if (result != null) {
-        prod = ProductModel.fromJson(result);
-        // update option items..
-        prod = await getProductImageItemList(prod);
-        prod = setProductListItem(prod);
-        LOG('--> getProductDetailFromId result : ${prod.toJson()}');
-      }
-    } catch (e) {
-      LOG('--> getProductDetailFromId error : $e');
-    }
-    return prod;
-  }
-
   Future<List<PurchaseModel>> getPurchaseList(address, {String? startDate, String? endDate}) async {
     var jsonData = await _apiService.getPurchasesList(address, startDate, endDate);
     if (jsonData != null) {
       var data = jsonData['data'];
       for (var item in data) {
         var newItem = PurchaseModel.fromJson(item);
+        LOG('--> newItem : [${newItem.status}] ${newItem.toJson()}');
         var isAdd = true;
         for (var orgItem in purchaseList) {
-          if (orgItem.merchantUid == newItem.merchantUid) {
+          if (orgItem.purchaseId == newItem.purchaseId) {
             isAdd = false;
             purchaseList[purchaseList.indexOf(orgItem)] = newItem;
             break;
@@ -313,7 +314,7 @@ class MarketRepository {
 
   setProductListItem(ProductModel newItem) {
     for (var item in productList) {
-      if (item.saleProdId == newItem.saleProdId) {
+      if (item.prodSaleId == newItem.prodSaleId) {
         var index = productList.indexOf(item);
         productList[index] = ProductModel.fromJson(newItem.toJson());
         return productList[index];
@@ -323,10 +324,10 @@ class MarketRepository {
   }
 
   Future<PurchaseModel?> requestPurchase(
-    String saleProdId, {String? itemId, String? imgId}) async {
-    if (STR(saleProdId).isNotEmpty) {
+    String prodSaleId, {String? itemId, String? imgId}) async {
+    if (STR(prodSaleId).isNotEmpty) {
       var result = await _apiService.requestPurchase(
-          saleProdId, itemId: itemId, imgId: imgId);
+          prodSaleId, itemId: itemId, imgId: imgId);
       if (result != null) {
         return PurchaseModel.fromJson(result);
       }

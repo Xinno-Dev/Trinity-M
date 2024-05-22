@@ -29,7 +29,8 @@ import '../common/const/utils/convertHelper.dart';
 //
 //
 
-Future<String?> startEmailSend(String emailAddr, Function(LoginErrorType) onError) async {
+Future<String?> startEmailSend(
+  String emailAddr, Function(LoginErrorType) onError) async {
   var vfCode    = crypto.sha256.convert(utf8.encode(emailAddr)).toString();
   var vfCodeStr = emailAddr + vfCode;
   var vfCodeEnc = crypto.sha256.convert(utf8.encode(vfCodeStr));
@@ -37,31 +38,19 @@ Future<String?> startEmailSend(String emailAddr, Function(LoginErrorType) onErro
     try {
       var host = IS_DEV_MODE ? API_HOST_DEV : API_HOST;
       LOG('--> startEmailSend [$host] : $vfCodeStr => $vfCodeEnc');
-      // final email = Email(
-      //   body: 'Email body',
-      //   subject: 'Email subject',
-      //   recipients: [emailAddr],
-      //   // cc: ['cc@example.com'],
-      //   // bcc: ['bcc@example.com'],
-      //   // attachmentPaths: ['/path/to/attachment.zip'],
-      //   isHTML: false,
-      // );
-      // FlutterEmailSender.send(email)
-      //   .onError((error, stackTrace) {
-      //     LOG('---> email send error : $error');
-      //     onResult(null);
-      //   }).then((value) => onResult(vfCode));
       var acs = ActionCodeSettings(
           url: '${host}/users/email/vflink/$vfCodeEnc',
           handleCodeInApp: true,
-          iOSBundleId: 'com.xinno.trinity_m_00',
-          androidPackageName: 'com.xinno.trinity_m_00',
-          androidInstallApp: true,
-          androidMinimumVersion: '12');
+          // iOSBundleId: 'com.xinno.trinity_m_00',
+          // androidPackageName: 'com.xinno.trinity_m_00',
+          // androidInstallApp: true,
+          // androidMinimumVersion: '12'
+      );
       await FirebaseAuth.instance.sendSignInLinkToEmail(
           email: emailAddr, actionCodeSettings: acs)
           .catchError((error) {
         LOG('--> FirebaseAuth error : $error');
+        throw FormatException(error.toString());
       });
     } catch (e) {
       LOG('--> startEmailLogin error : $e');
@@ -114,6 +103,7 @@ startKakaoLogin({Function(String)? onError}) async {
     } catch (error) {
       LOG('--> 카카오톡으로 로그인 실패 $error');
       if (error is PlatformException && error.code == 'CANCELED') {
+        return null;
       }
       try {
         token = await kakao.UserApi.instance.loginWithKakaoAccount();

@@ -9,37 +9,40 @@ part of 'app_start_model.dart';
 AppStartModel _$AppStartModelFromJson(Map<String, dynamic> json) =>
     AppStartModel(
       id: json['id'] as String,
-      update_time: json['update_time'] as String,
-      notice_message: NoticeMessageData.fromJson(
-          json['notice_message'] as Map<String, dynamic>),
       version_info: (json['version_info'] as Map<String, dynamic>).map(
         (k, e) =>
             MapEntry(k, AppVersionData.fromJson(e as Map<String, dynamic>)),
       ),
+      update_time: json['update_time'] as String?,
+      notice_message: json['notice_message'] == null
+          ? null
+          : NoticeMessageData.fromJson(
+              json['notice_message'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AppStartModelToJson(AppStartModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'update_time': instance.update_time,
-      'notice_message': instance.notice_message.toJson(),
       'version_info':
           instance.version_info.map((k, e) => MapEntry(k, e.toJson())),
+      'update_time': instance.update_time,
+      'notice_message': instance.notice_message?.toJson(),
     };
 
 AppVersionData _$AppVersionDataFromJson(Map<String, dynamic> json) =>
     AppVersionData(
       force_update: json['force_update'] as bool,
-      message:
-          LanguageTextData.fromJson(json['message'] as Map<String, dynamic>),
       version: json['version'] as String,
+      message: json['message'] == null
+          ? null
+          : LanguageTextData.fromJson(json['message'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AppVersionDataToJson(AppVersionData instance) =>
     <String, dynamic>{
       'force_update': instance.force_update,
       'version': instance.version,
-      'message': instance.message.toJson(),
+      'message': instance.message?.toJson(),
     };
 
 NoticeMessageData _$NoticeMessageDataFromJson(Map<String, dynamic> json) =>

@@ -14,6 +14,7 @@ import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/viewModel/market_view_model.dart';
+import '../profile/profile_Identity_screen.dart';
 import 'payment_screen.dart';
 import 'pg/payment_test.dart';
 
@@ -80,17 +81,18 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
             text: TR(context, '결제하기'),
             round: 0,
             onTap: () {
-              prov.createPurchaseInfo();
-              var data = prov.createPurchaseData(
-                userInfo: ref.read(loginProvider).userInfo!);
-              if (data != null) {
-                prov.requestPurchaseWithImageId().then((info) {
-                  if (info != null) {
-                    Navigator.of(context).push(
-                        createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data)));
-                  } else {
-                    _showFailMessage(context);
-                  }
+              final loginProv = ref.read(loginProvider);
+              LOG('--> userIdentityYN : ${loginProv.userIdentityYN}');
+              if (loginProv.userIdentityYN) {
+                _startPurchase();
+              } else {
+                // 본인인증이 안되있을경우 본인인증 부터..
+                Navigator.of(context).push(
+                  createAniRoute(ProfileIdentityScreen())).then((result) {
+                    if (BOL(result)) {
+                      loginProv.userInfo!.identityYN = result;
+                      _startPurchase();
+                    }
                 });
               }
             },
@@ -99,5 +101,22 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
           )
       ),
     );
+  }
+
+  _startPurchase() {
+    final prov = ref.read(marketProvider);
+    prov.createPurchaseInfo();
+    var data = prov.createPurchaseData(
+        userInfo: ref.read(loginProvider).userInfo!);
+    if (data != null) {
+      prov.requestPurchaseWithImageId().then((info) {
+        if (info != null) {
+          Navigator.of(context).push(
+              createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data)));
+        } else {
+          _showFailMessage(context);
+        }
+      });
+    }
   }
 }

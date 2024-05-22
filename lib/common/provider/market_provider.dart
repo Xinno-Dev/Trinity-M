@@ -81,14 +81,14 @@ class MarketProvider extends ChangeNotifier {
     return !hasOption || optionIndex >= 0;
   }
 
-  checkLastProduct(String? saleProdId) {
-    if (showList.isEmpty || STR(saleProdId).isEmpty) return true;
-    var result = STR(showList.last.saleProdId) == saleProdId;
+  checkLastProduct(String? prodSaleId) {
+    if (showList.isEmpty || STR(prodSaleId).isEmpty) return true;
+    var result = STR(showList.last.prodSaleId) == prodSaleId;
     return result;
   }
 
   get detailPic {
-    return selectProduct?.img ?? selectProduct?.repDetailImg;
+    return selectProduct?.itemImg ?? selectProduct?.repDetailImg;
   }
 
   get externalPic {
@@ -163,15 +163,20 @@ class MarketProvider extends ChangeNotifier {
   }
 
   getProductDetail() async {
-    if (_repo.checkDetailId != STR(selectProduct?.saleProdId)) {
-      _repo.checkDetailId = STR(selectProduct?.saleProdId);
+    if (_repo.checkDetailId != STR(selectProduct?.prodSaleId)) {
+      _repo.checkDetailId = STR(selectProduct?.prodSaleId);
       selectProduct = await _repo.getProductDetail(selectProduct!);
     }
-    return selectProduct ?? [];
+    return selectProduct;
+  }
+
+  getProductDetailFromId(String prodSaleId) async {
+    selectProduct = await _repo.getProductDetailFromId(prodSaleId);
+    return selectProduct;
   }
 
   getPurchaseProductInfo() async {
-      return await _repo.getProductDetailFromId(STR(selectPurchaseItem!.saleProdId));
+    return await _repo.getProductDetailFromId(STR(selectPurchaseItem!.prodSaleId));
   }
 
   getProductOptionList() async {
@@ -232,7 +237,7 @@ class MarketProvider extends ChangeNotifier {
     if (selectProduct != null) {
       purchaseInfo = PurchaseModel(
         purchaseId: Uuid().v4(),
-        saleProdId: selectProduct!.saleProdId,
+        prodSaleId: selectProduct!.prodSaleId,
         itemType:   selectProduct!.itemType,
         name:       selectProduct!.name,
         itemId:     optionId,
@@ -295,7 +300,7 @@ class MarketProvider extends ChangeNotifier {
 
   requestPurchaseWithImageId() async {
     var result = await _repo.requestPurchase(
-        STR(purchaseInfo?.saleProdId), imgId: STR(optionId));
+        STR(purchaseInfo?.prodSaleId), imgId: STR(optionId));
     if (result != null) {
       purchaseInfo!.itemId      = result.itemId;
       purchaseInfo!.merchantUid = result.merchantUid;

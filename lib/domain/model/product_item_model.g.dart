@@ -23,6 +23,7 @@ ProductItemModel _$ProductItemModelFromJson(Map<String, dynamic> json) =>
       issuer: json['issuer'] == null
           ? null
           : SellerModel.fromJson(json['issuer'] as Map<String, dynamic>),
+      externalUrl: json['externalUrl'] as String?,
       createTime: json['createTime'] == null
           ? null
           : DateTime.parse(json['createTime'] as String),
@@ -52,6 +53,7 @@ Map<String, dynamic> _$ProductItemModelToJson(ProductItemModel instance) {
   writeNotNull('type', instance.type);
   writeNotNull('symbol', instance.symbol);
   writeNotNull('totalSupply', instance.totalSupply);
+  writeNotNull('externalUrl', instance.externalUrl);
   writeNotNull('issuer', instance.issuer?.toJson());
   writeNotNull('createTime', instance.createTime?.toIso8601String());
   writeNotNull('updateTime', instance.updateTime?.toIso8601String());

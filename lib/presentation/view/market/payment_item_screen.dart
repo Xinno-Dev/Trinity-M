@@ -39,7 +39,7 @@ class _PaymentItemScreenState extends ConsumerState<PaymentItemScreen> {
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(TR(context, '상품 상세 보기')),
+          title: Text(TR(context, '상품 정보')),
           centerTitle: true,
           titleTextStyle: typo16bold,
           backgroundColor: Colors.white,
@@ -55,13 +55,13 @@ class _PaymentItemScreenState extends ConsumerState<PaymentItemScreen> {
             _viewModel.showPurchaseDetail(context),
           ]
         ),
-        bottomNavigationBar: PrimaryButton(
-          text: TR(context, '사용하기'),
-          round: 0,
-          onTap: () {
-
-          },
-        ),
+        // bottomNavigationBar: PrimaryButton(
+        //   text: TR(context, '사용하기'),
+        //   round: 0,
+        //   onTap: () {
+        //
+        //   },
+        // ),
       ),
     );
   }

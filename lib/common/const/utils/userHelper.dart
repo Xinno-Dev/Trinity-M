@@ -58,6 +58,7 @@ class UserHelper {
       uid: '',
     );
     userKey = '';
+    return true;
   }
 
   removeUser() async {
