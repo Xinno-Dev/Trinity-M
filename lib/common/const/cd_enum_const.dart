@@ -53,9 +53,9 @@ enum CD_PAY_ST {
       case CD_PAY_ST.verify:
         return '결제검증';
       case CD_PAY_ST.complete:
-        return '거래완료';
+        return '구매완료';
       default:
-        return '결제취소';
+        return '구매취소';
     }
   }
 

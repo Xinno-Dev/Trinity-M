@@ -67,6 +67,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
             prov.checkPurchase(result).then((checkResult) {
               LOG('--> checkResult : $checkResult');
               if (checkResult) {
+                showToast(TR(context, '결제에 성공했습니다.'));
                 context.pushReplacementNamed(PaymentDoneScreen.routeName);
               } else {
                 _showFailMessage(context);

@@ -25,7 +25,6 @@ class UserModel {
   String?     uid;          // user id from login
   int?        status;       // status 1: login done, 0: login not yet..
   LoginType?  loginType;    // login type ['kakao', 'email'..]
-  bool?   identityYN;       // 본인인증 여부
   bool?   bioIdentityYN;    // 생체인증 여부
 
   String? mnemonic;         // main mnemonic
@@ -41,6 +40,7 @@ class UserModel {
   String? picThumb;         // thumbnail image
   String? deviceId;         // device uuid
   String? deviceType;       // device type ['android', 'ios'...]
+  String? certUpdt;         // 본인인증 여부
 
   DateTime? createTime;
   DateTime? loginTime;
@@ -52,7 +52,6 @@ class UserModel {
     this.uid,
     this.status,
     this.loginType,
-    this.identityYN,
     this.bioIdentityYN,
 
     this.mnemonic,
@@ -69,6 +68,7 @@ class UserModel {
     this.deviceId,
     this.deviceType,
     this.addressList,
+    this.certUpdt,
 
     this.createTime,
     this.loginTime,
@@ -128,6 +128,7 @@ class UserModel {
       status:     1,
       uid:        STR(info['uid']),
       email:      STR(info['email']),
+      certUpdt:   STR(info['certUpdt']),
       addressList: addr
     );
   }

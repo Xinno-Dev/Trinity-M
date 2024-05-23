@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iamport_flutter/model/payment_data.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +9,7 @@ import '../../../../common/const/utils/convertHelper.dart';
 import '../../../../common/const/widget/primary_button.dart';
 import '../../../../domain/model/product_model.dart';
 import '../../../../domain/repository/market_repository.dart';
-import '../../../../presentation/view/market/seller_detail_screen.dart';
+import '../../presentation/view/profile/profile_targetl_screen.dart';
 import '../../../../services/api_service.dart';
 
 import '../../domain/model/category_model.dart';
@@ -45,6 +44,7 @@ class MarketProvider extends ChangeNotifier {
   ProductItemModel? selectUserProductItem;
 
   List<ProductModel> showList = [];
+  List<ProductModel> userShowList = [];
 
   late DateTime purchaseStartDate;
   late DateTime purchaseEndDate;
@@ -71,6 +71,16 @@ class MarketProvider extends ChangeNotifier {
     }
     LOG('---> marketList : $selectCategory / ${_repo.productList.length}');
     return showList;
+  }
+
+  get userMarketList {
+    userShowList.clear();
+    for (var item in _repo.userProductList) {
+      var newItem = ProductModel.fromJson(item.toJson());
+      userShowList.add(newItem);
+    }
+    LOG('---> userMarketList : $selectCategory / ${_repo.productList.length}');
+    return userShowList;
   }
 
   get hasOption {
@@ -153,12 +163,19 @@ class MarketProvider extends ChangeNotifier {
     return await _repo.getStartData();
   }
 
-  getProductList() async {
-    if (_repo.isLastPage) {
-      return false;
+  getProductList({String? ownerAddr}) async {
+    LOG('--> getProductList check : $ownerAddr / ${_repo.checkUserAddr}');
+    if (STR(ownerAddr).isNotEmpty) {
+      if (_repo.checkUserAddr != STR(ownerAddr)) {
+        await _repo.getUserProductList(ownerAddr!);
+      }
+    } else {
+      if (_repo.isLastPage) {
+        return false;
+      }
+      await _repo.getProductList();
+      notifyListeners();
     }
-    await _repo.getProductList();
-    notifyListeners();
     return true;
   }
 
@@ -189,12 +206,15 @@ class MarketProvider extends ChangeNotifier {
   }
 
   getPurchaseList() async {
-    var address = await UserHelper().get_address();
-    return await _repo.getPurchaseList(address);
+    var address   = await UserHelper().get_address();
+    var format    = DateFormat('yyyy-MM-dd');
+    var startStr  = format.format(purchaseStartDate).toString();
+    var endStr    = format.format(purchaseEndDate).toString();
+    return await _repo.getPurchaseList(address, startDate: startStr, endDate: endStr);
   }
 
-  getUserItemList() async {
-    return await _repo.getUserItemList();
+  getUserItemList(String ownerAddr) async {
+    return await _repo.getUserItemList(ownerAddr);
   }
 
   List<PurchaseModel> get purchaseList {
@@ -243,11 +263,11 @@ class MarketProvider extends ChangeNotifier {
         itemId:     optionId,
         itemImg:    optionPic,
         buyPrice:   selectProduct!.itemPrice,
+        payPrice:   selectProduct!.itemPrice,
         priceUnit:  selectProduct!.priceUnit,
         txDateTime: DateTime.now().toString(),
         payType:    '1',
         // for test..
-        payPrice:   '1000',
         cardType:   'TEST CARD',
         cardNum:    '1234-****-****-5678',
         seller:     selectProduct!.seller,
@@ -298,9 +318,14 @@ class MarketProvider extends ChangeNotifier {
   }
 
 
-  requestPurchaseWithImageId() async {
+  requestPurchaseWithImageId({Function(String)? onError}) async {
+    LOG('--> requestPurchaseWithImageId : ${purchaseInfo?.prodSaleId} / ${optionId}');
     var result = await _repo.requestPurchase(
-        STR(purchaseInfo?.prodSaleId), imgId: STR(optionId));
+        STR(purchaseInfo?.prodSaleId), imgId: STR(optionId), onError: (error) {
+        if (error == '__not_found__' && onError != null) {
+          onError('이미 판매완료된 옵션 상품입니다.');
+        }
+    });
     if (result != null) {
       purchaseInfo!.itemId      = result.itemId;
       purchaseInfo!.merchantUid = result.merchantUid;
@@ -313,24 +338,25 @@ class MarketProvider extends ChangeNotifier {
   }
 
   Future<bool> checkPurchase(JSON info) async {
-    var impUid      = STR(info['imp_uid']);
-    var status      = STR(info['status']);
-    var merchantId  = STR(purchaseInfo!.merchantUid);
+    LOG('--> checkPurchase : $info');
+    var impUid      = STR(info['imp_uid'      ]);
+    var status      = STR(info['status'       ]);
+    var merchantId  = STR(info['merchant_uid' ]);
     await Future.delayed(Duration(seconds: 1)); // 딜레이.. 1초..
     var result = await _repo.checkPurchase(impUid, merchantId, status);
     LOG('--> checkPurchase result : ${STR(result?['status'])}');
     if (result != null && STR(result['status']) == '4') {
-      return updatePurchaseInfo(result);
+      return updatePurchaseInfo(info);
     }
     return false;
   }
 
-  updatePurchaseInfo(JSON result) {
+  updatePurchaseInfo(JSON info) {
     if (purchaseInfo != null) {
-      purchaseInfo!.cardType  = STR(result['card_name'  ]);
-      purchaseInfo!.cardNum   = STR(result['card_number']);
-      purchaseInfo!.payPrice  = STR(result['paid_amount']);
-      purchaseInfo!.priceUnit = STR(result['currency'   ]);
+      purchaseInfo!.cardType  = STR(info['card_name'  ]);
+      purchaseInfo!.cardNum   = STR(info['card_number']);
+      purchaseInfo!.payPrice  = STR(info['paid_amount']);
+      purchaseInfo!.priceUnit = STR(info['currency'   ]);
       return true;
     }
     return false;

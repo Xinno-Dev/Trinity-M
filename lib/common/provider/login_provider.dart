@@ -188,6 +188,7 @@ class LoginProvider extends ChangeNotifier {
   var inputNick   = IS_DEV_MODE ? EX_TEST_ACCCOUNT_00 : '';
   var inputEmail  = IS_DEV_MODE ? EX_TEST_MAIL_00 : '';
   var inputPass   = List.generate(2, (index) => IS_DEV_MODE ? EX_TEST_PASS_00 : '');
+  var cloudPass   = List.generate(2, (index) => IS_DEV_MODE ? EX_TEST_PASS_00 : '');
 
   String? localLoginType;
   String? socialName;
@@ -197,6 +198,10 @@ class LoginProvider extends ChangeNotifier {
 
   get userPass {
     return inputPass.first;
+  }
+
+  get userPassReady {
+    return userPass.isNotEmpty;
   }
 
   get userEmail {
@@ -216,14 +221,14 @@ class LoginProvider extends ChangeNotifier {
   }
 
   get userIdentityYN {
-    return BOL(userInfo?.identityYN);
+    return STR(userInfo?.certUpdt).isNotEmpty;
   }
 
   get userBioYN {
     return BOL(userInfo?.bioIdentityYN);
   }
 
-  get userPassReady {
+  get checkPassLength {
     return userPass.length > 4;
   }
 
@@ -311,21 +316,25 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool> checkLogin([var isSignUp = false]) async {
-    if (isLogin || isLoginCheckDone) return isLogin;
-    var user = await UserHelper().get_loginInfo();
-    LOG('----------------------------- $user');
-    // auto login..
-    if (STR(user).isNotEmpty) {
-      loginAuto(user!).then((result) {
-        if (isLogin) {
-          Fluttertoast.showToast(
-              msg: "${account?.accountName} 로그인 완료");
-          notifyListeners();
-        }
-      });
+    if (IS_AUTO_LOGIN_MODE) {
+      if (isLogin || isLoginCheckDone) return isLogin;
+      var user = await UserHelper().get_loginInfo();
+      LOG('----------------------------- $user');
+      // auto login..
+      if (STR(user).isNotEmpty) {
+        loginAuto(user!).then((result) {
+          if (isLogin) {
+            Fluttertoast.showToast(
+                msg: "${account?.accountName} 로그인 완료");
+            notifyListeners();
+          }
+        });
+      }
+      isLoginCheckDone = true;
+      return isLogin;
     }
     isLoginCheckDone = true;
-    return isLogin;
+    return false;
   }
 
   get isLogin {
@@ -402,7 +411,7 @@ class LoginProvider extends ChangeNotifier {
       if (STR(userNickId).isEmpty) {
         await UserHelper().setUserKey(STR(userInfo?.email));
         await _refreshAccountList();
-        userInfo = await _setAccountListFromServer();
+        userInfo = await _updateUserInfo();
         if (userInfo != null) {
           userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
           return true;
@@ -472,21 +481,23 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool> initSignUpKakao(
+  Future<bool?> initSignUpKakao(
     {Function(LoginErrorType, String?)? onError}) async {
     init();
     final user = await startKakaoLogin();
     LOG('----> initSignUpKakao user : $user');
     if (user != null) {
       userInfo = await UserModel.createFromKakao(user);
-      LOG('----> signUpKakao userInfo : ${userInfo?.toJson()} / '
-          '${userInfo!.socialToken}');
       if (STR(userInfo?.email).isNotEmpty) {
         var result = await apiService.checkEmail(userInfo!.email!);
-        if (!result && onError != null) {
-          onError(LoginErrorType.mailDuplicate, userInfo!.email!);
+        LOG('----> checkEmail result : $result');
+        if (!result) {
+          if (onError != null) {
+            LOG('----> checkEmail onError : ${userInfo!.email}');
+            onError(LoginErrorType.mailDuplicate, userInfo!.email!);
+          }
           init();
-          return false;
+          return null;
         }
         return true;
       }
@@ -591,16 +602,16 @@ class LoginProvider extends ChangeNotifier {
     return null;
   }
 
-  Future<UserModel?> recoverUser(
+  Future<UserModel?> recoverUser(String newPass,
     {String? mnemonic, String? privateKey,
      Function(LoginErrorType, String?)? onError}) async {
     // set user key..
     userInfo ??= _createEmailUser();
-    LOG('--> recoverUser : ${userInfo?.toJson()}');
+    LOG('--> recoverUser : [$newPass] ${userInfo?.toJson()}');
     inputNick = ''; // nickId unknown..
     await UserHelper().setUserKey(userInfo!.email!);
     var result  = await createNewAccount(
-        userPass, mnemonic: mnemonic, privateKey: privateKey);
+        newPass, mnemonic: mnemonic, privateKey: privateKey);
     LOG('--> recoverUser create : $result <= $mnemonic / $privateKey');
     // create user info..
     if (result) {
@@ -661,15 +672,16 @@ class LoginProvider extends ChangeNotifier {
         var result = await apiService.loginUser(
             nickStr, type, email, token, onError: onError);
         if (result) {
-          // get all account info when nickId empty..
-          if (STR(userNickId).isEmpty) {
-            userInfo = await _setAccountListFromServer();
-          }
+          // // get all account info when nickId empty..
+          // if (STR(userNickId).isEmpty) {
+            userInfo = await _updateUserInfo();
+          // }
           userInfo!.uid = await UserHelper().get_uid();
           userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
           var userEnc = await userInfo?.encryptAes;
           await UserHelper().setUser(loginInfo: userEnc);
-          LOG('-----------> loginUser success : [${userInfo!.uid}] ${userInfo!.bioIdentityYN} / ${userInfo?.toJson()}');
+          LOG('-----------> loginUser success : [${userInfo!.uid}] '
+              '${userInfo!.bioIdentityYN} / ${userInfo?.toJson()}');
         }
         return result;
       }
@@ -680,7 +692,9 @@ class LoginProvider extends ChangeNotifier {
   Future<UserModel?> getUserInfo() async {
     var result = await apiService.getUserInfo();
     if (result != null) {
-      return UserModel.createFromInfo(result);
+      UserModel user = UserModel.createFromInfo(result);
+      LOG('---> user.certUpdt : ${user.certUpdt}');
+      return user;
     }
     return null;
   }
@@ -706,10 +720,10 @@ class LoginProvider extends ChangeNotifier {
 
   // add new account..
   Future<bool> addNewAccount(String passOrg, String newNickId) async {
+    LOG('--> addNewAccount : $passOrg / $newNickId');
     var pass    = crypto.sha256.convert(utf8.encode(passOrg)).toString();
     var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
     var keyResult = await eccImpl.addKeyPair(pass, nickId: newNickId);
-    LOG('--> addNewAccount : $newNickId / $passOrg => $keyResult / $walletAddress');
     if (keyResult) {
       await _refreshAccountList();
       var uid     = STR(await UserHelper().get_uid());
@@ -761,11 +775,12 @@ class LoginProvider extends ChangeNotifier {
     LOG('--> setUserInfo : $message / ${info.toJson()}');
     var sig = await createSign(message);
     if (sig != null) {
-      LOG('--> setUserInfo ready : $walletAddress / $sig / ${info.subTitle} / ${info.description} / ${info.image}');
+      LOG('--> setUserInfo ready : $walletAddress / $sig / ${info.subTitle} / '
+          '${info.description} / ${info.image}');
       var addResult = await apiService.setUserInfo(walletAddress, sig,
         subTitle: info.subTitle,
-        desc: info.description,
         imageUrl: info.image,
+        desc:     info.description,
       );
       if (addResult == true) {
         LOG('--> setUserInfo success !!');
@@ -791,6 +806,7 @@ class LoginProvider extends ChangeNotifier {
     if (result != true) {
       return false;
     }
+    notifyListeners();
     return true;
   }
 
@@ -860,6 +876,8 @@ class LoginProvider extends ChangeNotifier {
         if (keyStr != 'fail') {
           var keyPair = EccKeyPair.fromJson(jsonDecode(keyStr));
           return keyPair;
+        } else {
+          inputPass.first = '';
         }
       }
     } catch (e) {
@@ -1054,7 +1072,7 @@ class LoginProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<UserModel?> _setAccountListFromServer() async {
+  Future<UserModel?> _updateUserInfo() async {
     var tmpUserInfo = await getUserInfo();
     if (tmpUserInfo?.addressList != null) {
       var accountCount = INT(userInfo?.addressList?.length);
@@ -1079,6 +1097,7 @@ class LoginProvider extends ChangeNotifier {
         }
       }
       LOG('--> addrListJson : $addrListJson');
+      userInfo!.certUpdt = tmpUserInfo.certUpdt;
       await UserHelper().setUser(addressList: jsonEncode(addrListJson));
       // LOG('--> _setAccountListFromServer result : ${userInfo?.toJson()}');
       return userInfo;

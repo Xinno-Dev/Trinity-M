@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trinity_m_00/services/api_service.dart';
 import '../../../common/provider/coin_provider.dart';
 import '../../../common/provider/login_provider.dart';
 import '../../../common/provider/temp_provider.dart';
@@ -219,6 +220,11 @@ class _MainScreenState extends ConsumerState<MainScreen>
         ),
         backgroundColor: Colors.white,
         drawer: _viewModel.mainDrawer(context),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     ApiService().testCheck();
+        //   },
+        // ),
       )
     );
   }

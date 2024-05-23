@@ -51,6 +51,7 @@ class _PaymentDoneScreenState extends ConsumerState {
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
     var info = prov.purchaseInfo;
+    LOG('--> info : ${info?.toJson()}');
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -78,7 +79,7 @@ class _PaymentDoneScreenState extends ConsumerState {
                   children: [
                     Text(TR(context, '결제 금액'), style: typo16bold),
                     Spacer(),
-                    Text(STR(info?.priceText), style: typo16bold),
+                    Text(STR(info?.payText), style: typo16bold),
                   ],
                 ),
               ),
@@ -88,7 +89,7 @@ class _PaymentDoneScreenState extends ConsumerState {
                   children: [
                     Text(TR(context, '상품 금액'), style: typo14medium),
                     Spacer(),
-                    Text(STR(info?.payText), style: typo14medium),
+                    Text(STR(info?.priceText), style: typo14medium),
                   ],
                 ),
               ),

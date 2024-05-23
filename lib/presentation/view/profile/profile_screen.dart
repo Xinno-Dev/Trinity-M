@@ -39,6 +39,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
+    _viewModel.context = context;
     return SafeArea(
       top: false,
       child: GestureDetector(
@@ -54,10 +55,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   SizedBox(height: 10.h),
                   if (prov.isLogin)...[
                     _viewModel.showProfile(context),
-                    _marketViewModel.showStoreProductList(
-                        context,
-                        TR(context, 'Market'),
-                        isShowSeller: false, isCanBuy: false),
+                    _marketViewModel.showUserProductList(
+                      context,
+                      TR(context, 'Market'),
+                      prov.accountAddress,
+                      isShowSeller: false, isCanBuy: false),
                   ]
                 ]
               ),

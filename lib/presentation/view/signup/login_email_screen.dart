@@ -141,7 +141,9 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
     } else if (result == null) {
       // tester00 계정용 자동 니모닉 복구..
       if (loginProv.inputEmail == EX_TEST_MAIL_EX) {
-        loginProv.recoverUser(mnemonic: EX_TEST_MN_EX).then((result) {
+        loginProv.recoverUser(
+          EX_TEST_PASS_EX,
+          mnemonic: EX_TEST_MN_EX).then((result) {
           if (loginProv.isLogin) {
             _startEmailLogin();
           }

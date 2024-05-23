@@ -121,9 +121,12 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
       LOG('--> RecoverWalletInputScreen result : $mnemonic');
       if (STR(mnemonic).isNotEmpty) {
         showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
-        Navigator.of(context).push(createAniRoute(RecoverPassScreen())).then((newPass) {
-          loginProv.inputPass.first = newPass;
-          loginProv.recoverUser(mnemonic: mnemonic,
+        // create password..
+        Navigator.of(context).push(
+          createAniRoute(RecoverPassScreen())).then((newPass) {
+          loginProv.recoverUser(
+              newPass,
+              mnemonic: mnemonic,
               onError: (type, code) {
                 hideLoadingDialog();
                 showLoginErrorDialog(context, type, code);
@@ -146,12 +149,10 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
         // cloud pass check..
         Navigator.of(context).push(
           createAniRoute(CloudPassScreen())).then((pass) async {
-          LOG('--> CloudPassScreen result : $pass');
           if (STR(pass).isNotEmpty) {
-            showLoadingDialog(context, TR(context, '복구단어 복원중입니다...'));
             // recover mnemonic..
+            LOG('--> CloudPassScreen result : $pass / $rwfStr');
             var mnemonic = await RWFExportHelper.decrypt(pass, rwfStr);
-            hideLoadingDialog();
             if (mnemonic != null) {
               // new pass create..
               Navigator.of(context)
@@ -161,21 +162,24 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
                   loginProv.inputPass.first = newPass;
                   showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
                   // start recover user..
-                  loginProv.recoverUser(mnemonic: mnemonic,
-                      onError: (type, code) {
-                        hideLoadingDialog();
-                        showLoginErrorDialog(context, type, code);
-                        UserHelper().clearUser();
-                      }).then((result) {
-                    LOG('--> recoverUser mn result : $result');
-                    _recoverResult(result);
-                  });
+                  loginProv.recoverUser(
+                    newPass,
+                    mnemonic: mnemonic,
+                    onError: (type, code) {
+                      hideLoadingDialog();
+                      showLoginErrorDialog(context, type, code);
+                      UserHelper().clearUser();
+                    }).then((result) {
+                      LOG('--> recoverUser mn result : $result');
+                      hideLoadingDialog();
+                      _recoverResult(result);
+                    });
                 } else {
                   LOG('--> recoverUser mn cancel');
                 }
               });
             } else {
-              showLoginErrorTextDialog(context, TR(context, ''));
+              showLoginErrorTextDialog(context, TR(context, '잘못된 복구 비밀번호입니다.'));
             }
           }
         });
@@ -187,7 +191,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
     if (result != null) {
       _moveToMainProfile();
     } else {
-      showToast('복구 실패');
+      showToast('계정 복구 실패');
     }
   }
 
@@ -210,7 +214,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
         var keyPair = EccKeyPair.fromJson(jsonDecode(privateKey!));
         LOG('--> recoverUser keyPair : ${keyPair.toJson()}');
         if (STR(privateKey).isNotEmpty) {
-          loginProv.recoverUser(privateKey: keyPair.d).then((result) {
+          loginProv.recoverUser(loginProv.userPass, privateKey: keyPair.d).then((result) {
             LOG('--> recoverUser cloud success : $result / ${loginProv.isLogin}');
             if (loginProv.isLogin) {
               _moveToMainProfile();

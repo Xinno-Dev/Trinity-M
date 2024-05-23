@@ -51,7 +51,6 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);

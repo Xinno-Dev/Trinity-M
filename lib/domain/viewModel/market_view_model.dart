@@ -19,7 +19,7 @@ import '../../common/const/widget/primary_button.dart';
 import '../../presentation/view/market/item_select_screen.dart';
 import '../../presentation/view/market/payment_item_screen.dart';
 import '../../presentation/view/market/product_detail_screen.dart';
-import '../../presentation/view/market/seller_detail_screen.dart';
+import '../../presentation/view/profile/profile_targetl_screen.dart';
 import '../model/product_item_model.dart';
 import '../model/product_model.dart';
 import '../model/seller_model.dart';
@@ -70,13 +70,58 @@ class MarketViewModel {
   }
 
   showProductList(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      padding: EdgeInsets.fromLTRB(15, 10, 15, kToolbarHeight.h),
-      itemCount: prov.marketList.length,
-      itemBuilder: (context, index) {
-        return productListItem(context, prov.marketList[index]);
-      }
+    if (prov.marketList.isNotEmpty) {
+      return ListView.builder(
+        shrinkWrap: true,
+        padding: EdgeInsets.fromLTRB(15, 10, 15, kToolbarHeight.h),
+        itemCount: prov.marketList.length,
+        itemBuilder: (context, index) {
+          return productListItem(context, prov.marketList[index]);
+        }
+      );
+    } else {
+      return Container(
+        height: 200,
+        alignment: Alignment.center,
+        child: Text(TR(context, '상품이 없습니다.')),
+      );
+    }
+  }
+
+
+  showUserProductList(BuildContext context, String title, String ownerAddr,
+      { var isShowSeller = true, var isCanBuy = true}) {
+    return FutureBuilder(
+        future: prov.getProductList(ownerAddr: ownerAddr),
+        builder: (context, snapShot) {
+          if (snapShot.hasData) {
+            LOG('--> prov.marketRepo.userProductList : ${prov.marketRepo.userProductList.length}');
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                      padding: EdgeInsets.only(top: 20, bottom: 10),
+                      child: Text(title, style: typo16bold)
+                  ),
+                  if (prov.marketRepo.userProductList.isNotEmpty)...[
+                    ...List<Widget>.from(prov.marketRepo.userProductList.map((e) =>
+                    productListItem(context, e,
+                      isShowSeller: isShowSeller, isCanBuy: isCanBuy))
+                      .toList())
+                  ],
+                  if (prov.marketRepo.userProductList.isEmpty)...[
+                    Container(
+                      height: 200,
+                      alignment: Alignment.center,
+                      child: Text(TR(context, '상품이 없습니다.')),
+                    )
+                  ]
+                ],
+              );
+          } else {
+            return showLoadingFull();
+          }
+        }
     );
   }
 
@@ -142,26 +187,23 @@ class MarketViewModel {
                         },
                         tabs: <Widget>[
                           Tab(
-                            text: TR(context, '상세 정보'),
-                          ),
-                          Tab(
                             text: TR(context, '옵션 정보'),
                           ),
-                          // Tab(
-                          //   text: TR(context, 'NFT 정보'),
-                          // ),
+                          Tab(
+                            text: TR(context, '상세 정보'),
+                          ),
                         ],
                       ),
                       AnimatedContainer(
                         color: Colors.white,
-                        height: prov.selectDetailTab == 1 ? listHeight : detailHeight,
+                        height: prov.selectDetailTab == 0 ? listHeight : detailHeight,
                         margin: EdgeInsets.only(top: 2),
                         duration: Duration(milliseconds: 100),
                         child: TabBarView(
                           physics: NeverScrollableScrollPhysics(),
                           children: [
-                            showDetailTab(prov.externalPic),
                             showOptionTab(),
+                            showDetailTab(prov.externalPic),
                           ],
                         ),
                       )
@@ -229,7 +271,7 @@ class MarketViewModel {
     );
   }
 
-  showBuyBox() {
+  showBuyBox(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(15),
       child: Column(
@@ -296,21 +338,20 @@ class MarketViewModel {
     );
   }
 
-  showStoreProductList(BuildContext context, String title,
-    {var isShowSeller = true, var isCanBuy = true}) {
-    // TODO: seller product list change..
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-            padding: EdgeInsets.only(top: 20, bottom: 10),
-            child: Text(title, style: typo16bold)
-        ),
-        ...List<Widget>.from(prov.marketRepo.productList.map((e) =>
-            productListItem(context, e, isShowSeller: isShowSeller, isCanBuy: isCanBuy)).toList())
-      ],
-    );
-  }
+  // showStoreProductList(BuildContext context, String title,
+  //   {var isShowSeller = true, var isCanBuy = true}) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Padding(
+  //           padding: EdgeInsets.only(top: 20, bottom: 10),
+  //           child: Text(title, style: typo16bold)
+  //       ),
+  //       ...List<Widget>.from(prov.marketRepo.productList.map((e) =>
+  //           productListItem(context, e, isShowSeller: isShowSeller, isCanBuy: isCanBuy)).toList())
+  //     ],
+  //   );
+  // }
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -324,19 +365,19 @@ class MarketViewModel {
     );
   }
 
-  showPurchaseList(BuildContext context) {
+  showPurchaseList(BuildContext context, {var showStatus = true}) {
     return FutureBuilder(
         future: prov.getPurchaseList(),
         builder: (context, snapShot) {
           if (snapShot.hasData) {
             if (prov.purchaseList.isNotEmpty) {
               return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: prov.purchaseList.length,
-                  itemBuilder: (context, index) {
-                    return _purchaseItem(context, prov.purchaseList[index],
-                      isShowDetail: true);
-                  }
+                shrinkWrap: true,
+                itemCount: prov.purchaseList.length,
+                itemBuilder: (context, index) {
+                  return _purchaseItem(context, prov.purchaseList[index],
+                    isShowDetail: true);
+                }
               );
             } else {
               return Container(
@@ -383,12 +424,13 @@ class MarketViewModel {
     );
   }
 
-  showUserItemList(BuildContext context) {
+  showUserItemList(BuildContext context, String ownerAddr) {
     return FutureBuilder(
-      future: prov.getUserItemList(),
+      future: prov.getUserItemList(ownerAddr),
       builder: (context, snapShot) {
         if (snapShot.hasData) {
           if (prov.userItemList.isNotEmpty) {
+            LOG('--> prov.userItemList : ${prov.userItemList}');
             if (prov.userItemShowGrid) {
               return GridView.builder(
                   shrinkWrap: true,
@@ -559,7 +601,9 @@ class MarketViewModel {
           Text(prov.purchaseSearchDate, style: typo14semibold),
           Spacer(),
           PrimaryButton(
-            onTap: _showPurchaseDatePicker,
+            onTap: () {
+              _showPurchaseDatePicker(context);
+            },
             text: TR(context, '조회 기간'),
             height: 30.h,
             color: WHITE,
@@ -627,7 +671,7 @@ class MarketViewModel {
   }
 
 
-  _showPurchaseDatePicker() {
+  _showPurchaseDatePicker(BuildContext context) {
     showDialog(context: context,
       builder: (BuildContext context) =>
         DateRangePickerDialog(
@@ -888,16 +932,19 @@ class MarketViewModel {
     // );
   }
 
-  getUserItemImage(ProductItemModel item, {var isShowEmpty = true}) {
+  getUserItemImage(ProductItemModel item,
+    {var isShowEmpty = true}) {
     if (STR(item.img).isNotEmpty) return STR(item.img);
     var img = prov.marketRepo.getProductImgFromData(item.itemId);
     return img ?? (isShowEmpty ? EMPTY_IMAGE : '');
   }
 
-  _userProductListItem(BuildContext context, ProductItemModel item,
+  _userProductListItem(BuildContext context,
+      ProductItemModel item,
       {EdgeInsets? margin}) {
     final image = getUserItemImage(item);
     return Container(
+      margin: margin ?? EdgeInsets.only(top: 15),
       color: Colors.transparent,
       child: Column(
         children: [
@@ -907,32 +954,30 @@ class MarketViewModel {
               showUserItemDetail(context, item);
             },
             child: Container(
-              margin: EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 children: [
-                  if (image.isNotEmpty)
-                    Container(
-                      width: 80,
-                      height: 80,
+                  Container(
+                      width: 100,
+                      height: 100,
                       margin: EdgeInsets.only(right: 15),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: showImage(image, Size(80, 80)),
+                        child: showImage(image, Size(100, 100)),
                       )
-                    ),
+                  ),
                   Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(STR(item.name), style: typo14bold.copyWith(height: 1.0)),
-                        SizedBox(height: 10),
-                        Text(STR(item.desc), style: typo12normal),
+                        SizedBox(height: 5),
+                        Text(STR(item.desc), style: typo14normal),
                       ],
                     ),
                   ),
                 ],
-              ),
+              )
             )
           ),
           // Padding(
@@ -942,25 +987,84 @@ class MarketViewModel {
           //     children: [
           //       InkWell(
           //         onTap: () {
-          //           prov.selectUserProductItem = item;
-          //           Navigator.of(context).push(createAniRoute(PaymentItemScreen()));
+          //           // prov.getProductDetailFromId(STR(item.prodSaleId)).then((result) {
+          //           //   if (result != null) {
+          //           //     prov.selectUserProductItem = item;
+          //           //     Navigator.of(context).push(createAniRoute(ProductDetailScreen()));
+          //           //   }
+          //           // });
           //         },
-          //         child: Text(TR(context, '상품 정보'), style: typo14normal),
+          //         child: Text(TR(context, '상품 정보'), style: typo14semibold),
           //       ),
           //       Container(
           //         width: 1,
           //         height: 16.h,
           //         color: GRAY_50,
           //       ),
-          //       Text(TR(context, '구매 상세'), style: typo14normal),
+          //       InkWell(
+          //         onTap: () {
+          //           prov.purchaseInfo = PurchaseModel();
+          //           // Navigator.of(context).push(createAniRoute(PaymentDetailScreen(
+          //           //   title: '',
+          //           // )));
+          //         },
+          //         child: Text(TR(context, '구매 상세'), style: typo14semibold),
+          //       ),
           //     ],
           //   ),
           // ),
-          Divider(height: 1)
+          Divider()
         ],
       )
     );
   }
+
+  // _userProductListItem(BuildContext context, ProductItemModel item,
+  //     {EdgeInsets? margin}) {
+  //   final image = getUserItemImage(item);
+  //   return Container(
+  //     color: Colors.transparent,
+  //     child: Column(
+  //       children: [
+  //         InkWell(
+  //           onTap: () {
+  //             prov.selectUserProductItem = item;
+  //             showUserItemDetail(context, item);
+  //           },
+  //           child: Container(
+  //             margin: EdgeInsets.symmetric(vertical: 15),
+  //             child: Row(
+  //               children: [
+  //                 if (image.isNotEmpty)
+  //                   Container(
+  //                     width: 80,
+  //                     height: 80,
+  //                     margin: EdgeInsets.only(right: 15),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.circular(10),
+  //                       child: showImage(image, Size(80, 80)),
+  //                     )
+  //                   ),
+  //                 Expanded(
+  //                   child: Column(
+  //                     mainAxisAlignment: MainAxisAlignment.center,
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Text(STR(item.name), style: typo14bold.copyWith(height: 1.0)),
+  //                       SizedBox(height: 10),
+  //                       Text(STR(item.desc), style: typo12normal),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           )
+  //         ),
+  //         Divider(height: 1)
+  //       ],
+  //     )
+  //   );
+  // }
 
   _contentSellerBar(SellerModel info, {EdgeInsets? padding}) {
     return OpenContainer(
@@ -1005,7 +1109,7 @@ class MarketViewModel {
         );
       },
       openBuilder: (context, builder) {
-        return SellerDetailScreen(info);
+        return ProfileTargetScreen(info);
       },
     );
   }
@@ -1048,10 +1152,10 @@ class MarketViewModel {
   }
 
   _contentSellerDescBox(SellerModel seller, {EdgeInsets? padding}) {
-    if (STR(seller.pfImg).isNotEmpty) {
+    if (STR(seller.desc).isNotEmpty) {
       return Container(
         padding: padding,
-        child: Text(STR(seller.pfImg), style: typo14normal,
+        child: Text(STR(seller.desc), style: typo14normal,
             textAlign: TextAlign.center),
       );
     }
@@ -1247,7 +1351,17 @@ class MarketViewModel {
       margin: EdgeInsets.only(top: 20),
       child: Row(
         children: [
-          if (prov.detailPic != null)
+          if (prov.optionPic != null)
+            Container(
+                width: 100,
+                height: 100,
+                margin: EdgeInsets.only(right: 15),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: showImage(STR(prov.optionPic), Size(100, 100)),
+                )
+            ),
+          if (prov.optionPic == null && prov.detailPic != null)
           Container(
             width: 100,
             height: 100,
@@ -1284,70 +1398,88 @@ class MarketViewModel {
   }
 
   _contentBuyOptionBar(ProductModel item) {
-    final height = 80.0.r;
+    final height = 100.0;
     return Container(
       margin: EdgeInsets.only(top: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (prov.optionIndex >= 0)...[
-            Container(
-              width:  height / 2,
-              height: height,
-              margin: EdgeInsets.only(right: 5),
-              child: SvgPicture.asset('assets/svg/sub_line_00.svg',
-                fit: BoxFit.fitHeight,
-                colorFilter: ColorFilter.mode(GRAY_40, BlendMode.srcIn)
-              ),
-            ),
-          ],
-          Expanded(child: Column(
-            children: [
-              if (prov.optionIndex >= 0)...[
-                Row(
-                  children: [
-                    Container(
-                      width:  height,
-                      height: height,
-                      margin: EdgeInsets.only(right: 15),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: showImage(STR(prov.optionPic),
-                          Size.square(height), fit: BoxFit.fitHeight),
-                      )
-                    ),
-                    Text(STR(prov.optionDesc), style: typo16regular),
-                  ],
-                ),
-                SizedBox(height: 10),
-              ],
-              if (prov.optionIndex < 0)...[
-                SizedBox(height: 14),
-              ],
-              Row(
-                children: [
-                  PrimaryButton(
-                    onTap: () {
-                      Navigator.of(context).push(createAniRoute(ItemSelectScreen())).then((index) {
-                        if (index != null) {
-                          prov.setOptionIndex(index);
-                        }
-                      });
-                    },
-                    width: height,
-                    round: 8,
-                    color: Colors.white,
-                    padding: EdgeInsets.zero,
-                    isBorderShow: true,
-                    isSmallButton: true,
-                    textStyle: typo14bold.copyWith(color: prov.optionIndex >= 0 ? GRAY_80 : Colors.red),
-                    text: TR(context, '옵션 선택'),
-                  ),
-                  Spacer(),
-                ],
-              ),
-            ],
-          ))
+          PrimaryButton(
+            onTap: () {
+              Navigator.of(context).push(createAniRoute(ItemSelectScreen())).then((index) {
+                if (index != null) {
+                  prov.setOptionIndex(index);
+                }
+              });
+            },
+            width: height,
+            round: 8,
+            color: Colors.white,
+            padding: EdgeInsets.zero,
+            isBorderShow: true,
+            isSmallButton: true,
+            textStyle: typo14bold.copyWith(color: prov.optionIndex >= 0 ? GRAY_80 : Colors.red),
+            text: TR(context, '옵션 선택'),
+          ),
+          Spacer(),
+          // if (prov.optionIndex >= 0)...[
+          //   Container(
+          //     width:  height / 2,
+          //     height: height,
+          //     margin: EdgeInsets.only(right: 5),
+          //     child: SvgPicture.asset('assets/svg/sub_line_00.svg',
+          //       fit: BoxFit.fitHeight,
+          //       colorFilter: ColorFilter.mode(GRAY_40, BlendMode.srcIn)
+          //     ),
+          //   ),
+          // ],
+          // Expanded(child: Column(
+          //   children: [
+          //     if (prov.optionIndex >= 0)...[
+          //       Row(
+          //         children: [
+          //           Container(
+          //             width:  height,
+          //             height: height,
+          //             margin: EdgeInsets.only(right: 15),
+          //             child: ClipRRect(
+          //               borderRadius: BorderRadius.circular(10),
+          //               child: showImage(STR(prov.optionPic),
+          //                 Size.square(height), fit: BoxFit.fitHeight),
+          //             )
+          //           ),
+          //           Text(STR(prov.optionDesc), style: typo16regular),
+          //         ],
+          //       ),
+          //       SizedBox(height: 10),
+          //     ],
+          //     if (prov.optionIndex < 0)...[
+          //       SizedBox(height: 14),
+          //     ],
+          //     Row(
+          //       children: [
+          //         PrimaryButton(
+          //           onTap: () {
+          //             Navigator.of(context).push(createAniRoute(ItemSelectScreen())).then((index) {
+          //               if (index != null) {
+          //                 prov.setOptionIndex(index);
+          //               }
+          //             });
+          //           },
+          //           width: height,
+          //           round: 8,
+          //           color: Colors.white,
+          //           padding: EdgeInsets.zero,
+          //           isBorderShow: true,
+          //           isSmallButton: true,
+          //           textStyle: typo14bold.copyWith(color: prov.optionIndex >= 0 ? GRAY_80 : Colors.red),
+          //           text: TR(context, '옵션 선택'),
+          //         ),
+          //         Spacer(),
+          //       ],
+          //     ),
+          //   ],
+          // ))
         ],
       )
     );

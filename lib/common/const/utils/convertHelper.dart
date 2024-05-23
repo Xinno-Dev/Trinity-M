@@ -64,13 +64,13 @@ class ConvertHelper {
 }
 
 String CommaText(value, [int decimal = 8]) {
-  if (value == null) return '0';
+  if (STR(value).isEmpty) return '0';
   var numStr = value is String ? double.parse(value) : value;
   return NumberFormat(',###.${'#' * decimal}').format(numStr);
 }
 
 String CommaIntText(value) {
-  if (value == null) return '0';
+  if (STR(value).isEmpty) return '0';
   var numStr = value is String ? double.parse(value) : value;
   return NumberFormat(',###').format(numStr);
 }

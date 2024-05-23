@@ -501,10 +501,10 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
               SvgPicture.asset(
                   'assets/svg/icon_warning.svg',
                   width: 40.r, height: 40.r),
-              SizedBox(height: 15.h),
+              SizedBox(height: 5.h),
               if (type == LoginErrorType.code)...[
                 Text(errorText1,
-                    style: typo16semibold,
+                    style: typo16bold,
                     textAlign: TextAlign.center),
                 SizedBox(height: 10),
                 Text(errorText2,
@@ -513,7 +513,7 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
               ],
               if (type != LoginErrorType.code)...[
                 Text(type.errorText,
-                  style: typo16semibold,
+                  style: typo16bold,
                   textAlign: TextAlign.center),
                 if (STR(text).isNotEmpty)...[
                   SizedBox(height: 10.h),

@@ -14,18 +14,18 @@ import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/model/seller_model.dart';
 import '../../../domain/viewModel/market_view_model.dart';
-import 'product_buy_screen.dart';
+import '../market/product_buy_screen.dart';
 
-class SellerDetailScreen extends ConsumerStatefulWidget {
-  SellerDetailScreen(this.seller, {super.key});
-  static String get routeName => 'sellerDetailScreen';
+class ProfileTargetScreen extends ConsumerStatefulWidget {
+  ProfileTargetScreen(this.seller, {super.key});
+  static String get routeName => 'profileTargetScreen';
   final SellerModel seller;
 
   @override
-  ConsumerState<SellerDetailScreen> createState() => _SellerDetailScreenState();
+  ConsumerState<ProfileTargetScreen> createState() => _ProfileTargetScreenState();
 }
 
-class _SellerDetailScreenState extends ConsumerState<SellerDetailScreen> {
+class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
   late MarketViewModel _viewModel;
 
   @override
@@ -37,6 +37,7 @@ class _SellerDetailScreenState extends ConsumerState<SellerDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
+    _viewModel.context = context;
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -57,7 +58,10 @@ class _SellerDetailScreenState extends ConsumerState<SellerDetailScreen> {
           padding: EdgeInsets.symmetric(horizontal: 20),
           children: [
             _viewModel.showStoreDetail(widget.seller),
-            _viewModel.showStoreProductList(context, TR(context, 'Market'),
+            _viewModel.showUserProductList(
+                context,
+                TR(context, 'Market'),
+                STR(widget.seller.address),
                 isShowSeller: false, isCanBuy: true),
           ]
         )

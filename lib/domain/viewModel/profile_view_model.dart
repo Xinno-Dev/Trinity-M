@@ -81,7 +81,7 @@ class ProfileViewModel {
               showProfileSelectBox(
                 context,
                 onSelect: _selectAccount,
-                onAdd: _startAccountAdd);
+                onAdd: _accountAdd);
             }
           },
           child: Container(
@@ -601,18 +601,36 @@ class ProfileViewModel {
   }
 
   _selectAccount(AddressModel select) {
+    if (loginProv.accountAddress == select.address) return false;
     LOG('---> _selectAccount : ${select.toJson()}');
+    hideProfileSelectBox();
+    if (loginProv.userPassReady) {
+      _changeAccount(select);
+    } else {
+      Navigator.of(context).push(
+          createAniRoute(LoginPassScreen())).then((passOrg) {
+        if (STR(passOrg).isNotEmpty) {
+          loginProv.inputPass.first = passOrg;
+          _changeAccount(select);
+        }
+      });
+    }
+    return true;
+  }
+
+  _changeAccount(AddressModel select) {
     loginProv.changeAccount(select).then((result) {
       if (result) {
         Fluttertoast.showToast(msg: TR(context, '계정 변경 성공'));
-        hideProfileSelectBox();
       } else {
         Fluttertoast.showToast(msg: TR(context, '계정 변경 실패'));
       }
     });
+    return true;
   }
 
-  _startAccountAdd() {
+  _accountAdd() {
+    hideProfileSelectBox();
     showInputDialog(context,
       TR(context, '계정 추가'),
       defaultText: IS_DEV_MODE ? EX_TEST_ACCCOUNT_00_1 : '',
@@ -625,24 +643,29 @@ class ProfileViewModel {
           then((check) {
             if (check == true) {
               // pass check..
-              hideProfileSelectBox();
-              Navigator.of(context).push(
-                  createAniRoute(LoginPassScreen())).then((passOrg) {
-                if (STR(passOrg).isNotEmpty) {
-                  // add wallet..
-                  loginProv.addNewAccount(passOrg, newNickId).then((result) {
-                    LOG('---> account add result : $result');
-                    Fluttertoast.showToast(
-                      msg: result ? "계정추가 성공" : "계정추가 실패",
-                    );
-                  });
-                }
-              });
-            } else {
-              _startAccountAdd();
+              if (loginProv.userPassReady) {
+                _startAccountAdd(newNickId);
+              } else {
+                Navigator.of(context).push(
+                    createAniRoute(LoginPassScreen())).then((passOrg) {
+                  if (STR(passOrg).isNotEmpty) {
+                    loginProv.inputPass.first = passOrg;
+                    _startAccountAdd(newNickId);
+                  }
+                });
+              }
             }
         });
       }
+    });
+  }
+
+  _startAccountAdd(String newNickId) {
+    loginProv.addNewAccount(loginProv.userPass, newNickId).then((result) {
+      LOG('---> account add result : $result');
+      Fluttertoast.showToast(
+        msg: result ? "계정추가 성공" : "계정추가 실패",
+      );
     });
   }
 
@@ -824,8 +847,11 @@ class ProfileViewModel {
   }
 
   _setAccountName() async {
-    var passOrg = await Navigator.of(context).push(
-        createAniRoute(LoginPassScreen()));
+    var passOrg = loginProv.userPass;
+    if (passOrg.isEmpty) {
+      passOrg = await Navigator.of(context).push(
+          createAniRoute(LoginPassScreen()));
+    }
     if (STR(passOrg).isNotEmpty) {
       loginProv.inputPass.first = passOrg;
       var result = await loginProv.setAccountName(loginProv.selectAccount!);
@@ -841,9 +867,13 @@ class ProfileViewModel {
   }
 
   _setAccountInfo() async {
-    // var passOrg = await Navigator.of(context).push(
-    //     createAniRoute(LoginPassScreen()));
-    // if (STR(passOrg).isNotEmpty) {
+    var passOrg = loginProv.userPass;
+    if (passOrg.isEmpty) {
+      passOrg = await Navigator.of(context).push(
+        createAniRoute(LoginPassScreen()));
+    }
+    if (STR(passOrg).isNotEmpty) {
+      loginProv.inputPass.first = passOrg;
       var result = await loginProv.setAccountInfo(loginProv.selectAccount!);
       Fluttertoast.showToast(
         msg: result == true ? "내정보 변경 성공" : "내정보 변경 실패",
@@ -852,7 +882,7 @@ class ProfileViewModel {
         _restoreAccount();
       }
       return result;
-    // }
-    // return false;
+    }
+    return false;
   }
 }

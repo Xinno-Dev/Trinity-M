@@ -478,15 +478,15 @@ class ApiService {
   //  GET: /items/owner
   //
 
-  Future<JSON?> getUserItemList() async {
+  Future<JSON?> getUserItemList(String ownerAddr) async {
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
         return null;
       }
-      LOG('--> API getUserItemList : $jwt');
+      LOG('--> API getUserItemList : $ownerAddr');
       final response = await http.get(
-        Uri.parse(httpUrl + '/items/owner'),
+        Uri.parse(httpUrl + '/items/owner?ownerAddr=$ownerAddr'),
         headers: {
           'Authorization': 'Bearer $jwt',
         },
@@ -536,14 +536,17 @@ class ApiService {
   //
 
   Future<JSON?> getProductList(
-    {int tagId = 0, int lastId = -1, int pageCnt = 20}) async {
+    {String? ownerAddr, int tagId = 0, int lastId = -1, int pageCnt = 20}) async {
     try {
-      final lastStr = lastId >= 0 ? '&lastId=$lastId' : '';
-      LOG('--> API getProductList : $tagId / $lastId($lastStr) / $pageCnt');
-      final response = await http.get(
-        // Uri.parse(httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt&lastId=$lastId'),
-        Uri.parse(httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt$lastStr'),
-      );
+      var urlStr = httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt';
+      if (STR(ownerAddr).isNotEmpty) {
+        urlStr += '&ownerAddr=$ownerAddr';
+      }
+      if (lastId >= 0) {
+        urlStr += '&lastId=$lastId';
+      }
+      LOG('--> API getProductList : $ownerAddr / $tagId / $lastId / $pageCnt => $urlStr');
+      final response = await http.get(Uri.parse(urlStr));
       LOG('--> API getProductList response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {
         var resultJson = jsonDecode(response.body);
@@ -709,11 +712,13 @@ class ApiService {
           })
       );
       LOG('--> API requestPurchase response : ${response.statusCode} / ${response.body}');
+      var resultJson = jsonDecode(response.body);
       if (isSuccess(response.statusCode)) {
-        var resultJson = jsonDecode(response.body);
         if (resultJson['result'] != null) {
           return resultJson['result'];
         }
+      } else {
+        return resultJson;
       }
     } catch (e) {
       LOG('--> API requestPurchase error : $e');
@@ -726,6 +731,10 @@ class ApiService {
   //  구매 확인 (JWT)
   //  PUT: /purchases/vf
   //
+
+  testCheck() async {
+    return await checkPurchase('imp_547454147757', 'dev-prod-156-14', 'paid');
+  }
 
   Future<JSON?> checkPurchase(String impUid, String merchantId, String status) async {
     try {

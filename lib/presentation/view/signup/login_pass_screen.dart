@@ -142,21 +142,22 @@ class _LoginPassScreenState extends ConsumerState {
               ],
             )
           ),
-          bottomNavigationBar: IS_DEV_MODE || prov.userPassReady
+          bottomNavigationBar: IS_DEV_MODE || _checkPassLength()
               ? PrimaryButton(
             text: TR(context, '확인'),
             round: 0,
             onTap: () {
               LOG('--> viewModel.passType : [${prov.userPass}] ${viewModel.passType}');
               if (viewModel.passType == PassType.cloudDown) {
-                Navigator.of(context).pop(prov.userPass);
+                Navigator.of(context).pop(prov.cloudPass.first);
               } else {
+                // 암호 검증..
                 prov.checkWalletPass(prov.userPass).then((result) async {
                   if (result) {
                     if (viewModel.passType == PassType.open) {
                       _startMain(0);
                     } else {
-                      Navigator.of(context).pop(prov.userPass);
+                      Navigator.of(context).pop(prov.inputPass.first);
                     }
                   } else {
                     if (isCanBack && isFailBack) {
@@ -175,6 +176,15 @@ class _LoginPassScreenState extends ConsumerState {
     );
   }
 
+  _checkPassLength() {
+    final prov = ref.read(loginProvider);
+    if (viewModel.passType == PassType.cloudDown) {
+      return prov.cloudPass.first.length > 4;
+    } else {
+      return prov.inputPass.first.length > 4;
+    }
+  }
+
   _buildInputBox() {
     final prov = ref.read(loginProvider);
     return Padding(
@@ -189,7 +199,11 @@ class _LoginPassScreenState extends ConsumerState {
         scrollPadding: EdgeInsets.only(bottom: 200),
         onChanged: (text) {
           setState(() {
-            prov.inputPass.first = passInputController.text;
+            if (viewModel.passType == PassType.cloudDown) {
+              prov.cloudPass.first = passInputController.text;
+            } else {
+              prov.inputPass.first = passInputController.text;
+            }
           });
         },
       )

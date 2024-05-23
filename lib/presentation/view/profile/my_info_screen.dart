@@ -73,7 +73,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       prov.userIdentityYN ? '' : '인증']], onEdit: () {
                         Navigator.of(context).push(
                           createAniRoute(ProfileIdentityScreen())).then((result) {
-                          prov.userInfo!.identityYN = result;
+                          prov.userInfo!.certUpdt = DateTime.now().toString();
                           prov.refresh();
                         });
                     }),

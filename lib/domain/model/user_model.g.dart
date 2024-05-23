@@ -10,7 +10,6 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       uid: json['uid'] as String?,
       status: (json['status'] as num?)?.toInt(),
       loginType: $enumDecodeNullable(_$LoginTypeEnumMap, json['loginType']),
-      identityYN: json['identityYN'] as bool?,
       bioIdentityYN: json['bioIdentityYN'] as bool?,
       mnemonic: json['mnemonic'] as String?,
       keyPair: json['keyPair'] as String?,
@@ -27,6 +26,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       addressList: (json['addressList'] as List<dynamic>?)
           ?.map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      certUpdt: json['certUpdt'] as String?,
       createTime: json['createTime'] == null
           ? null
           : DateTime.parse(json['createTime'] as String),
@@ -50,7 +50,6 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) {
   writeNotNull('uid', instance.uid);
   writeNotNull('status', instance.status);
   writeNotNull('loginType', _$LoginTypeEnumMap[instance.loginType]);
-  writeNotNull('identityYN', instance.identityYN);
   writeNotNull('bioIdentityYN', instance.bioIdentityYN);
   writeNotNull('mnemonic', instance.mnemonic);
   writeNotNull('keyPair', instance.keyPair);
@@ -64,6 +63,7 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) {
   writeNotNull('picThumb', instance.picThumb);
   writeNotNull('deviceId', instance.deviceId);
   writeNotNull('deviceType', instance.deviceType);
+  writeNotNull('certUpdt', instance.certUpdt);
   writeNotNull('createTime', instance.createTime?.toIso8601String());
   writeNotNull('loginTime', instance.loginTime?.toIso8601String());
   writeNotNull('logoutTime', instance.logoutTime?.toIso8601String());

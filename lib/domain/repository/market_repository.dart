@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:trinity_m_00/common/const/utils/userHelper.dart';
+import 'package:trinity_m_00/common/provider/login_provider.dart';
 import 'package:trinity_m_00/domain/model/purchase_model.dart';
 
 import '../../../../domain/model/product_item_model.dart';
@@ -19,6 +20,7 @@ class MarketRepository {
   Map<String, ProductModel> productData = {};
   Map<String, ProductItemModel> optionData = {};
   List<ProductModel>  productList = [];
+  List<ProductModel>  userProductList = [];
   List<CategoryModel> categoryList = [];
   List<PurchaseModel> purchaseList = [];  // 구매 목록 (구매완료, 취소)
   List<ProductItemModel> userItemList = [];  // 구매한 아이템 목록
@@ -33,6 +35,7 @@ class MarketRepository {
   var lastId = -1;
   var checkLastId = -2;
   var checkDetailId = '';
+  var checkUserAddr = '';
   var isLastPage = false;
 
   init() {
@@ -154,24 +157,25 @@ class MarketRepository {
           // newItem.prodSaleId = STR(item['saleProdId']);
           var isAdd = true;
           // checking duplicate..
-          for (var orgItem in productList) {
-            if (orgItem.prodSaleId == newItem.prodSaleId) {
-              var index = productList.indexOf(orgItem);
-              var tmp = ProductModel.fromJson(orgItem.toJson());
-              newItem.repDetailImg  = tmp.repDetailImg;
-              newItem.desc          = tmp.desc;
-              newItem.desc2         = tmp.desc2;
-              newItem.externUrl     = tmp.externUrl;
-              productList[index]    = newItem;
-              isAdd = false;
-              LOG('--> getProductList update : ${newItem.prodSaleId} / ${newItem.tagId}');
-              break;
+            for (var orgItem in productList) {
+              if (orgItem.prodSaleId == newItem.prodSaleId) {
+                var index = productList.indexOf(orgItem);
+                var tmp = ProductModel.fromJson(orgItem.toJson());
+                newItem.repDetailImg = tmp.repDetailImg;
+                newItem.desc = tmp.desc;
+                newItem.desc2 = tmp.desc2;
+                newItem.externUrl = tmp.externUrl;
+                productList[index] = newItem;
+                isAdd = false;
+                LOG('--> getProductList update : ${newItem
+                    .prodSaleId} / ${newItem.tagId}');
+                break;
+              }
             }
-          }
-          if (isAdd) {
-            LOG('--> getProductList add : ${newItem.prodSaleId} / ${newItem.tagId}');
-            productList.add(newItem);
-          }
+            if (isAdd) {
+              LOG('--> getProductList productList add : ${newItem.prodSaleId}');
+              productList.add(newItem);
+            }
         }
       }
       LOG('--> getProductList result : '
@@ -180,6 +184,31 @@ class MarketRepository {
       LOG('--> getProductList error : $e');
     }
     return productList;
+  }
+
+
+  getUserProductList(String ownerAddr) async {
+    LOG('--> getUserProductList : $ownerAddr');
+    checkUserAddr = ownerAddr;
+    userProductList.clear();
+    try {
+      final jsonData = await _apiService.getProductList(
+          ownerAddr: ownerAddr,
+          pageCnt: 9999
+      );
+      if (jsonData != null && LIST_NOT_EMPTY(jsonData['data'])) {
+        for (var item in jsonData['data']) {
+          var newItem = ProductModel.fromJson(item);
+          LOG('--> getUserProductList add : ${newItem.prodSaleId}');
+          userProductList.add(newItem);
+        }
+      }
+      LOG('--> getUserProductList result : '
+          '${userProductList.length} ==> lastId: $lastId / $isLastPage');
+    } catch (e) {
+      LOG('--> getUserProductList error : $e');
+    }
+    return userProductList;
   }
 
   Future<ProductModel?> getProductDetail(ProductModel prod) async {
@@ -290,8 +319,8 @@ class MarketRepository {
     return purchaseList;
   }
 
-  Future<List<ProductItemModel>> getUserItemList() async {
-    var jsonData = await _apiService.getUserItemList();
+  Future<List<ProductItemModel>> getUserItemList(String ownerAddr) async {
+    var jsonData = await _apiService.getUserItemList(ownerAddr);
     if (jsonData != null) {
       var data = jsonData['data'];
       for (var item in data) {
@@ -324,11 +353,15 @@ class MarketRepository {
   }
 
   Future<PurchaseModel?> requestPurchase(
-    String prodSaleId, {String? itemId, String? imgId}) async {
+    String prodSaleId, {String? itemId, String? imgId, Function(String)? onError}) async {
     if (STR(prodSaleId).isNotEmpty) {
       var result = await _apiService.requestPurchase(
           prodSaleId, itemId: itemId, imgId: imgId);
       if (result != null) {
+        if (result['err'] != null) {
+          if (onError != null) onError(STR(result['err']['code']));
+          return null;
+        }
         return PurchaseModel.fromJson(result);
       }
     }

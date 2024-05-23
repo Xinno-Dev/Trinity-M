@@ -74,6 +74,8 @@ const String EX_TEST_PASS_00 = 'jubalpass00';
 const String EX_TEST_REC_PASS_00 = '11111';
 
 const String EX_TEST_MAIL_EX = 'test00@exsino.com';
+const String EX_TEST_PASS_EX = 'testpass00';
+
 const String EX_TEST_ACCCOUNT_00 = 'jubal0000';
 const String EX_TEST_ACCCOUNT_00_1 = 'jubal0000_1';
 const String EX_TEST_NAME_00 = 'jubal0000 입니다!';

@@ -548,8 +548,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               // clean user info..
               loginProv.init();
               if (isSignUp) {
-                loginProv.initSignUpKakao().then((result) {
-                  if (result) {
+                loginProv.initSignUpKakao(onError: (code, text) {
+                  showLoginErrorDialog(context, code, text);
+                }).then((result) {
+                  if (result == true) {
                     Navigator.of(context)
                         .push(createAniRoute(SignUpPassScreen()));
                   }

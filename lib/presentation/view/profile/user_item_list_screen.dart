@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:trinity_m_00/common/provider/login_provider.dart';
 import 'package:trinity_m_00/presentation/view/main_screen.dart';
 import '../../../../common/common_package.dart';
 import '../../../../common/const/utils/uihelper.dart';
@@ -34,6 +35,7 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
+    final loginProv = ref.read(loginProvider);
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -43,7 +45,8 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
           children: [
             Container(
               padding: EdgeInsets.fromLTRB(15, 40, 15, 10),
-              child: _viewModel.showUserItemList(context),
+              child: _viewModel.showUserItemList(
+                context, loginProv.accountAddress),
             ),
             Align(
               alignment: Alignment.topCenter,

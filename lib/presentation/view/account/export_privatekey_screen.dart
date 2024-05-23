@@ -52,12 +52,10 @@ class _ExportPrivateKeyScreenState extends State<ExportPrivateKeyScreen> {
   }
 
   Future<void> _getUserInfo() async {
-    UserHelper userHelper = UserHelper();
-    String get_address = await userHelper.get_address();
-
     List<AddressModel> addressList = [];
-
-    String jsonString = await userHelper.get_addressList();
+    var userHelper = UserHelper();
+    var get_address = await userHelper.get_address();
+    var jsonString = await userHelper.get_addressList();
     List<dynamic> decodeJson = json.decode(jsonString);
     for (var jsonObject in decodeJson) {
       AddressModel model = AddressModel.fromJson(jsonObject);
@@ -66,7 +64,6 @@ class _ExportPrivateKeyScreenState extends State<ExportPrivateKeyScreen> {
       }
       addressList.add(model);
     }
-
     setState(() {
       address = get_address;
     });

@@ -137,7 +137,8 @@ class _SignUpPassScreenState extends ConsumerState {
               if (viewModel.passType == PassType.signUp) {
                 Navigator.of(context).push(createAniRoute(SignUpTermsScreen()));
               } else {
-                context.pop(viewModel.password);
+                var result = viewModel.passInputController.first.text;
+                context.pop(result);
               }
             }
           },
@@ -161,7 +162,11 @@ class _SignUpPassScreenState extends ConsumerState {
       obscureText: true,
       scrollPadding: EdgeInsets.only(bottom: 200),
       onChanged: (text) {
-        prov.inputPass[index] = viewModel.passInputController[index].text;
+        if (viewModel.passType == PassType.recover) {
+          prov.cloudPass[index] = viewModel.passInputController[index].text;
+        } else {
+          prov.inputPass[index] = viewModel.passInputController[index].text;
+        }
         prov.refresh();
       },
     ));
