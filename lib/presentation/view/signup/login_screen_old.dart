@@ -35,17 +35,17 @@ import 'login_email_screen.dart';
 import 'signup_terms_screen.dart';
 import '../terms_screen.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  LoginScreen({this.isAppStart = true, this.isWillReturn = false, super.key});
+class LoginScreenOld extends ConsumerStatefulWidget {
+  LoginScreenOld({this.isAppStart = true, this.isWillReturn = false, super.key});
   static String get routeName => 'loginScreen';
   bool isAppStart;
   bool isWillReturn;
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreenOld> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen>
+class _LoginScreenState extends ConsumerState<LoginScreenOld>
   with WidgetsBindingObserver {
   FocusNode _focusNode = FocusNode();
   TextEditingController _textEditingController = TextEditingController();

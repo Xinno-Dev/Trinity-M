@@ -39,7 +39,7 @@ import '../../presentation/view/settings/settings_security_screen.dart';
 import '../../presentation/view/sign_generate_screen.dart';
 import '../../presentation/view/sign_password_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
-import '../../presentation/view/signup/login_screen.dart';
+import '../../presentation/view/signup/login_screen_old.dart';
 import '../../presentation/view/signup/signup_terms_screen.dart';
 import '../../presentation/view/staking/select_staking_list_screen.dart';
 import '../../presentation/view/staking/staking_caution_screen.dart';
@@ -79,8 +79,8 @@ class TempProvider extends ChangeNotifier {
         ),
         GoRoute(
           path: '/login',
-          name: LoginScreen.routeName,
-          builder: (context, state) => LoginScreen(
+          name: LoginScreenOld.routeName,
+          builder: (context, state) => LoginScreenOld(
             isAppStart: BOL(state.queryParams['isAppStart']),
           ),
         ),

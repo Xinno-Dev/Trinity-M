@@ -8,7 +8,7 @@ import '../../../../common/provider/login_provider.dart';
 import '../../../../domain/viewModel/market_view_model.dart';
 import '../../../../domain/viewModel/profile_view_model.dart';
 import '../../../../presentation/view/main_screen.dart';
-import '../../../../presentation/view/signup/login_screen.dart';
+import '../../../../presentation/view/signup/login_screen_old.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';

@@ -12,7 +12,7 @@ import '../../../common/const/widget/settingsMenu.dart';
 import '../../../common/const/widget/warning_icon.dart';
 import '../../../common/provider/firebase_provider.dart';
 import '../../../common/provider/temp_provider.dart';
-import '../signup/login_screen.dart';
+import '../signup/login_screen_old.dart';
 
 import 'settings_language_screen.dart';
 import 'settings_policy_screent.dart';
@@ -57,7 +57,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with WidgetsBin
     print('---> didChangeAppLifecycleState : $state');
     if (IS_AUTO_LOCK_MODE && state == AppLifecycleState.inactive) {
       setState(() {
-        context.goNamed(LoginScreen.routeName);
+        context.goNamed(LoginScreenOld.routeName);
       });
     }
   }
@@ -189,7 +189,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with WidgetsBin
                                 onTapOption: () {
                                   UserHelper().clearLoginDate();
                                   isGlobalLogin = false;
-                                  context.goNamed(LoginScreen.routeName);
+                                  context.goNamed(LoginScreenOld.routeName);
                                 },
                               );
                             },

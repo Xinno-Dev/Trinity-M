@@ -34,7 +34,7 @@ import '../../presentation/view/profile/profile_Identity_screen.dart';
 import '../../presentation/view/profile/user_item_list_screen.dart';
 import '../../presentation/view/profile/webview_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
-import '../../presentation/view/signup/login_screen.dart';
+import '../../presentation/view/signup/login_screen_old.dart';
 import '../../services/google_service.dart';
 import '../../services/iamport_service.dart';
 import '../model/address_model.dart';
@@ -160,7 +160,7 @@ class ProfileViewModel {
                         onTap: () {
                           context.pop();
                           Navigator.of(context).push(
-                            createAniRoute(LoginScreen(isAppStart: false)));
+                            createAniRoute(LoginScreenOld(isAppStart: false)));
                         },
                         child: Container(
                           height: 35,
@@ -227,7 +227,7 @@ class ProfileViewModel {
                     createAniRoute(MyInfoScreen()));
               } else {
                 Navigator.of(context).push(
-                    createAniRoute(LoginScreen(isAppStart: false)));
+                    createAniRoute(LoginScreenOld(isAppStart: false)));
               }
               break;
             case DrawerActionType.history:
@@ -236,7 +236,7 @@ class ProfileViewModel {
                     createAniRoute(PaymentListScreen()));
               } else {
                 Navigator.of(context).push(
-                    createAniRoute(LoginScreen(isAppStart: false)));
+                    createAniRoute(LoginScreenOld(isAppStart: false)));
               }
               break;
             case DrawerActionType.terms:
@@ -274,14 +274,14 @@ class ProfileViewModel {
           //     LOG('--> checkCert result : $result2');
           //   });
           //   break;
-          case DrawerActionType.test_delete:
-            UserHelper().clearAllUser().then((_) {
-              loginProv.logout().then((_) {
-                loginProv.setMainPageIndex(0);
-                Fluttertoast.showToast(msg: TR(context, '로컬정보 삭제 완료'));
-              });
-            });
-            break;
+          // case DrawerActionType.test_delete:
+          //   UserHelper().clearAllUser().then((_) {
+          //     loginProv.logout().then((_) {
+          //       loginProv.setMainPageIndex(0);
+          //       Fluttertoast.showToast(msg: TR(context, '로컬정보 삭제 완료'));
+          //     });
+          //   });
+          //   break;
             default:
               break;
           }

@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trinity_m_00/common/provider/login_provider.dart';
-import 'package:trinity_m_00/presentation/view/signup/login_screen.dart';
+import 'package:trinity_m_00/presentation/view/signup/login_screen_old.dart';
 import '../../../../common/common_package.dart';
 import '../../../../common/const/utils/uihelper.dart';
 import '../../../../common/provider/market_provider.dart';
@@ -84,7 +84,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         ) : PrimaryButton(
           onTap: () {
             Navigator.of(context).push(
-              createAniRoute(LoginScreen(isAppStart: false, isWillReturn: true)))
+              createAniRoute(LoginScreenOld(isAppStart: false, isWillReturn: true)))
               .then((result) {
                 if (BOL(result)) {
                   prov.refresh();

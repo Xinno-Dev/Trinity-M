@@ -20,7 +20,7 @@ import '../../../common/provider/network_provider.dart';
 import '../../../domain/model/network_model.dart';
 import '../../../domain/model/rpc/delegateInfo.dart';
 import '../../../domain/model/rpc/staking_type.dart';
-import '../signup/login_screen.dart';
+import '../signup/login_screen_old.dart';
 
 class StakingScreen extends ConsumerStatefulWidget {
   const StakingScreen({Key? key, required this.stakingType}) : super(key: key);
@@ -152,7 +152,7 @@ class _StakingScreenState extends ConsumerState<StakingScreen> with WidgetsBindi
     print('---> didChangeAppLifecycleState : $state');
     if (IS_AUTO_LOCK_MODE && state == AppLifecycleState.inactive) {
       setState(() {
-        context.goNamed(LoginScreen.routeName);
+        context.goNamed(LoginScreenOld.routeName);
       });
     }
   }

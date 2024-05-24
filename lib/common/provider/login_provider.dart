@@ -136,7 +136,8 @@ enum LoginErrorType {
 final drawerTitleN = [
   '내 정보', '구매 내역', '-',
   '이용약관', '개인정보처리방침', '버전 정보', '로그아웃', '회원탈퇴',
-  '로컬정보 삭제(test)'];
+  // '로컬정보 삭제(test)'
+];
 
 enum DrawerActionType {
   my,
@@ -146,8 +147,8 @@ enum DrawerActionType {
   privacy,
   version,
   logout,
-  withdrawal,
-  test_delete;
+  withdrawal;
+  // test_delete;
 
   String get title {
     return drawerTitleN[this.index];

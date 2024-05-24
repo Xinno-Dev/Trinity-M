@@ -32,7 +32,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../../../presentation/view/signup/login_screen.dart';
+import '../../../presentation/view/signup/login_screen_old.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart' as provider;
 import 'common/const/utils/convertHelper.dart';
