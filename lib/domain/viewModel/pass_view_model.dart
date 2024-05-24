@@ -73,13 +73,19 @@ class PassViewModel {
     passInputController[1].text = prov.inputPass[1];
   }
 
-  get checkPassLength {
-    return passInputController[0].text.length > 4;
+  get checkPassMinLength {
+    return passInputController[0].text.length >= PASS_LENGTH_MIN;
   }
+
+  get checkPassMaxLength {
+    return passInputController[0].text.length <= PASS_LENGTH_MAX;
+  }
+
+
 
   get comparePass {
     LOG('--> comparePass : ${passInputController[0].text} / ${passInputController[1].text}');
-    return checkPassLength &&
+    return checkPassMinLength && checkPassMaxLength &&
       passInputController[0].text == passInputController[1].text;
   }
 

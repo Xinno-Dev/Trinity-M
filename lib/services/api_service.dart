@@ -536,7 +536,7 @@ class ApiService {
   //
 
   Future<JSON?> getProductList(
-    {String? ownerAddr, int tagId = 0, int lastId = -1, int pageCnt = 20}) async {
+    {String? ownerAddr, int tagId = 0, int lastId = -1, int pageCnt = MARKET_PAGE_COUNT_MAX}) async {
     try {
       var urlStr = httpUrl + '/prods?tagId=$tagId&pageCnt=$pageCnt';
       if (STR(ownerAddr).isNotEmpty) {
@@ -592,7 +592,7 @@ class ApiService {
   //
 
   Future<JSON?> getProductItems(String prodSaleId,
-    {int type = 1, int lastId = -1, int pageCnt = 30}) async {
+    {int type = 1, int lastId = -1, int pageCnt = PAGE_COUNT_MAX}) async {
     try {
       final lastStr = lastId >= 0 ? '&lastId=$lastId' : '';
       LOG('--> API getProductItems : $prodSaleId / $lastStr');
@@ -620,7 +620,7 @@ class ApiService {
   //
 
   Future<JSON?> getProductImageItems(String prodSaleId,
-    {int lastId = -1, int pageCnt = 10}) async {
+    {int lastId = -1, int pageCnt = PAGE_COUNT_MAX}) async {
     try {
       final lastStr = lastId >= 0 ? '&lastId=$lastId' : '';
       LOG('--> API getProductImageItems : $prodSaleId / $lastStr');
@@ -648,21 +648,22 @@ class ApiService {
 
   Future<JSON?> getPurchasesList(
     String buyerAddr, String? startDate, String? endDate,
-    {int lastId = -1, int pageCnt = 20}) async {
+    {int lastId = -1, int pageCnt = PAGE_COUNT_FULL_MAX}) async {
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
         return null;
       }
-      var urlStr = '/purchases/${buyerAddr}';
-      if (STR(startDate).isNotEmpty) {
-        urlStr += '?startDate=$startDate';
-      }
+      var urlStr = '/purchases/${buyerAddr}?pageCnt=$pageCnt';
+
       if (STR(endDate).isNotEmpty) {
-        urlStr += '?endDate=$endDate';
+        if (STR(startDate).isEmpty) {
+          startDate = endDate;
+        }
+        urlStr += '&startDate=$startDate&endDate=$endDate';
       }
       if (lastId >= 0) {
-        urlStr += '?lastId=$lastId';
+        urlStr += '&lastId=$lastId';
       }
       LOG('--> API getPurchasesList : $urlStr');
       final response = await http.get(

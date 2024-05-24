@@ -147,7 +147,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                   Navigator.of(context).push(
                       createAniRoute(SignUpBioScreen()));
                 }
-                Fluttertoast.showToast(msg: TR(context,
+                showToast(TR(context,
                   loginProv.isLogin ? '회원가입 성공' : '회원가입 실패'));
               });
             });

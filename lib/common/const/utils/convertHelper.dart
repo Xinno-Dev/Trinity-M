@@ -193,6 +193,15 @@ String STR(dynamic value, {String defaultValue = ''}) {
 }
 
 // ignore: non_constant_identifier_names
+String P_STR(dynamic value, {String defaultValue = ''}) {
+  var result = value.runtimeType != Null && value != 'null' &&
+      value!.toString().isNotEmpty ? value!.toString() : defaultValue;
+  result = result.replaceAll('\\n', ' ');
+  result = result.replaceAll('\n', ' ');
+  return result;
+}
+
+// ignore: non_constant_identifier_names
 String ADDR(dynamic value, {String defaultValue = ''}) {
   var result = value.runtimeType != Null && value != 'null' &&
       value!.toString().isNotEmpty ? value!.toString() : defaultValue;

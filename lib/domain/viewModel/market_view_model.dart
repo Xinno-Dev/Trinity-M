@@ -25,14 +25,11 @@ import '../model/product_model.dart';
 import '../model/seller_model.dart';
 
 class MarketViewModel {
-  factory MarketViewModel() {
-    return _singleton;
+  MarketViewModel(BuildContext context) {
+    this.context = context;
   }
-  static final _singleton = MarketViewModel._internal();
-  MarketViewModel._internal();
-
-  final prov = MarketProvider();
   late BuildContext context;
+  final prov = MarketProvider();
 
   showCategoryBar() {
     // LOG('--> prov.categoryList : ${prov.categoryList}');
@@ -48,7 +45,7 @@ class MarketViewModel {
               children: List<Widget>.of(prov.categoryList.map((e) =>
                 _categoryItem(STR(e.value), prov.categoryList.indexOf(e),
                   onChanged: (index) {
-                    setState(() {});
+                    prov.setCategory(index);
                 }))),
             ),
           );
@@ -57,26 +54,27 @@ class MarketViewModel {
     );
   }
 
-  showSliverProductList(BuildContext context) {
+  showSliverProductList() {
     return SliverPadding(
       padding: EdgeInsets.fromLTRB(15, 10, 15, 0),
       sliver: SliverList(
         delegate: SliverChildListDelegate(
         List.generate(prov.marketList.length, (index) =>
-            productListItem(context, prov.marketList[index])),
+            productListItem(prov.marketList[index])),
         ),
       ),
     );
   }
 
-  showProductList(BuildContext context) {
+  showProductList() {
+    LOG('--> showProductList : ${prov.marketList.length}');
     if (prov.marketList.isNotEmpty) {
       return ListView.builder(
         shrinkWrap: true,
         padding: EdgeInsets.fromLTRB(15, 10, 15, kToolbarHeight.h),
         itemCount: prov.marketList.length,
         itemBuilder: (context, index) {
-          return productListItem(context, prov.marketList[index]);
+          return productListItem(prov.marketList[index]);
         }
       );
     } else {
@@ -88,8 +86,7 @@ class MarketViewModel {
     }
   }
 
-
-  showUserProductList(BuildContext context, String title, String ownerAddr,
+  showUserProductList(String title, String ownerAddr,
       { var isShowSeller = true, var isCanBuy = true}) {
     return FutureBuilder(
         future: prov.getProductList(ownerAddr: ownerAddr),
@@ -105,7 +102,7 @@ class MarketViewModel {
                   ),
                   if (prov.marketRepo.userProductList.isNotEmpty)...[
                     ...List<Widget>.from(prov.marketRepo.userProductList.map((e) =>
-                    productListItem(context, e,
+                    productListItem(e,
                       isShowSeller: isShowSeller, isCanBuy: isCanBuy))
                       .toList())
                   ],
@@ -125,7 +122,7 @@ class MarketViewModel {
     );
   }
 
-  showProductDetail(BuildContext context, [var isShowSeller = true]) {
+  showProductDetail([var isShowSeller = true]) {
     final imageSize = MediaQuery.of(context).size.width;
     LOG('--> showProductDetail : ${prov.detailPic} / ${prov.selectProduct?.toJson()}');
     return Column(
@@ -166,11 +163,16 @@ class MarketViewModel {
                 var screenWidth = MediaQuery.of(context).size.width;
                 var detailHeight = DBL(info.size?.width) <= 0 ? 0.0 :
                     DBL(info.size?.height) * (screenWidth / DBL(info.size?.width));
+                var isShowAll = prov.canOptionSelect && prov.catShowExternalPic;
+                var height = isShowAll ?
+                  (prov.selectDetailTab == 1 ? detailHeight : listHeight) :
+                  prov.canOptionSelect ? listHeight : detailHeight;
+
                 // LOG('---> listHeight : $listHeight / $itemHeight / $itemLength /'
                 //     ' $detailHeight (${screenWidth} / ${info.size})');
                 return DefaultTabController(
-                  length: 2,
-                  initialIndex: prov.selectDetailTab,
+                  length: isShowAll ? 2 : 1,
+                  initialIndex: isShowAll ? prov.selectDetailTab : 0,
                   child: Column(
                     children: [
                       TabBar(
@@ -186,24 +188,28 @@ class MarketViewModel {
                           });
                         },
                         tabs: <Widget>[
-                          Tab(
-                            text: TR(context, '옵션 정보'),
-                          ),
-                          Tab(
-                            text: TR(context, '상세 정보'),
-                          ),
+                          if (prov.canOptionSelect)
+                            Tab(
+                              text: TR(context, '옵션 정보'),
+                            ),
+                          if (prov.catShowExternalPic)
+                            Tab(
+                              text: TR(context, '상세 정보'),
+                            ),
                         ],
                       ),
                       AnimatedContainer(
                         color: Colors.white,
-                        height: prov.selectDetailTab == 0 ? listHeight : detailHeight,
+                        height: height,
                         margin: EdgeInsets.only(top: 2),
                         duration: Duration(milliseconds: 100),
                         child: TabBarView(
                           physics: NeverScrollableScrollPhysics(),
                           children: [
-                            showOptionTab(),
-                            showDetailTab(prov.externalPic),
+                            if (prov.canOptionSelect)
+                              showOptionTab(),
+                            if (prov.catShowExternalPic)
+                              showDetailTab(prov.externalPic),
                           ],
                         ),
                       )
@@ -271,7 +277,10 @@ class MarketViewModel {
     );
   }
 
-  showBuyBox(BuildContext context) {
+  showBuyBox() {
+    if (!prov.canOptionSelect && prov.hasOption) {
+      prov.optionIndex = 0;
+    }
     return Container(
       padding: EdgeInsets.all(15),
       child: Column(
@@ -283,7 +292,8 @@ class MarketViewModel {
           ),
           _contentSellerBar(prov.selectProduct!.seller!),
           _contentBuyDetailBox(prov.selectProduct!),
-          _contentBuyOptionBar(prov.selectProduct!),
+          if (prov.canOptionSelect)
+            _contentBuyOptionBar(prov.selectProduct!),
           Divider(height: 50),
           Padding(
             padding: EdgeInsets.only(bottom: 10),
@@ -338,7 +348,7 @@ class MarketViewModel {
     );
   }
 
-  // showStoreProductList(BuildContext context, String title,
+  // showStoreProductList(String title,
   //   {var isShowSeller = true, var isCanBuy = true}) {
   //   return Column(
   //     crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,27 +365,29 @@ class MarketViewModel {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  showPurchaseResult(BuildContext context) {
+  showPurchaseResult() {
     var info = prov.purchaseInfo;
     return Column(
       children: [
         _contentSellerBar(info!.seller!),
-        _purchaseItem(context, info),
+        _purchaseItem(info),
       ],
     );
   }
 
-  showPurchaseList(BuildContext context, {var showStatus = true}) {
-    return FutureBuilder(
+  showPurchaseList({var showStatus = true, EdgeInsets? padding}) {
+    return Container(
+      child: FutureBuilder(
         future: prov.getPurchaseList(),
         builder: (context, snapShot) {
           if (snapShot.hasData) {
             if (prov.purchaseList.isNotEmpty) {
               return ListView.builder(
                 shrinkWrap: true,
+                padding: padding,
                 itemCount: prov.purchaseList.length,
                 itemBuilder: (context, index) {
-                  return _purchaseItem(context, prov.purchaseList[index],
+                  return _purchaseItem(prov.purchaseList[index],
                     isShowDetail: true);
                 }
               );
@@ -390,6 +402,7 @@ class MarketViewModel {
             return showLoadingFull();
           }
         }
+      )
     );
   }
 
@@ -424,7 +437,7 @@ class MarketViewModel {
     );
   }
 
-  showUserItemList(BuildContext context, String ownerAddr) {
+  showUserItemList(String ownerAddr) {
     return FutureBuilder(
       future: prov.getUserItemList(ownerAddr),
       builder: (context, snapShot) {
@@ -452,8 +465,7 @@ class MarketViewModel {
                 shrinkWrap: true,
                 itemCount: prov.userItemList.length,
                 itemBuilder: (context, index) {
-                  return _userProductListItem(
-                      context, prov.userItemList[index]);
+                  return _userProductListItem(prov.userItemList[index]);
                 }
               );
             }
@@ -471,7 +483,7 @@ class MarketViewModel {
     );
   }
 
-  showUserItemDetail(BuildContext context, ProductItemModel item) {
+  popUserItemDetail(ProductItemModel item) {
     final width  = MediaQuery.of(context).size.width * 0.9;
     final height = MediaQuery.of(context).size.height * 0.9;
     final image  = getUserItemImage(item, isShowEmpty: false);
@@ -516,9 +528,11 @@ class MarketViewModel {
                   child: showImage(image, Size.square(width))
                 ),
               ],
-              _barcodeButtonBox(context, item),
+              _barcodeSelectButtonBox(item),
               _contentTitleBarFromItem(item, isShowAmount: false),
-              _contextExternalImage('assets/samples/detail_00.png',
+              _contentDescriptionFromItem(item),
+              if (STR(item.externalUrl).isNotEmpty)
+                _contextExternalImage(STR(item.externalUrl),
                   padding: EdgeInsets.only(top: 10)),
             ],
           ),
@@ -527,7 +541,7 @@ class MarketViewModel {
     );
   }
 
-  _barcodeButtonBox(BuildContext context, ProductItemModel item) {
+  _barcodeSelectButtonBox(ProductItemModel item) {
     final width = MediaQuery.of(context).size.width * 0.8;
     return StatefulBuilder(
       builder: (context, setState) {
@@ -552,7 +566,7 @@ class MarketViewModel {
                         alignment: Alignment.center,
                         child: Text(TR(context, '바코드'),
                             style: typo14bold.copyWith(
-                                color: !isQR ? GRAY_80 : GRAY_20)),
+                                color: !isQR ? GRAY_80 : GRAY_30)),
                       ),
                     )),
                     Container(
@@ -593,16 +607,18 @@ class MarketViewModel {
     );
   }
 
-  showPurchaseDate(BuildContext context) {
+  showPurchaseDate({EdgeInsets? margin}) {
     return Container(
+      margin: margin,
       padding: EdgeInsets.symmetric(vertical: 10),
+      color: WHITE,
       child: Row(
         children: [
           Text(prov.purchaseSearchDate, style: typo14semibold),
           Spacer(),
           PrimaryButton(
             onTap: () {
-              _showPurchaseDatePicker(context);
+              _showPurchaseDatePicker();
             },
             text: TR(context, '조회 기간'),
             height: 30.h,
@@ -616,7 +632,7 @@ class MarketViewModel {
     );
   }
 
-  showPurchaseDetail(BuildContext context, [var isShowSeller = true]) {
+  showPurchaseDetail([var isShowSeller = true]) {
     final imageSize = MediaQuery.of(context).size.width;
     LOG('--> showPurchaseInfo : ${prov.selectPurchaseItem?.prodSaleId}');
     return FutureBuilder(
@@ -671,9 +687,9 @@ class MarketViewModel {
   }
 
 
-  _showPurchaseDatePicker(BuildContext context) {
+  _showPurchaseDatePicker() {
     showDialog(context: context,
-      builder: (BuildContext context) =>
+      builder: (context) =>
         DateRangePickerDialog(
           currentDate: DateTime.now(),
           initialDateRange: DateTimeRange(
@@ -717,7 +733,7 @@ class MarketViewModel {
     );
   }
 
-  _purchaseItem(BuildContext context, PurchaseModel item,
+  _purchaseItem(PurchaseModel item,
     {EdgeInsets? margin, var isShowDetail = false}) {
     return Container(
       margin: margin ?? EdgeInsets.only(top: 15),
@@ -846,7 +862,6 @@ class MarketViewModel {
     final isSelected = index == prov.selectCategory;
     return GestureDetector(
       onTap: () {
-        prov.setCategory(index);
         if (onChanged != null) onChanged(index);
       },
       child: Container(
@@ -863,7 +878,7 @@ class MarketViewModel {
     );
   }
 
-  productListItem(BuildContext context, ProductModel item,
+  productListItem(ProductModel item,
     {var isShowSeller = true, var isCanBuy = true}) {
     return OpenContainer(
       transitionType: ContainerTransitionType.fadeThrough,
@@ -939,7 +954,7 @@ class MarketViewModel {
     return img ?? (isShowEmpty ? EMPTY_IMAGE : '');
   }
 
-  _userProductListItem(BuildContext context,
+  _userProductListItem(
       ProductItemModel item,
       {EdgeInsets? margin}) {
     final image = getUserItemImage(item);
@@ -951,7 +966,7 @@ class MarketViewModel {
           InkWell(
             onTap: () {
               prov.selectUserProductItem = item;
-              showUserItemDetail(context, item);
+              popUserItemDetail(item);
             },
             child: Container(
               child: Row(
@@ -970,9 +985,9 @@ class MarketViewModel {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(STR(item.name), style: typo14bold.copyWith(height: 1.0)),
+                        Text(STR(item.name), style: typo14bold.copyWith(height: 1.0), maxLines: 2),
                         SizedBox(height: 5),
-                        Text(STR(item.desc), style: typo14normal),
+                        Text(STR(item.desc), style: typo12normal, maxLines: 2),
                       ],
                     ),
                   ),
@@ -1019,7 +1034,7 @@ class MarketViewModel {
     );
   }
 
-  // _userProductListItem(BuildContext context, ProductItemModel item,
+  // _userProductListItem(ProductItemModel item,
   //     {EdgeInsets? margin}) {
   //   final image = getUserItemImage(item);
   //   return Container(

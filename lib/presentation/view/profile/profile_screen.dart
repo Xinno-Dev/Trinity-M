@@ -8,7 +8,7 @@ import '../../../../common/provider/login_provider.dart';
 import '../../../../domain/viewModel/market_view_model.dart';
 import '../../../../domain/viewModel/profile_view_model.dart';
 import '../../../../presentation/view/main_screen.dart';
-import '../../../../presentation/view/signup/login_screen_old.dart';
+import '../../../../presentation/view/signup/login_screen.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
@@ -32,14 +32,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     _viewModel = ProfileViewModel();
-    _marketViewModel = MarketViewModel();
+    _marketViewModel = MarketViewModel(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
-    _viewModel.context = context;
     return SafeArea(
       top: false,
       child: GestureDetector(
@@ -56,7 +55,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   if (prov.isLogin)...[
                     _viewModel.showProfile(context),
                     _marketViewModel.showUserProductList(
-                      context,
                       TR(context, 'Market'),
                       prov.accountAddress,
                       isShowSeller: false, isCanBuy: false),

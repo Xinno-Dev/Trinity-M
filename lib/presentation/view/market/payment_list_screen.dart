@@ -28,7 +28,7 @@ class _PaymentListScreenState extends ConsumerState<PaymentListScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -38,24 +38,16 @@ class _PaymentListScreenState extends ConsumerState<PaymentListScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(TR(context, '구매 내역')),
-          centerTitle: true,
-          titleTextStyle: typo16bold,
-          backgroundColor: Colors.white,
-          // leading: IconButton(
-          //   onPressed: context.pop,
-          //   icon: Icon(Icons.close),
-          // ),
-        ),
+        appBar: defaultAppBar(TR(context, '구매 내역')),
         backgroundColor: Colors.white,
-        body: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.symmetric(horizontal: 20),
+        body: Container(
+          padding: EdgeInsets.symmetric(horizontal: 15),
+          child: Stack(
             children: [
-              _viewModel.showPurchaseDate(context),
-              _viewModel.showPurchaseList(context),
+              _viewModel.showPurchaseList(padding: EdgeInsets.symmetric(vertical: 40)),
+              _viewModel.showPurchaseDate(),
             ]
+          ),
         ),
       ),
     );

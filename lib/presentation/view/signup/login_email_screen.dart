@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:crypto/crypto.dart' as crypto;
+
 import '../../../../common/const/utils/uihelper.dart';
 import '../../../../common/provider/login_provider.dart';
 import '../../../../presentation/view/asset/networkScreens/network_input_screen.dart';
@@ -32,25 +36,39 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
   final emailInputController = TextEditingController();
   final passInputController = TextEditingController();
   var isNextReady = false;
+  var isEmailReady = false;
+  var passErrorText = '';
 
   checkNextReady() {
     setState(() {
       isNextReady =
-          EmailValidator.validate(emailInputController.text) &&
-          passInputController.text.length > 4;
+        EmailValidator.validate(emailInputController.text) && (
+        !isEmailReady || (
+          passInputController.text.length >= PASS_LENGTH_MIN &&
+          passInputController.text.length <= PASS_LENGTH_MAX)
+        );
+      passErrorText = '';
+      if (isEmailReady && passInputController.text.length < PASS_LENGTH_MIN) {
+        passErrorText = '$PASS_LENGTH_MIN 자 이상 입력해 주세요';
+      }
+      if (isEmailReady && passInputController.text.length > PASS_LENGTH_MAX) {
+        passErrorText = '$PASS_LENGTH_MAX 자 이하 입력해 주세요';
+      }
     });
   }
 
   @override
   void initState() {
     super.initState();
-    emailInputController.text = ref.read(loginProvider).inputEmail;
-    passInputController.text = ref.read(loginProvider).inputPass.first;
+    var prov = ref.read(loginProvider);
+    emailInputController.text = prov.inputEmail;
+    passInputController.text  = IS_DEV_MODE ? prov.inputPass.first : '';
+    isEmailReady = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    final loginProv = ref.watch(loginProvider);
+    final prov = ref.watch(loginProvider);
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -91,19 +109,31 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                         checkNextReady();
                       },
                     ),
-                    SizedBox(height: 40.h),
-                    TextField(
-                      controller: passInputController,
-                      decoration: InputDecoration(
-                        hintText: TR(context, '비밀번호 입력'),
-                      ),
-                      keyboardType: TextInputType.visiblePassword,
-                      obscureText: true,
-                      scrollPadding: EdgeInsets.only(bottom: 200),
-                      onChanged: (text) {
-                        checkNextReady();
-                      },
-                    ),
+                    if (isEmailReady)...[
+                      SizedBox(height: 40.h),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextField(
+                            controller: passInputController,
+                            decoration: InputDecoration(
+                              hintText: TR(context, '비밀번호 입력'),
+                            ),
+                            keyboardType: TextInputType.visiblePassword,
+                            obscureText: true,
+                            autofocus: true,
+                            scrollPadding: EdgeInsets.only(bottom: 200),
+                            onChanged: (text) {
+                              checkNextReady();
+                            },
+                          ),
+                          if (passErrorText.isNotEmpty)...[
+                            SizedBox(height: 5),
+                            Text(TR(context, passErrorText), style: errorStyle)
+                          ]
+                        ],
+                      )
+                    ],
                   ],
                 )
               ),
@@ -114,8 +144,23 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
           PrimaryButton(
             text: TR(context, '다음'),
             round: 0,
-            onTap: () {
-              _startEmailLogin();
+            onTap: () async {
+              var email = emailInputController.text;
+              if (isEmailReady) {
+                _startEmailLogin();
+              } else {
+                if (email == EX_TEST_MAIL_EX) {
+                  setState(() {
+                    isEmailReady = true;
+                  });
+                } else {
+                  var userKey = crypto.sha256.convert(utf8.encode(email)).toString();
+                  var result  = await UserHelper().get_mnemonic(userKeyTmp: userKey);
+                  setState(() {
+                    isEmailReady = result != 'NOT_MNEMONIC';
+                  });
+                }
+              }
             },
           ) : DisabledButton(
             text: TR(context, '다음'),
@@ -125,50 +170,64 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
   }
 
   _startEmailLogin() async {
-    var loginProv = ref.read(loginProvider);
-    loginProv.inputEmail = emailInputController.text;
-    loginProv.inputPass.first = passInputController.text;
-    LOG('=================> _startEmailLogin : ${loginProv.inputEmail}');
+    var prov = ref.read(loginProvider);
+    prov.inputEmail = emailInputController.text;
+    prov.inputPass.first = passInputController.text;
+    LOG('=================> _startEmailLogin : ${prov.inputEmail}');
     showLoadingDialog(context, '로그인중입니다...');
-    await Future.delayed(Duration(milliseconds: 200));
-    var result = await loginProv.loginEmail();
+    var result = await prov.loginEmail(onError: (code, text) {
+      if (prov.inputEmail != EX_TEST_MAIL_EX) {
+        hideLoadingDialog();
+        showLoginErrorDialog(context, code);
+      }
+    });
     LOG('----> loginProv.loginEmail result : $result');
     hideLoadingDialog();
     if (result == true) {
       // 로그인 완료..
-      Fluttertoast.showToast(msg: '로그인 성공');
+      showToast('로그인 성공');
       Navigator.of(context).pop(true);
     } else if (result == null) {
       // tester00 계정용 자동 니모닉 복구..
-      if (loginProv.inputEmail == EX_TEST_MAIL_EX) {
-        loginProv.recoverUser(
+      if (prov.inputEmail == EX_TEST_MAIL_EX) {
+        prov.recoverUser(
           EX_TEST_PASS_EX,
           mnemonic: EX_TEST_MN_EX).then((result) {
-          if (loginProv.isLogin) {
+          if (prov.isLogin) {
             _startEmailLogin();
           }
         });
       } else {
         // 이미 생성된 계정인지 체크..
-        loginProv.inputEmailDupCheck().then((result) {
+        prov.inputEmailDupCheck().then((result) {
           if (result) {
             // 계정 복구..
             Navigator.of(context).push(
                 createAniRoute(LoginRestoreScreen()));
             showLoginErrorDialog(context,
-                LoginErrorType.recoverRequire, loginProv.userInfo?.email);
+                LoginErrorType.recoverRequire, prov.userInfo?.email);
           } else {
             // 회원가입..
             showLoginErrorDialog(context,
-                LoginErrorType.signupRequire, loginProv.userInfo?.email).then((_) {
-              loginProv.setSignUpMode();
+                LoginErrorType.signupRequire, prov.userInfo?.email).then((_) {
+              prov.setSignUpMode();
               context.pop();
             });
           }
         });
       }
     } else {
-      Fluttertoast.showToast(msg: '로그인 실패');
+      // showToast('로그인 실패');
+      LOG('----> login fail! : ${prov.inputEmail}');
+      if (prov.inputEmail == EX_TEST_MAIL_EX) {
+        prov.recoverUser(
+            EX_TEST_PASS_EX,
+            mnemonic: EX_TEST_MN_EX).then((result) {
+          if (prov.isLogin) {
+            _startEmailLogin();
+          }
+        });
+      }
     }
   }
 }

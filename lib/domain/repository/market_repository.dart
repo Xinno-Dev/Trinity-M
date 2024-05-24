@@ -43,6 +43,15 @@ class MarketRepository {
     optionData  = {}; // product item cache data..
     productList = [];
     userItemList = [];
+    userProductList = [];
+    purchaseList = [];
+
+    pageCount = 0;
+    lastId = -1;
+    checkLastId = -2;
+    checkDetailId = '';
+    checkUserAddr = '';
+    isLastPage = false;
 
     // // add sample products..
     // for (var title in titleN) {
@@ -147,7 +156,6 @@ class MarketRepository {
       final jsonData = await _apiService.getProductList(
         tagId: tagId,
         lastId: lastId,
-        pageCnt: 3
       );
       if (jsonData != null && LIST_NOT_EMPTY(jsonData['data'])) {
         isLastPage  = BOL(jsonData['isLast']);
@@ -194,13 +202,22 @@ class MarketRepository {
     try {
       final jsonData = await _apiService.getProductList(
           ownerAddr: ownerAddr,
-          pageCnt: 9999
+          pageCnt: 9999,
       );
       if (jsonData != null && LIST_NOT_EMPTY(jsonData['data'])) {
         for (var item in jsonData['data']) {
           var newItem = ProductModel.fromJson(item);
+          var isAdd = true;
           LOG('--> getUserProductList add : ${newItem.prodSaleId}');
-          userProductList.add(newItem);
+          for (var orgItem in userProductList) {
+            if (orgItem.prodSaleId == newItem.prodSaleId) {
+              isAdd = false;
+              break;
+            }
+          }
+          if (isAdd) {
+            userProductList.add(newItem);
+          }
         }
       }
       LOG('--> getUserProductList result : '
@@ -220,6 +237,7 @@ class MarketRepository {
         prod.desc2        = STR(jsonData['desc2']);
         prod.externUrl    = STR(jsonData['externUrl']);
         prod.repDetailImg = STR(jsonData['repDetailImg']);
+        // prod.externUrl    = 'https://firebasestorage.googleapis.com/v0/b/larba-00-9fdd3.appspot.com/o/sample_img%2Fdetail_00.png?alt=media&token=1af2818a-30ac-4327-90b2-76535fe3df1a';
         // update option items..
         prod = await getProductImageItemList(prod);
         prod = setProductListItem(prod);
@@ -297,6 +315,7 @@ class MarketRepository {
   }
 
   Future<List<PurchaseModel>> getPurchaseList(address, {String? startDate, String? endDate}) async {
+    purchaseList.clear();
     var jsonData = await _apiService.getPurchasesList(address, startDate, endDate);
     if (jsonData != null) {
       var data = jsonData['data'];

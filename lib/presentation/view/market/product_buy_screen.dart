@@ -36,9 +36,9 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
     final prov = ref.read(marketProvider);
     prov.optionIndex = -1;
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -66,7 +66,7 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  _viewModel.showBuyBox(context),
+                  _viewModel.showBuyBox(),
                 ]
               ),
             ),

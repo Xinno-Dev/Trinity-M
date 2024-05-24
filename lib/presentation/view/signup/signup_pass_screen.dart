@@ -129,8 +129,12 @@ class _SignUpPassScreenState extends ConsumerState {
           round: 0,
           onTap: () async {
             LOG('---> CloudPassCreateScreen ok : ${viewModel.password} / ${viewModel.comparePass} / ${viewModel.passType}');
-            if (!viewModel.checkPassLength) {
-              showToast(TR(context, '4자 이상 입력해주세요.'));
+            if (!viewModel.checkPassMinLength) {
+              showToast(TR(context, '$PASS_LENGTH_MIN 자 이상 입력해주세요.'));
+              return;
+            }
+            if (!viewModel.checkPassMaxLength) {
+              showToast(TR(context, '$PASS_LENGTH_MAX 자 이하 입력해주세요.'));
               return;
             }
             if (viewModel.comparePass) {

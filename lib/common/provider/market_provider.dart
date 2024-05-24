@@ -3,6 +3,7 @@ import 'package:iamport_flutter/model/payment_data.dart';
 import 'package:intl/intl.dart';
 import 'package:trinity_m_00/common/const/utils/userHelper.dart';
 import 'package:trinity_m_00/domain/model/user_model.dart';
+import 'package:trinity_m_00/domain/viewModel/market_view_model.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../common/const/utils/convertHelper.dart';
@@ -26,19 +27,16 @@ final marketProvider = ChangeNotifierProvider<MarketProvider>((_) {
 });
 
 class MarketProvider extends ChangeNotifier {
-  static final _singleton = MarketProvider._internal();
-  static final _repo = MarketRepository();
-
   factory MarketProvider() {
-    _repo.init();
     _singleton.purchaseStartDate = DateTime.now().subtract(Duration(days: 10));
     _singleton.purchaseEndDate = DateTime.now();
     return _singleton;
   }
-
   MarketProvider._internal();
+  static final _singleton = MarketProvider._internal();
+  static final _repo = MarketRepository();
 
-  ProductModel? selectProduct;
+  ProductModel?  selectProduct;
   PurchaseModel? purchaseInfo;
   PurchaseModel? selectPurchaseItem;
   ProductItemModel? selectUserProductItem;
@@ -57,6 +55,10 @@ class MarketProvider extends ChangeNotifier {
   var userItemShowGrid = false;
   var userItemShowQR = false;
 
+  initRepo() {
+    _repo.init();
+  }
+
   get marketRepo {
     return _repo;
   }
@@ -64,7 +66,8 @@ class MarketProvider extends ChangeNotifier {
   get marketList {
     showList.clear();
     for (var item in _repo.productList) {
-      if (selectCategory == 0 || item.tagId == selectCategory) {
+      if (selectCategory == 0 ||
+        (item.tagId != null && item.tagId!.contains(selectCategory))) {
         var newItem = ProductModel.fromJson(item.toJson());
         showList.add(newItem);
       }
@@ -87,8 +90,20 @@ class MarketProvider extends ChangeNotifier {
     return INT(selectProduct?.itemList?.length) > 0;
   }
 
+  get canOptionSelect {
+    return INT(selectProduct?.itemList?.length) > 1;
+  }
+
+  get catShowExternalPic {
+    return STR(externalPic).isNotEmpty;
+  }
+
+  get isShowDetailTab {
+    return canOptionSelect || catShowExternalPic;
+  }
+
   get purchaseReady {
-    return !hasOption || optionIndex >= 0;
+    return !canOptionSelect || optionIndex >= 0;
   }
 
   checkLastProduct(String? prodSaleId) {
@@ -164,7 +179,7 @@ class MarketProvider extends ChangeNotifier {
   }
 
   getProductList({String? ownerAddr}) async {
-    LOG('--> getProductList check : $ownerAddr / ${_repo.checkUserAddr}');
+    // LOG('--> getProductList check : $ownerAddr / ${_repo.checkUserAddr}');
     if (STR(ownerAddr).isNotEmpty) {
       if (_repo.checkUserAddr != STR(ownerAddr)) {
         await _repo.getUserProductList(ownerAddr!);
@@ -231,8 +246,7 @@ class MarketProvider extends ChangeNotifier {
       LOG('-------> update product list!! : $prodId');
       _repo.checkLastId = int.parse(STR(prodId, defaultValue: '0'));
       if (!await getProductList()) {
-        Fluttertoast.showToast(msg: TR(context, '상품 목록 마지막입니다.'),
-            toastLength: Toast.LENGTH_SHORT);
+        showToast(TR(context, '상품 목록 마지막입니다.'));
         return false;
       }
     }
@@ -245,8 +259,7 @@ class MarketProvider extends ChangeNotifier {
       LOG('-------> update product item list!! : $itemId');
       selectProduct?.itemCheckId = int.parse(STR(itemId));
       if (!await getProductOptionList()) {
-        Fluttertoast.showToast(msg: TR(context, '옵션 목록 마지막입니다.'),
-            toastLength: Toast.LENGTH_SHORT);
+        showToast(TR(context, '옵션 목록 마지막입니다.'));
         return true;
       }
     }
@@ -283,7 +296,7 @@ class MarketProvider extends ChangeNotifier {
     } // 구매자 이메일
   ) {
     if (purchaseInfo != null) {
-      var name    = STR(purchaseInfo?.name);
+      var name    = P_STR(purchaseInfo?.name);
       var amount  = num.parse(STR(purchaseInfo?.buyPrice));
       LOG('--> createPurchaseData : $name / $amount');
       payData = PaymentData(

@@ -92,6 +92,7 @@ enum LoginErrorType {
   mailSendServer,
   mailNotVerified,
   nickDuplicate,
+  passFail,
   loginKakaoFail,
   loginFail,
   recoverRequire,
@@ -115,6 +116,8 @@ enum LoginErrorType {
         return '인증이 완료되지않았습니다.\n(받은 이메일을 확인해 주세요)';
       case nickDuplicate:
         return '이미 사용중인 닉네임입니다.';
+      case passFail:
+        return '잘못된 계정이나 패스워드 입니다.';
       case loginKakaoFail:
         return '카카오 로그인에 실패했습니다.';
       case loginFail:
@@ -163,13 +166,12 @@ final loginProvider = ChangeNotifierProvider<LoginProvider>((_) {
 });
 
 class LoginProvider extends ChangeNotifier {
-  static final _singleton = LoginProvider._internal();
-  static final apiService = ApiService();
-
   factory LoginProvider() {
     return _singleton;
   }
   LoginProvider._internal();
+  static final _singleton = LoginProvider._internal();
+  static final _api = ApiService();
 
   UserModel?    userInfo;
   AddressModel? selectAccount;
@@ -325,8 +327,7 @@ class LoginProvider extends ChangeNotifier {
       if (STR(user).isNotEmpty) {
         loginAuto(user!).then((result) {
           if (isLogin) {
-            Fluttertoast.showToast(
-                msg: "${account?.accountName} 로그인 완료");
+            showToast('${account?.accountName} 로그인 완료');
             notifyListeners();
           }
         });
@@ -490,7 +491,7 @@ class LoginProvider extends ChangeNotifier {
     if (user != null) {
       userInfo = await UserModel.createFromKakao(user);
       if (STR(userInfo?.email).isNotEmpty) {
-        var result = await apiService.checkEmail(userInfo!.email!);
+        var result = await _api.checkEmail(userInfo!.email!);
         LOG('----> checkEmail result : $result');
         if (!result) {
           if (onError != null) {
@@ -571,7 +572,7 @@ class LoginProvider extends ChangeNotifier {
         var sig = await createSign(msg);
         if (sig != null) {
           // create user from server..
-          var result = await apiService.createUser(
+          var result = await _api.createUser(
               userName ?? '',
               socialId ?? '',
               email,
@@ -633,7 +634,8 @@ class LoginProvider extends ChangeNotifier {
     if (key != null) {
       return await startLogin(key, onError: onError);
     }
-    return null;
+    if (onError != null) onError(LoginErrorType.passFail, null);
+    return false;
   }
 
   Future<bool?> startLogin(EccKeyPair? key,
@@ -650,7 +652,7 @@ class LoginProvider extends ChangeNotifier {
         if (key != null) {
           var pubKey = await getPublicKey(key.d);
           var shareKey = formatBytesAsHexString(pubKey.Q!.getEncoded());
-          var secretKey = await apiService.getSecretKey(
+          var secretKey = await _api.getSecretKey(
               nickStr, email, shareKey);
           if (secretKey != null) {
             var curve = getS256();
@@ -670,7 +672,7 @@ class LoginProvider extends ChangeNotifier {
         token = STR(user.properties?['token']);
       }
       if (token.isNotEmpty) {
-        var result = await apiService.loginUser(
+        var result = await _api.loginUser(
             nickStr, type, email, token, onError: onError);
         if (result) {
           // // get all account info when nickId empty..
@@ -691,7 +693,7 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<UserModel?> getUserInfo() async {
-    var result = await apiService.getUserInfo();
+    var result = await _api.getUserInfo();
     if (result != null) {
       UserModel user = UserModel.createFromInfo(result);
       LOG('---> user.certUpdt : ${user.certUpdt}');
@@ -733,7 +735,7 @@ class LoginProvider extends ChangeNotifier {
       LOG('--> addNewAccount message : $uid + $nickId + $walletAddress');
       var sig = await createSign(message);
       if (sig != null) {
-        var addResult = await apiService.addAccount(nickId, walletAddress, sig);
+        var addResult = await _api.addAccount(nickId, walletAddress, sig);
         if (addResult) {
           var result = await startLoginWithKey();
           LOG('--> addNewAccount result : $result');
@@ -759,7 +761,7 @@ class LoginProvider extends ChangeNotifier {
     LOG('--> setUserNickId : [$newNickId] / $message');
     var sig = await createSign(message);
     if (sig != null) {
-      var addResult = await apiService.addAccount(nickId, walletAddress, sig);
+      var addResult = await _api.addAccount(nickId, walletAddress, sig);
       if (addResult == true) {
         LOG('--> setUserNickId success !!');
         return true;
@@ -778,7 +780,7 @@ class LoginProvider extends ChangeNotifier {
     if (sig != null) {
       LOG('--> setUserInfo ready : $walletAddress / $sig / ${info.subTitle} / '
           '${info.description} / ${info.image}');
-      var addResult = await apiService.setUserInfo(walletAddress, sig,
+      var addResult = await _api.setUserInfo(walletAddress, sig,
         subTitle: info.subTitle,
         imageUrl: info.image,
         desc:     info.description,
@@ -973,12 +975,12 @@ class LoginProvider extends ChangeNotifier {
   }
 
   emailSend(Function(LoginErrorType) onError) async {
-    apiService.checkEmail(inputEmail).then((result) {
+    _api.checkEmail(inputEmail).then((result) {
       LOG('---> checkEmail result : $result');
       if (result) {
         startEmailSend(inputEmail, onError).then((vfCode) {
           if (STR(vfCode).isNotEmpty) {
-            apiService.sendEmailVfCode(inputEmail, vfCode!).then((result) async {
+            _api.sendEmailVfCode(inputEmail, vfCode!).then((result) async {
               if (result) {
                 emailStep = EmailSignUpStep.check;
                 emailVfCode = vfCode;
@@ -1001,13 +1003,13 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool> emailDupCheck(String checkMail) async {
-    return !await apiService.checkEmail(checkMail);
+    return !await _api.checkEmail(checkMail);
   }
 
   Future<bool> emailVfCheck({Function(LoginErrorType)? onError}) async {
     emailVfCode ??= await UserHelper().get_vfCode();
     if (STR(emailVfCode).isNotEmpty) {
-      var result = await apiService.checkEmailVfComplete(emailVfCode!);
+      var result = await _api.checkEmailVfComplete(emailVfCode!);
       if (result != null) {
         if (result) {
           emailStep = EmailSignUpStep.complete;
@@ -1025,7 +1027,7 @@ class LoginProvider extends ChangeNotifier {
     if (nickId != null) {
       inputNick = nickId;
     }
-    var result = await apiService.checkNickname(inputNick);
+    var result = await _api.checkNickname(inputNick);
     if (result == true) {
       nickStep = NickCheckStep.complete;
       notifyListeners();

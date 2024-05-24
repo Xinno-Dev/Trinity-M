@@ -29,13 +29,8 @@ class _ItemSelectScreenState extends ConsumerState<ItemSelectScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
   }
 
   @override

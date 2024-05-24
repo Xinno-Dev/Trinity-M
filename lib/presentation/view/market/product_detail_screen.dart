@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trinity_m_00/common/provider/login_provider.dart';
-import 'package:trinity_m_00/presentation/view/signup/login_screen_old.dart';
+import 'package:trinity_m_00/presentation/view/signup/login_screen.dart';
 import '../../../../common/common_package.dart';
 import '../../../../common/const/utils/uihelper.dart';
 import '../../../../common/provider/market_provider.dart';
@@ -36,7 +36,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     final prov = ref.read(marketProvider);
     prov.optionIndex = -1;
     prov.selectDetailTab = 0;
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -60,8 +60,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               return ListView(
                 shrinkWrap: true,
                 children: [
-                  _viewModel.showProductDetail(context, widget.isShowSeller),
-                  _viewModel.showProductInfoTab(ref),
+                  _viewModel.showProductDetail(widget.isShowSeller),
+                  if (prov.isShowDetailTab)
+                    _viewModel.showProductInfoTab(ref),
                 ]
               );
             } else {
@@ -69,33 +70,35 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             }
           }
         ),
-        bottomNavigationBar: (widget.isCanBuy && ref.read(loginProvider).isLogin) ?
-        OpenContainer(
-          transitionType: ContainerTransitionType.fadeThrough,
-          closedBuilder: (context, builder) {
-            return PrimaryButton(
-              text: TR(context, '구매하기'),
-              round: 0,
-            );
-          },
-          openBuilder: (context, builder) {
-            return ProductBuyScreen();
-          },
-        ) : PrimaryButton(
-          onTap: () {
-            Navigator.of(context).push(
-              createAniRoute(LoginScreenOld(isAppStart: false, isWillReturn: true)))
-              .then((result) {
-                if (BOL(result)) {
-                  prov.refresh();
-                  Navigator.of(context).push(
-                    createAniRoute(ProductBuyScreen()));
-                }
-            });
-          },
-          text: TR(context, '구매하기'),
-          round: 0,
-        )
+        bottomNavigationBar:
+          (widget.isCanBuy && ref.read(loginProvider).isLogin) ?
+          OpenContainer(
+            transitionType: ContainerTransitionType.fadeThrough,
+            closedBuilder: (context, builder) {
+              return PrimaryButton(
+                text: TR(context, '구매하기'),
+                round: 0,
+              );
+            },
+            openBuilder: (context, builder) {
+              return ProductBuyScreen();
+            },
+          ) : PrimaryButton(
+            onTap: () {
+              Navigator.of(context).push(
+                createAniRoute(LoginScreen(
+                isAppStart: false, isWillReturn: true)))
+                .then((result) {
+                  if (BOL(result)) {
+                    prov.refresh();
+                    Navigator.of(context).push(
+                      createAniRoute(ProductBuyScreen()));
+                  }
+              });
+            },
+            text: TR(context, '구매하기'),
+            round: 0,
+          )
       ),
     );
   }

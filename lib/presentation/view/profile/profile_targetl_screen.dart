@@ -30,14 +30,13 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
-    _viewModel.context = context;
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -59,7 +58,6 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
           children: [
             _viewModel.showStoreDetail(widget.seller),
             _viewModel.showUserProductList(
-                context,
                 TR(context, 'Market'),
                 STR(widget.seller.address),
                 isShowSeller: false, isCanBuy: true),

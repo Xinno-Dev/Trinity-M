@@ -25,7 +25,7 @@ import '../../services/google_service.dart';
 import 'asset/asset_screen.dart';
 import 'market/market_screen.dart';
 import 'profile/profile_screen.dart';
-import 'signup/login_screen_old.dart';
+import 'signup/login_screen.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   MainScreen({Key? key, this.selectedPage = 0}) : super(key: key);
@@ -234,7 +234,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
     final prov = ref.read(loginProvider);
     if (index == 1 && !prov.isLogin) {
       Navigator.of(context).push(
-          createAniRoute(LoginScreenOld(isAppStart: false)));
+          createAniRoute(LoginScreen(isAppStart: false)));
     } else {
       prov.setMainPageIndex(index);
     }

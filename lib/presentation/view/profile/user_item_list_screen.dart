@@ -28,7 +28,7 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -46,16 +46,13 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
             Container(
               padding: EdgeInsets.fromLTRB(15, 40, 15, 10),
               child: _viewModel.showUserItemList(
-                context, loginProv.accountAddress),
+                loginProv.accountAddress),
             ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Column(
-                children: [
-                  _viewModel.showUserItemListShowType(),
-                  Divider(),
-                ],
-              )
+            Column(
+              children: [
+                _viewModel.showUserItemListShowType(),
+                Divider(),
+              ],
             )
           ]
         ),

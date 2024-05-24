@@ -34,7 +34,7 @@ import '../../../common/const/widget/network_error_screen.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../common/const/widget/show_explorer.dart';
 import '../../../domain/model/address_model.dart';
-import '../signup/login_screen_old.dart';
+import '../signup/login_screen.dart';
 import '../account/user_info_screen.dart';
 import 'networkScreens/network_list_screen.dart';
 import 'swapScreen/swap_asset_screen.dart';
@@ -162,7 +162,7 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
     print('---> didChangeAppLifecycleState : $state');
     if (IS_AUTO_LOCK_MODE && state == AppLifecycleState.inactive) {
       setState(() {
-        context.goNamed(LoginScreenOld.routeName);
+        context.goNamed(LoginScreen.routeName);
       });
     }
   }

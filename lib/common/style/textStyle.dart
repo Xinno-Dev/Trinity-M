@@ -370,6 +370,14 @@ var typo10regular100 = TextStyle(
   fontSize: 10.r,
 );
 
+var errorStyle = TextStyle(
+  color: ERROR_90,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Pretendard',
+  fontStyle: FontStyle.normal,
+  fontSize: 10.r,
+);
+
 var medalStyle = TextStyle(
   color: WHITE,
   fontWeight: FontWeight.w700,

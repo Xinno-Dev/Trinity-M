@@ -55,7 +55,7 @@ enum CD_PAY_ST {
       case CD_PAY_ST.complete:
         return '구매완료';
       default:
-        return '구매취소';
+        return '구매실패';
     }
   }
 

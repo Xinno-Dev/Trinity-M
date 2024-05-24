@@ -17,6 +17,7 @@ import 'package:path_provider/path_provider.dart';
 import '../common/common_package.dart';
 import '../common/const/utils/convertHelper.dart';
 import '../common/const/utils/languageHelper.dart';
+import '../common/const/utils/uihelper.dart';
 import '../common/const/utils/userHelper.dart';
 import '../common/const/widget/dialog_utils.dart';
 
@@ -380,9 +381,7 @@ class GoogleService extends GoogleAccount {
       LOG('--> _uploadToGoogleDrive error : $e');
     }
     hideLoadingDialog();
-    Fluttertoast.showToast(
-      msg: result ? "복구키 백업 완료" : "복구키 백업 실패",
-    );
+    showToast(result ? "복구키 백업 완료" : "복구키 백업 실패");
     return result;
   }
 
@@ -407,9 +406,7 @@ class GoogleService extends GoogleAccount {
       LOG('--> _downloadFromGoogleDrive error : $e');
     }
     hideLoadingDialog();
-    Fluttertoast.showToast(
-      msg: rwfText != null ? "복구키 받기 완료" : "복구키 받기 실패",
-    );
+    showToast(rwfText != null ? "복구키 받기 완료" : "복구키 받기 실패");
     return rwfText;
   }
 

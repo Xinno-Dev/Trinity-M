@@ -37,15 +37,15 @@ import '../terms_screen.dart';
 
 class LoginScreenOld extends ConsumerStatefulWidget {
   LoginScreenOld({this.isAppStart = true, this.isWillReturn = false, super.key});
-  static String get routeName => 'loginScreen';
+  static String get routeName => 'loginScreenOld';
   bool isAppStart;
   bool isWillReturn;
 
   @override
-  ConsumerState<LoginScreenOld> createState() => _LoginScreenState();
+  ConsumerState<LoginScreenOld> createState() => _LoginScreenOldState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreenOld>
+class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
   with WidgetsBindingObserver {
   FocusNode _focusNode = FocusNode();
   TextEditingController _textEditingController = TextEditingController();
@@ -650,7 +650,7 @@ class _LoginScreenState extends ConsumerState<LoginScreenOld>
     return GestureDetector(
       onTap: () {
         loginProv.logout().then((_) {
-          Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
+          showToast(TR(context, '로그아웃 완료'));
         });
       },
       child: Container(

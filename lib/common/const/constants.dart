@@ -55,6 +55,7 @@ const bool IS_DEV_MODE = kDebugMode && false;
 const bool IS_EMAIL_CHECK = true;
 const bool IS_AUTO_LOCK_MODE = false;
 const bool IS_AUTO_LOGIN_MODE = true; // 로컬에 패스워드 저장
+
 const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc API 이용
 const bool IS_SWAP_ON = false;
 const bool IS_PAYMENT_ON = true;
@@ -73,13 +74,13 @@ const String EX_TEST_MAIL_00 = 'jubal2000@gmail.com';
 const String EX_TEST_PASS_00 = 'jubalpass00';
 const String EX_TEST_REC_PASS_00 = '11111';
 
-const String EX_TEST_MAIL_EX = 'test00@exsino.com';
+const String EX_TEST_MAIL_EX = 'test00@xinno.io';
 const String EX_TEST_PASS_EX = 'testpass00';
 
 const String EX_TEST_ACCCOUNT_00 = 'jubal0000';
 const String EX_TEST_ACCCOUNT_00_1 = 'jubal0000_1';
 const String EX_TEST_NAME_00 = 'jubal0000 입니다!';
-const String EX_TEST_MN_EX = 'weekend minimum ribbon sing destroy vacuum cherry cement sock shell wear result'; // email: tester00
+const String EX_TEST_MN_EX = 'man path latin cement conduct upgrade melt garage total develop erosion universe'; // email: tester00
 const String EX_TEST_MN_00 = 'weekend minimum ribbon sing destroy vacuum cherry cement sock shell wear result'; // email: tester00
 const String EX_TEST_MN_01 = 'frown gadget pattern black quality staff connect throw mercy rookie valid swim'; // email: jubal2000@gmail.com
 const String EX_TEST_MN_02 = 'layer replace clay dinosaur agree jazz unit peace roast combine chase relief'; // kakao: jubal2000@hanmail.net
@@ -87,8 +88,15 @@ const String EX_TEST_MN_03 = 'apart sand present sunny destroy police either idl
 
 const String EMPTY_IMAGE = 'assets/images/app_icon_128_g.png';
 
+const int PASS_LENGTH_MIN = 5;
+const int PASS_LENGTH_MAX = 12;
+
+const int PAGE_COUNT_MAX = 3;
+const int MARKET_PAGE_COUNT_MAX = 3;
+const int PAGE_COUNT_FULL_MAX = 9999;
+
 const int DECIMAL_PLACES = 8;
-const double PROFILE_RADIUS = 120.0;
+const double PROFILE_RADIUS = 80.0;
 const double PROFILE_RADIUS_S = 40.0;
 
 late List DEFAULT_COIN_LIST = [

@@ -43,7 +43,7 @@ class _PaymentDoneScreenState extends ConsumerState {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -71,7 +71,7 @@ class _PaymentDoneScreenState extends ConsumerState {
             shrinkWrap: true,
             padding: EdgeInsets.symmetric(horizontal: 20),
             children: [
-              _viewModel.showPurchaseResult(context),
+              _viewModel.showPurchaseResult(),
               Divider(height: 50),
               Padding(
                 padding: EdgeInsets.only(bottom: 10),

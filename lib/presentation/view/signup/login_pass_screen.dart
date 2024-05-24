@@ -51,6 +51,7 @@ class _LoginPassScreenState extends ConsumerState {
   PassViewModel viewModel;
   bool isFailBack;
   var isCanBack = true;
+  var passErrorText = '';
 
   _startMain(int page) {
     LOG('---> _startMain');
@@ -163,8 +164,7 @@ class _LoginPassScreenState extends ConsumerState {
                     if (isCanBack && isFailBack) {
                       Navigator.of(context).pop();
                     }
-                    Fluttertoast.showToast(
-                        msg: TR(context, '잘못된 비밀번호입니다.'));
+                    showToast(TR(context, '잘못된 비밀번호입니다.'));
                   }
                 });
               }
@@ -179,33 +179,52 @@ class _LoginPassScreenState extends ConsumerState {
   _checkPassLength() {
     final prov = ref.read(loginProvider);
     if (viewModel.passType == PassType.cloudDown) {
-      return prov.cloudPass.first.length > 4;
+      return prov.cloudPass.first.length >= PASS_LENGTH_MIN &&
+             prov.cloudPass.first.length <= PASS_LENGTH_MAX;
     } else {
-      return prov.inputPass.first.length > 4;
+      return prov.inputPass.first.length >= PASS_LENGTH_MIN &&
+             prov.inputPass.first.length <= PASS_LENGTH_MAX;
     }
   }
 
-  _buildInputBox() {
+  _refreshPass(String? text) {
     final prov = ref.read(loginProvider);
+    setState(() {
+      if (viewModel.passType == PassType.cloudDown) {
+        prov.cloudPass.first = passInputController.text;
+      } else {
+        prov.inputPass.first = passInputController.text;
+      }
+      passErrorText = '';
+      if (passInputController.text.length < PASS_LENGTH_MIN) {
+        passErrorText = '$PASS_LENGTH_MIN 자 이상 입력해 주세요';
+      }
+      if (passInputController.text.length > PASS_LENGTH_MAX) {
+        passErrorText = '$PASS_LENGTH_MAX 자 이하 입력해 주세요';
+      }
+    });
+  }
+
+  _buildInputBox() {
     return Padding(
       padding: EdgeInsets.only(bottom: 40),
-      child: TextField(
-        controller: passInputController,
-        decoration: InputDecoration(
-          hintText: TR(context, '비밀번호 입력'),
-        ),
-        keyboardType: TextInputType.visiblePassword,
-        obscureText: true,
-        scrollPadding: EdgeInsets.only(bottom: 200),
-        onChanged: (text) {
-          setState(() {
-            if (viewModel.passType == PassType.cloudDown) {
-              prov.cloudPass.first = passInputController.text;
-            } else {
-              prov.inputPass.first = passInputController.text;
-            }
-          });
-        },
+      child: Column(
+        children: [
+          TextField(
+            controller: passInputController,
+            decoration: InputDecoration(
+              hintText: TR(context, '비밀번호 입력'),
+            ),
+            keyboardType: TextInputType.visiblePassword,
+            obscureText: true,
+            scrollPadding: EdgeInsets.only(bottom: 200),
+            onChanged: _refreshPass,
+          ),
+          if (passErrorText.isNotEmpty)...[
+            SizedBox(height: 5),
+            Text(TR(context, passErrorText), style: errorStyle)
+          ]
+        ],
       )
     );
   }

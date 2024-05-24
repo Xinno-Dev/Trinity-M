@@ -566,5 +566,10 @@ getLoginErrorCodeText(String codeText) {
 }
 
 showToast(String text) {
-  Fluttertoast.showToast(msg: text, toastLength: Toast.LENGTH_SHORT);
+  Fluttertoast.showToast(
+    msg: text,
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.CENTER,
+    backgroundColor: Colors.black.withOpacity(0.7),
+  );
 }

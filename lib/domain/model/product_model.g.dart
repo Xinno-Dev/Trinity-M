@@ -11,7 +11,9 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       itemType: json['itemType'] as String?,
       type: json['type'] as String?,
       name: json['name'] as String?,
-      tagId: (json['tagId'] as num?)?.toInt(),
+      tagId: (json['tagId'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
       repImg: json['repImg'] as String?,
       totalAmount: (json['totalAmount'] as num?)?.toInt(),
       remainAmount: (json['remainAmount'] as num?)?.toInt(),

@@ -171,7 +171,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         await Clipboard.setData(ClipboardData(text: mnemonic));
                         final androidInfo = await DeviceInfoPlugin().androidInfo;
                         if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
-                          Fluttertoast.showToast(msg: TR(context, '문구가 복사되었습니다'));
+                          showToast(TR(context, '문구가 복사되었습니다'));
                       },
                     ),
                   ),
@@ -237,7 +237,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
               ref.read(loginProvider).mainPageIndexOrg = 0;
               context.pushReplacementNamed(
                   MainScreen.routeName, queryParams: {'selectedPage': '1'});
-              Fluttertoast.showToast(msg: TR(context, '회원가입 완료'));
+              showToast(TR(context, '회원가입 완료'));
             },
           ),
         ) : null,

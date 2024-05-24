@@ -27,6 +27,7 @@ import '../../common/const/utils/uihelper.dart';
 import '../../common/const/widget/image_widget.dart';
 import '../../common/const/widget/primary_button.dart';
 import '../../common/provider/firebase_provider.dart';
+import '../../common/provider/market_provider.dart';
 import '../../presentation/view/main_screen.dart';
 import '../../presentation/view/market/payment_list_screen.dart';
 import '../../presentation/view/profile/my_info_screen.dart';
@@ -34,7 +35,7 @@ import '../../presentation/view/profile/profile_Identity_screen.dart';
 import '../../presentation/view/profile/user_item_list_screen.dart';
 import '../../presentation/view/profile/webview_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
-import '../../presentation/view/signup/login_screen_old.dart';
+import '../../presentation/view/signup/login_screen.dart';
 import '../../services/google_service.dart';
 import '../../services/iamport_service.dart';
 import '../model/address_model.dart';
@@ -46,8 +47,9 @@ class ProfileViewModel {
   static final _singleton = ProfileViewModel._internal();
   ProfileViewModel._internal();
 
-  final loginProv = LoginProvider();
-  final fireProv  = FirebaseProvider();
+  final loginProv   = LoginProvider();
+  final marketProv  = MarketProvider();
+  final fireProv    = FirebaseProvider();
   late BuildContext context;
 
   AddressModel? accountOrg;
@@ -160,7 +162,7 @@ class ProfileViewModel {
                         onTap: () {
                           context.pop();
                           Navigator.of(context).push(
-                            createAniRoute(LoginScreenOld(isAppStart: false)));
+                            createAniRoute(LoginScreen(isAppStart: false)));
                         },
                         child: Container(
                           height: 35,
@@ -227,7 +229,7 @@ class ProfileViewModel {
                     createAniRoute(MyInfoScreen()));
               } else {
                 Navigator.of(context).push(
-                    createAniRoute(LoginScreenOld(isAppStart: false)));
+                    createAniRoute(LoginScreen(isAppStart: false)));
               }
               break;
             case DrawerActionType.history:
@@ -236,7 +238,7 @@ class ProfileViewModel {
                     createAniRoute(PaymentListScreen()));
               } else {
                 Navigator.of(context).push(
-                    createAniRoute(LoginScreenOld(isAppStart: false)));
+                    createAniRoute(LoginScreen(isAppStart: false)));
               }
               break;
             case DrawerActionType.terms:
@@ -254,8 +256,9 @@ class ProfileViewModel {
             case DrawerActionType.logout:
               if (loginProv.isLogin) {
                 loginProv.logout().then((_) {
+                  marketProv.initRepo();
                   loginProv.setMainPageIndex(0);
-                  Fluttertoast.showToast(msg: TR(context, '로그아웃 완료'));
+                  showToast(TR(context, '로그아웃 완료'));
                 });
               }
               break;
@@ -263,7 +266,7 @@ class ProfileViewModel {
               if (loginProv.isLogin) {
                 loginProv.logout().then((_) {
                   loginProv.setMainPageIndex(0);
-                  Fluttertoast.showToast(msg: TR(context, '회원탈퇴 완료'));
+                  showToast(TR(context, '회원탈퇴 완료'));
                 });
               }
               break;
@@ -278,7 +281,7 @@ class ProfileViewModel {
           //   UserHelper().clearAllUser().then((_) {
           //     loginProv.logout().then((_) {
           //       loginProv.setMainPageIndex(0);
-          //       Fluttertoast.showToast(msg: TR(context, '로컬정보 삭제 완료'));
+          //       showToast(TR(context, '로컬정보 삭제 완료'));
           //     });
           //   });
           //   break;
@@ -516,7 +519,6 @@ class ProfileViewModel {
                       });
                     },
                     child: Container(
-                      margin: EdgeInsets.all(5),
                       child: Icon(Icons.photo_camera, color: GRAY_30),
                     ),
                   )
@@ -621,9 +623,9 @@ class ProfileViewModel {
   _changeAccount(AddressModel select) {
     loginProv.changeAccount(select).then((result) {
       if (result) {
-        Fluttertoast.showToast(msg: TR(context, '계정 변경 성공'));
+        showToast(TR(context, '계정 변경 성공'));
       } else {
-        Fluttertoast.showToast(msg: TR(context, '계정 변경 실패'));
+        showToast(TR(context, '계정 변경 실패'));
       }
     });
     return true;
@@ -639,7 +641,7 @@ class ProfileViewModel {
       if (STR(newNickId).isNotEmpty) {
         // nickId duplicate check..
         loginProv.checkNickId(nickId: newNickId!,
-          onError: (type) => Fluttertoast.showToast(msg: type.errorText)).
+          onError: (type) => showToast(type.errorText)).
           then((check) {
             if (check == true) {
               // pass check..
@@ -663,9 +665,7 @@ class ProfileViewModel {
   _startAccountAdd(String newNickId) {
     loginProv.addNewAccount(loginProv.userPass, newNickId).then((result) {
       LOG('---> account add result : $result');
-      Fluttertoast.showToast(
-        msg: result ? "계정추가 성공" : "계정추가 실패",
-      );
+      showToast(result ? "계정추가 성공" : "계정추가 실패");
     });
   }
 
@@ -855,9 +855,7 @@ class ProfileViewModel {
     if (STR(passOrg).isNotEmpty) {
       loginProv.inputPass.first = passOrg;
       var result = await loginProv.setAccountName(loginProv.selectAccount!);
-      Fluttertoast.showToast(
-        msg: result == true ? "내정보 변경 성공" : "내정보 변경 실패",
-      );
+      showToast(result == true ? "닉네임 변경 성공" : "닉네임 변경 실패");
       if (result == true) {
         _restoreAccount();
       }
@@ -875,9 +873,7 @@ class ProfileViewModel {
     if (STR(passOrg).isNotEmpty) {
       loginProv.inputPass.first = passOrg;
       var result = await loginProv.setAccountInfo(loginProv.selectAccount!);
-      Fluttertoast.showToast(
-        msg: result == true ? "내정보 변경 성공" : "내정보 변경 실패",
-      );
+      showToast(result == true ? "내정보 변경 성공" : "내정보 변경 실패");
       if (result == true) {
         _restoreAccount();
       }

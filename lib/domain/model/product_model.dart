@@ -11,11 +11,11 @@ part 'product_model.g.dart';
   explicitToJson: true,
 )
 class ProductModel {
-  String?   prodSaleId;   // 판매상품 ID
-  String?   itemType;     // 아이템 종류. mk_item.CD_ITEM_TYPE 값
-  String?   type;         // 상품종류. mk_prod.CD_PROD_TYPE 값
-  String?   name;         // 상품이름
-  int?      tagId;        // 상품타입 CD_TAG 값
+  String?     prodSaleId;   // 판매상품 ID
+  String?     itemType;     // 아이템 종류. mk_item.CD_ITEM_TYPE 값
+  String?     type;         // 상품종류. mk_prod.CD_PROD_TYPE 값
+  String?     name;         // 상품이름
+  List<int>?  tagId;        // 상품타입 CD_TAG 값
 
   // 목록 정보..
   String?   repImg;       // 상품 목록 이미지
