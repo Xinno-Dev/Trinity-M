@@ -34,8 +34,7 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final prov = ref.watch(marketProvider);
-    final loginProv = ref.read(loginProvider);
+    final prov = ref.read(loginProvider);
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -45,8 +44,7 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
           children: [
             Container(
               padding: EdgeInsets.fromLTRB(15, 40, 15, 10),
-              child: _viewModel.showUserItemList(
-                loginProv.accountAddress),
+              child: _viewModel.showUserItemList(prov.accountAddress),
             ),
             Column(
               children: [

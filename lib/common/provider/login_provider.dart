@@ -197,7 +197,7 @@ class LoginProvider extends ChangeNotifier {
   String? socialName;
   String? socialId;
   String? emailVfCode;
-  String  appVersion = '1,0.0(0)';
+  String  appVersion = '1.0.0_';
 
   get userPass {
     return inputPass.first;

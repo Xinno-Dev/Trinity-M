@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:firebase_auth/firebase_auth.dart' as google;
 import 'package:google_sign_in/google_sign_in.dart';
@@ -99,26 +100,35 @@ startKakaoLogin({Function(String)? onError}) async {
   if (isKakaoTalkReady) {
     try {
       token = await kakao.UserApi.instance.loginWithKakaoTalk();
-      LOG('--> 카카오톡으로 로그인 성공 ${token.accessToken}');
+      LOG('--> 카카오톡으로 로그인 성공 1 ${token.accessToken}');
     } catch (error) {
-      LOG('--> 카카오톡으로 로그인 실패 $error');
-      if (error is PlatformException && error.code == 'CANCELED') {
+      LOG('--> 카카오톡으로 로그인 실패 1 $error');
+      if (error is KakaoAuthException && error.error
+        == AuthErrorCause.accessDenied) {
         return null;
       }
       try {
         token = await kakao.UserApi.instance.loginWithKakaoAccount();
-        LOG('--> 카카오계정으로 로그인 성공 ${token.accessToken}');
+        LOG('--> 카카오계정으로 로그인 성공 2 ${token.accessToken}');
       } catch (error) {
-        LOG('--> 카카오계정으로 로그인 실패 $error');
+        LOG('--> 카카오계정으로 로그인 실패 2 $error');
+        if (error is KakaoAuthException && error.error
+          == AuthErrorCause.accessDenied) {
+          return null;
+        }
       }
     }
   }
   if (token == null) {
     try {
       token = await kakao.UserApi.instance.loginWithKakaoAccount();
-      LOG('--> 카카오계정으로 로그인 성공 ${token.accessToken}');
+      LOG('--> 카카오계정으로 로그인 성공 3 ${token.accessToken}');
     } catch (error) {
-      LOG('--> 카카오계정으로 로그인 실패 $error');
+      LOG('--> 카카오계정으로 로그인 실패 3 $error');
+      if (error is KakaoAuthException && error.error
+        == AuthErrorCause.accessDenied) {
+        return null;
+      }
     }
   }
   if (token != null) {
