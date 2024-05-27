@@ -51,14 +51,17 @@ const String MNEMONIC_CHECK = 'MNEMONIC_CHECK';
 const String APP_VERSION_KEY = 'APP_VERSION_KEY';
 const String APP_NOTICE_KEY = 'APP_NOTICE_KEY';
 
+
+// 출시시 필수 체크..
 const bool IS_DEV_MODE = kDebugMode && false;
+const bool IS_PAYMENT_READY = true;
 const bool IS_EMAIL_CHECK = true;
 const bool IS_AUTO_LOCK_MODE = false;
 const bool IS_AUTO_LOGIN_MODE = true; // 로컬에 패스워드 저장
+const bool IS_PAYMENT_ON = true;
 
 const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc API 이용
 const bool IS_SWAP_ON = false;
-const bool IS_PAYMENT_ON = true;
 const bool IS_EXPORT_MN = true;
 
 String CURRENT_CHAIN_ID = TEST_NET_CHAIN_ID;
@@ -80,7 +83,7 @@ const String EX_TEST_PASS_EX = 'testpass00';
 const String EX_TEST_ACCCOUNT_00 = 'jubal0000';
 const String EX_TEST_ACCCOUNT_00_1 = 'jubal0000_1';
 const String EX_TEST_NAME_00 = 'jubal0000 입니다!';
-const String EX_TEST_MN_EX = 'man path latin cement conduct upgrade melt garage total develop erosion universe'; // email: tester00
+const String EX_TEST_MN_EX = 'yard embrace develop ramp nothing member audit toilet vendor pool friend describe'; // email: tester00
 const String EX_TEST_MN_00 = 'weekend minimum ribbon sing destroy vacuum cherry cement sock shell wear result'; // email: tester00
 const String EX_TEST_MN_01 = 'frown gadget pattern black quality staff connect throw mercy rookie valid swim'; // email: jubal2000@gmail.com
 const String EX_TEST_MN_02 = 'layer replace clay dinosaur agree jazz unit peace roast combine chase relief'; // kakao: jubal2000@hanmail.net
@@ -94,6 +97,7 @@ const int PASS_LENGTH_MAX = 12;
 const int PAGE_COUNT_MAX = 3;
 const int MARKET_PAGE_COUNT_MAX = 3;
 const int PAGE_COUNT_FULL_MAX = 9999;
+const int EMAIL_SEND_TIME_MAX = 30;
 
 const int DECIMAL_PLACES = 8;
 const double PROFILE_RADIUS = 80.0;

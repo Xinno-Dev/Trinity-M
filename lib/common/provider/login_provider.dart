@@ -67,7 +67,6 @@ enum EmailSignUpStep {
   none,
   ready,
   send,
-  check,
   complete;
 }
 
@@ -93,6 +92,7 @@ enum LoginErrorType {
   mailNotVerified,
   nickDuplicate,
   passFail,
+  passFailEx,
   loginKakaoFail,
   loginFail,
   recoverRequire,
@@ -102,7 +102,7 @@ enum LoginErrorType {
 
   none;
 
-  get errorText {
+  String get errorText {
     switch (this) {
       case network:
         return '서버에 접속할 수 없습니다.';
@@ -118,12 +118,14 @@ enum LoginErrorType {
         return '이미 사용중인 닉네임입니다.';
       case passFail:
         return '잘못된 계정이나 패스워드 입니다.';
+      case passFailEx:
+        return '잘못된 패스워드 입니다.';
       case loginKakaoFail:
         return '카카오 로그인에 실패했습니다.';
       case loginFail:
         return '로그인에 실패했습니다.';
       case recoverRequire:
-        return '지갑 복구가 필요한 메일입니다.';
+        return '지갑 복구가 필요한 이메일입니다.';
       case recoverFail:
         return '지갑 복구에 실패했습니다.';
       case signupRequire:
@@ -183,6 +185,8 @@ class LoginProvider extends ChangeNotifier {
 
   var mainPageIndex = 0;
   var mainPageIndexOrg = 0;
+
+  var sendMail    = '';
 
   var emailStep   = EmailSignUpStep.none;
   var nickStep    = NickCheckStep.none;
@@ -439,7 +443,7 @@ class LoginProvider extends ChangeNotifier {
       });
       if (result != true) {
         userInfo = null;
-        return result;
+        return false;
       }
       return true;
     }
@@ -943,10 +947,6 @@ class LoginProvider extends ChangeNotifier {
     return emailStep == EmailSignUpStep.send;
   }
 
-  get isEmailCheckDone {
-    return emailStep == EmailSignUpStep.check;
-  }
-
   get isNickCheckReady {
     return nickStep == NickCheckStep.ready;
   }
@@ -968,34 +968,33 @@ class LoginProvider extends ChangeNotifier {
 
   emailInput(String email) {
     inputEmail = email;
-    emailStep = EmailValidator.validate(email) ?
+    emailStep  = EmailValidator.validate(email) ?
       EmailSignUpStep.ready : EmailSignUpStep.none;
     LOG('---> emailInput [$inputEmail] : $emailStep');
     notifyListeners();
   }
 
   emailSend(Function(LoginErrorType) onError) async {
-    _api.checkEmail(inputEmail).then((result) {
-      LOG('---> checkEmail result : $result');
-      if (result) {
-        startEmailSend(inputEmail, onError).then((vfCode) {
-          if (STR(vfCode).isNotEmpty) {
-            _api.sendEmailVfCode(inputEmail, vfCode!).then((result) async {
-              if (result) {
-                emailStep = EmailSignUpStep.check;
-                emailVfCode = vfCode;
-                await UserHelper().setUser(vfCode: vfCode);
-                notifyListeners();
-              } else {
-                onError(LoginErrorType.mailSendServer);
-              }
-            });
-          }
-        });
-      } else {
-        onError(LoginErrorType.mailDuplicate);
+    var result = await _api.checkEmail(inputEmail);
+    LOG('---> checkEmail result : $result');
+    if (result) {
+      var vfCode = await startEmailSend(inputEmail, onError);
+      if (STR(vfCode).isNotEmpty) {
+        var sendResult = await _api.sendEmailVfCode(inputEmail, vfCode!);
+        if (sendResult) {
+          emailStep = EmailSignUpStep.send;
+          emailVfCode = vfCode;
+          await UserHelper().setUser(vfCode: vfCode);
+          notifyListeners();
+          return true;
+        } else {
+          onError(LoginErrorType.mailSendServer);
+        }
       }
-    });
+    } else {
+      onError(LoginErrorType.mailDuplicate);
+    }
+    return false;
   }
 
   Future<bool> inputEmailDupCheck() async {

@@ -5,7 +5,7 @@ BuildContext? dialogContext;
 showLoadingDialog(BuildContext context, String message, {var isShowIcon = true}) {
   showDialog(
     context: context,
-    barrierColor: Colors.black54,
+    barrierColor: Colors.black87,
     barrierDismissible: false, // lock touched close..
     builder: (BuildContext context) {
       dialogContext = context;

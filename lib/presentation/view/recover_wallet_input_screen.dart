@@ -1,3 +1,7 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
 import '../../../common/const/widget/custom_text_form_field.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
@@ -7,6 +11,7 @@ import 'package:bip39/bip39.dart' as bip39;
 import '../../common/common_package.dart';
 import '../../common/const/constants.dart';
 import '../../common/const/utils/languageHelper.dart';
+import '../../common/const/utils/uihelper.dart';
 import '../../common/const/widget/SimpleCheckDialog.dart';
 import '../../common/const/widget/back_button.dart';
 
@@ -69,155 +74,154 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
         top: false,
         child: Scaffold(
           backgroundColor: WHITE,
-          appBar: AppBar(
-            backgroundColor: WHITE,
-            leading: CustomBackButton(
-              onPressed: context.pop,
-            ),
-            centerTitle: true,
-            title: Text(
-              TR(context, '지갑 복구'),
-              style: typo18semibold,
-            ),
-            elevation: 0,
-          ),
-          body: SingleChildScrollView(
-            controller: _scrollController,
-            physics: ClampingScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 80,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
+          appBar: defaultAppBar(TR(context, '계정 복구')),
+          body: LayoutBuilder(builder: (context, constraints) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Stack(
+                children: [
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                          TR(context, '지갑 복구용 문구를 확인합니다'),
-                        style: typo24bold,
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Text(
-                          TR(context, '문구 12개를 순서대로 입력하세요'),
-                        style: typo16medium150.copyWith(color: GRAY_70),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _showInfoText = !_showInfoText;
-                          });
-                        },
+                      Expanded(
                         child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 9.0, horizontal: 8.0),
-                          decoration: BoxDecoration(
-                            color: SECONDARY_10,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                TR(context, '지갑 복구용 문구란'),
-                                style: typo14medium.copyWith(
-                                    color: SECONDARY_90),
-                              ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              _showInfoText
-                                  ? SvgPicture.asset(
-                                      'assets/svg/arrow_up.svg')
-                                  : SvgPicture.asset(
-                                      'assets/svg/arrow_down.svg',
-                                      colorFilter: ColorFilter.mode(
-                                          SECONDARY_90, BlendMode.srcIn),
-                                    ),
-                            ],
-                          ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                                child: Text(
+                              TR(context, '계정 복구 단어를 입력해주세요.'),
+                              style: typo24bold,
+                            )),
+                            Expanded(
+                                child: Text(
+                              TR(context, '회원가입시 제공된 계정 복구 단어는\n'
+                                  '12개의 단어로 이루어져있습니다.'),
+                              style: typo16medium150.copyWith(color: GRAY_70),
+                            )),
+                            // SizedBox(
+                            //   height: 16,
+                            // ),
+                            // GestureDetector(
+                            //   onTap: () {
+                            //     setState(() {
+                            //       _showInfoText = !_showInfoText;
+                            //     });
+                            //   },
+                            //   child: Container(
+                            //     padding: EdgeInsets.symmetric(
+                            //         vertical: 9.0, horizontal: 8.0),
+                            //     decoration: BoxDecoration(
+                            //       color: SECONDARY_10,
+                            //       borderRadius: BorderRadius.circular(4),
+                            //     ),
+                            //     child: Row(
+                            //       mainAxisSize: MainAxisSize.min,
+                            //       children: [
+                            //         Text(
+                            //           TR(context, '지갑 복구용 문구란'),
+                            //           style: typo14medium.copyWith(
+                            //               color: SECONDARY_90),
+                            //         ),
+                            //         SizedBox(
+                            //           width: 4,
+                            //         ),
+                            //         _showInfoText
+                            //             ? SvgPicture.asset(
+                            //                 'assets/svg/arrow_up.svg')
+                            //             : SvgPicture.asset(
+                            //                 'assets/svg/arrow_down.svg',
+                            //                 colorFilter: ColorFilter.mode(
+                            //                     SECONDARY_90, BlendMode.srcIn),
+                            //               ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
+                            if (_showInfoText) InfoTextColumn(),
+                          ],
                         ),
-                      ),
-                      if (_showInfoText) InfoTextColumn(),
-                      SizedBox(
-                        height: 32,
-                      ),
+                      )),
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 60),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: GridView.builder(
+                          itemCount: 12,
+                          shrinkWrap: true,
+                          primary: false,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 8,
+                              childAspectRatio: 1.2),
+                          itemBuilder: (BuildContext context, int index) {
+                            return RecoveryInputColumn(
+                              index: index + 1,
+                              focusNode: focusNodeList[index],
+                              controller: _controllerList[index],
+                            );
+                          },
+                        ),
+                      )),
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: GridView.builder(
-                    itemCount: 12,
-                    shrinkWrap: true,
-                    primary: false,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 8,
-                        childAspectRatio: 1.2),
-                    itemBuilder: (BuildContext context, int index) {
-                      return RecoveryInputColumn(
-                        index: index + 1,
-                        focusNode: focusNodeList[index],
-                        controller: _controllerList[index],
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 400.0,
-                ),
-              ],
-            ),
-          ),
-          bottomNavigationBar: _allFilled ? PrimaryButton(
-            text: TR(context, '다음'),
-            round: 0,
-            onTap: () {
-              mnemonic = '';
-              for (TextEditingController controller
-                  in _controllerList) {
-                if (controller == _controllerList.first) {
-                  mnemonic += controller.text;
-                } else {
-                  mnemonic += (' ' + controller.text);
-                }
-              }
-              bool isValidMnemonic = bip39.validateMnemonic(mnemonic);
-              if (isValidMnemonic) {
-                // context.pushNamed(
-                //   RecoverWalletRegisterPassword.routeName,
-                //   queryParams: {'mnemonic': mnemonic},
-                // );
-                context.pop(mnemonic);
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return SimpleCheckDialog(
-                      hasTitle: true,
-                      titleString: TR(context, '지갑 복구 문구가 일치하지 않습니다'),
-                      infoString: TR(context, '다시 입력해주세요.'),
-                      defaultButtonText: TR(context, '다시 입력하기'));
-                  },
-                );
-              }
-            },
-          )
-        : DisabledButton(
-            round: 0,
-            text: TR(context, '다음'),
-          ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _showButton(),
+                  )
+                ],
+              ),
+            );
+          }
         ),
-      ),
+      )
+      )
+    );
+  }
+
+  _showButton() {
+    return _allFilled ? PrimaryButton(
+      text: TR(context, '다음'),
+      round: 0,
+      onTap: () {
+        mnemonic = '';
+        for (TextEditingController controller
+        in _controllerList) {
+          if (controller == _controllerList.first) {
+            mnemonic += controller.text;
+          } else {
+            mnemonic += (' ' + controller.text);
+          }
+        }
+        bool isValidMnemonic = bip39.validateMnemonic(mnemonic);
+        if (isValidMnemonic) {
+          // context.pushNamed(
+          //   RecoverWalletRegisterPassword.routeName,
+          //   queryParams: {'mnemonic': mnemonic},
+          // );
+          context.pop(mnemonic);
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return SimpleCheckDialog(
+                  hasTitle: true,
+                  titleString: TR(context, '지갑 복구 문구가 일치하지 않습니다'),
+                  infoString: TR(context, '다시 입력해주세요.'),
+                  defaultButtonText: TR(context, '다시 입력하기'));
+            },
+          );
+        }
+      },
+    ) : DisabledButton(
+      round: 0,
+      text: TR(context, '다음'),
     );
   }
 }

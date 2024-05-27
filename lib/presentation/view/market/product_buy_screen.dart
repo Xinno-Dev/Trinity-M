@@ -31,7 +31,7 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
   late MarketViewModel _viewModel;
 
   _showFailMessage(BuildContext context) {
-    showLoginErrorTextDialog(context, TR(context, '결제준비에 실패했습니다!'));
+    showLoginErrorTextDialog(context, TR(context, '결제에 실패했습니다!'));
   }
 
   @override
@@ -76,7 +76,7 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
                 style: typo12bold.copyWith(color: Colors.red))),
           ],
         ),
-        bottomNavigationBar: prov.purchaseReady ?
+        bottomNavigationBar: IS_PAYMENT_READY && prov.purchaseReady ?
           PrimaryButton(
             text: TR(context, '결제하기'),
             round: 0,
@@ -116,7 +116,7 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
           Navigator.of(context).push(
               createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data)));
         } else {
-          // _showFailMessage(context);
+          _showFailMessage(context);
         }
       });
     }

@@ -4,8 +4,11 @@ import "dart:typed_data";
 import 'dart:convert';
 
 import 'package:decimal/decimal.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:web3dart/web3dart.dart';
+
+import '../constants.dart';
 
 Uint8List createUint8ListFromString(String s) {
   var ret = new Uint8List(s.length);
@@ -156,7 +159,8 @@ String getFormattedText({int decimalPlaces = 0, required num value}) {
 
 // ignore: non_constant_identifier_names
 LOG(String msg) {
-  print(msg);
+  if (kDebugMode)
+    print(msg);
 }
 
 // ignore: non_constant_identifier_names
@@ -196,8 +200,7 @@ String STR(dynamic value, {String defaultValue = ''}) {
 String P_STR(dynamic value, {String defaultValue = ''}) {
   var result = value.runtimeType != Null && value != 'null' &&
       value!.toString().isNotEmpty ? value!.toString() : defaultValue;
-  result = result.replaceAll('\\n', ' ');
-  result = result.replaceAll('\n', ' ');
+  result = result.replaceAll(RegExp('[^a-zA-Z0-9가-힣\\s]'), '');
   return result;
 }
 

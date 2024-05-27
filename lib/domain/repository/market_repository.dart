@@ -237,6 +237,8 @@ class MarketRepository {
         prod.desc2        = STR(jsonData['desc2']);
         prod.externUrl    = STR(jsonData['externUrl']);
         prod.repDetailImg = STR(jsonData['repDetailImg']);
+        prod.totalAmount  = INT(jsonData['totalAmount']);
+        prod.remainAmount = INT(jsonData['remainAmount']);
         // prod.externUrl    = 'https://firebasestorage.googleapis.com/v0/b/larba-00-9fdd3.appspot.com/o/sample_img%2Fdetail_00.png?alt=media&token=1af2818a-30ac-4327-90b2-76535fe3df1a';
         // update option items..
         prod = await getProductImageItemList(prod);

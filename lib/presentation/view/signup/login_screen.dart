@@ -88,11 +88,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: WHITE,
-        appBar: !widget.isAppStart ? AppBar(
-          title: Text(TR(context, '로그인'), style: typo16bold),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-        ) : null,
+        appBar: !widget.isAppStart ? defaultAppBar(TR(context, '로그인')) : null,
         body: SafeArea(
           // bottom: false,
           child: LayoutBuilder(builder: (context, constraints) {

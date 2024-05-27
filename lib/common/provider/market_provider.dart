@@ -309,8 +309,13 @@ class MarketProvider extends ChangeNotifier {
         buyerName:  userInfo.userName,
         buyerEmail: userInfo.email,
         buyerTel:   STR(userInfo.mobile),
-        appScheme: 'flutterexample',
+        appScheme: 'iamport_payment',
         niceMobileV2: true,
+        popup: false,
+        period: {
+          'from': '20240101',
+          'to': '20241231',
+        }
       );
       // 할부개월 설정..
       if (payMethod == 'card' && cardQuota != '0') {
@@ -319,12 +324,6 @@ class MarketProvider extends ChangeNotifier {
           payData.cardQuota!.add(int.parse(cardQuota));
         }
       }
-      // [이니시스-빌링.나이스.다날] 제공기간 표기
-      payData.period = {
-        'from': '20240101',
-        'to': '20241231',
-      };
-      payData.popup = false;
       return payData;
     }
     return null;
@@ -333,21 +332,25 @@ class MarketProvider extends ChangeNotifier {
 
   requestPurchaseWithImageId({Function(String)? onError}) async {
     LOG('--> requestPurchaseWithImageId : ${purchaseInfo?.prodSaleId} / ${optionId}');
-    var result = await _repo.requestPurchase(
-        STR(purchaseInfo?.prodSaleId), imgId: STR(optionId), onError: (error) {
+    if (optionId != null) {
+      var result = await _repo.requestPurchase(
+          STR(purchaseInfo?.prodSaleId), imgId: optionId, onError: (error) {
         if (error == '__not_found__' && onError != null) {
           onError('이미 판매완료된 옵션 상품입니다.');
         }
-    });
-    if (result != null) {
-      purchaseInfo!.itemId      = result.itemId;
-      purchaseInfo!.merchantUid = result.merchantUid;
-      purchaseInfo!.buyPrice    = result.price; // price -> buyPrice 로 변환
-      purchaseInfo!.priceUnit   = result.priceUnit;
-      payData.merchantUid       = STR(result.merchantUid);
+      });
+      if (result != null) {
+        purchaseInfo!.itemId = result.itemId;
+        purchaseInfo!.merchantUid = result.merchantUid;
+        purchaseInfo!.buyPrice = result.price; // price -> buyPrice 로 변환
+        purchaseInfo!.priceUnit = result.priceUnit;
+        payData.merchantUid = STR(result.merchantUid);
+      }
+      LOG('--> requestPurchaseWithImageId result : ${payData
+          .merchantUid} <= ${result?.toJson()}');
+      return result;
     }
-    LOG('--> requestPurchaseWithImageId result : ${payData.merchantUid} <= ${result?.toJson()}');
-    return result;
+    return null;
   }
 
   Future<bool> checkPurchase(JSON info) async {

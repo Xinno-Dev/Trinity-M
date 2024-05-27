@@ -44,7 +44,8 @@ class _PaymentListScreenState extends ConsumerState<PaymentListScreen> {
           padding: EdgeInsets.symmetric(horizontal: 15),
           child: Stack(
             children: [
-              _viewModel.showPurchaseList(padding: EdgeInsets.symmetric(vertical: 40)),
+              _viewModel.showPurchaseList(
+                padding: EdgeInsets.symmetric(vertical: 40)),
               _viewModel.showPurchaseDate(),
             ]
           ),

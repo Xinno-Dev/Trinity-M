@@ -62,15 +62,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: AppBar(
-          backgroundColor: WHITE,
-          centerTitle: true,
-          title: Text(
-            TR(context, '지갑 만들기'),
-            style: typo18semibold,
-          ),
-          titleSpacing: 0,
-        ),
+        appBar: defaultAppBar(TR(context, '계정 복구 단어 백업')),
         body: LayoutBuilder(builder: (context, constraints) {
           var mnBoxRatio = constraints.maxHeight / constraints.maxWidth;
           if (mnBoxRatio < 2.0) mnBoxRatio = 2.0;
@@ -89,13 +81,13 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                       children: [
                         SizedBox(height: 16.h),
                         Text(
-                          TR(context, '블록체인 연결을 위한\n복구문구를 보관하세요.'),
+                          TR(context, '계정 복구를 위한\n복구 단어를 보관하세요.'),
                           style: typo24bold150,
                         ),
                         SizedBox(height: 16.h),
                         Text(
-                          TR(context, '블록체인 복구 문구를 안전한 곳에 보관해 주세요.\n'
-                              '잃어버리실 경우 복구가 불가합니다.'),
+                          TR(context, '계정 복구 단어를 안전한 곳에 보관해 주세요.\n'
+                          '잃어버리실 경우 계정 복구가 불가합니다.'),
                           style: typo16medium150.copyWith(
                               color: GRAY_70),
                         ),
@@ -160,7 +152,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                               width: 4,
                             ),
                             Text(
-                              TR(context, '문구 복사하기'),
+                              TR(context, '복구 단어 복사하기'),
                               style:
                               typo14bold100.copyWith(color: SECONDARY_90),
                             ),
@@ -228,18 +220,15 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
             )
           );
         }),
-        bottomNavigationBar: widget.isShowNext ? Padding(
-          padding: EdgeInsets.symmetric(vertical: 40.h),
-          child: PrimaryButton(
-            text: TR(context, '다음'),
-            round: 0,
-            onTap: () {
-              ref.read(loginProvider).mainPageIndexOrg = 0;
-              context.pushReplacementNamed(
-                  MainScreen.routeName, queryParams: {'selectedPage': '1'});
-              showToast(TR(context, '회원가입 완료'));
-            },
-          ),
+        bottomNavigationBar: widget.isShowNext ? PrimaryButton(
+          text: TR(context, '다음'),
+          round: 0,
+          onTap: () {
+            ref.read(loginProvider).mainPageIndexOrg = 0;
+            context.pushReplacementNamed(
+                MainScreen.routeName, queryParams: {'selectedPage': '1'});
+            showToast(TR(context, '회원가입 완료'));
+          },
         ) : null,
       ),
     );

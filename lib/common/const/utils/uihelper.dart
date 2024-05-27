@@ -337,12 +337,13 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
   );
 }
 
-defaultAppBar(String title) {
+defaultAppBar(String title, {Widget? leading}) {
   return AppBar(
     title: Text(title),
-    titleTextStyle: typo18bold,
+    titleTextStyle: title.length > 16 ? typo14bold : typo18bold,
     titleSpacing: 0,
     centerTitle: true,
+    leading: leading,
     backgroundColor: WHITE,
     surfaceTintColor: WHITE,
   );
@@ -501,25 +502,25 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
               SvgPicture.asset(
                   'assets/svg/icon_warning.svg',
                   width: 40.r, height: 40.r),
-              SizedBox(height: 5.h),
               if (type == LoginErrorType.code)...[
                 Text(errorText1,
-                    style: typo16bold,
-                    textAlign: TextAlign.center),
+                  style: typo16bold,
+                  textAlign: TextAlign.center),
                 SizedBox(height: 10),
                 Text(errorText2,
-                    style: typo14normal.copyWith(color: SECONDARY_90),
-                    textAlign: TextAlign.center),
+                  style: typo14normal.copyWith(color: SECONDARY_90),
+                  textAlign: TextAlign.center),
               ],
               if (type != LoginErrorType.code)...[
                 Text(type.errorText,
                   style: typo16bold,
                   textAlign: TextAlign.center),
                 if (STR(text).isNotEmpty)...[
-                  SizedBox(height: 10.h),
+                  if (type.errorText.isNotEmpty)
+                    SizedBox(height: 10.h),
                   Text(STR(text),
-                      style: typo14normal,
-                      textAlign: TextAlign.center),
+                    style: type.errorText.isEmpty ? typo14bold : typo14normal,
+                    textAlign: TextAlign.center),
                 ],
               ]
             ],
@@ -530,16 +531,16 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
         actionsAlignment: MainAxisAlignment.center,
         actions: <Widget>[
           Container(
-              width: 127.w,
-              height: 40.h,
-              child: OutlinedButton(
-                onPressed: context.pop,
-                child: Text(
-                  TR(context, '닫기'),
-                  style: typo12semibold100,
-                ),
-                style: darkBorderButtonStyle,
-              )
+            width: 127.w,
+            height: 40.h,
+            child: OutlinedButton(
+              onPressed: context.pop,
+              child: Text(
+                TR(context, '닫기'),
+                style: typo12semibold100,
+              ),
+              style: darkBorderButtonStyle,
+            )
           )
         ],
       ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -74,80 +75,93 @@ class _SignUpPassScreenState extends ConsumerState {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: AppBar(
-          backgroundColor: WHITE,
-          centerTitle: true,
-          title: Text(
-            TR(context, viewModel.title),
-            style: typo18semibold,
-          ),
-          titleSpacing: 0,
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: 240,
-                margin: EdgeInsets.symmetric(horizontal: 20.w),
-                padding: EdgeInsets.only(top: 30.h),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      TR(context, viewModel.info1),
-                      style: typo24bold150,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      TR(context, viewModel.info2),
-                      style: typo16medium150.copyWith(
-                        color: GRAY_70,
+        appBar: defaultAppBar(viewModel.title),
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: constraints.maxHeight / 3,
+                          margin: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                TR(context, viewModel.info1),
+                                style: typo24bold150,
+                              ),
+                              SizedBox(height: 16.h),
+                              Text(
+                                TR(context, viewModel.info2),
+                                style: typo16medium150.copyWith(
+                                  color: GRAY_70,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
                       ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 40.w),
+                          child: Column(
+                            children: [
+                              for (var index = 0; index < 2; index++)
+                                _buildInputBox(index),
+                            ],
+                          )
+                        )
+                      ),
+                    ],
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: viewModel.comparePass
+                      ? PrimaryButton(
+                      text: TR(context, '다음'),
+                      round: 0,
+                      onTap: () async {
+                        LOG('---> CloudPassCreateScreen ok : '
+                          '${viewModel.password} / ${viewModel.comparePass} / '
+                          '${viewModel.passType}');
+                        if (!viewModel.checkPassMinLength) {
+                          showToast(TR(context,
+                            '$PASS_LENGTH_MIN 자 이상 입력해주세요.'));
+                          return;
+                        }
+                        if (!viewModel.checkPassMaxLength) {
+                          showToast(TR(context,
+                            '$PASS_LENGTH_MAX 자 이하 입력해주세요.'));
+                          return;
+                        }
+                        if (viewModel.comparePass) {
+                          FocusScope.of(context).requestFocus(FocusNode()); //remove focus
+                          if (viewModel.passType == PassType.signUp) {
+                            Navigator.of(context).push(
+                              createAniRoute(SignUpTermsScreen()));
+                          } else {
+                            var result = viewModel.passInputController.first.text;
+                            context.pop(result);
+                          }
+                        }
+                      },
+                    ) : DisabledButton(
+                      text: TR(context, '다음'),
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 30.h),
-              Container(
-                height: 240,
-                margin: EdgeInsets.symmetric(horizontal: 40.w),
-                child: Column(
-                  children: [
-                    for (var index=0; index<2; index++)
-                      _buildInputBox(index),
-                  ],
-                )
-              ),
-            ],
-          )
-        ),
-        bottomNavigationBar: viewModel.comparePass
-            ? PrimaryButton(
-          text: TR(context, '다음'),
-          round: 0,
-          onTap: () async {
-            LOG('---> CloudPassCreateScreen ok : ${viewModel.password} / ${viewModel.comparePass} / ${viewModel.passType}');
-            if (!viewModel.checkPassMinLength) {
-              showToast(TR(context, '$PASS_LENGTH_MIN 자 이상 입력해주세요.'));
-              return;
-            }
-            if (!viewModel.checkPassMaxLength) {
-              showToast(TR(context, '$PASS_LENGTH_MAX 자 이하 입력해주세요.'));
-              return;
-            }
-            if (viewModel.comparePass) {
-              if (viewModel.passType == PassType.signUp) {
-                Navigator.of(context).push(createAniRoute(SignUpTermsScreen()));
-              } else {
-                var result = viewModel.passInputController.first.text;
-                context.pop(result);
-              }
-            }
-          },
-        ) : DisabledButton(
-          text: TR(context, '다음'),
+                  )
+                ],
+              )
+            );
+          }
         ),
       )
     );
@@ -156,17 +170,18 @@ class _SignUpPassScreenState extends ConsumerState {
   _buildInputBox(int index) {
     final prov = ref.read(loginProvider);
     return Padding(
-      padding: EdgeInsets.only(bottom: 40),
+      padding: EdgeInsets.only(bottom: 20),
       child: TextField(
       controller: viewModel.passInputController[index],
       decoration: InputDecoration(
         hintText: TR(context, index == 0 ? '비밀번호 입력' : '비밀번호 재입력'),
       ),
       keyboardType: TextInputType.visiblePassword,
+      textInputAction: index == 0 ? TextInputAction.next : TextInputAction.done,
       obscureText: true,
-      scrollPadding: EdgeInsets.only(bottom: 200),
+      scrollPadding: EdgeInsets.only(bottom: 100),
       onChanged: (text) {
-        if (viewModel.passType == PassType.recover) {
+        if (viewModel.passType == PassType.cloudUp) {
           prov.cloudPass[index] = viewModel.passInputController[index].text;
         } else {
           prov.inputPass[index] = viewModel.passInputController[index].text;

@@ -777,7 +777,7 @@ class MarketViewModel {
                         ],
                         Text(STR(item.name), style: typo14normal.copyWith(height: 1.0)),
                         SizedBox(height: 5),
-                        Text(item.priceText, style: typo14bold),
+                        Text(item.priceText, style: typo14bold, textAlign: TextAlign.start),
                       ],
                     ),
                   ),

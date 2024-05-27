@@ -76,78 +76,6 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
     });
   }
 
-  // Future<void> _authenticateWithBiometrics(context) async {
-  //   bool authenticated = false;
-  //   try {
-  //     setState(() {
-  //       _isAuthenticating = true;
-  //       _authorized = 'Authenticating';
-  //     });
-  //
-  //     var iosStrings = IOSAuthMessages(
-  //       // cancelButton: '취소',
-  //       // goToSettingsButton: '설정',
-  //       // goToSettingsDescription: '생체인증 설정을 해주세요.',
-  //       // lockOut: 'Please reenable your Touch ID',
-  //       // localizedFallbackTitle: '암호입력',
-  //     );
-  //
-  //     var androidStrings = AndroidAuthMessages(
-  //       signInTitle: '생체인증 사용 동의',
-  //       biometricHint: '지문',
-  //       cancelButton: '닫기',
-  //     );
-  //
-  //     authenticated = await auth.authenticate(
-  //       localizedReason: TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
-  //       authMessages: <AuthMessages>[
-  //         androidStrings,
-  //         iosStrings,
-  //       ],
-  //       options: AuthenticationOptions(
-  //         stickyAuth: true,
-  //         biometricOnly: true,
-  //         useErrorDialogs: false,
-  //       ),
-  //     );
-  //     setState(() {
-  //       _isAuthenticating = false;
-  //       _authorized = 'Authenticating';
-  //     });
-  //   } on PlatformException catch (e) {
-  //     LOG('--> Authentication error : $e');
-  //     showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return SimpleCheckDialog(
-  //           titleString: TR(context, '등록에 실패했습니다.'),
-  //           infoString: TR(context, e.toString()),
-  //         );
-  //       },
-  //     );
-  //     setState(() {
-  //       _localAuthAgree = false;
-  //       _isAuthenticating = false;
-  //       _authorized = 'Error - ${e.message}';
-  //     });
-  //     return;
-  //   }
-  //   if (!mounted) {
-  //     return;
-  //   }
-  //
-  //   setState(() {
-  //     final String message = authenticated ? 'Authorized' : 'Not Authorized';
-  //     if (authenticated) {
-  //       _localAuthAgree = true;
-  //     }
-  //     LOG('----> authenticated result : $message');
-  //     ref.read(loginProvider).setBioIdentity(authenticated);
-  //     if (!widget.isShowNext && authenticated) {
-  //       Navigator.of(context).pop(true);
-  //     }
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -156,15 +84,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: AppBar(
-          backgroundColor: WHITE,
-          centerTitle: true,
-          title: Text(
-            TR(context, '생체인증 사용동의'),
-            style: ref.read(languageProvider).isKor ? typo18semibold : typo16semibold,
-          ),
-          titleSpacing: 0,
-        ),
+        appBar: defaultAppBar(TR(context, '생체인증 사용동의')),
         body: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -232,16 +152,13 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: widget.isShowNext ? Padding(
-          padding: EdgeInsets.symmetric(vertical: 40.h),
-          child: PrimaryButton(
-            text: TR(context, _localAuthAgree ? '다음' : '건너뛰기'),
-            round: 0,
-            onTap: () {
-              UserHelper().setUser(localAuth: _localAuthAgree ? 'true' : 'false');
-              Navigator.of(context).push(createAniRoute(SignUpMnemonicScreen()));
-            },
-          ),
+        bottomNavigationBar: widget.isShowNext ? PrimaryButton(
+          text: TR(context, _localAuthAgree ? '다음' : '건너뛰기'),
+          round: 0,
+          onTap: () {
+            UserHelper().setUser(localAuth: _localAuthAgree ? 'true' : 'false');
+            Navigator.of(context).push(createAniRoute(SignUpMnemonicScreen()));
+          },
         ) : null,
       ),
     );

@@ -24,7 +24,7 @@ class PaymentScreen extends ConsumerStatefulWidget {
 class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   final controller  = ScrollController();
 
-  _showFailMessage(BuildContext context) {
+  _showFailMessage() {
     showToast(TR(context, '결제에 실패했습니다.'));
     context.pop();
   }
@@ -33,14 +33,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
     return IamportPayment(
-      appBar: AppBar(
-        title: Text('결제하기'),
-        centerTitle: true,
-        titleTextStyle: TextStyle(
-          fontSize: 24,
-          color: Colors.white,
-        ),
-        backgroundColor: Colors.white,
+      appBar: defaultAppBar(TR(context, '결제하기'),
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: context.pop,
@@ -70,7 +63,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 showToast(TR(context, '결제에 성공했습니다.'));
                 context.pushReplacementNamed(PaymentDoneScreen.routeName);
               } else {
-                _showFailMessage(context);
+                _showFailMessage();
               }
             });
           } else {
@@ -78,7 +71,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
             context.pushReplacementNamed(PaymentDoneScreen.routeName);
           }
         } else {
-          _showFailMessage(context);
+          _showFailMessage();
         }
       },
     );

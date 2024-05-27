@@ -104,75 +104,89 @@ class _LoginPassScreenState extends ConsumerState {
               icon: Icon(Icons.close),
             ) : null,
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 240,
-                  margin: EdgeInsets.symmetric(horizontal: 20.w),
-                  padding: EdgeInsets.only(top: 30.h),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        TR(context, viewModel.passType.info1),
-                        style: typo24bold150,
-                      ),
-                      SizedBox(height: 16.h),
-                      Text(
-                        TR(context, viewModel.passType.info2),
-                        style: typo16medium150.copyWith(
-                          color: GRAY_70,
-                        ),
-                      ),
-                    ],
-                  ),
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              return ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
                 ),
-                SizedBox(height: 30.h),
-                Container(
-                  height: 240,
-                  margin: EdgeInsets.symmetric(horizontal: 40.w),
-                  child: Column(
-                    children: [
-                      _buildInputBox(),
-                    ],
+                child: Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                TR(context, viewModel.passType.info1),
+                                style: typo24bold150,
+                              ),
+                              SizedBox(height: 16.h),
+                              Text(
+                                TR(context, viewModel.passType.info2),
+                                style: typo16medium150.copyWith(
+                                  color: GRAY_70,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                        Expanded(
+                          flex: constraints.maxHeight > 500 ? 2 : 1,
+                          child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 40.w),
+                          child: Column(
+                            children: [
+                              _buildInputBox(),
+                            ],
+                          )
+                        )),
+                      ],
+                    ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: IS_DEV_MODE || _checkPassLength()
+                      ? PrimaryButton(
+                      text: TR(context, '확인'),
+                      round: 0,
+                      onTap: () {
+                        LOG('--> viewModel.passType : [${prov.userPass}] ${viewModel.passType}');
+                        FocusScope.of(context).requestFocus(FocusNode()); //remove focus
+                        if (viewModel.passType == PassType.cloudDown) {
+                          Navigator.of(context).pop(prov.cloudPass.first);
+                        } else {
+                          // 암호 검증..
+                          prov.checkWalletPass(prov.userPass).then((result) async {
+                            if (result) {
+                              if (viewModel.passType == PassType.open) {
+                                _startMain(0);
+                              } else {
+                                Navigator.of(context).pop(prov.inputPass.first);
+                              }
+                            } else {
+                              if (isCanBack && isFailBack) {
+                                Navigator.of(context).pop();
+                              }
+                              showToast(TR(context, '잘못된 비밀번호입니다.'));
+                            }
+                          });
+                        }
+                      },
+                    ) : DisabledButton(
+                      text: TR(context, '확인'),
+                    ),
                   )
-                ),
-              ],
-            )
-          ),
-          bottomNavigationBar: IS_DEV_MODE || _checkPassLength()
-              ? PrimaryButton(
-            text: TR(context, '확인'),
-            round: 0,
-            onTap: () {
-              LOG('--> viewModel.passType : [${prov.userPass}] ${viewModel.passType}');
-              if (viewModel.passType == PassType.cloudDown) {
-                Navigator.of(context).pop(prov.cloudPass.first);
-              } else {
-                // 암호 검증..
-                prov.checkWalletPass(prov.userPass).then((result) async {
-                  if (result) {
-                    if (viewModel.passType == PassType.open) {
-                      _startMain(0);
-                    } else {
-                      Navigator.of(context).pop(prov.inputPass.first);
-                    }
-                  } else {
-                    if (isCanBack && isFailBack) {
-                      Navigator.of(context).pop();
-                    }
-                    showToast(TR(context, '잘못된 비밀번호입니다.'));
-                  }
-                });
-              }
-            },
-          ) : DisabledButton(
-            text: TR(context, '확인'),
-          ),
+                ],
+              )
+            );
+          }
         )
+      )
     );
   }
 

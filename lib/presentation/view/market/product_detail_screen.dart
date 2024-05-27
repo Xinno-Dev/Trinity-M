@@ -43,6 +43,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
+    final loginProv = ref.read(loginProvider);
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -71,7 +72,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           }
         ),
         bottomNavigationBar:
-          (widget.isCanBuy && ref.read(loginProvider).isLogin) ?
+          (widget.isCanBuy && loginProv.isLogin) ?
           OpenContainer(
             transitionType: ContainerTransitionType.fadeThrough,
             closedBuilder: (context, builder) {

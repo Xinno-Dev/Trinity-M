@@ -49,111 +49,120 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: AppBar(
-          backgroundColor: WHITE,
-          centerTitle: true,
-          title: Text(
-            TR(context, '사용자 이름 등록'),
-            style: typo18semibold,
-          ),
-          titleSpacing: 0,
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: 240,
-                margin: EdgeInsets.symmetric(horizontal: 20.w),
-                padding: EdgeInsets.only(top: 30.h),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+        appBar: defaultAppBar(TR(context, '사용자 이름 등록')),
+        body: LayoutBuilder(builder: (context, constraints) {
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: Stack(
+              children: [
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      TR(context, '사용자 이름을\n등록해 주세요.'),
-                      style: typo24bold150,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      TR(context, '서비스에서 사용 될 ID(닉네임)입니다.\n가입 후 변경 가능합니다.'),
-                      style: typo16medium150.copyWith(
-                        color: GRAY_70,
+                    Expanded(child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20.w),
+                      padding: EdgeInsets.only(top: 30.h),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            TR(context, '사용자 이름을\n등록해 주세요.'),
+                            style: typo24bold150,
+                          ),
+                          SizedBox(height: 16.h),
+                          Text(
+                            TR(context, '서비스에서 사용 될 ID(닉네임)입니다.\n가입 후 변경 가능합니다.'),
+                            style: typo16medium150.copyWith(
+                              color: GRAY_70,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                    )),
+                    Expanded(
+                      flex: constraints.maxHeight > 500 ? 2 : 1,
+                      child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 40.w),
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: textInputController,
+                            focusNode: textFocusNode,
+                            decoration: InputDecoration(
+                              hintText: TR(context, '사용자 이름 입력'),
+                            ),
+                            keyboardType: TextInputType.name,
+                            scrollPadding: EdgeInsets.only(bottom: 100),
+                            onChanged: (text) {
+                              loginProv.nickInput(text);
+                            },
+                          ),
+                          SizedBox(height: 20.h),
+                          InkWell(
+                            onTap: () {
+                              FocusScope.of(context).requestFocus(
+                                  FocusNode()); //remove focus
+                              if (loginProv.isNickCheckReady) {
+                                loginProv.checkNickId(onError: (type) =>
+                                    showLoginErrorDialog(context, type)).then((
+                                    result) {
+                                  if (BOL(result)) {
+                                    showToast(TR(context, '중복 확인 완료'));
+                                  }
+                                });
+                              }
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(vertical: 10.h),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: !loginProv.isNickCheckReady ? Border.all(
+                                      width: 2, color: GRAY_20) : null,
+                                  color: loginProv.isNickCheckReady
+                                      ? PRIMARY_90
+                                      : WHITE
+                              ),
+                              child: Text(TR(context, '중복 확인'), style: typo14bold),
+                            ),
+                          ),
+                        ],
+                      )
+                    )),
                   ],
                 ),
-              ),
-              SizedBox(height: 30.h),
-              Container(
-                height: 240,
-                margin: EdgeInsets.symmetric(horizontal: 40.w),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: textInputController,
-                      focusNode: textFocusNode,
-                      decoration: InputDecoration(
-                        hintText: TR(context, '사용자 이름 입력'),
-                      ),
-                      keyboardType: TextInputType.name,
-                      scrollPadding: EdgeInsets.only(bottom: 200),
-                      onChanged: (text) {
-                        loginProv.nickInput(text);
-                      },
-                    ),
-                    SizedBox(height: 40.h),
-                    InkWell(
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: loginProv.isNickCheckDone
+                    ? PrimaryButton(
+                      text: TR(context, '다음'),
+                      round: 0,
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode()); //remove focus
-                        if (loginProv.isNickCheckReady) {
-                          loginProv.checkNickId(onError: (type) =>
-                            showLoginErrorDialog(context, type)).then((result) {
-                            if (BOL(result)) {
-                              showToast(TR(context, '중복 확인 완료'));
+                        showLoadingDialog(context, '회원 가입중입니다...');
+                        Future.delayed(Duration(milliseconds: 200)).then((_) {
+                          loginProv.signUpUser().then((result) {
+                            hideLoadingDialog();
+                            if (loginProv.isLogin) {
+                              Navigator.of(context).push(
+                                  createAniRoute(SignUpBioScreen()));
                             }
+                            showToast(TR(context,
+                                loginProv.isLogin ? '회원가입 성공' : '회원가입 실패'));
                           });
-                        }
+                        });
                       },
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 10.h),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: !loginProv.isNickCheckReady ? Border.all(width: 2, color: GRAY_20) : null,
-                          color: loginProv.isNickCheckReady ? PRIMARY_90 : WHITE
-                        ),
-                        child: Text(TR(context, '중복 확인'), style: typo16bold),
-                      ),
+                    ) : DisabledButton(
+                      text: TR(context, '다음'),
                     ),
-                  ],
-                )
-              ),
-            ],
-          )
-        ),
-        bottomNavigationBar: loginProv.isNickCheckDone
-            ? PrimaryButton(
-          text: TR(context, '다음'),
-          round: 0,
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode()); //remove focus
-            showLoadingDialog(context, '회원 가입중입니다...');
-            Future.delayed(Duration(milliseconds: 200)).then((_) {
-              loginProv.signUpUser().then((result) {
-                hideLoadingDialog();
-                if (loginProv.isLogin) {
-                  Navigator.of(context).push(
-                      createAniRoute(SignUpBioScreen()));
-                }
-                showToast(TR(context,
-                  loginProv.isLogin ? '회원가입 성공' : '회원가입 실패'));
-              });
-            });
-          },
-        ) : DisabledButton(
-          text: TR(context, '다음'),
+                  ),
+                ],
+              )
+            );
+          }
         ),
       )
     );
