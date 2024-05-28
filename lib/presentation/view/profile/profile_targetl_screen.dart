@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:trinity_m_00/common/provider/login_provider.dart';
 import '../../../../common/common_package.dart';
 import '../../../../common/const/utils/uihelper.dart';
 import '../../../../common/provider/market_provider.dart';
@@ -14,6 +15,7 @@ import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/model/seller_model.dart';
 import '../../../domain/viewModel/market_view_model.dart';
+import '../../../domain/viewModel/profile_view_model.dart';
 import '../market/product_buy_screen.dart';
 
 class ProfileTargetScreen extends ConsumerStatefulWidget {
@@ -37,7 +39,9 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
-    return SafeArea(
+    final loginProv = ref.watch(loginProvider);
+    return loginProv.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+    SafeArea(
       top: false,
       child: Scaffold(
         appBar: AppBar(

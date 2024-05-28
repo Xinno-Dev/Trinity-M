@@ -140,6 +140,10 @@ class showHorizontalDivider extends StatelessWidget {
   }
 }
 
+AnimateMoveAni(BuildContext context, Widget target) {
+
+}
+
 Route createAniRoute(Widget target, {var delay = 200}) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => target,
@@ -337,13 +341,14 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
   );
 }
 
-defaultAppBar(String title, {Widget? leading}) {
+defaultAppBar(String title, {Widget? leading, var isCanBack = true}) {
   return AppBar(
     title: Text(title),
     titleTextStyle: title.length > 16 ? typo14bold : typo18bold,
     titleSpacing: 0,
     centerTitle: true,
     leading: leading,
+    automaticallyImplyLeading: isCanBack,
     backgroundColor: WHITE,
     surfaceTintColor: WHITE,
   );

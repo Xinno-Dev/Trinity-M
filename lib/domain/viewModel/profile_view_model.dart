@@ -20,6 +20,7 @@ import 'package:image/image.dart' as IMG;
 
 import '../../common/common_package.dart';
 import '../../common/const/constants.dart';
+import '../../common/const/utils/appVersionHelper.dart';
 import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/rwfExportHelper.dart';
@@ -110,12 +111,21 @@ class ProfileViewModel {
 
   ////////////////////////////////////////////////////////////////////////
 
-  lockScreen(BuildContext context) {
+  lockScreen(BuildContext context, [int? count]) {
     return Container(
       color: WHITE,
       child: Center(
-        child: SvgPicture.asset(
-          'assets/svg/logo.svg',
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              'assets/svg/logo.svg',
+            ),
+            if (INT(count) > 0)...[
+              SizedBox(height: 20),
+              Text('${INT(count)}', style: typo18bold),
+            ]
+          ],
         ),
       ),
     );
@@ -213,13 +223,10 @@ class ProfileViewModel {
     var isEnable = (type == DrawerActionType.terms ||
         type == DrawerActionType.privacy || type == DrawerActionType.version) ||
         loginProv.isLogin;
-    return ListTile(
-      title: Text(showTitle,
-        style: typo16bold.copyWith(
-        color: isTest ? Colors.blueAccent : isEnable ? GRAY_80 : GRAY_20)),
-      enabled: isEnable,
-      onTap: () {
-        LOG('--> _mainDrawerItem: $type');
+    return InkWell(
+        onTap: () {
+        LOG('--> _mainDrawerItem: $type / $isEnable');
+        if (!isEnable) return;
         context.pop();
         Future.delayed(Duration(milliseconds: 200)).then((_) {
           switch (type) {
@@ -253,6 +260,10 @@ class ProfileViewModel {
                       title: TR(context, '개인정보처리방침'),
                       url: '$API_HOST/terms/2')));
               break;
+            case DrawerActionType.version:
+              isUpdateCheckDone = false;
+              checkAppUpdate(context, isForceCheck: true);
+              break;
             case DrawerActionType.logout:
               if (loginProv.isLogin) {
                 loginProv.logout().then((_) {
@@ -262,14 +273,14 @@ class ProfileViewModel {
                 });
               }
               break;
-            case DrawerActionType.withdrawal:
-              if (loginProv.isLogin) {
-                loginProv.logout().then((_) {
-                  loginProv.setMainPageIndex(0);
-                  showToast(TR(context, '회원탈퇴 완료'));
-                });
-              }
-              break;
+          // case DrawerActionType.withdrawal:
+          //   if (loginProv.isLogin) {
+          //     loginProv.logout().then((_) {
+          //       loginProv.setMainPageIndex(0);
+          //       showToast(TR(context, '회원탈퇴 완료'));
+          //     });
+          //   }
+          //   break;
           // case DrawerActionType.test_identity:
           //   // Navigator.of(context).push(
           //   //   createAniRoute(ProfileIdentityScreen()));
@@ -289,7 +300,17 @@ class ProfileViewModel {
               break;
           }
         });
-      });
+      },
+      child: Container(
+        height: 50,
+        color: WHITE,
+        alignment: Alignment.centerLeft,
+        padding: EdgeInsets.only(left: 15),
+        child: Text(showTitle,
+          style: typo16bold.copyWith(
+            color: isTest ? Colors.blueAccent : isEnable ? GRAY_80 : GRAY_20)),
+      )
+    );
   }
 
   ////////////////////////////////////////////////////////////////////////
@@ -338,13 +359,14 @@ class ProfileViewModel {
             shrinkWrap: true,
             padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
             children: [
-              ...loginProv.userInfo!.addressList!.map((e) => _profileItem(e, onSelect)).toList(),
+              ...loginProv.userInfo!.addressList!.map((e) =>
+                  _profileItem(e, onSelect)).toList(),
               SizedBox(height: 10),
               Ink(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: GRAY_50, width: 1),
-                    color: Colors.white
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: GRAY_50, width: 1),
+                  color: Colors.white
                 ),
                 child: InkWell(
                   onTap: () {
@@ -463,9 +485,11 @@ class ProfileViewModel {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(STR(account.accountName),
-                      style: typo16semibold.copyWith(color: color)),
-                  Text(ADDR(account.address),
+                    style: typo16semibold.copyWith(color: color)),
+                  if (IS_DEV_MODE)...[
+                    Text(ADDR(account.address),
                       style: typo11normal.copyWith(color: GRAY_40))
+                  ],
                 ],
               )
             ),
@@ -498,6 +522,7 @@ class ProfileViewModel {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(50),
                     onTap: () {
+                      loginProv.disableLockScreen();
                       showImagePicker().then((data) {
                         if (data != null) {
                           JSON imageInfo = {
@@ -513,8 +538,11 @@ class ProfileViewModel {
                               loginProv.selectAccount!.image = picUrl;
                               await _setAccountInfo();
                             }
+                            loginProv.enableLockScreen();
                             hideLoadingDialog();
                           });
+                        } else {
+                          loginProv.enableLockScreen();
                         }
                       });
                     },

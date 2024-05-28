@@ -42,63 +42,72 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     _viewModel.context = context;
-    return SafeArea(
+    return prov.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+    SafeArea(
       top: false,
       child: Scaffold(
         appBar: defaultAppBar(TR(context, '내 정보')),
         body: Scaffold(
           backgroundColor: Colors.white,
-          body: Stack(
+          body: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.symmetric(horizontal: 30),
             children: [
-              ListView(
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(horizontal: 30),
-                children: [
-                  SizedBox(height: 10.h),
-                  _viewModel.myInfoEditItem('이메일',
-                    [[prov.userEmail,'']]),
-                  grayDivider(),
-                  _viewModel.myInfoEditItem('ID(닉네임)',
-                    [[prov.userId,'변경']], onEdit: () {
-                      _viewModel.showEditAccountName();
-                    }),
-                  grayDivider(),
-                  _viewModel.myInfoEditItem('사용자 이름',
-                    [[prov.userName,'변경']], onEdit: () {
-                      _viewModel.showEditSubTitle();
-                    }),
-                  grayDivider(),
-                  _viewModel.myInfoEditItem('본인인증',
-                    [[prov.userIdentityYN ? '인증완료' : '미완료',
-                      prov.userIdentityYN ? '' : '인증']], onEdit: () {
-                        Navigator.of(context).push(
-                          createAniRoute(ProfileIdentityScreen())).then((result) {
-                          prov.userInfo!.certUpdt = DateTime.now().toString();
-                          prov.refresh();
-                        });
-                    }),
-                  grayDivider(),
-                  _viewModel.myInfoEditItem('계정',
-                    [['계정 복구 단어 보기','보기']], onEdit: _showMnemonic),
-                  grayDivider(),
-                  _viewModel.myInfoEditItem('인증',
-                    [['생체 인증 사용', prov.userBioYN ? 'on' : 'off']], onToggle: (value) {
-                      if (value) {
-                        Navigator.of(context).push(
-                          createAniRoute(SignUpBioScreen(isShowNext: false))).then((result) {
-                            LOG('--> SignUpBioScreen result : $result');
-                            if (BOL(result)) {
-                              prov.setBioIdentity(true);
-                            }
-                        });
-                      } else {
-                        prov.setBioIdentity(false);
-                      }
-                    }),
-                ]
-              ),
+              SizedBox(height: 10.h),
+              _viewModel.myInfoEditItem('이메일',
+                [[prov.userEmail,'']]),
+              grayDivider(),
+              _viewModel.myInfoEditItem('ID(닉네임)',
+                [[prov.userId,'변경']], onEdit: () {
+                  _viewModel.showEditAccountName();
+                }),
+              grayDivider(),
+              _viewModel.myInfoEditItem('사용자 이름',
+                [[prov.userName,'변경']], onEdit: () {
+                  _viewModel.showEditSubTitle();
+                }),
+              grayDivider(),
+              _viewModel.myInfoEditItem('본인인증',
+                [[prov.userIdentityYN ? '인증완료' : '미완료',
+                  prov.userIdentityYN ? '' : '인증']], onEdit: () {
+                    Navigator.of(context).push(
+                      createAniRoute(ProfileIdentityScreen())).then((result) {
+                      prov.userInfo!.certUpdt = DateTime.now().toString();
+                      prov.refresh();
+                    });
+                }),
+              grayDivider(),
+              _viewModel.myInfoEditItem('계정',
+                [['계정 복구 단어 보기','보기']], onEdit: _showMnemonic),
+              grayDivider(),
+              _viewModel.myInfoEditItem('인증',
+                [['생체 인증 사용', prov.userBioYN ? 'on' : 'off']], onToggle: (value) {
+                  if (value) {
+                    Navigator.of(context).push(
+                      createAniRoute(SignUpBioScreen(isShowNext: false))).then((result) {
+                        LOG('--> SignUpBioScreen result : $result');
+                        if (BOL(result)) {
+                          prov.setBioIdentity(true);
+                        }
+                    });
+                  } else {
+                    prov.setBioIdentity(false);
+                  }
+                }),
+              if (IS_WITHDRAWAL_ON)...[
+                grayDivider(),
+                _viewModel.myInfoEditItem('회원 탈퇴', [['회원 탈퇴 신청하기', '신청']], onEdit: () {
+                  if (prov.isLogin) {
+                    prov.logout().then((_) {
+                      context.pop();
+                      prov.setMainPageIndex(0);
+                      showToast(TR(context, '회원 탈퇴 신청 완료'));
+                    });
+                  }
+                })
+              ]
             ]
-          )
+          ),
         ),
       )
     );

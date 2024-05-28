@@ -145,6 +145,7 @@ class _SignUpPassScreenState extends ConsumerState {
                         }
                         if (viewModel.comparePass) {
                           FocusScope.of(context).requestFocus(FocusNode()); //remove focus
+                          await Future.delayed(Duration(milliseconds: 200));
                           if (viewModel.passType == PassType.signUp) {
                             Navigator.of(context).push(
                               createAniRoute(SignUpTermsScreen()));

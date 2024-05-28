@@ -14,6 +14,7 @@ import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/viewModel/market_view_model.dart';
+import '../../../domain/viewModel/profile_view_model.dart';
 import '../profile/profile_Identity_screen.dart';
 import 'payment_screen.dart';
 import 'pg/payment_test.dart';
@@ -45,7 +46,9 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
-    return SafeArea(
+    final loginProv = ref.watch(loginProvider);
+    return loginProv.isScreenLocked ?
+    ProfileViewModel().lockScreen(context) : SafeArea(
       top: false,
       child: Scaffold(
         appBar: AppBar(
@@ -82,6 +85,7 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
             round: 0,
             onTap: () {
               final prov = ref.read(loginProvider);
+              prov.disableLockScreen();
               LOG('--> userIdentityYN : ${prov.userIdentityYN}');
               if (prov.userIdentityYN) {
                 _startPurchase();

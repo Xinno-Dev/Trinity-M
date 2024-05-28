@@ -140,7 +140,7 @@ enum LoginErrorType {
 
 final drawerTitleN = [
   '내 정보', '구매 내역', '-',
-  '이용약관', '개인정보처리방침', '버전 정보', '로그아웃', '회원탈퇴',
+  '이용약관', '개인정보처리방침', '버전 정보', '로그아웃',
   // '로컬정보 삭제(test)'
 ];
 
@@ -151,8 +151,7 @@ enum DrawerActionType {
   terms,
   privacy,
   version,
-  logout,
-  withdrawal;
+  logout;
   // test_delete;
 
   String get title {
@@ -181,7 +180,9 @@ class LoginProvider extends ChangeNotifier {
   var isLoginCheckDone = false;
   var isSignUpMode = false;
   var isShowMask = false;
+
   var isScreenLocked = false;
+  var isScreenLockReady = false;
 
   var mainPageIndex = 0;
   var mainPageIndexOrg = 0;
@@ -260,9 +261,28 @@ class LoginProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  setLockScreen(bool status) {
-    isScreenLocked = status;
-    notifyListeners();
+  enableLockScreen() {
+    isScreenLockReady = true;
+  }
+
+  disableLockScreen() {
+    isScreenLockReady = false;
+  }
+
+  setLockScreen(BuildContext context, bool status) {
+    LOG('--> setLockScreen : $status / $isScreenLocked / $isScreenLockReady');
+    if (IS_AUTO_LOCK_MODE && isLogin && isScreenLockReady) {
+      if (!status && isScreenLocked) {
+        isScreenLocked = status;
+        isScreenLockReady = false;
+        Future.delayed(Duration(milliseconds: 200)).then((_) {
+          context.pushNamed(OpenPassScreen.routeName);
+        });
+        return;
+      }
+      isScreenLocked = status;
+      notifyListeners();
+    }
   }
 
   setBioIdentity(bool status) async {
@@ -276,9 +296,12 @@ class LoginProvider extends ChangeNotifier {
   }
 
   showBioIdentityCheck(BuildContext context) async {
-    return await showBioIdentity(context, onError: (err) {
-      showLoginErrorTextDialog(context, err);
-    });
+    return await showBioIdentity(context,
+      TR(context, '본인확인'),
+      onError: (err) {
+        showLoginErrorTextDialog(context, err);
+      }
+    );
   }
 
   // local에 있는 address 목록을 userInfo 에 추가 & 케싱 한다..

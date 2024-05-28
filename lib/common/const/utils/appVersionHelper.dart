@@ -16,14 +16,15 @@ import '../../provider/firebase_provider.dart';
 import '../constants.dart';
 import 'convertHelper.dart';
 import 'dialogHelper.dart';
+import 'languageHelper.dart';
 import 'localStorageHelper.dart';
 
 bool isUpdateCheckDone = false;
 
-Future<bool> checkAppUpdate(BuildContext context) async {
-  LOG('--> checkAppUpdate start : $isUpdateCheckDone');
+Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) async {
   if (isUpdateCheckDone) return true;
   isUpdateCheckDone = true;
+  LOG('--> checkAppUpdate start');
 
   var startInfo = await provider.Provider.of<FirebaseProvider>(context,
       listen: false).getAppStartInfo();
@@ -77,12 +78,12 @@ Future<bool> checkAppUpdate(BuildContext context) async {
               imageWidget = CachedNetworkImage(
                 imageUrl: startInfo.notice_message!.image!.url,
                 progressIndicatorBuilder: (context, widget, _) =>
-                    SizedBox(
-                      height: 150.h,
-                      child: Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
+                  SizedBox(
+                    height: 150.h,
+                    child: Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     ),
+                  ),
                 errorWidget: (context, error, stackTrace) =>
                 const Icon(Icons.error),
               );
@@ -99,6 +100,30 @@ Future<bool> checkAppUpdate(BuildContext context) async {
             });
           }
         }
+      } else if (isForceCheck) {
+        showAppUpdateDialog(context,
+          TR(context, '현재 최신 버전입니다.'),
+          'v $versionApp',
+          title: TR(context, '앱 버전정보'),
+          isForceCheck: true).then((result) {
+            if (result == 1) {
+              // move to market..
+              if (Platform.isAndroid || Platform.isIOS) {
+                final appId = Platform.isAndroid ?
+                  'com.xinno.trinity_m_00' :
+                  'com.xinno.trinity_m_00';
+                final url = Uri.parse(
+                  Platform.isAndroid
+                    ? "market://details?id=$appId"
+                    : "https://apps.apple.com/app/id$appId",
+                );
+                launchUrl(
+                  url,
+                  mode: LaunchMode.externalApplication,
+                );
+              }
+            }
+        });
       }
     }
   }

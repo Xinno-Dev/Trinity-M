@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../../common/const/constants.dart';
@@ -51,15 +53,26 @@ class _LoginPassScreenState extends ConsumerState {
   PassViewModel viewModel;
   bool isFailBack;
   var isCanBack = true;
+  var isBioCheckDone = false;
   var passErrorText = '';
 
-  _startMain(int page) {
-    LOG('---> _startMain');
-    final prov = ref.read(loginProvider);
+  _screenLockOff() {
+    var prov = ref.read(loginProvider);
     prov.isScreenLocked = false;
-    prov.mainPageIndexOrg = 1;
-    context.pushReplacementNamed(
-        MainScreen.routeName, queryParams: {'selectedPage': page.toString()});
+    prov.enableLockScreen();
+    prov.refresh();
+  }
+
+  _showBioCheck() {
+    if (isBioCheckDone) return;
+    isBioCheckDone = true;
+    var prov = ref.read(loginProvider);
+    prov.showBioIdentityCheck(context).then((result) {
+      if (result) {
+        context.pop();
+        _screenLockOff();
+      }
+    });
   }
 
   @override
@@ -72,12 +85,8 @@ class _LoginPassScreenState extends ConsumerState {
     LOG('--> _LoginPassScreenState : ${viewModel.passType} && ${prov.userBioYN}');
     if (viewModel.passType == PassType.open && prov.userBioYN) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showBioIdentity(context, onError: (err) {
-          showLoginErrorTextDialog(context, err);
-        }).then((result) {
-          if (BOL(result)) {
-            _startMain(0);
-          }
+        Future.delayed(Duration(milliseconds: 200)).then((_) {
+          _showBioCheck();
         });
       });
     }
@@ -86,19 +95,14 @@ class _LoginPassScreenState extends ConsumerState {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
-    return SafeArea(
+    return PopScope(
+      canPop: isCanBack,
+      child: SafeArea(
         top: false,
         child: Scaffold(
           backgroundColor: WHITE,
-          appBar: AppBar(
-            backgroundColor: WHITE,
-            centerTitle: true,
-            title: Text(
-              TR(context, '비밀번호 입력'),
-              style: typo18semibold,
-            ),
-            titleSpacing: 0,
-            automaticallyImplyLeading: false,
+          appBar: defaultAppBar(TR(context, '비밀번호 입력'),
+            isCanBack: isCanBack,
             leading: isCanBack ? IconButton(
               onPressed: context.pop,
               icon: Icon(Icons.close),
@@ -143,6 +147,16 @@ class _LoginPassScreenState extends ConsumerState {
                           child: Column(
                             children: [
                               _buildInputBox(),
+                              if (viewModel.passType == PassType.open && prov.userBioYN)...[
+                                SizedBox(height: 20),
+                                InkWell(
+                                  onTap: () {
+                                    isBioCheckDone = false;
+                                    _showBioCheck();
+                                  },
+                                  child: Icon(Icons.fingerprint, size: 50, color: SECONDARY_50)
+                                )
+                              ]
                             ],
                           )
                         )),
@@ -154,9 +168,10 @@ class _LoginPassScreenState extends ConsumerState {
                       ? PrimaryButton(
                       text: TR(context, '확인'),
                       round: 0,
-                      onTap: () {
+                      onTap: () async {
                         LOG('--> viewModel.passType : [${prov.userPass}] ${viewModel.passType}');
                         FocusScope.of(context).requestFocus(FocusNode()); //remove focus
+                        await Future.delayed(Duration(milliseconds: 200));
                         if (viewModel.passType == PassType.cloudDown) {
                           Navigator.of(context).pop(prov.cloudPass.first);
                         } else {
@@ -164,13 +179,14 @@ class _LoginPassScreenState extends ConsumerState {
                           prov.checkWalletPass(prov.userPass).then((result) async {
                             if (result) {
                               if (viewModel.passType == PassType.open) {
-                                _startMain(0);
+                                context.pop();
+                                _screenLockOff();
                               } else {
                                 Navigator.of(context).pop(prov.inputPass.first);
                               }
                             } else {
                               if (isCanBack && isFailBack) {
-                                Navigator.of(context).pop();
+                                context.pop();
                               }
                               showToast(TR(context, '잘못된 비밀번호입니다.'));
                             }
@@ -186,6 +202,7 @@ class _LoginPassScreenState extends ConsumerState {
             );
           }
         )
+      )
       )
     );
   }
@@ -237,7 +254,7 @@ class _LoginPassScreenState extends ConsumerState {
           if (passErrorText.isNotEmpty)...[
             SizedBox(height: 5),
             Text(TR(context, passErrorText), style: errorStyle)
-          ]
+          ],
         ],
       )
     );

@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:trinity_m_00/common/provider/login_provider.dart';
+import 'package:trinity_m_00/domain/viewModel/profile_view_model.dart';
 import 'package:trinity_m_00/presentation/view/main_screen.dart';
 import '../../../../common/common_package.dart';
 import '../../../../common/const/utils/uihelper.dart';
@@ -34,8 +35,10 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final prov = ref.read(loginProvider);
-    return SafeArea(
+    final prov = ref.watch(loginProvider);
+    ref.watch(marketProvider);
+    return prov.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+      SafeArea(
       top: false,
       child: Scaffold(
         appBar: defaultAppBar(TR(context, '보유 상품')),

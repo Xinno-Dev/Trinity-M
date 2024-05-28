@@ -110,7 +110,7 @@ class MarketViewModel {
                     Container(
                       height: 200,
                       alignment: Alignment.center,
-                      child: Text(TR(context, '상품이 없습니다.')),
+                      child: Text(TR(context, '판매중인 상품이 없습니다.')),
                     )
                   ]
                 ],
@@ -124,7 +124,7 @@ class MarketViewModel {
 
   showProductDetail([var isShowSeller = true]) {
     final imageSize = MediaQuery.of(context).size.width;
-    LOG('--> showProductDetail : ${prov.detailPic} / ${prov.selectProduct?.toJson()}');
+    // LOG('--> showProductDetail : ${prov.detailPic} / ${prov.selectProduct?.toJson()}');
     return Column(
       children: [
         if (STR(prov.detailPic).isNotEmpty)
@@ -448,6 +448,7 @@ class MarketViewModel {
               return GridView.builder(
                   shrinkWrap: true,
                   itemCount: prov.userItemList.length,
+                  padding: EdgeInsets.symmetric(vertical: 5),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 2,
@@ -464,6 +465,7 @@ class MarketViewModel {
               return ListView.builder(
                 shrinkWrap: true,
                 itemCount: prov.userItemList.length,
+                padding: EdgeInsets.symmetric(vertical: 10),
                 itemBuilder: (context, index) {
                   return _userProductListItem(prov.userItemList[index]);
                 }
@@ -688,18 +690,15 @@ class MarketViewModel {
 
 
   _showPurchaseDatePicker() {
-    showDialog(context: context,
-      builder: (context) =>
-        DateRangePickerDialog(
-          currentDate: DateTime.now(),
-          initialDateRange: DateTimeRange(
-            start: prov.purchaseStartDate,
-            end:   prov.purchaseEndDate,
-          ),
-          firstDate: DateTime.now().subtract(Duration(days: 365)),
-          lastDate: DateTime.now(),
-          saveText: TR(context, '선택완료'),
-        )
+    showDateRangePicker(context: context,
+      currentDate: DateTime.now(),
+      initialDateRange: DateTimeRange(
+        start: prov.purchaseStartDate,
+        end:   prov.purchaseEndDate,
+      ),
+      firstDate: DateTime.now().subtract(Duration(days: 365)),
+      lastDate: DateTime.now(),
+      saveText: TR(context, '선택완료'),
     ).then((result) {
       if (result != null) {
         var range = result as DateTimeRange;
@@ -959,7 +958,6 @@ class MarketViewModel {
       {EdgeInsets? margin}) {
     final image = getUserItemImage(item);
     return Container(
-      margin: margin ?? EdgeInsets.only(top: 15),
       color: Colors.transparent,
       child: Column(
         children: [
@@ -1337,22 +1335,25 @@ class MarketViewModel {
   }
 
 
-  _userOptionListItem(ProductItemModel option, int index,
+  _userOptionListItem(ProductItemModel item, int index,
       {EdgeInsets? padding, String? image}) {
     return InkWell(
       onTap: () {
+        prov.selectUserProductItem = item;
+        popUserItemDetail(item);
       },
       child: Container(
         padding: padding,
         child: Stack(
           children: [
             SizedBox.expand(
-              child: showImage(image ?? STR(option.img), Size.zero, fit: BoxFit.cover),
+              child: showImage(image ?? STR(item.img), Size.zero, fit: BoxFit.cover),
             ),
             Positioned(
-              bottom: 3,
+              bottom: 5,
               left: 3,
-              child: Text(STR(option.itemId), style: typo12shadowR.copyWith(fontSize: 10)),
+              child: Text(STR(item.name),
+                style: typo12shadowR.copyWith(fontSize: 10), maxLines: 2),
             ),
           ],
         ),

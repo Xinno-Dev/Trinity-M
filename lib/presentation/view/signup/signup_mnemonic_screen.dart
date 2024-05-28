@@ -24,6 +24,7 @@ import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/rwfExportHelper.dart';
 import '../../../common/const/utils/uihelper.dart';
 import '../../../common/const/widget/warning_icon.dart';
+import '../../../domain/viewModel/profile_view_model.dart';
 import '../../../services/google_service.dart';
 import 'signup_pass_screen.dart';
 
@@ -57,8 +58,9 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final loginProv = ref.watch(loginProvider);
-    return SafeArea(
+    final prov = ref.watch(loginProvider);
+    return prov.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+      SafeArea(
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
@@ -167,6 +169,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                       },
                     ),
                   ),
+                  if (IS_CLOUD_BACKUP_ON)
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
                     child: InkWell(
@@ -174,27 +177,32 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         Navigator.of(context).push(
                           createAniRoute(CloudPassCreateScreen())).then((pass) async {
                           if (STR(pass).isNotEmpty) {
-                            if (IS_EXPORT_MN) {
-                              var address = loginProv.accountFirstAddress;
+                            prov.disableLockScreen();
+                            if (IS_CLOUD_BACKUP_MN) {
+                              var address = prov.accountFirstAddress;
                               if (address != null) {
                                 var rwfStr = await RWFExportHelper.encrypt(
                                     pass, address, mnemonic);
                                 // var rwfStr = await RWFExportHelper.encrypt(pass, address, mnemonic);
-                                LOG('---> rwfStr : $rwfStr / $mnemonic');
-                                GoogleService.uploadKeyToGoogleDrive(context, rwfStr);
+                                LOG('---> rwfStr mn : $rwfStr / $mnemonic');
+                                GoogleService.uploadKeyToGoogleDrive(context, rwfStr).then((_) {
+                                  prov.enableLockScreen();
+                                });
                               }
                             } else {
                               Navigator.of(context).push(
                                 createAniRoute(LoginPassScreen())).then((
                                 userPass) async {
                                 if (STR(userPass).isNotEmpty) {
-                                  var address = loginProv.accountAddress;
-                                  var keyPair = await loginProv.getAccountKey(passOrg: userPass);
+                                  var address = prov.accountAddress;
+                                  var keyPair = await prov.getAccountKey(passOrg: userPass);
                                   if (address != null && keyPair != null) {
                                     var rwfStr = await RWFExportHelper.encrypt(
                                         pass, address, keyPair.d);
-                                    LOG('---> rwfStr : $rwfStr / ${keyPair.d}');
-                                    GoogleService.uploadKeyToGoogleDrive(context, rwfStr);
+                                    LOG('---> rwfStr key : $rwfStr / ${keyPair.d}');
+                                    GoogleService.uploadKeyToGoogleDrive(context, rwfStr).then((_) {
+                                      prov.enableLockScreen();
+                                    });
                                   }
                                 }
                               });

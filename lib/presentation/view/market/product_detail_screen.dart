@@ -16,6 +16,7 @@ import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/viewModel/market_view_model.dart';
+import '../../../domain/viewModel/profile_view_model.dart';
 import 'product_buy_screen.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
@@ -36,6 +37,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     final prov = ref.read(marketProvider);
     prov.optionIndex = -1;
     prov.selectDetailTab = 0;
+    prov.clearCheckDetailId();
     _viewModel = MarketViewModel(context);
     super.initState();
   }
@@ -43,8 +45,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
-    final loginProv = ref.read(loginProvider);
-    return SafeArea(
+    final loginProv = ref.watch(loginProvider);
+    return loginProv.isScreenLocked ?
+      ProfileViewModel().lockScreen(context) : SafeArea(
       top: false,
       child: Scaffold(
         appBar: AppBar(

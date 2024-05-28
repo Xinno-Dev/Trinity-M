@@ -7,9 +7,8 @@ import '../../common_package.dart';
 import 'convertHelper.dart';
 import 'languageHelper.dart';
 
-Future<bool?> showBioIdentity(BuildContext context,
-  {String? title, Function(String)? onError}) async {
-  LOG('--> showBioIdentity');
+Future<bool?> showBioIdentity(BuildContext context, String title,
+    {Function(String)? onError}) async {
   final auth = LocalAuthentication();
   var result = false;
   try {
@@ -21,12 +20,12 @@ Future<bool?> showBioIdentity(BuildContext context,
       // localizedFallbackTitle: '암호입력',
     );
     var androidStrings = AndroidAuthMessages(
-      signInTitle: '생체인증 사용 동의',
+      signInTitle: title,
       biometricHint: '지문',
-      cancelButton: '닫기',
+      cancelButton: '취소',
     );
     result = await auth.authenticate(
-      localizedReason: title ?? TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
+      localizedReason: TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
       authMessages: <AuthMessages>[
         androidStrings,
         iosStrings,
@@ -38,7 +37,7 @@ Future<bool?> showBioIdentity(BuildContext context,
       ),
     );
   } on PlatformException catch (e) {
-    LOG('--> Authentication error : $e');
+    LOG('--> showBioIdentity error : $e');
     if (onError != null) onError(e.toString());
   }
   LOG('--> showBioIdentity result : $result');

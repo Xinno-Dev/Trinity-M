@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trinity_m_00/common/const/constants.dart';
 import 'package:trinity_m_00/services/api_service.dart';
 import '../../../common/provider/coin_provider.dart';
 import '../../../common/provider/login_provider.dart';
@@ -38,8 +40,8 @@ class MainScreen extends ConsumerStatefulWidget {
 
 class _MainScreenState extends ConsumerState<MainScreen>
   with WidgetsBindingObserver {
-  final _pageController = PageController();
   final _scaffoldController = GlobalKey<ScaffoldState>();
+  late PageController _pageController;
   late ProfileViewModel _viewModel;
 
   List<Widget> _mainPages = <Widget>[
@@ -51,29 +53,23 @@ class _MainScreenState extends ConsumerState<MainScreen>
   void initState() {
     final prov = ref.read(loginProvider);
     prov.mainPageIndex = widget.selectedPage;
+    prov.enableLockScreen();
     _viewModel = ProfileViewModel();
     WidgetsBinding.instance.addObserver(this);
+    _pageController = PageController(initialPage: prov.mainPageIndex);
     super.initState();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final prov = ref.read(loginProvider);
-    LOG('--> App Status : ${state.toString()}');
     switch (state) {
       case AppLifecycleState.resumed:
-        if (prov.isLogin && prov.isScreenLocked) {
-          context.pushReplacementNamed(OpenPassScreen.routeName);
-        }
+        prov.setLockScreen(context, false);
+        _pageController = PageController(initialPage: prov.mainPageIndex);
         break;
       case AppLifecycleState.inactive:
-        // if (prov.isLogin) {
-        //   prov.setLockScreen(true);
-        // }
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.detached:
+        prov.setLockScreen(context, true);
         break;
     }
   }
@@ -88,6 +84,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     _movePage();
+    LOG('--> show main screen : ${prov.isScreenLocked}');
     return SafeArea(
       top: false,
       child: prov.isScreenLocked ? _viewModel.lockScreen(context) :
@@ -242,7 +239,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
 
   _movePage() {
     final prov = ref.read(loginProvider);
-    // LOG('---> movePage : ${prov.mainPageIndexOrg} => ${prov.mainPageIndex}');
+    LOG('---> movePage : ${prov.mainPageIndexOrg} => ${prov.mainPageIndex}');
     if (prov.mainPageIndexOrg != prov.mainPageIndex) {
       prov.mainPageIndexOrg = prov.mainPageIndex;
       WidgetsBinding.instance.addPostFrameCallback((_) {

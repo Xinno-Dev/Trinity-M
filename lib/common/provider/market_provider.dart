@@ -194,6 +194,10 @@ class MarketProvider extends ChangeNotifier {
     return true;
   }
 
+  clearCheckDetailId() {
+    _repo.checkDetailId = '';
+  }
+
   getProductDetail() async {
     if (_repo.checkDetailId != STR(selectProduct?.prodSaleId)) {
       _repo.checkDetailId = STR(selectProduct?.prodSaleId);
@@ -275,8 +279,10 @@ class MarketProvider extends ChangeNotifier {
         name:       selectProduct!.name,
         itemId:     optionId,
         itemImg:    optionPic,
-        buyPrice:   selectProduct!.itemPrice,
-        payPrice:   selectProduct!.itemPrice,
+        buyPrice:   '100',
+        payPrice:   '100',
+        // buyPrice:   selectProduct!.itemPrice,
+        // payPrice:   selectProduct!.itemPrice,
         priceUnit:  selectProduct!.priceUnit,
         txDateTime: DateTime.now().toString(),
         payType:    '1',

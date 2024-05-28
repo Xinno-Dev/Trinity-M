@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:trinity_m_00/common/provider/login_provider.dart';
 import 'package:trinity_m_00/presentation/view/main_screen.dart';
 import 'package:trinity_m_00/presentation/view/market/payment_list_screen.dart';
 import '../../../../common/common_package.dart';
@@ -16,6 +17,7 @@ import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/model/purchase_model.dart';
 import '../../../domain/viewModel/market_view_model.dart';
+import '../../../domain/viewModel/profile_view_model.dart';
 import 'product_buy_screen.dart';
 
 class PaymentDoneScreen extends ConsumerStatefulWidget {
@@ -50,11 +52,12 @@ class _PaymentDoneScreenState extends ConsumerState {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
+    final loginProv = ref.watch(loginProvider);
     var info = prov.purchaseInfo;
-    LOG('--> info : ${info?.toJson()}');
-    return SafeArea(
-      top: false,
-      child: Scaffold(
+    return loginProv.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+      SafeArea(
+        top: false,
+        child: Scaffold(
           appBar: AppBar(
             title: Text(title ?? TR(context, '구매 완료')),
             centerTitle: true,

@@ -128,11 +128,13 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                         _localAuthAgree = false;
                       });
                     } else {
-                      showBioIdentity(context, onError: (err) {
-                        setState(() {
-                          _localAuthAgree = false;
-                          showLoginErrorTextDialog(context, err);
-                        });
+                      showBioIdentity(context,
+                        TR(context, '생체인증 등록'),
+                        onError: (err) {
+                          setState(() {
+                            _localAuthAgree = false;
+                            showLoginErrorTextDialog(context, err);
+                          });
                       }).then((result) {
                         prov.isScreenLocked = false;
                         if (BOL(result)) {

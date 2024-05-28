@@ -305,7 +305,7 @@ var typo12shadow = TextStyle(
 );
 
 var typo12shadowR = TextStyle(
-    color: WHITE,
+    color: GRAY_90,
     fontWeight: FontWeight.w700,
     fontFamily: 'Pretendard',
     fontStyle: FontStyle.normal,
@@ -313,15 +313,15 @@ var typo12shadowR = TextStyle(
     height: 1.0,
     shadows: [
       Shadow( // topRight
-          offset: Offset(0.5, 0.5),
-          color: GRAY_80
+        offset: Offset(0.5, 0.5),
+        color: WHITE
       ),
     ]
 );
 
 var typo12outline = TextStyle(
   color: GRAY_90,
-    fontWeight: FontWeight.w700,
+  fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
   fontSize: 12.r,

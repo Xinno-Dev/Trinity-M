@@ -9,8 +9,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
+import '../../../common/provider/login_provider.dart';
+import '../../../domain/viewModel/profile_view_model.dart';
 
-class WebviewScreen extends StatefulWidget {
+class WebviewScreen extends ConsumerStatefulWidget {
   const WebviewScreen({super.key,
     required this.url,
     this.title,
@@ -20,10 +22,10 @@ class WebviewScreen extends StatefulWidget {
   final String url;
 
   @override
-  State<WebviewScreen> createState() => _WebviewScreenState();
+  ConsumerState<WebviewScreen> createState() => _WebviewScreenState();
 }
 
-class _WebviewScreenState extends State<WebviewScreen> {
+class _WebviewScreenState extends ConsumerState<WebviewScreen> {
   final _controller = WebViewController();
 
   @override
@@ -43,7 +45,9 @@ class _WebviewScreenState extends State<WebviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final loginProv = ref.watch(loginProvider);
+    return loginProv.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+      Scaffold(
       appBar: AppBar(
         title: widget.title != null ? Text(
           widget.title!,
