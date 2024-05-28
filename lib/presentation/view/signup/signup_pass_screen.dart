@@ -59,6 +59,7 @@ class CloudPassCreateScreen extends ConsumerStatefulWidget {
 
 class _SignUpPassScreenState extends ConsumerState {
   _SignUpPassScreenState(this.viewModel);
+  var errorMsg = '';
 
   PassViewModel viewModel;
 
@@ -89,7 +90,6 @@ class _SignUpPassScreenState extends ConsumerState {
                     children: [
                       Expanded(
                         child: Container(
-                          height: constraints.maxHeight / 3,
                           margin: EdgeInsets.symmetric(horizontal: 20.w),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -133,16 +133,6 @@ class _SignUpPassScreenState extends ConsumerState {
                         LOG('---> CloudPassCreateScreen ok : '
                           '${viewModel.password} / ${viewModel.comparePass} / '
                           '${viewModel.passType}');
-                        if (!viewModel.checkPassMinLength) {
-                          showToast(TR(context,
-                            '$PASS_LENGTH_MIN 자 이상 입력해주세요.'));
-                          return;
-                        }
-                        if (!viewModel.checkPassMaxLength) {
-                          showToast(TR(context,
-                            '$PASS_LENGTH_MAX 자 이하 입력해주세요.'));
-                          return;
-                        }
                         if (viewModel.comparePass) {
                           FocusScope.of(context).requestFocus(FocusNode()); //remove focus
                           await Future.delayed(Duration(milliseconds: 200));
@@ -168,27 +158,50 @@ class _SignUpPassScreenState extends ConsumerState {
     );
   }
 
+  _checkPassLength() {
+    errorMsg = '';
+    if (!viewModel.checkPassMinLength) {
+      errorMsg = TR(context,
+          '$PASS_LENGTH_MIN 자 이상 입력해주세요.');
+    }
+    if (!viewModel.checkPassMaxLength) {
+      errorMsg = TR(context,
+          '$PASS_LENGTH_MAX 자 이하로 입력해주세요.');
+    }
+  }
+
   _buildInputBox(int index) {
     final prov = ref.read(loginProvider);
-    return Padding(
-      padding: EdgeInsets.only(bottom: 20),
-      child: TextField(
-      controller: viewModel.passInputController[index],
-      decoration: InputDecoration(
-        hintText: TR(context, index == 0 ? '비밀번호 입력' : '비밀번호 재입력'),
-      ),
-      keyboardType: TextInputType.visiblePassword,
-      textInputAction: index == 0 ? TextInputAction.next : TextInputAction.done,
-      obscureText: true,
-      scrollPadding: EdgeInsets.only(bottom: 100),
-      onChanged: (text) {
-        if (viewModel.passType == PassType.cloudUp) {
-          prov.cloudPass[index] = viewModel.passInputController[index].text;
-        } else {
-          prov.inputPass[index] = viewModel.passInputController[index].text;
-        }
-        prov.refresh();
-      },
-    ));
+    return Container(
+      margin: EdgeInsets.only(bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: viewModel.passInputController[index],
+            decoration: InputDecoration(
+              hintText: TR(context, index == 0 ? '비밀번호 입력' : '비밀번호 재입력'),
+            ),
+            keyboardType: TextInputType.visiblePassword,
+            textInputAction: index == 0 ? TextInputAction.next : TextInputAction.done,
+            obscureText: true,
+            scrollPadding: EdgeInsets.only(bottom: 100),
+            onChanged: (text) {
+              if (viewModel.passType == PassType.cloudUp) {
+                prov.cloudPass[index] = viewModel.passInputController[index].text;
+              } else {
+                prov.inputPass[index] = viewModel.passInputController[index].text;
+              }
+              _checkPassLength();
+              prov.refresh();
+            },
+          ),
+          if (index == 0 && errorMsg.isNotEmpty)...[
+            SizedBox(height: 3),
+            Text(errorMsg, style: errorStyle),
+          ]
+        ],
+      )
+    );
   }
 }

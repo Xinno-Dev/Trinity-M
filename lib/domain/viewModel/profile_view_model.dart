@@ -702,7 +702,7 @@ class ProfileViewModel {
         TR(context, '유저 닉네임 변경'),
         defaultText: STR(loginProv.selectAccount?.accountName),
         hintText: TR(context, '변경할 닉네임 입력해 주세요.'),
-        maxLength: 40,
+        maxLength: NICK_LENGTH_MAX,
     ).then((text) {
       if (STR(text).isNotEmpty) {
         _backupAccount();
@@ -720,7 +720,7 @@ class ProfileViewModel {
         textInputType: TextInputType.multiline,
         textAlign: TextAlign.start,
         maxLine: 1,
-        maxLength: 50,
+        maxLength: SUBTITLE_LENGTH_MAX,
     ).then((text) {
       if (STR(text).isNotEmpty) {
         _backupAccount();
@@ -738,7 +738,7 @@ class ProfileViewModel {
         textInputType: TextInputType.multiline,
         textAlign: TextAlign.start,
         maxLine: 5,
-        maxLength: 300,
+        maxLength: PROFILE_LENGTH_MAX,
     ).then((text) {
       if (STR(text).isNotEmpty) {
         _backupAccount();
@@ -875,6 +875,12 @@ class ProfileViewModel {
   }
 
   _setAccountName() async {
+    var result = await loginProv.checkNickDup(loginProv.selectAccount?.accountName);
+    if (!result) {
+      showToast(TR(context, '중복된 닉네임입니다'));
+      showEditAccountName();
+      return false;
+    }
     var passOrg = loginProv.userPass;
     if (passOrg.isEmpty) {
       passOrg = await Navigator.of(context).push(
@@ -901,7 +907,7 @@ class ProfileViewModel {
     if (STR(passOrg).isNotEmpty) {
       loginProv.inputPass.first = passOrg;
       var result = await loginProv.setAccountInfo(loginProv.selectAccount!);
-      showToast(result == true ? "내정보 변경 성공" : "내정보 변경 실패");
+      showToast(result == true ? "내 정보 변경 성공" : "내 정보 변경 실패");
       if (result == true) {
         _restoreAccount();
       }

@@ -54,6 +54,7 @@ class MarketProvider extends ChangeNotifier {
   var isStartDataDone = false;
   var userItemShowGrid = false;
   var userItemShowQR = false;
+  var isBuying = false;
 
   initRepo() {
     _repo.init();
@@ -337,8 +338,12 @@ class MarketProvider extends ChangeNotifier {
 
 
   requestPurchaseWithImageId({Function(String)? onError}) async {
-    LOG('--> requestPurchaseWithImageId : ${purchaseInfo?.prodSaleId} / ${optionId}');
+    LOG('--> requestPurchaseWithImageId : ${purchaseInfo?.prodSaleId} / ${optionId} / $isBuying');
     if (optionId != null) {
+      if (isBuying) {
+        return false;
+      }
+      isBuying = true;
       var result = await _repo.requestPurchase(
           STR(purchaseInfo?.prodSaleId), imgId: optionId, onError: (error) {
         if (error == '__not_found__' && onError != null) {
@@ -354,7 +359,8 @@ class MarketProvider extends ChangeNotifier {
       }
       LOG('--> requestPurchaseWithImageId result : ${payData
           .merchantUid} <= ${result?.toJson()}');
-      return result;
+      isBuying = false;
+      return result != null;
     }
     return null;
   }

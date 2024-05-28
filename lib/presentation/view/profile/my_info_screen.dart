@@ -68,7 +68,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                 }),
               grayDivider(),
               _viewModel.myInfoEditItem('본인인증',
-                [[prov.userIdentityYN ? '인증완료' : '미완료',
+                [[prov.userIdentityYN ? '인증 완료' : '인증 미완료',
                   prov.userIdentityYN ? '' : '인증']], onEdit: () {
                     Navigator.of(context).push(
                       createAniRoute(ProfileIdentityScreen())).then((result) {

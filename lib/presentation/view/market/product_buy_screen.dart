@@ -116,11 +116,13 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
       prov.requestPurchaseWithImageId(onError: (error) {
         showLoginErrorTextDialog(context, TR(context, error));
       }).then((info) {
-        if (info != null) {
+        if (info == true) {
           Navigator.of(context).push(
               createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data)));
-        } else {
+        } else if (info == null) {
           _showFailMessage(context);
+        } else {
+          LOG('--> purchase skip');
         }
       });
     }

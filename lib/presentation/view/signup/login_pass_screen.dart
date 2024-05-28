@@ -240,6 +240,7 @@ class _LoginPassScreenState extends ConsumerState {
     return Padding(
       padding: EdgeInsets.only(bottom: 40),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
             controller: passInputController,

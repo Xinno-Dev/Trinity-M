@@ -93,14 +93,19 @@ const String EX_TEST_MN_03 = 'apart sand present sunny destroy police either idl
 
 const String EMPTY_IMAGE = 'assets/images/app_icon_128_g.png';
 
-const int PASS_LENGTH_MIN = 5;
-const int PASS_LENGTH_MAX = 12;
 
 const int PAGE_COUNT_MAX = 3;
 const int MARKET_PAGE_COUNT_MAX = 3;
 const int PAGE_COUNT_FULL_MAX = 9999;
 const int EMAIL_SEND_TIME_MAX = 30;
 const int LOCK_SCREEN_DELAY = 5 * 1000;
+
+const int NICK_LENGTH_MIN = 5;
+const int NICK_LENGTH_MAX = 40;
+const int PASS_LENGTH_MIN = 5;
+const int PASS_LENGTH_MAX = 12;
+const int SUBTITLE_LENGTH_MAX = 40;
+const int PROFILE_LENGTH_MAX = 300;
 
 const int DECIMAL_PLACES = 8;
 const double PROFILE_RADIUS = 80.0;

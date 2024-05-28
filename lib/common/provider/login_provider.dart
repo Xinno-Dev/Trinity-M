@@ -979,7 +979,7 @@ class LoginProvider extends ChangeNotifier {
   }
 
   nickInput(String nickId) {
-    if (nickId.length > 4) {
+    if (nickId.length >= NICK_LENGTH_MIN) {
       inputNick = nickId;
       final orgStep = nickStep;
       nickStep = NickCheckStep.ready;
@@ -1056,6 +1056,15 @@ class LoginProvider extends ChangeNotifier {
     } else if (onError != null) {
       onError(LoginErrorType.nickDuplicate);
     }
+    return result;
+  }
+
+  Future<bool> checkNickDup(String? nickId) async {
+    if (STR(nickId).isEmpty) {
+      return false;
+    }
+    inputNick = nickId!;
+    var result = await _api.checkNickname(inputNick);
     return result;
   }
 

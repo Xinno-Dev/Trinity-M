@@ -95,6 +95,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                             ),
                             keyboardType: TextInputType.name,
                             scrollPadding: EdgeInsets.only(bottom: 100),
+                            maxLength: NICK_LENGTH_MAX,
                             onChanged: (text) {
                               loginProv.nickInput(text);
                             },
