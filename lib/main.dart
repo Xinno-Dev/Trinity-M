@@ -79,7 +79,6 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 
 Future<void> main() async {
   // demo();
-
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
@@ -253,7 +252,6 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    FlutterNativeSplash.remove();
     final router = ref.watch(routerProvider);
     final lang = ref.watch(languageProvider);
 

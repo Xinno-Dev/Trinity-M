@@ -73,7 +73,7 @@ class MarketProvider extends ChangeNotifier {
         showList.add(newItem);
       }
     }
-    LOG('---> marketList : $selectCategory / ${_repo.productList.length}');
+    // LOG('---> marketList : $selectCategory / ${_repo.productList.length}');
     return showList;
   }
 
@@ -83,7 +83,7 @@ class MarketProvider extends ChangeNotifier {
       var newItem = ProductModel.fromJson(item.toJson());
       userShowList.add(newItem);
     }
-    LOG('---> userMarketList : $selectCategory / ${_repo.productList.length}');
+    // LOG('---> userMarketList : $selectCategory / ${_repo.productList.length}');
     return userShowList;
   }
 
@@ -281,13 +281,12 @@ class MarketProvider extends ChangeNotifier {
         itemId:     optionId,
         itemImg:    optionPic,
         buyPrice:   '100',
-        payPrice:   '100',
         // buyPrice:   selectProduct!.itemPrice,
-        // payPrice:   selectProduct!.itemPrice,
         priceUnit:  selectProduct!.priceUnit,
         txDateTime: DateTime.now().toString(),
         payType:    '1',
         // for test..
+        payPrice:   '',
         cardType:   'TEST CARD',
         cardNum:    '1234-****-****-5678',
         seller:     selectProduct!.seller,
@@ -353,8 +352,8 @@ class MarketProvider extends ChangeNotifier {
       if (result != null) {
         purchaseInfo!.itemId = result.itemId;
         purchaseInfo!.merchantUid = result.merchantUid;
-        purchaseInfo!.buyPrice = result.price; // price -> buyPrice 로 변환
-        purchaseInfo!.priceUnit = result.priceUnit;
+        purchaseInfo!.buyPrice    = result.price; // price -> payPrice 로 변환
+        purchaseInfo!.priceUnit   = result.priceUnit;
         payData.merchantUid = STR(result.merchantUid);
       }
       LOG('--> requestPurchaseWithImageId result : ${payData

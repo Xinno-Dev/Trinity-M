@@ -45,8 +45,8 @@ class _WebviewScreenState extends ConsumerState<WebviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final loginProv = ref.watch(loginProvider);
-    return loginProv.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+    final prov = ref.watch(loginProvider);
+    return prov.isScreenLocked ? prov.lockScreen(context) :
       Scaffold(
       appBar: AppBar(
         title: widget.title != null ? Text(

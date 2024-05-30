@@ -59,7 +59,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
-    return prov.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+    return prov.isScreenLocked ? prov.lockScreen(context) :
       SafeArea(
       top: false,
       child: Scaffold(
@@ -164,7 +164,8 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                       onTap: () async {
                         await Clipboard.setData(ClipboardData(text: mnemonic));
                         final androidInfo = await DeviceInfoPlugin().androidInfo;
-                        if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
+                        if (defaultTargetPlatform == TargetPlatform.iOS ||
+                          androidInfo.version.sdkInt < 32)
                           showToast(TR(context, '문구가 복사되었습니다'));
                       },
                     ),
@@ -185,7 +186,8 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                                     pass, address, mnemonic);
                                 // var rwfStr = await RWFExportHelper.encrypt(pass, address, mnemonic);
                                 LOG('---> rwfStr mn : $rwfStr / $mnemonic');
-                                GoogleService.uploadKeyToGoogleDrive(context, rwfStr).then((_) {
+                                GoogleService.uploadKeyToGoogleDrive(
+                                  context, prov.userEmail, rwfStr).then((_) {
                                   prov.enableLockScreen();
                                 });
                               }
@@ -200,7 +202,8 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                                     var rwfStr = await RWFExportHelper.encrypt(
                                         pass, address, keyPair.d);
                                     LOG('---> rwfStr key : $rwfStr / ${keyPair.d}');
-                                    GoogleService.uploadKeyToGoogleDrive(context, rwfStr).then((_) {
+                                    GoogleService.uploadKeyToGoogleDrive(
+                                      context, prov.userEmail, rwfStr).then((_) {
                                       prov.enableLockScreen();
                                     });
                                   }

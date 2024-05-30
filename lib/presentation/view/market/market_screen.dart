@@ -1,4 +1,5 @@
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/appVersionHelper.dart';
@@ -25,6 +26,7 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
       checkAppUpdate(context);
     });
     _viewModel = MarketViewModel(context);
+    FlutterNativeSplash.remove();
     super.initState();
   }
 

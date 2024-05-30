@@ -109,6 +109,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       child: Container(
                         height: 400 - (!widget.isAppStart ? kToolbarHeight : 0),
                         margin: EdgeInsets.only(top: 40),
+                        // child: Image.asset(
+                        //   'assets/images/title_00.png',
+                        //   width: constraints.maxWidth - 100,
+                        // ),
                         child: SvgPicture.asset(
                           'assets/svg/logo.svg',
                         ),

@@ -21,8 +21,8 @@ class PurchaseModel {
 
   // 구매 정보..
   String?   price;        // 서버에서 회신된 가격
-  String?   buyPrice;     // 구매 가격
-  String?   payPrice;     // 상품 가격
+  String?   payPrice;     // 구매 가격
+  String?   buyPrice;     // 상품 가격
   String?   priceUnit;
   String?   txDateTime;
   String?   payType;

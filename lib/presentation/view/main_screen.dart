@@ -84,10 +84,9 @@ class _MainScreenState extends ConsumerState<MainScreen>
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     _movePage();
-    LOG('--> show main screen : ${prov.isScreenLocked}');
     return SafeArea(
       top: false,
-      child: prov.isScreenLocked ? _viewModel.lockScreen(context) :
+      child: prov.isScreenLocked ? prov.lockScreen(context) :
       Scaffold(
         key: _scaffoldController,
         drawerEnableOpenDragGesture: false,
@@ -95,8 +94,8 @@ class _MainScreenState extends ConsumerState<MainScreen>
           title: _viewModel.getPageTitle(context),
           titleSpacing: 0,
           titleTextStyle: typo16bold,
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
+          backgroundColor: WHITE,
+          surfaceTintColor: WHITE,
           centerTitle: true,
           automaticallyImplyLeading: false,
           leadingWidth: 50,
@@ -239,7 +238,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
 
   _movePage() {
     final prov = ref.read(loginProvider);
-    LOG('---> movePage : ${prov.mainPageIndexOrg} => ${prov.mainPageIndex}');
+    // LOG('---> movePage : ${prov.mainPageIndexOrg} => ${prov.mainPageIndex}');
     if (prov.mainPageIndexOrg != prov.mainPageIndex) {
       prov.mainPageIndexOrg = prov.mainPageIndex;
       WidgetsBinding.instance.addPostFrameCallback((_) {

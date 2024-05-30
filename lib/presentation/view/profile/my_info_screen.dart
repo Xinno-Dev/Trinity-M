@@ -42,7 +42,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     _viewModel.context = context;
-    return prov.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+    return prov.isScreenLocked ? prov.lockScreen(context) :
     SafeArea(
       top: false,
       child: Scaffold(
@@ -81,19 +81,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                 [['계정 복구 단어 보기','보기']], onEdit: _showMnemonic),
               grayDivider(),
               _viewModel.myInfoEditItem('인증',
-                [['생체 인증 사용', prov.userBioYN ? 'on' : 'off']], onToggle: (value) {
-                  if (value) {
-                    Navigator.of(context).push(
-                      createAniRoute(SignUpBioScreen(isShowNext: false))).then((result) {
-                        LOG('--> SignUpBioScreen result : $result');
-                        if (BOL(result)) {
-                          prov.setBioIdentity(true);
-                        }
-                    });
-                  } else {
-                    prov.setBioIdentity(false);
-                  }
-                }),
+                [['생체 인증 사용', prov.userBioYN ? 'on' : 'off']], onToggle: _showBioIdentity),
               if (IS_WITHDRAWAL_ON)...[
                 grayDivider(),
                 _viewModel.myInfoEditItem('회원 탈퇴', [['회원 탈퇴 신청하기', '신청']], onEdit: () {
@@ -114,10 +102,11 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
   }
 
   _showMnemonic() {
+    final prov = ref.read(loginProvider);
     Navigator.of(context).push(
       createAniRoute(LoginPassScreen())).then((passOrg) {
       if (STR(passOrg).isNotEmpty) {
-        final prov = ref.read(loginProvider);
+        prov.inputPass.first = passOrg;
         Navigator.of(context).push(
           createAniRoute(SignUpMnemonicScreen(isShowNext: false))).
           then((result) {
@@ -125,5 +114,29 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
           });
       }
     });
+  }
+
+  _showBioIdentity(value) {
+    final prov = ref.read(loginProvider);
+    if (value) {
+      Navigator.of(context).push(
+        createAniRoute(LoginPassScreen())).then((passOrg) {
+        if (STR(passOrg).isNotEmpty) {
+          prov.inputPass.first = passOrg;
+          prov.disableLockScreen();
+          Navigator.of(context).push(
+            createAniRoute(SignUpBioScreen(isShowNext: false)))
+            .then((result) {
+              LOG('--> SignUpBioScreen result : $result');
+              if (BOL(result)) {
+                prov.setBioIdentity(true);
+              }
+              prov.enableLockScreen();
+          });
+        }
+      });
+    } else {
+      prov.setBioIdentity(false);
+    }
   }
 }

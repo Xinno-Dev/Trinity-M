@@ -1,3 +1,5 @@
+import 'package:biometric_storage/biometric_storage.dart';
+
 import '../../../../common/common_package.dart';
 import '../../../../common/const/constants.dart';
 import '../../../../common/const/utils/localStorageHelper.dart';
@@ -41,39 +43,45 @@ class SignUpBioScreen extends ConsumerStatefulWidget {
 class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
   bool _localAuthAgree = false; //로컬인증 사용
   final LocalAuthentication auth = LocalAuthentication();
-  _SupportState _supportState = _SupportState.unknown;
-  List<BiometricType>? _availableBiometrics;
-  String _authorized = 'Not Authorized';
-  bool _isAuthenticating = false;
+  var _bioAuthReady = false;
+  // _SupportState _supportState = _SupportState.unknown;
+  // List<BiometricType>? _availableBiometrics;
+  // String _authorized = 'Not Authorized';
+  // bool _isAuthenticating = false;
 
   @override
   void initState() {
-    super.initState();
-    auth.isDeviceSupported().then(
-          (bool isSupported) => setState(() => _supportState = isSupported
-          ? _SupportState.supported
-          : _SupportState.unsupported),
-    );
-
+    // auth.isDeviceSupported().then(
+    //       (bool isSupported) => setState(() => _supportState = isSupported
+    //       ? _SupportState.supported
+    //       : _SupportState.unsupported),
+    // );
     _getAvailableBiometrics();
+    super.initState();
   }
 
   Future<void> _getAvailableBiometrics() async {
-    late List<BiometricType> availableBiometrics;
-    try {
-      availableBiometrics = await auth.getAvailableBiometrics();
-      print(availableBiometrics);
-    } on PlatformException catch (e) {
-      availableBiometrics = <BiometricType>[];
-      print(e);
-    }
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _availableBiometrics = availableBiometrics;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final response = await BiometricStorage().canAuthenticate();
+      LOG('---> canAuthenticate : $response');
+      setState(() {
+        _bioAuthReady = response == CanAuthenticateResponse.success;
+      });
     });
+    // late List<BiometricType> availableBiometrics;
+    // try {
+    //   availableBiometrics = await auth.getAvailableBiometrics();
+    //   print(availableBiometrics);
+    // } on PlatformException catch (e) {
+    //   availableBiometrics = <BiometricType>[];
+    //   print(e);
+    // }
+    // if (!mounted) {
+    //   return;
+    // }
+    // setState(() {
+    //   _availableBiometrics = availableBiometrics;
+    // });
   }
 
 
@@ -112,45 +120,57 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 50.h,
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 20.r),
-                child: CustomCheckbox(
-                  title: TR(context, '생체인증 사용 동의'),
-                  checked: _localAuthAgree,
-                  pushed: false,
-                  localAuth: true,
-                  onChanged: (agree) async {
-                    if (_localAuthAgree == true) {
-                      setState(() {
-                        _localAuthAgree = false;
-                      });
-                    } else {
-                      showBioIdentity(context,
-                        TR(context, '생체인증 등록'),
-                        onError: (err) {
-                          setState(() {
-                            _localAuthAgree = false;
-                            showLoginErrorTextDialog(context, err);
-                          });
-                      }).then((result) {
-                        prov.isScreenLocked = false;
-                        if (BOL(result)) {
-                          setState(() {
-                            _localAuthAgree = true;
-                            prov.setBioIdentity(_localAuthAgree);
-                            if (!widget.isShowNext) {
-                              context.pop(result);
-                            }
-                          });
-                        }
-                      });
-                    }
-                  },
+              if (_bioAuthReady)...[
+                SizedBox(
+                  height: 50.h,
                 ),
-              ),
+                Padding(
+                  padding: EdgeInsets.only(left: 20.r),
+                  child: CustomCheckbox(
+                    title: TR(context, '생체인증 사용 동의'),
+                    checked: _localAuthAgree,
+                    pushed: false,
+                    localAuth: true,
+                    onChanged: (agree) async {
+                      if (_localAuthAgree == true) {
+                        setState(() {
+                          _localAuthAgree = false;
+                        });
+                      } else {
+                        // var result = await prov.writeBioStorage('pass', prov.userPass);
+                        // if (result == true) {
+                        //   setState(() {
+                        //     _localAuthAgree = true;
+                        //     prov.setBioIdentity(_localAuthAgree);
+                        //     if (!widget.isShowNext) {
+                        //       context.pop(result);
+                        //     }
+                        //   });
+                        // }
+                        showBioIdentity(context,
+                          TR(context, '생체인증 등록'),
+                          onError: (err) {
+                            setState(() {
+                              _localAuthAgree = false;
+                              showLoginErrorTextDialog(context, err);
+                            });
+                        }).then((result) {
+                          prov.isScreenLocked = false;
+                          if (BOL(result)) {
+                            setState(() {
+                              _localAuthAgree = true;
+                              prov.setBioIdentity(_localAuthAgree);
+                              if (!widget.isShowNext) {
+                                context.pop(result);
+                              }
+                            });
+                          }
+                        });
+                      }
+                    },
+                  ),
+                ),
+              ]
             ],
           ),
         ),

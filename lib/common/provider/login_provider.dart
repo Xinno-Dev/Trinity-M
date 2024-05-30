@@ -1,6 +1,8 @@
 
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:biometric_storage/biometric_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../common/common_package.dart';
@@ -176,6 +178,7 @@ class LoginProvider extends ChangeNotifier {
 
   UserModel?    userInfo;
   AddressModel? selectAccount;
+  int lockTime = 0;
 
   var isLoginCheckDone = false;
   var isSignUpMode = false;
@@ -183,6 +186,7 @@ class LoginProvider extends ChangeNotifier {
 
   var isScreenLocked = false;
   var isScreenLockReady = false;
+  var isPassInputShow = false;
 
   var mainPageIndex = 0;
   var mainPageIndexOrg = 0;
@@ -269,19 +273,57 @@ class LoginProvider extends ChangeNotifier {
     isScreenLockReady = false;
   }
 
+  lockScreen(BuildContext context) {
+    return Scaffold(
+      backgroundColor: WHITE,
+      body: Container(
+        color: WHITE,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                'assets/svg/logo.svg',
+              ),
+              SizedBox(height: 20),
+              Text('${LOCK_SCREEN_DELAY}초 후 화면이 잠김니다.',
+                style: typo18semibold.copyWith(color: SECONDARY_90)),
+            ],
+          ),
+        ),
+      )
+    );
+  }
+
   setLockScreen(BuildContext context, bool status) {
-    LOG('--> setLockScreen : $status / $isScreenLocked / $isScreenLockReady');
+    LOG('--> setLockScreen : $status / $isScreenLocked / $isScreenLockReady / ${!isPassInputShow}');
     if (IS_AUTO_LOCK_MODE && isLogin && isScreenLockReady) {
-      if (!status && isScreenLocked) {
+      if (!status && isScreenLocked && !isPassInputShow) {
         isScreenLocked = status;
+        var offset = DateTime.now().millisecondsSinceEpoch - lockTime;
+        LOG('--> lockTime [unlock] : $offset <= $lockTime / ${DateTime.now().millisecondsSinceEpoch}');
+        if (offset <= LOCK_SCREEN_DELAY * 1000) {
+          lockTime = 0;
+          notifyListeners();
+          return;
+        }
         isScreenLockReady = false;
         Future.delayed(Duration(milliseconds: 200)).then((_) {
-          context.pushNamed(OpenPassScreen.routeName);
+          Navigator.of(context).push(createAniRoute(OpenPassScreen())).then((_) {
+            lockTime = 0;
+          });
         });
         return;
       }
-      isScreenLocked = status;
-      notifyListeners();
+      if (isScreenLocked != status) {
+        lockTime = DateTime.now().millisecondsSinceEpoch;
+        LOG('--> lockTime [lock] : $status <= $lockTime');
+        isScreenLocked = status;
+        // if (status) {
+        //   _startLockTimer();
+        // }
+        notifyListeners();
+      }
     }
   }
 
@@ -341,7 +383,7 @@ class LoginProvider extends ChangeNotifier {
         selectAccount = userInfo!.addressList!.first;
       }
     }
-    LOG('--> _refreshSelectAccount 2 : ${selectAccount?.toJson()}');
+    LOG('--> _refreshSelectAccount result : ${selectAccount?.toJson()}');
     return selectAccount;
   }
 
@@ -483,13 +525,15 @@ class LoginProvider extends ChangeNotifier {
       userInfo = await UserModel.createFromKakao(user);
       LOG('----> loginKakao email : ${userInfo?.email}');
       if (STR(userInfo?.email).isNotEmpty) {
+        // read local user info..
         await UserHelper().setUserKey(userInfo!.email!);
         await _refreshAccountList();
-        if (await getAccountKey() != null) {
-          var pass = await Navigator.of(context).push(
-              createAniRoute(LoginPassScreen()));
-          if (STR(pass).isNotEmpty) {
-            inputPass.first = pass!;
+        // check login pass..
+        var pass = await Navigator.of(context).push(
+            createAniRoute(LoginPassScreen()));
+        if (STR(pass).isNotEmpty) {
+          inputPass.first = pass!;
+          if (await getAccountKey() != null) {
             var result = await startLoginWithKey(onError: (type, text) {
               if (!isAutoLogin && onError != null) {
                 onError(type, text);
@@ -501,9 +545,9 @@ class LoginProvider extends ChangeNotifier {
               return result;
             }
             return true;
+          } else {
+            return null;
           }
-        } else {
-          return null;
         }
       }
     }
@@ -898,8 +942,8 @@ class LoginProvider extends ChangeNotifier {
   Future<EccKeyPair?> getAccountKey({String? passOrg, String? tmpKeyStr}) async {
     try {
       passOrg ??= userPass;
-      LOG('--> getAccountKey : [$passOrg] / ${selectAccount?.address}');
       var keyData = tmpKeyStr ?? selectAccount?.keyPair;
+      LOG('--> getAccountKey : [$passOrg] / $keyData');
       if (passOrg != null && STR(keyData).isNotEmpty) {
         var keyStr = await decryptData(passOrg, keyData!);
         LOG('--> getAccountKey : $keyStr');
@@ -1184,5 +1228,45 @@ class LoginProvider extends ChangeNotifier {
       return false;
     }
     return await eccManager.isValidateKeyPair(keyPair);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+
+  final _prompt = const PromptInfo(
+    iosPromptInfo: IosPromptInfo(
+      saveTitle: 'Custom save title',
+      accessTitle: 'Custom access title.',
+    ),
+    androidPromptInfo: AndroidPromptInfo(
+      title: 'Custom title',
+      subtitle: 'Custom subtitle',
+      description: 'Custom description',
+      negativeButton: 'Nope!',
+    ),
+  );
+
+  Future<String?> readBioStorage(String key) async {
+    var name = key + userEmail;
+    var storage = await BiometricStorage().getStorage(name, promptInfo: _prompt);
+    var value = await storage.read();
+    LOG('--> readBioStorage : $name -> $value');
+    return value;
+  }
+
+  Future<bool?> writeBioStorage(String key, [String? value]) async {
+    var name = key + userEmail;
+    try {
+      if (value != null) {
+        final storage = await BiometricStorage().getStorage(name);
+        await storage.write(value);
+        LOG('--> writeBioStorage : $name -> $value');
+      } else {
+        return await BiometricStorage().delete(name, _prompt);
+      }
+    } catch (e) {
+      LOG('--> writeBioStorage error : $e');
+      return false;
+    }
+    return true;
   }
 }

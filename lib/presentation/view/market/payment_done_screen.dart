@@ -54,7 +54,7 @@ class _PaymentDoneScreenState extends ConsumerState {
     final prov = ref.watch(marketProvider);
     final loginProv = ref.watch(loginProvider);
     var info = prov.purchaseInfo;
-    return loginProv.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+    return loginProv.isScreenLocked ? loginProv.lockScreen(context) :
       SafeArea(
         top: false,
         child: Scaffold(

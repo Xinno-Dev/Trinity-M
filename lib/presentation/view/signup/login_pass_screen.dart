@@ -79,10 +79,10 @@ class _LoginPassScreenState extends ConsumerState {
   void initState() {
     super.initState();
     var prov = ref.read(loginProvider);
+    prov.isPassInputShow = true;
     prov.inputPass = List.generate(2, (index) => IS_DEV_MODE ? EX_TEST_PASS_00 : '');
     isCanBack = viewModel.passType != PassType.open;
     passInputController.text = IS_DEV_MODE ? EX_TEST_PASS_00 : '';
-    LOG('--> _LoginPassScreenState : ${viewModel.passType} && ${prov.userBioYN}');
     if (viewModel.passType == PassType.open && prov.userBioYN) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(Duration(milliseconds: 200)).then((_) {
@@ -97,6 +97,12 @@ class _LoginPassScreenState extends ConsumerState {
     final prov = ref.watch(loginProvider);
     return PopScope(
       canPop: isCanBack,
+      onPopInvoked: (status) {
+        LOG('--> onPopInvoked : $status');
+        if (status) {
+          prov.isPassInputShow = false;
+        }
+      },
       child: SafeArea(
         top: false,
         child: Scaffold(
@@ -173,11 +179,13 @@ class _LoginPassScreenState extends ConsumerState {
                         FocusScope.of(context).requestFocus(FocusNode()); //remove focus
                         await Future.delayed(Duration(milliseconds: 200));
                         if (viewModel.passType == PassType.cloudDown) {
+                          prov.isPassInputShow = false;
                           Navigator.of(context).pop(prov.cloudPass.first);
                         } else {
                           // 암호 검증..
                           prov.checkWalletPass(prov.userPass).then((result) async {
                             if (result) {
+                              prov.isPassInputShow = false;
                               if (viewModel.passType == PassType.open) {
                                 context.pop();
                                 _screenLockOff();
@@ -186,6 +194,7 @@ class _LoginPassScreenState extends ConsumerState {
                               }
                             } else {
                               if (isCanBack && isFailBack) {
+                                prov.isPassInputShow = false;
                                 context.pop();
                               }
                               showToast(TR(context, '잘못된 비밀번호입니다.'));

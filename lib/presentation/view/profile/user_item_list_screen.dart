@@ -37,7 +37,7 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     ref.watch(marketProvider);
-    return prov.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+    return prov.isScreenLocked ? prov.lockScreen(context) :
       SafeArea(
       top: false,
       child: Scaffold(

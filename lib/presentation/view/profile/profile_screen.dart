@@ -39,7 +39,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
-    return prov.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+    return prov.isScreenLocked ? prov.lockScreen(context) :
       SafeArea(
         top: false,
         child: GestureDetector(

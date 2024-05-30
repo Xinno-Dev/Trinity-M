@@ -54,3 +54,4 @@ class AddressModel {
   factory AddressModel.fromJson(JSON json) => _$AddressModelFromJson(json);
   JSON toJson() => _$AddressModelToJson(this);
 }
+

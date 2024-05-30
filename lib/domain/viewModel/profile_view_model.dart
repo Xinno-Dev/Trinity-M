@@ -111,26 +111,6 @@ class ProfileViewModel {
 
   ////////////////////////////////////////////////////////////////////////
 
-  lockScreen(BuildContext context, [int? count]) {
-    return Container(
-      color: WHITE,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/svg/logo.svg',
-            ),
-            if (INT(count) > 0)...[
-              SizedBox(height: 20),
-              Text('${INT(count)}', style: typo18bold),
-            ]
-          ],
-        ),
-      ),
-    );
-  }
-
   mainDrawer(BuildContext context) {
     return Drawer(
       backgroundColor: WHITE,

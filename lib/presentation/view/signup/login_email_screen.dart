@@ -115,6 +115,12 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                         ),
                         keyboardType: TextInputType.emailAddress,
                         autofocus: true,
+                        onTap: () {
+                          setState(() {
+                            passErrorText = '';
+                            isEmailReady = false;
+                          });
+                        },
                         onChanged: (text) {
                           _checkNextReady();
                         },

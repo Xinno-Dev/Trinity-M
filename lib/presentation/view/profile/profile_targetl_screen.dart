@@ -40,7 +40,7 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
     final loginProv = ref.watch(loginProvider);
-    return loginProv.isScreenLocked ? ProfileViewModel().lockScreen(context) :
+    return loginProv.isScreenLocked ? loginProv.lockScreen(context) :
     SafeArea(
       top: false,
       child: Scaffold(

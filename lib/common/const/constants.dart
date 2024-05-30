@@ -53,16 +53,19 @@ const String APP_NOTICE_KEY = 'APP_NOTICE_KEY';
 
 
 // 출시시 필수 체크..
-const bool IS_DEV_MODE = kDebugMode && false; // 개발자 버전 켜기
-const bool IS_EMAIL_CHECK = true;       // 이메일 링크 전송 켜기
-const bool IS_AUTO_LOCK_MODE = true;    // 자동 잠금 켜기
-const bool IS_AUTO_LOGIN_MODE = true;   // 자동 로그인 켜기
-const bool IS_PAYMENT_ON = true;        // 결제 켜기
-const bool IS_PAYMENT_READY = true;     // 결제 버튼 켜기
-const bool IS_CLOUD_BACKUP_ON = true;   // 클라우드 백업 켜기
-const bool IS_CLOUD_BACKUP_MN = true;   // 클라우드 백업 시 니모닉 or Key
-const bool IS_WITHDRAWAL_ON = false;    // 회원탈퇴 메뉴 켜기
+const bool IS_DEV_MODE = kDebugMode && false; // 개발자 버전 켜기 / false
 
+// TrinityM 출시시 필수 체크..
+const bool IS_EMAIL_CHECK = true;       // 이메일 링크 전송 켜기 / true
+const bool IS_AUTO_LOCK_MODE = true;    // 자동 잠금 켜기 / true
+const bool IS_AUTO_LOGIN_MODE = true;   // 자동 로그인 켜기 / true
+const bool IS_PAYMENT_ON = true;        // 결제 켜기 / true
+const bool IS_PAYMENT_READY = true;     // 결제 버튼 켜기 / true
+const bool IS_CLOUD_BACKUP_ON = true;   // 클라우드 백업 켜기 / true
+const bool IS_CLOUD_BACKUP_MN = true;   // 클라우드 백업 시 니모닉 or Key / true
+const bool IS_WITHDRAWAL_ON = false;    // 회원탈퇴 메뉴 켜기 / false
+
+// byffin.. 출시시 필수 체크..
 const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc API 이용
 const bool IS_SWAP_ON = false;
 
@@ -98,7 +101,7 @@ const int PAGE_COUNT_MAX = 3;
 const int MARKET_PAGE_COUNT_MAX = 3;
 const int PAGE_COUNT_FULL_MAX = 9999;
 const int EMAIL_SEND_TIME_MAX = 30;
-const int LOCK_SCREEN_DELAY = 5 * 1000;
+const int LOCK_SCREEN_DELAY = 5;
 
 const int NICK_LENGTH_MIN = 5;
 const int NICK_LENGTH_MAX = 40;
