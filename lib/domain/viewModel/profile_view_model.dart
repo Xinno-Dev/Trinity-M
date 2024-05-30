@@ -618,9 +618,9 @@ class ProfileViewModel {
       _changeAccount(select);
     } else {
       Navigator.of(context).push(
-          createAniRoute(LoginPassScreen())).then((passOrg) {
+          createAniRoute(OpenPassScreen())).then((passOrg) {
         if (STR(passOrg).isNotEmpty) {
-          loginProv.inputPass.first = passOrg;
+          loginProv.setUserPass(passOrg);
           _changeAccount(select);
         }
       });
@@ -657,9 +657,9 @@ class ProfileViewModel {
                 _startAccountAdd(newNickId);
               } else {
                 Navigator.of(context).push(
-                    createAniRoute(LoginPassScreen())).then((passOrg) {
+                    createAniRoute(OpenPassScreen())).then((passOrg) {
                   if (STR(passOrg).isNotEmpty) {
-                    loginProv.inputPass.first = passOrg;
+                    loginProv.setUserPass(passOrg);
                     _startAccountAdd(newNickId);
                   }
                 });
@@ -864,10 +864,10 @@ class ProfileViewModel {
     var passOrg = loginProv.userPass;
     if (passOrg.isEmpty) {
       passOrg = await Navigator.of(context).push(
-          createAniRoute(LoginPassScreen()));
+          createAniRoute(OpenPassScreen()));
     }
     if (STR(passOrg).isNotEmpty) {
-      loginProv.inputPass.first = passOrg;
+      loginProv.setUserPass(passOrg);
       var result = await loginProv.setAccountName(loginProv.selectAccount!);
       showToast(result == true ? "닉네임 변경 성공" : "닉네임 변경 실패");
       if (result == true) {
@@ -882,10 +882,10 @@ class ProfileViewModel {
     var passOrg = loginProv.userPass;
     if (passOrg.isEmpty) {
       passOrg = await Navigator.of(context).push(
-        createAniRoute(LoginPassScreen()));
+        createAniRoute(OpenPassScreen()));
     }
     if (STR(passOrg).isNotEmpty) {
-      loginProv.inputPass.first = passOrg;
+      loginProv.setUserPass(passOrg);
       var result = await loginProv.setAccountInfo(loginProv.selectAccount!);
       showToast(result == true ? "내 정보 변경 성공" : "내 정보 변경 실패");
       if (result == true) {

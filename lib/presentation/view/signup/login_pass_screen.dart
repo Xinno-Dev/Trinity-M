@@ -47,12 +47,22 @@ class OpenPassScreen extends ConsumerStatefulWidget {
       _LoginPassScreenState(PassViewModel(PassType.open), false);
 }
 
+class OpenLockPassScreen extends ConsumerStatefulWidget {
+  const OpenLockPassScreen({Key? key}) : super(key: key);
+  static String get routeName => 'openLockPassScreen';
+
+  @override
+  ConsumerState createState() =>
+      _LoginPassScreenState(PassViewModel(PassType.openLock), false);
+}
+
 class _LoginPassScreenState extends ConsumerState {
   _LoginPassScreenState(this.viewModel, this.isFailBack);
   final passInputController = TextEditingController();
   PassViewModel viewModel;
   bool isFailBack;
   var isCanBack = true;
+  var isBioCheckShow = false;
   var isBioCheckDone = false;
   var passErrorText = '';
 
@@ -67,12 +77,42 @@ class _LoginPassScreenState extends ConsumerState {
     if (isBioCheckDone) return;
     isBioCheckDone = true;
     var prov = ref.read(loginProvider);
-    prov.showBioIdentityCheck(context).then((result) {
+    prov.showUserBioIdentityCheck(context).then((result) {
+      LOG('--> showUserBioIdentityCheck result : $result');
       if (result) {
-        context.pop();
-        _screenLockOff();
+        _processResult();
       }
     });
+  }
+
+  _processResult() async {
+    var prov = ref.read(loginProvider);
+    LOG('--> viewModel.passType : [${prov.userPass}] ${viewModel.passType}');
+    FocusScope.of(context).requestFocus(FocusNode()); //remove focus
+    await Future.delayed(Duration(milliseconds: 200));
+    if (viewModel.passType == PassType.cloudDown) {
+      prov.isPassInputShow = false;
+      Navigator.of(context).pop(prov.cloudPass.first);
+    } else {
+      // 암호 검증..
+      prov.checkWalletPass(prov.userPass).then((result) async {
+        if (result) {
+          prov.isPassInputShow = false;
+          if (viewModel.passType == PassType.openLock) {
+            context.pop();
+            _screenLockOff();
+          } else {
+            Navigator.of(context).pop(prov.userPass);
+          }
+        } else {
+          if (isCanBack && isFailBack) {
+            prov.isPassInputShow = false;
+            context.pop();
+          }
+          showToast(TR(context, '잘못된 비밀번호입니다.'));
+        }
+      });
+    }
   }
 
   @override
@@ -81,9 +121,11 @@ class _LoginPassScreenState extends ConsumerState {
     var prov = ref.read(loginProvider);
     prov.isPassInputShow = true;
     prov.inputPass = List.generate(2, (index) => IS_DEV_MODE ? EX_TEST_PASS_00 : '');
-    isCanBack = viewModel.passType != PassType.open;
+    isCanBack = viewModel.passType != PassType.openLock;
     passInputController.text = IS_DEV_MODE ? EX_TEST_PASS_00 : '';
-    if (viewModel.passType == PassType.open && prov.userBioYN) {
+    if ((viewModel.passType == PassType.open ||
+        viewModel.passType == PassType.openLock) && prov.userBioYN) {
+      isBioCheckShow = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(Duration(milliseconds: 200)).then((_) {
           _showBioCheck();
@@ -153,15 +195,16 @@ class _LoginPassScreenState extends ConsumerState {
                           child: Column(
                             children: [
                               _buildInputBox(),
-                              if (viewModel.passType == PassType.open && prov.userBioYN)...[
-                                SizedBox(height: 20),
-                                InkWell(
-                                  onTap: () {
-                                    isBioCheckDone = false;
-                                    _showBioCheck();
-                                  },
-                                  child: Icon(Icons.fingerprint, size: 50, color: SECONDARY_50)
-                                )
+                              if (isBioCheckShow)...[
+                                  SizedBox(height: 20),
+                                  InkWell(
+                                    onTap: () {
+                                      isBioCheckDone = false;
+                                      _showBioCheck();
+                                    },
+                                    child: Icon(Icons.fingerprint,
+                                      size: 50, color: SECONDARY_50)
+                                  )
                               ]
                             ],
                           )
@@ -174,34 +217,7 @@ class _LoginPassScreenState extends ConsumerState {
                       ? PrimaryButton(
                       text: TR(context, '확인'),
                       round: 0,
-                      onTap: () async {
-                        LOG('--> viewModel.passType : [${prov.userPass}] ${viewModel.passType}');
-                        FocusScope.of(context).requestFocus(FocusNode()); //remove focus
-                        await Future.delayed(Duration(milliseconds: 200));
-                        if (viewModel.passType == PassType.cloudDown) {
-                          prov.isPassInputShow = false;
-                          Navigator.of(context).pop(prov.cloudPass.first);
-                        } else {
-                          // 암호 검증..
-                          prov.checkWalletPass(prov.userPass).then((result) async {
-                            if (result) {
-                              prov.isPassInputShow = false;
-                              if (viewModel.passType == PassType.open) {
-                                context.pop();
-                                _screenLockOff();
-                              } else {
-                                Navigator.of(context).pop(prov.inputPass.first);
-                              }
-                            } else {
-                              if (isCanBack && isFailBack) {
-                                prov.isPassInputShow = false;
-                                context.pop();
-                              }
-                              showToast(TR(context, '잘못된 비밀번호입니다.'));
-                            }
-                          });
-                        }
-                      },
+                      onTap: _processResult,
                     ) : DisabledButton(
                       text: TR(context, '확인'),
                     ),

@@ -11,6 +11,7 @@ import '../../presentation/view/signup/signup_terms_screen.dart';
 
 enum PassType {
   open,
+  openLock,
   signIn,
   signUp,
   cloudUp,
@@ -20,6 +21,7 @@ enum PassType {
   get title {
     switch(this) {
       case PassType.open:
+      case PassType.openLock:
       case PassType.signIn: return '비밀번호 확인';
       case PassType.cloudUp: return '지갑 복구';
       case PassType.cloudDown: return '지갑 복구';
@@ -30,6 +32,7 @@ enum PassType {
   get info1 {
     switch(this) {
       case PassType.open:
+      case PassType.openLock:
       case PassType.signIn:
         return '비밀번호를\n입력해 주세요.';
       case PassType.cloudUp:
@@ -45,6 +48,7 @@ enum PassType {
   get info2 {
     switch(this) {
       case PassType.open:
+      case PassType.openLock:
       case PassType.signIn:
         return '회원가입시 생성한\n비밀번호를 입력해 주세요.';
       case PassType.cloudUp:

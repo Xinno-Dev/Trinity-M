@@ -105,8 +105,9 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
     final prov = ref.read(loginProvider);
     Navigator.of(context).push(
       createAniRoute(LoginPassScreen())).then((passOrg) {
+        LOG('--> _showMnemonic : $passOrg');
       if (STR(passOrg).isNotEmpty) {
-        prov.inputPass.first = passOrg;
+        prov.setUserPass(passOrg);
         Navigator.of(context).push(
           createAniRoute(SignUpMnemonicScreen(isShowNext: false))).
           then((result) {
@@ -122,21 +123,21 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
       Navigator.of(context).push(
         createAniRoute(LoginPassScreen())).then((passOrg) {
         if (STR(passOrg).isNotEmpty) {
-          prov.inputPass.first = passOrg;
+          prov.setUserPass(passOrg);
           prov.disableLockScreen();
           Navigator.of(context).push(
             createAniRoute(SignUpBioScreen(isShowNext: false)))
             .then((result) {
               LOG('--> SignUpBioScreen result : $result');
               if (BOL(result)) {
-                prov.setBioIdentity(true);
+                prov.setUserBioIdentity(true);
               }
               prov.enableLockScreen();
           });
         }
       });
     } else {
-      prov.setBioIdentity(false);
+      prov.setUserBioIdentity(false);
     }
   }
 }

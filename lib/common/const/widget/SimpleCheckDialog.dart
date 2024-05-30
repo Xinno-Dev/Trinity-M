@@ -31,6 +31,10 @@ class SimpleCheckDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: WHITE,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:trinity_m_00/common/const/all_mnemonic_list.dart';
+import 'package:trinity_m_00/common/provider/login_provider.dart';
 
 import '../../../common/const/widget/custom_text_form_field.dart';
 import '../../../common/const/widget/disabled_button.dart';
@@ -10,6 +12,7 @@ import 'package:bip39/bip39.dart' as bip39;
 
 import '../../common/common_package.dart';
 import '../../common/const/constants.dart';
+import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/uihelper.dart';
 import '../../common/const/widget/SimpleCheckDialog.dart';
@@ -20,57 +23,61 @@ class RecoverWalletInputScreen extends StatefulWidget {
   static String get routeName => 'recover_wallet_input';
 
   @override
-  State<RecoverWalletInputScreen> createState() =>
+  State createState() =>
       _RecoverWalletInputScreenState();
 }
 
 class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
-  final List<FocusNode> focusNodeList =
+  final _focusNodeList =
       List<FocusNode>.generate(12, (index) => FocusNode());
-  final List<TextEditingController> _controllerList = IS_DEV_MODE ?
+  final _controllerList = IS_DEV_MODE ?
       List.generate(12, (index) => TextEditingController(text: EX_TEST_MN_01.split(' ')[index])) :
       List.generate(12, (index) => TextEditingController());
 
-  final _scrollController = ScrollController();
-  bool _allFilled = IS_DEV_MODE;
-  bool _showInfoText = false;
-  String mnemonic = '';
+  var _allFilled = IS_DEV_MODE;
+  var _showInfoText = false;
+  var mnemonic = '';
+  var currentIndex = 0;
+  List<String> _autoMnemonic = [];
 
   void checkAllFieldsFilled() {
     final anyEmpty =
-      _controllerList.any((controller) => controller.text.isEmpty);
+      _controllerList.any((controller) => controller.text.length < 3);
     setState(() {
       _allFilled = !anyEmpty;
     });
   }
 
+  void onFocusChange(int index) {
+    if (_focusNodeList[index].hasFocus) {
+      LOG('--> _onFocusChange : $index');
+      _refreshAutoMnemonic(index);
+    }
+  }
+
   @override
   void initState() {
-    for (final controller in _controllerList) {
-      controller.addListener(checkAllFieldsFilled);
+    for (var item in _controllerList) {
+      item.addListener(checkAllFieldsFilled);
+    }
+    for (var item in _focusNodeList) {
+      item.addListener(() {
+        onFocusChange(_focusNodeList.indexOf(item));
+      });
     }
     super.initState();
   }
 
   @override
   void dispose() {
-    for (final controller in _controllerList) {
-      controller.dispose();
-    }
+    _controllerList.map((e) => e.dispose);
+    _focusNodeList.map((e) => e.dispose);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        _scrollController.animateTo(0,
-            duration: Duration(microseconds: 200), curve: Curves.bounceIn);
-        for (FocusNode focus in focusNodeList) {
-          focus.unfocus();
-        }
-      },
-      child: SafeArea(
+    return SafeArea(
         top: false,
         child: Scaffold(
           backgroundColor: WHITE,
@@ -87,22 +94,22 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
                     children: [
                       Expanded(
                         child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        padding: EdgeInsets.symmetric(horizontal: 20.0),
+                        alignment: Alignment.centerLeft,
+                        child: ListView(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(bottom: 10),
                           children: [
-                            Expanded(
-                                child: Text(
+                            Text(
                               TR(context, '계정 복구 단어를 입력해주세요.'),
                               style: typo24bold,
-                            )),
-                            Expanded(
-                                child: Text(
+                            ),
+                            SizedBox(height: 10),
+                            Text(
                               TR(context, '회원가입시 제공된 계정 복구 단어는\n'
                                   '12개의 단어로 이루어져있습니다.'),
                               style: typo16medium150.copyWith(color: GRAY_70),
-                            )),
+                            ),
                             // SizedBox(
                             //   height: 16,
                             // ),
@@ -149,38 +156,49 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
                       Expanded(
                         flex: 3,
                         child: Container(
-                          margin: EdgeInsets.only(bottom: 60),
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: GridView.builder(
-                          itemCount: 12,
-                          shrinkWrap: true,
-                          primary: false,
-                          physics: NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 8,
-                              childAspectRatio: 1.2),
-                          itemBuilder: (BuildContext context, int index) {
-                            return RecoveryInputColumn(
-                              index: index + 1,
-                              focusNode: focusNodeList[index],
-                              controller: _controllerList[index],
-                            );
-                          },
-                        ),
-                      )),
+                          margin: EdgeInsets.only(
+                            bottom: kToolbarHeight + (_autoMnemonic.isNotEmpty ? 40 : 0)),
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: GridView.builder(
+                            itemCount: 12,
+                            shrinkWrap: true,
+                            primary: false,
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 8,
+                                childAspectRatio: 1.2),
+                            itemBuilder: (BuildContext context, int index) {
+                              return RecoveryInputColumn(
+                                index: index + 1,
+                                focusNode: _focusNodeList[index],
+                                controller: _controllerList[index],
+                                onChanged: (text) {
+                                  _refreshAutoMnemonic(index);
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      ),
                     ],
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: _showButton(),
+                    child: SizedBox(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          _showAutoMnemonicSelectBar(),
+                          _showButton(),
+                        ],
+                      ),
+                    ),
                   )
                 ],
               ),
             );
           }
         ),
-      )
       )
     );
   }
@@ -191,6 +209,7 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
       round: 0,
       onTap: () {
         mnemonic = '';
+        FocusScope.of(context).requestFocus(FocusNode());
         for (TextEditingController controller
         in _controllerList) {
           if (controller == _controllerList.first) {
@@ -211,10 +230,9 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
             context: context,
             builder: (BuildContext context) {
               return SimpleCheckDialog(
-                  hasTitle: true,
-                  titleString: TR(context, '지갑 복구 문구가 일치하지 않습니다'),
-                  infoString: TR(context, '다시 입력해주세요.'),
-                  defaultButtonText: TR(context, '다시 입력하기'));
+                hasTitle: true,
+                titleString: TR(context, '복구 문구가 일치하지 않습니다'),
+                infoString: TR(context, '다시 입력해주세요.'));
             },
           );
         }
@@ -222,6 +240,59 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
     ) : DisabledButton(
       round: 0,
       text: TR(context, '다음'),
+    );
+  }
+
+  _refreshAutoMnemonic(int index) {
+    setState(() {
+      currentIndex = index;
+      var mnText = _controllerList[index].text;
+      _autoMnemonic.clear();
+      if (mnText.isNotEmpty) {
+        _autoMnemonic = allMnemonic.where((mnemonic) =>
+          mnemonic.startsWith(mnText)).toList();
+      }
+      LOG('---> _autoMnemonic [$mnText] : $_autoMnemonic');
+    });
+  }
+
+  _showAutoMnemonicSelectBar() {
+    return Container(
+      height: _autoMnemonic.isNotEmpty ? 40 : 0,
+      width: double.infinity,
+      color: GRAY_20,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: _autoMnemonic.length,
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(vertical: 5),
+        itemBuilder: (context, index) {
+          var text = _autoMnemonic[index];
+        return InkWell(
+          onTap: () {
+            setState(() {
+              LOG('--> _autoMnemonic[$currentIndex] : $text');
+              _controllerList[currentIndex].text = text;
+              if (currentIndex + 1 < _focusNodeList.length) {
+                var nextIndex = currentIndex + 1;
+                FocusScope.of(context)
+                  .requestFocus(_focusNodeList[nextIndex]);
+                _refreshAutoMnemonic(nextIndex);
+              }
+            });
+          },
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 5),
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: Colors.transparent,
+            ),
+            child: Text(text, style: typo14normal),
+          )
+        );
+      }),
     );
   }
 }
@@ -297,14 +368,14 @@ class RecoveryInputColumn extends StatelessWidget {
     super.key,
     required this.index,
     required this.focusNode,
-    this.onSubmitted,
     required this.controller,
+    this.onChanged,
   });
 
   final FocusNode focusNode;
   final TextEditingController controller;
   final int index;
-  final Function(String)? onSubmitted;
+  final Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -324,45 +395,16 @@ class RecoveryInputColumn extends StatelessWidget {
             height: 8,
           ),
           CustomTextFormField(
-              hintText: TR(context, '문구 입력'),
-              constraints: constraints,
-              focusNode: focusNode,
-              controller: controller),
+            hintText: TR(context, '문구 입력'),
+            constraints: constraints,
+            focusNode: focusNode,
+            controller: controller,
+            onChanged: onChanged,
+            textAlign: TextAlign.center,
+            scrollBottom: 120,
+          ),
         ],
       );
     });
-  }
-
-  TextFormField buildDefaultTextFormField(
-      {required String labelText,
-      required BoxConstraints constraints,
-      required FocusNode focusNode,
-      required TextEditingController controller}) {
-    return TextFormField(
-      focusNode: focusNode,
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: labelText,
-        labelStyle: constraints.maxWidth > 107
-            ? typo16regular.copyWith(color: GRAY_30)
-            : typo14regular.copyWith(color: GRAY_30),
-        floatingLabelBehavior: FloatingLabelBehavior.never,
-        contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 23.5),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: GRAY_20,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: SECONDARY_90,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      textInputAction: TextInputAction.next,
-      textAlign: TextAlign.center,
-    );
   }
 }

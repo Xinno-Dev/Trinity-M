@@ -171,10 +171,10 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                         isEmailReady = true;
                       });
                     } else {
-                      var userKey = crypto.sha256.convert(utf8.encode(email)).toString();
-                      var mnCheck  = await UserHelper().get_mnemonic(userKeyTmp: userKey);
-                      if (mnCheck != 'NOT_MNEMONIC') {
-                        LOG('--> isEmailReady : $mnCheck');
+                      // var userKey = crypto.sha256.convert(utf8.encode(email)).toString();
+                      // var mnCheck  = await UserHelper().get_mnemonic(userKeyTmp: userKey);
+                      if (await prov.checkUserHasLocalInfo(email)) {
+                        LOG('--> isEmailReady : $email');
                         setState(() {
                           isEmailReady = true;
                         });
@@ -213,7 +213,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
   _startEmailLogin() async {
     var prov = ref.read(loginProvider);
     prov.inputEmail = emailInputController.text;
-    prov.inputPass.first = passInputController.text;
+    prov.setUserPass(passInputController.text);
     LOG('=================> _startEmailLogin : ${prov.inputEmail}');
     FocusScope.of(context).requestFocus(FocusNode()); //remove focus
     showLoadingDialog(context, '로그인중입니다...');

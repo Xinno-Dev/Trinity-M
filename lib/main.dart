@@ -98,11 +98,11 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform
   );
 
-  await FirebaseAppCheck.instance.activate(
-    webProvider: ReCaptchaV3Provider('6Ldzot8pAAAAAFreQ89tKciFuJV9assNxUWDJpR-'),
-    androidProvider: AndroidProvider.debug,
-    appleProvider: AppleProvider.appAttest,
-  );
+  // await FirebaseAppCheck.instance.activate(
+  //   webProvider: ReCaptchaV3Provider('6Ldzot8pAAAAAFreQ89tKciFuJV9assNxUWDJpR-'),
+  //   androidProvider: AndroidProvider.debug,
+  //   appleProvider: AppleProvider.appAttest,
+  // );
 
   //background
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);

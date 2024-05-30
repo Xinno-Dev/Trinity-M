@@ -91,17 +91,18 @@ const String EX_TEST_NAME_00 = 'jubal0000 입니다!';
 const String EX_TEST_MN_EX = 'yard embrace develop ramp nothing member audit toilet vendor pool friend describe'; // email: tester00
 const String EX_TEST_MN_00 = 'weekend minimum ribbon sing destroy vacuum cherry cement sock shell wear result'; // email: tester00
 const String EX_TEST_MN_01 = 'frown gadget pattern black quality staff connect throw mercy rookie valid swim'; // email: jubal2000@gmail.com
-const String EX_TEST_MN_02 = 'layer replace clay dinosaur agree jazz unit peace roast combine chase relief'; // kakao: jubal2000@hanmail.net
+const String EX_TEST_MN_02 = 'order behave grunt balance ecology find empower any tobacco theme autumn occur'; // kakao: jubal2000@hanmail.net
 const String EX_TEST_MN_03 = 'apart sand present sunny destroy police either idle gospel anxiety ranch junk'; // kakao: jubal2001@gmail.com(from home)
 
 const String EMPTY_IMAGE = 'assets/images/app_icon_128_g.png';
+const String BIO_USER_PASS_KEY = 'user_pass_key';
 
 
 const int PAGE_COUNT_MAX = 3;
 const int MARKET_PAGE_COUNT_MAX = 3;
 const int PAGE_COUNT_FULL_MAX = 9999;
 const int EMAIL_SEND_TIME_MAX = 30;
-const int LOCK_SCREEN_DELAY = 5;
+const int LOCK_SCREEN_DELAY = 10;
 
 const int NICK_LENGTH_MIN = 5;
 const int NICK_LENGTH_MAX = 40;

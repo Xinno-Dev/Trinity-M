@@ -142,6 +142,7 @@ class _PaymentDoneScreenState extends ConsumerState {
           text: TR(context, '확인'),
           round: 0,
           onTap: () {
+            loginProv.enableLockScreen();
             context.pushReplacementNamed(MainScreen.routeName);
           },
         ) : null,

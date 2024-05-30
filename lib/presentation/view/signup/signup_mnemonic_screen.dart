@@ -46,6 +46,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
   Future<void> _getMnemonic() async {
     mnemonic = await UserHelper().get_check_mnemonic();
     mnemonicList = mnemonic.split(' ');
+    LOG('--> mnemonicList : $mnemonic');
     setState(() {});
   }
 
@@ -53,7 +54,6 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
   void initState() {
     super.initState();
     _getMnemonic();
-    mnemonicList = mnemonic.split(' ');
   }
 
   @override

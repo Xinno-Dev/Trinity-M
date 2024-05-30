@@ -159,7 +159,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
                   .push(createAniRoute(RecoverPassScreen()))
                   .then((newPass) async {
                 if (STR(newPass).isNotEmpty) {
-                  loginProv.inputPass.first = newPass;
+                  loginProv.setUserPass(newPass!);
                   showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
                   // start recover user..
                   loginProv.recoverUser(

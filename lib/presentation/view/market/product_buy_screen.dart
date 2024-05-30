@@ -49,82 +49,89 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
     final loginProv = ref.watch(loginProvider);
     return loginProv.isScreenLocked ? loginProv.lockScreen(context) :
       SafeArea(
-      top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(TR(context, '구매하기')),
-          centerTitle: true,
-          titleTextStyle: typo16bold,
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            onPressed: context.pop,
-            icon: Icon(Icons.close),
-          ),
-        ),
-        backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  _viewModel.showBuyBox(),
-                ]
-              ),
+        top: false,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(TR(context, '구매하기')),
+            centerTitle: true,
+            titleTextStyle: typo16bold,
+            backgroundColor: Colors.white,
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              onPressed: context.pop,
+              icon: Icon(Icons.close),
             ),
-            if (!prov.purchaseReady)
-              Padding(padding: EdgeInsets.all(10),
-              child: Text(TR(context, '* 옵션을 선택해 주세요.'),
-                style: typo12bold.copyWith(color: Colors.red))),
-          ],
+          ),
+          backgroundColor: Colors.white,
+          body: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    _viewModel.showBuyBox(),
+                  ]
+                ),
+              ),
+              if (!prov.purchaseReady)
+                Padding(padding: EdgeInsets.all(10),
+                child: Text(TR(context, '* 옵션을 선택해 주세요.'),
+                  style: typo12bold.copyWith(color: Colors.red))),
+            ],
+          ),
+          bottomNavigationBar: IS_PAYMENT_READY && prov.purchaseReady ?
+            PrimaryButton(
+              text: TR(context, '결제하기'),
+              round: 0,
+              onTap: () {
+                loginProv.disableLockScreen();
+                LOG('--> userIdentityYN : ${loginProv.userIdentityYN}');
+                if (loginProv.userIdentityYN) {
+                  _startPurchase();
+                } else {
+                  // 본인인증이 안되있을경우 본인인증 부터..
+                  Navigator.of(context).push(
+                    createAniRoute(ProfileIdentityScreen())).then((result) {
+                      if (BOL(result)) {
+                        loginProv.userInfo!.certUpdt = DateTime.now().toString();
+                        _startPurchase();
+                      } else {
+                        loginProv.enableLockScreen();
+                      }
+                  });
+                }
+              },
+            ) : DisabledButton(
+              text: TR(context, '결제하기'),
+            )
         ),
-        bottomNavigationBar: IS_PAYMENT_READY && prov.purchaseReady ?
-          PrimaryButton(
-            text: TR(context, '결제하기'),
-            round: 0,
-            onTap: () {
-              final prov = ref.read(loginProvider);
-              prov.disableLockScreen();
-              LOG('--> userIdentityYN : ${prov.userIdentityYN}');
-              if (prov.userIdentityYN) {
-                _startPurchase();
-              } else {
-                // 본인인증이 안되있을경우 본인인증 부터..
-                Navigator.of(context).push(
-                  createAniRoute(ProfileIdentityScreen())).then((result) {
-                    if (BOL(result)) {
-                      prov.userInfo!.certUpdt = DateTime.now().toString();
-                      _startPurchase();
-                    }
-                });
-              }
-            },
-          ) : DisabledButton(
-            text: TR(context, '결제하기'),
-          )
-      ),
-    );
+      );
   }
 
   _startPurchase() {
     final prov = ref.read(marketProvider);
+    final loginProv = ref.read(loginProvider);
     prov.createPurchaseInfo();
-    var data = prov.createPurchaseData(
-        userInfo: ref.read(loginProvider).userInfo!);
+    var data = prov.createPurchaseData(userInfo: loginProv.userInfo!);
     if (data != null) {
       prov.requestPurchaseWithImageId(onError: (error) {
         showLoginErrorTextDialog(context, TR(context, error));
       }).then((info) {
         if (info == true) {
           Navigator.of(context).push(
-              createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data)));
+            createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data))).then((_) {
+            loginProv.enableLockScreen();
+          });
+          return;
         } else if (info == null) {
           _showFailMessage(context);
         } else {
           LOG('--> purchase skip');
         }
+        loginProv.enableLockScreen();
       });
+    } else {
+      loginProv.enableLockScreen();
     }
   }
 }

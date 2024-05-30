@@ -7,7 +7,7 @@ import '../../common_package.dart';
 import 'convertHelper.dart';
 import 'languageHelper.dart';
 
-Future<bool?> showBioIdentity(BuildContext context, String title,
+Future<bool?> showBioIdentityDialog(BuildContext context, String title,
     {Function(String)? onError}) async {
   final auth = LocalAuthentication();
   var result = false;

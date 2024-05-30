@@ -14,6 +14,9 @@ class CustomTextFormField extends StatelessWidget {
       this.textInputAction,
       this.textInputType,
       this.textAlign,
+      this.scrollBottom,
+      this.onTap,
+      this.onChanged,
       required this.hintText,
       required this.constraints,
       required this.focusNode,
@@ -30,6 +33,9 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final TextInputType? textInputType;
   final TextAlign? textAlign;
+  final double? scrollBottom;
+  final Function()? onTap;
+  final Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +48,9 @@ class CustomTextFormField extends StatelessWidget {
       maxLines: maxLines,
       keyboardType: textInputType ?? TextInputType.text,
       inputFormatters: inputFormatters,
-      scrollPadding: EdgeInsets.only(bottom: 200.h),
+      scrollPadding: EdgeInsets.only(bottom: scrollBottom ?? 200),
       style: isSmallScreen
-          ? typo14regular.copyWith(color: GRAY_90)
+          ? typo14semibold.copyWith(color: GRAY_90)
           : typo16regular.copyWith(color: GRAY_90),
       decoration: InputDecoration(
         hintText: focusNode.hasFocus ? '' : hintText,
@@ -71,6 +77,8 @@ class CustomTextFormField extends StatelessWidget {
       textInputAction: textInputAction ??
           (isSmallScreen ? TextInputAction.next : TextInputAction.newline),
       textAlign: textAlign ?? TextAlign.start,
+      onTap: onTap,
+      onChanged: onChanged,
     );
   }
 }

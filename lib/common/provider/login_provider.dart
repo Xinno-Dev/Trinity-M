@@ -4,48 +4,30 @@ import 'dart:convert';
 
 import 'package:biometric_storage/biometric_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
-import '../../../common/common_package.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/services.dart';
 import 'package:elliptic/ecdh.dart';
 import 'package:elliptic/elliptic.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:eth_sig_util/util/utils.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:googleapis/jobs/v3.dart';
-import 'package:intl/intl.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:secp256k1cipher/secp256k1cipher.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../data/repository/ecc_repository_impl.dart';
-import '../../domain/model/account_model.dart';
 import '../../domain/model/address_model.dart';
 import '../../domain/model/ecckeypair.dart';
 import '../../domain/model/user_model.dart';
-import '../../domain/repository/market_repository.dart';
 import '../../domain/usecase/ecc_usecase_impl.dart';
-import '../../presentation/view/authpassword_screen.dart';
 import '../../presentation/view/signup/login_pass_screen.dart';
-import '../../services/google_service.dart';
 import '../../services/api_service.dart';
 import '../../services/social_service.dart';
+import '../../../common/common_package.dart';
 import '../const/constants.dart';
 import '../const/utils/aesManager.dart';
-import '../const/utils/appVersionHelper.dart';
 import '../const/utils/convertHelper.dart';
 import '../const/utils/eccManager.dart';
-import '../const/utils/identityHelper.dart';
 import '../const/utils/languageHelper.dart';
 import '../const/utils/uihelper.dart';
 import '../const/utils/userHelper.dart';
 import '../const/utils/walletHelper.dart';
-import '../const/widget/dialog_utils.dart';
-import '../const/widget/primary_button.dart';
 
 enum LoginType {
   kakaotalk,
@@ -206,10 +188,14 @@ class LoginProvider extends ChangeNotifier {
   String? socialName;
   String? socialId;
   String? emailVfCode;
-  String  appVersion = '1.0.0_';
+  String  appVersion = '';
 
   get userPass {
     return inputPass.first;
+  }
+
+  setUserPass(String pass) {
+    inputPass.first = pass;
   }
 
   get userPassReady {
@@ -287,7 +273,7 @@ class LoginProvider extends ChangeNotifier {
               ),
               SizedBox(height: 20),
               Text('${LOCK_SCREEN_DELAY}초 후 화면이 잠김니다.',
-                style: typo18semibold.copyWith(color: SECONDARY_90)),
+                style: typo18semibold.copyWith(color: GRAY_50)),
             ],
           ),
         ),
@@ -309,7 +295,7 @@ class LoginProvider extends ChangeNotifier {
         }
         isScreenLockReady = false;
         Future.delayed(Duration(milliseconds: 200)).then((_) {
-          Navigator.of(context).push(createAniRoute(OpenPassScreen())).then((_) {
+          Navigator.of(context).push(createAniRoute(OpenLockPassScreen())).then((_) {
             lockTime = 0;
           });
         });
@@ -327,7 +313,7 @@ class LoginProvider extends ChangeNotifier {
     }
   }
 
-  setBioIdentity(bool status) async {
+  setUserBioIdentity(bool status) async {
     if (isLogin) {
       userInfo!.bioIdentityYN = status;
       await UserHelper().setUser(bioIdentity: status ? 'true' : '');
@@ -337,8 +323,8 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
-  showBioIdentityCheck(BuildContext context) async {
-    return await showBioIdentity(context,
+  showUserBioIdentityCheck(BuildContext context) async {
+    return await getBioIdentity(context,
       TR(context, '본인확인'),
       onError: (err) {
         showLoginErrorTextDialog(context, err);
@@ -528,12 +514,12 @@ class LoginProvider extends ChangeNotifier {
         // read local user info..
         await UserHelper().setUserKey(userInfo!.email!);
         await _refreshAccountList();
-        // check login pass..
-        var pass = await Navigator.of(context).push(
-            createAniRoute(LoginPassScreen()));
-        if (STR(pass).isNotEmpty) {
-          inputPass.first = pass!;
-          if (await getAccountKey() != null) {
+        if (await checkUserHasLocalInfo(STR(userInfo?.email))) {
+          // check login pass..
+          var pass = await Navigator.of(context).push(
+              createAniRoute(LoginPassScreen()));
+          if (STR(pass).isNotEmpty) {
+            setUserPass(pass!);
             var result = await startLoginWithKey(onError: (type, text) {
               if (!isAutoLogin && onError != null) {
                 onError(type, text);
@@ -545,9 +531,9 @@ class LoginProvider extends ChangeNotifier {
               return result;
             }
             return true;
-          } else {
-            return null;
           }
+        } else {
+          return null;
         }
       }
     }
@@ -692,7 +678,10 @@ class LoginProvider extends ChangeNotifier {
       if (loginResult == true) {
         // '복구' 일경우 첫번째 계정을 디폴트로 지정..
         selectAccount = accountFirst;
-        await UserHelper().setUser(address: accountFirstAddress);
+        userInfo!.bioIdentityYN = false; // bio 인증 초기화
+        await UserHelper().setUser(
+            address: accountFirstAddress,
+            bioIdentity: '');
         return userInfo;
       }
     }
@@ -935,7 +924,7 @@ class LoginProvider extends ChangeNotifier {
   // passOrg : 실제로 입력 받은 패스워드 문자열..
   Future<bool> checkWalletPass(String passOrg) async {
     var keyEnc = await getAccountKey(passOrg: passOrg);
-    // LOG('--> checkWalletPass result : $keyEnc');
+    LOG('--> checkWalletPass result : $keyEnc');
     return keyEnc != null;
   }
 
@@ -951,13 +940,17 @@ class LoginProvider extends ChangeNotifier {
           var keyPair = EccKeyPair.fromJson(jsonDecode(keyStr));
           return keyPair;
         } else {
-          inputPass.first = '';
+          setUserPass('');
         }
       }
     } catch (e) {
       LOG('--> getAccountKey error : $e');
     }
     return null;
+  }
+
+  Future<bool> checkUserHasLocalInfo(String email) async {
+    return await UserHelper().checkWallet(email);
   }
 
   decryptData(String passOrg, String data) async {
@@ -1232,18 +1225,84 @@ class LoginProvider extends ChangeNotifier {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  final _prompt = const PromptInfo(
-    iosPromptInfo: IosPromptInfo(
-      saveTitle: 'Custom save title',
-      accessTitle: 'Custom access title.',
-    ),
-    androidPromptInfo: AndroidPromptInfo(
-      title: 'Custom title',
-      subtitle: 'Custom subtitle',
-      description: 'Custom description',
-      negativeButton: 'Nope!',
-    ),
-  );
+  late PromptInfo _prompt;
+
+  setPrompt(String title, String subtitle) {
+    _prompt = PromptInfo(
+      iosPromptInfo: IosPromptInfo(
+        saveTitle: title,
+        accessTitle: subtitle,
+      ),
+      androidPromptInfo: AndroidPromptInfo(
+        title: title,
+        description: subtitle,
+      )
+    );
+  }
+
+  Future<bool?> setBioIdentity(BuildContext context, String title,
+      {Function(String)? onError}) async {
+    // final auth = LocalAuthentication();
+    try {
+      setPrompt(title, TR(context, '본인 확인을 위해 생체인증을 사용합니다.'));
+      var value = await AesManager().encryptWithDeviceId(userPass);
+      var result = await writeBioStorage(BIO_USER_PASS_KEY, value);
+      if (result == true) {
+        setUserBioIdentity(true);
+      }
+      return result;
+      // var iosStrings = IOSAuthMessages(
+      //   // cancelButton: '취소',
+      //   // goToSettingsButton: '설정',
+      //   // goToSettingsDescription: '생체인증 설정을 해주세요.',
+      //   // lockOut: 'Please reenable your Touch ID',
+      //   // localizedFallbackTitle: '암호입력',
+      // );
+      // var androidStrings = AndroidAuthMessages(
+      //   signInTitle: title,
+      //   biometricHint: '지문',
+      //   cancelButton: '취소',
+      // );
+      // result = await auth.authenticate(
+      //   localizedReason: TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
+      //   authMessages: <AuthMessages>[
+      //     androidStrings,
+      //     iosStrings,
+      //   ],
+      //   options: AuthenticationOptions(
+      //     stickyAuth: true,
+      //     biometricOnly: true,
+      //     useErrorDialogs: false,
+      //   ),
+      // );
+    } on PlatformException catch (e) {
+      LOG('--> showBioIdentity error : $e');
+      if (onError != null) onError(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool?> getBioIdentity(BuildContext context, String title,
+      {Function(String)? onError}) async {
+    try {
+      setPrompt(title, TR(context, '본인 확인을 위해 생체인증을 사용합니다.'));
+      var localPass = await readBioStorage(BIO_USER_PASS_KEY);
+      LOG('--> getBioIdentity localPass : $localPass');
+      if (STR(localPass).isNotEmpty) {
+        var passOrg = await AesManager().decryptWithDeviceId(localPass!);
+        LOG('--> getBioIdentity result : $passOrg');
+        if (await checkWalletPass(passOrg)) {
+          setUserPass(passOrg);
+          return true;
+        }
+      }
+    } on PlatformException catch (e) {
+      LOG('--> getBioIdentity error : $e');
+      if (onError != null) onError(e.toString());
+    }
+    return false;
+  }
+
 
   Future<String?> readBioStorage(String key) async {
     var name = key + userEmail;
@@ -1254,12 +1313,13 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool?> writeBioStorage(String key, [String? value]) async {
-    var name = key + userEmail;
+    var encEmail = crypto.sha256.convert(utf8.encode(userEmail)).toString();
+    var name = '${key}-${encEmail}';
     try {
       if (value != null) {
-        final storage = await BiometricStorage().getStorage(name);
+        final storage = await BiometricStorage().getStorage(name, promptInfo: _prompt);
         await storage.write(value);
-        LOG('--> writeBioStorage : $name -> $value');
+        LOG('--> writeBioStorage : $name ($userEmail) -> $value');
       } else {
         return await BiometricStorage().delete(name, _prompt);
       }

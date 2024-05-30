@@ -80,7 +80,7 @@ class AesManager {
       return null;
     }
     var pass = await deviceIdPass;
-    var jwt  = await AesManager().decrypt(pass, jwtEnc);
+    var jwt  = await decrypt(pass, jwtEnc);
     LOG('--> jwt : $jwt / $pass');
     return jwt;
   }
@@ -90,6 +90,18 @@ class AesManager {
     var pass = crypto.sha256.convert(utf8.encode(deviceId)).toString();
     LOG('--> deviceIdPass : $pass');
     return pass;
+  }
+
+  Future<String> encryptWithDeviceId(String msg) async {
+    var pass    = await deviceIdPass;
+    var result  = await encrypt(pass, msg);
+    return result;
+  }
+
+  Future<String> decryptWithDeviceId(String encMsg) async {
+    var pass    = await deviceIdPass;
+    var result  = await decrypt(pass, encMsg);
+    return result;
   }
 
   Future<String> decrypt(String pin, String ciphertext) async {

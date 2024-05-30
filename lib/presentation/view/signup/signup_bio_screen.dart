@@ -137,17 +137,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                           _localAuthAgree = false;
                         });
                       } else {
-                        // var result = await prov.writeBioStorage('pass', prov.userPass);
-                        // if (result == true) {
-                        //   setState(() {
-                        //     _localAuthAgree = true;
-                        //     prov.setBioIdentity(_localAuthAgree);
-                        //     if (!widget.isShowNext) {
-                        //       context.pop(result);
-                        //     }
-                        //   });
-                        // }
-                        showBioIdentity(context,
+                        prov.setBioIdentity(context,
                           TR(context, '생체인증 등록'),
                           onError: (err) {
                             setState(() {
@@ -156,12 +146,14 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                             });
                         }).then((result) {
                           prov.isScreenLocked = false;
+                          LOG('--> prov.setBioIdentity result : $result / ${widget.isShowNext}');
                           if (BOL(result)) {
                             setState(() {
                               _localAuthAgree = true;
-                              prov.setBioIdentity(_localAuthAgree);
+                              prov.setUserBioIdentity(_localAuthAgree);
                               if (!widget.isShowNext) {
                                 context.pop(result);
+                                showToast(TR(context, '생체인증 설정 완료'));
                               }
                             });
                           }

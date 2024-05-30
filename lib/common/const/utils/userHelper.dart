@@ -146,7 +146,6 @@ class UserHelper {
     }
 
     if (bioIdentity != null) {
-      LOG('--> setUser BIO_IDENTITY_KEY : ${BIO_IDENTITY_KEY + userKey}');
       if (bioIdentity.isNotEmpty) {
         await storage.write(key: BIO_IDENTITY_KEY, value: bioIdentity);
       } else {
@@ -176,7 +175,6 @@ class UserHelper {
     };
 
     if (address != null) {
-      LOG('--> setUser address : ${KEYPAIR_KEY + userKey} => $address');
       if (address.isNotEmpty) {
         await storage.write(key: ADDRESS_KEY + userKey, value: address);
       } else {
@@ -222,7 +220,6 @@ class UserHelper {
       await storage.write(key: CHECK_MNEMONIC_KEY + userKey, value: checkMnemonic);
 
     if (addressList != '') {
-      // LOG('--> setUser ADDRESSLIST_KEY : ${ADDRESSLIST_KEY + userKey} / $addressList');
       await storage.write(key: ADDRESSLIST_KEY + userKey, value: addressList);
     }
 
@@ -338,7 +335,6 @@ class UserHelper {
   }
 
   Future<String> get_mnemonic({String? userKeyTmp}) async {
-    LOG('--> get_mnemonic : ${MNEMONIC_KEY + (userKeyTmp ?? userKey)}');
     return await storage.read(key: MNEMONIC_KEY + (userKeyTmp ?? userKey)) ?? 'NOT_MNEMONIC';
   }
 
@@ -347,7 +343,6 @@ class UserHelper {
   }
 
   Future<String> get_addressList() async {
-    // LOG('--> get_addressList : ${ADDRESSLIST_KEY + userKey}');
     return await storage.read(key: ADDRESSLIST_KEY + userKey) ?? 'NOT_ADDRESSLIST';
   }
 
