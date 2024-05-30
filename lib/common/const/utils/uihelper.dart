@@ -11,6 +11,7 @@ import '../../provider/login_provider.dart';
 import '../../style/buttonStyle.dart';
 import '../../style/colors.dart';
 import '../../style/textStyle.dart';
+import '../widget/back_button.dart';
 import '../widget/custom_text_form_field.dart';
 import 'convertHelper.dart';
 import 'languageHelper.dart';
@@ -351,6 +352,20 @@ defaultAppBar(String title, {Widget? leading, var isCanBack = true}) {
     automaticallyImplyLeading: isCanBack,
     backgroundColor: WHITE,
     surfaceTintColor: WHITE,
+  );
+}
+
+
+keyboardHideAppBar(BuildContext context, String title, {var isCanBack = true}) {
+  return defaultAppBar(title,
+    leading: CustomBackButton(
+      onPressed: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+        Future.delayed(Duration(milliseconds: 200)).then((_) {
+          context.pop();
+        });
+      },
+    )
   );
 }
 

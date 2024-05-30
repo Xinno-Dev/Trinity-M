@@ -81,7 +81,7 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
         top: false,
         child: Scaffold(
           backgroundColor: WHITE,
-          appBar: defaultAppBar(TR(context, '계정 복구')),
+          appBar: keyboardHideAppBar(context, TR(context, '계정 복구')),
           body: LayoutBuilder(builder: (context, constraints) {
             return ConstrainedBox(
               constraints: BoxConstraints(

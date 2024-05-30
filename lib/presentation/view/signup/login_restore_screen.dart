@@ -60,15 +60,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: AppBar(
-          backgroundColor: WHITE,
-          centerTitle: true,
-          title: Text(
-            TR(context, '지갑 복구'),
-            style: typo18semibold,
-          ),
-          titleSpacing: 0,
-        ),
+        appBar: defaultAppBar(TR(context, '지갑 복구')),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -16,8 +16,7 @@ class CustomBackButton extends StatelessWidget {
         height: 40.r,
         color: Colors.transparent,
         child: Center(
-          child: SvgPicture.asset('assets/svg/back.svg',
-              width: 22.r, height: 22.r),
+          child: Icon(Icons.arrow_back),
         ),
       ),
       onPressed: onPressed
