@@ -206,7 +206,7 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
                         if (widget.addType == NetworkAddType.manual || isCheckDone) {
                           // 수동 추가 & 자동 추가 입력
                           if (!isEnableCheck) {
-                            showResultDialog(context, TR(context, '입력 내용을 확인해 주세요.'));
+                            showSimpleDialog(context, TR(context, '입력 내용을 확인해 주세요.'));
                             return;
                           }
                           showConfirmDialog(widget.newNetwork.name).then((result) async {
@@ -230,7 +230,7 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
                                 ref.read(coinProvider).setNetworkFromId(widget.newNetwork.id);
                                 context.pop(true);
                               } else {
-                                showResultDialog(context, TR(context, '잘못된 네트워크입니다.'));
+                                showSimpleDialog(context, TR(context, '잘못된 네트워크입니다.'));
                               }
                             }
                           });

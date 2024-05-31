@@ -8,7 +8,7 @@ class CustomCheckbox extends StatefulWidget {
     this.onPushnamed,
     this.pushed = true,
     this.localAuth = false,
-    this.height = 40,
+    this.height = 45,
     required this.title,
     required this.checked,
   }) : super(key: key);
@@ -40,12 +40,9 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
       height: widget.height.h,
       child: Row(
         children: [
-          SizedBox(
-            height: 34.h,
-          ),
           Container(
-              width: 18.r,
-              height: 18.r,
+              width: 24.r,
+              height: 24.r,
               decoration: BoxDecoration(
                 color: isChecked ? PRIMARY_90 : GRAY_20,
                 borderRadius: BorderRadius.circular(12.0),
@@ -76,18 +73,10 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
           if (widget.pushed)...[
             // Spacer(),
             SizedBox(width: 5.w),
-            SizedBox(
-              height: 34.h,
-              width: 34.h,
-              child: TextButton(
-                onPressed: widget.onPushnamed,
-                child: SvgPicture.asset(
-                  'assets/svg/arrow.svg',
-                  width: 30.r,
-                  height: 30.r,
-                ),
-              )),
-            ],
+            TextButton(
+              onPressed: widget.onPushnamed,
+              child: Icon(Icons.navigate_next)),
+          ],
         ],
       )
       ),

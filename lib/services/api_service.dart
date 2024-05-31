@@ -699,7 +699,7 @@ class ApiService {
         return null;
       }
       var urlStr = '/purchases/$prodSaleId';
-      LOG('--> API requestPurchase : $urlStr / $itemId / $imgId');
+      LOG('--> API requestPurchase : $urlStr / $imgId');
       final response = await http.post(
         Uri.parse(httpUrl + urlStr),
           headers: {

@@ -10,7 +10,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/provider/login_provider.dart';
-import '../../../domain/viewModel/profile_view_model.dart';
+import '../../../common/const/utils/uihelper.dart';
 
 class WebviewScreen extends ConsumerStatefulWidget {
   const WebviewScreen({super.key,
@@ -46,7 +46,7 @@ class _WebviewScreenState extends ConsumerState<WebviewScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
-    return prov.isScreenLocked ? prov.lockScreen(context) :
+    return prov.isScreenLocked ? lockScreen(context) :
       Scaffold(
       appBar: AppBar(
         title: widget.title != null ? Text(

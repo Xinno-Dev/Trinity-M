@@ -332,9 +332,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                       child: Container(
                         height: 400 - (!widget.isAppStart ? kToolbarHeight : 0),
                         margin: EdgeInsets.only(top: 40),
-                        child: SvgPicture.asset(
-                          'assets/svg/logo.svg',
-                        ),
+                        child: logoWidget(),
                       ),
                     ),
                     if (prov.isLoginCheckDone)...[

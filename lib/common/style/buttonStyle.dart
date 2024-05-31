@@ -89,13 +89,31 @@ var grayBorderButtonStyle = OutlinedButton.styleFrom(
   side: BorderSide(color: GRAY_20, width: 1),
 );
 
+var grayBorderBoldButtonStyle = OutlinedButton.styleFrom(
+  backgroundColor: WHITE,
+  padding: EdgeInsets.symmetric(vertical: 9, horizontal: 8),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(8),
+  ),
+  side: BorderSide(color: GRAY_20, width: 2),
+);
+
 var darkBorderButtonStyle = OutlinedButton.styleFrom(
   backgroundColor: WHITE,
   padding: EdgeInsets.symmetric(vertical: 9, horizontal: 20),
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(8),
   ),
-  side: BorderSide(color: GRAY_80, width: 1),
+  side: BorderSide(color: GRAY_70, width: 1),
+);
+
+var darkBorderBoldButtonStyle = OutlinedButton.styleFrom(
+  backgroundColor: WHITE,
+  padding: EdgeInsets.symmetric(vertical: 9, horizontal: 20),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(8),
+  ),
+  side: BorderSide(color: GRAY_70, width: 2),
 );
 
 var primaryBorderButtonStyle = OutlinedButton.styleFrom(

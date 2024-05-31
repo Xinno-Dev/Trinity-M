@@ -1,4 +1,5 @@
 import '../../common/common_package.dart';
+import '../../common/const/utils/uihelper.dart';
 import '../../common/const/utils/userHelper.dart';
 import '../../common/const/widget/mainBox.dart';
 import '../../presentation/view/history_screen.dart';
@@ -41,10 +42,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   SizedBox(
                     width: 20,
                   ),
-                  SvgPicture.asset(
-                    'assets/svg/logo.svg',
-                    fit: BoxFit.fitWidth,
-                  ),
+                  logoWidget(),
                   Spacer(),
                   IconButton(
                     onPressed: () {

@@ -97,10 +97,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
               Container(
                 // heightFactor: 2.8,
                 height: constraints.maxHeight / 2.5,
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                child: SvgPicture.asset(
-                  'assets/svg/logo.svg',
-                ),
+                child: logoWidget(),
               ),
               Center(
                 child: Container(

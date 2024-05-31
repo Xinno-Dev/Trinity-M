@@ -251,7 +251,7 @@ class _ImportPrivateKeyScreenState
             SizedBox(width: 5.w),
             InkWell(
               onTap: () {
-                showResultDialog(context, 'RWF(RIGO Wallet Key Format) 는\n'
+                showSimpleDialog(context, 'RWF(RIGO Wallet Key Format) 는\n'
                     '개인키를 암호화 하여 저장한\njson 형식의 파일 입니다.', null, 160.0);
               },
               child: SvgPicture.asset('assets/svg/icon_question.svg', width: 18.r, height: 18.r),
@@ -332,7 +332,7 @@ class _ImportPrivateKeyScreenState
             SizedBox(width: 5.w),
             InkWell(
               onTap: () {
-                showResultDialog(context, 'RWF(RIGO Wallet Key Format)\n'
+                showSimpleDialog(context, 'RWF(RIGO Wallet Key Format)\n'
                     '생성 시, 설정하신 비밀번호를 입력해 주세요.');
               },
               child: SvgPicture.asset('assets/svg/icon_question.svg', width: 18.r, height: 18.r),

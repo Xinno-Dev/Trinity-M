@@ -47,7 +47,7 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
     final loginProv = ref.watch(loginProvider);
-    return loginProv.isScreenLocked ? loginProv.lockScreen(context) :
+    return loginProv.isScreenLocked ? lockScreen(context) :
       SafeArea(
         top: false,
         child: Scaffold(

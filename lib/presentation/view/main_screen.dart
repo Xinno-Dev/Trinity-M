@@ -86,7 +86,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
     _movePage();
     return SafeArea(
       top: false,
-      child: prov.isScreenLocked ? prov.lockScreen(context) :
+      child: prov.isScreenLocked ? lockScreen(context) :
       Scaffold(
         key: _scaffoldController,
         drawerEnableOpenDragGesture: false,
@@ -218,8 +218,10 @@ class _MainScreenState extends ConsumerState<MainScreen>
         drawer: _viewModel.mainDrawer(context),
         // floatingActionButton: FloatingActionButton(
         //   onPressed: () {
-        //     ApiService().testCheck();
+        //     // ApiService().testCheck();
+        //     showSimpleDialog(context, 'test test');
         //   },
+        //   child: Text('+'),
         // ),
       )
     );

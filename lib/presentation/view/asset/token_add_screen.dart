@@ -226,7 +226,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
                       }
                       setState(() {
                         if (!isCheckDone) {
-                          showResultDialog(context, TR(context,
+                          showSimpleDialog(context, TR(context,
                               '올바르지 않은 토큰 주소입니다.\n주소를 다시 확인해 주세요.'),
                               'assets/svg/icon_error.svg');
                         }

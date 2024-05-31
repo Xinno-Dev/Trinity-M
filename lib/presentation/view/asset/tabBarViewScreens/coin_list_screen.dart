@@ -186,7 +186,7 @@ class CoinListScreenState extends ConsumerState<CoinListScreen> {
                           print('----> TokenAddScreen result : $result');
                           if (result != null && result) {
                             Future.delayed(Duration(milliseconds: 200)).then((_) {
-                              showResultDialog(context, TR(context, '추가하였습니다.'),
+                              showSimpleDialog(context, TR(context, '추가하였습니다.'),
                                   'assets/svg/success.svg', 70.h);
                             });
                           }

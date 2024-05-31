@@ -11,6 +11,7 @@ import '../../provider/login_provider.dart';
 import '../../style/buttonStyle.dart';
 import '../../style/colors.dart';
 import '../../style/textStyle.dart';
+import '../constants.dart';
 import '../widget/back_button.dart';
 import '../widget/custom_text_form_field.dart';
 import 'convertHelper.dart';
@@ -245,7 +246,7 @@ Widget showLoadingFull([double size = 60.0]) {
   );
 }
 
-Future<void> showResultDialog(
+Future<void> showSimpleDialog(
     BuildContext context,
     String text,
     [String? svgIcon, var height = 120.0]) async {
@@ -254,13 +255,14 @@ Future<void> showResultDialog(
     builder: (BuildContext context) =>
       AlertDialog(
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          borderRadius: BorderRadius.all(Radius.circular(12.0))),
         content: Container(
           constraints: BoxConstraints(
             minWidth: 400.w,
           ),
           alignment: Alignment.center,
           height: height - (svgIcon == null ? 30 : 0),
+          color: WHITE,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -274,8 +276,10 @@ Future<void> showResultDialog(
             ],
           ),
         ),
+        backgroundColor: WHITE,
+        surfaceTintColor: WHITE,
         contentPadding: EdgeInsets.only(top: 20.h),
-        actionsPadding: EdgeInsets.fromLTRB(30.w, 10.h, 20.w, 30.h),
+        actionsPadding: EdgeInsets.fromLTRB(30.w, 10.h, 20.w, 20.h),
         actionsAlignment: MainAxisAlignment.center,
         actions: <Widget>[
           Container(
@@ -284,10 +288,10 @@ Future<void> showResultDialog(
             child: OutlinedButton(
               onPressed: context.pop,
               child: Text(
-                TR(context, '닫기'),
+                TR(context, '확인'),
                 style: typo12semibold100,
               ),
-              style: darkBorderButtonStyle,
+              style: darkBorderBoldButtonStyle,
             )
             ,
           )
@@ -345,7 +349,7 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
 defaultAppBar(String title, {Widget? leading, var isCanBack = true}) {
   return AppBar(
     title: Text(title),
-    titleTextStyle: title.length > 16 ? typo14bold : typo18bold,
+    titleTextStyle: title.length > 16 ? typo14semibold : typo18semibold,
     titleSpacing: 0,
     centerTitle: true,
     leading: leading,
@@ -355,6 +359,40 @@ defaultAppBar(String title, {Widget? leading, var isCanBack = true}) {
   );
 }
 
+logoWidget({EdgeInsets? padding}) {
+  return Container(
+    padding: padding ?? EdgeInsets.symmetric(horizontal: 40),
+    child: SvgPicture.asset(
+      // 'assets/svg/logo.svg',
+      'assets/svg/logo_text_00.svg',
+    ),
+  );
+}
+
+
+lockScreen(BuildContext context) {
+  return Scaffold(
+      backgroundColor: WHITE,
+      body: Container(
+        color: WHITE,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              logoWidget(),
+              SizedBox(height: 20),
+              Text('${LOCK_SCREEN_DELAY}초 후 화면이 잠김니다.',
+                style: typo18semibold.copyWith(color: GRAY_50)),
+            ],
+          ),
+        ),
+      )
+  );
+}
+
+clearFocus(BuildContext context) {
+  FocusScope.of(context).requestFocus(FocusNode());
+}
 
 keyboardHideAppBar(BuildContext context, String title, {var isCanBack = true}) {
   return defaultAppBar(title,
@@ -389,7 +427,8 @@ Future<String?> showInputDialog(BuildContext context, String title, {
   String? okText,
   String? cancelText,
   int maxLine = 1,
-  int maxLength = 30,
+  int? minLength,
+  int? maxLength,
   TextInputAction? textInputAction,
   TextInputType? textInputType,
   TextAlign? textAlign,
@@ -426,11 +465,9 @@ Future<String?> showInputDialog(BuildContext context, String title, {
                       constraints: constraints,
                       focusNode:  _focusNode,
                       controller: _textEditingController,
-                      // inputFormatters: [
-                      //   FilteringTextInputFormatter(RegExp('[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9| _-]'), allow: true)
-                      // ],
+                      minLength: minLength,
                       maxLength: maxLength,
-                      maxLines: maxLine,
+                      maxLines:  maxLine,
                       textInputAction: textInputAction,
                       textInputType: textInputType,
                       textAlign: textAlign,

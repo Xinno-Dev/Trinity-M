@@ -81,6 +81,10 @@ class _LoginPassScreenState extends ConsumerState {
       LOG('--> showUserBioIdentityCheck result : $result');
       if (result) {
         _processResult();
+      } else {
+        setState(() {
+          isBioCheckShow = false;
+        });
       }
     });
   }
@@ -196,15 +200,15 @@ class _LoginPassScreenState extends ConsumerState {
                             children: [
                               _buildInputBox(),
                               if (isBioCheckShow)...[
-                                  SizedBox(height: 20),
-                                  InkWell(
-                                    onTap: () {
-                                      isBioCheckDone = false;
-                                      _showBioCheck();
-                                    },
-                                    child: Icon(Icons.fingerprint,
-                                      size: 50, color: SECONDARY_50)
-                                  )
+                                SizedBox(height: 20),
+                                InkWell(
+                                  onTap: () {
+                                    isBioCheckDone = false;
+                                    _showBioCheck();
+                                  },
+                                  child: Icon(Icons.fingerprint,
+                                    size: 50, color: SECONDARY_50)
+                                )
                               ]
                             ],
                           )

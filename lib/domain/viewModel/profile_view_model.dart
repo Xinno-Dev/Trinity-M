@@ -237,7 +237,7 @@ class ProfileViewModel {
             case DrawerActionType.privacy:
               Navigator.of(context).push(
                   createAniRoute(WebviewScreen(
-                      title: TR(context, '개인정보처리방침'),
+                      title: TR(context, '개인정보처리 방침'),
                       url: '$API_HOST/terms/2')));
               break;
             case DrawerActionType.version:
@@ -479,7 +479,7 @@ class ProfileViewModel {
     );
   }
 
-  _profileImage({EdgeInsets? padding}) {
+  _profileImage({EdgeInsets? padding, var isShowButton = true}) {
     return Container(
       padding: padding,
       child: Row(
@@ -490,10 +490,18 @@ class ProfileViewModel {
             height: PROFILE_RADIUS.r,
             child: Stack(
               children: [
-                Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
-                    child: accountPic,
+                Container(
+                  width:  PROFILE_RADIUS.r,
+                  height: PROFILE_RADIUS.r,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(width: 2, color: GRAY_70)
+                  ),
+                  child: Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
+                      child: accountPic,
+                    ),
                   ),
                 ),
                 Positioned(
@@ -502,6 +510,7 @@ class ProfileViewModel {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(50),
                     onTap: () {
+                      if (!isShowButton) return;
                       loginProv.disableLockScreen();
                       showImagePicker().then((data) {
                         if (data != null) {
@@ -526,9 +535,9 @@ class ProfileViewModel {
                         }
                       });
                     },
-                    child: Container(
+                    child: isShowButton ? Container(
                       child: Icon(Icons.photo_camera, color: GRAY_30),
-                    ),
+                    ) : null,
                   )
                 )
               ],
@@ -679,22 +688,28 @@ class ProfileViewModel {
 
   showEditAccountName() {
     showInputDialog(context,
-        TR(context, '유저 닉네임 변경'),
+        TR(context, 'ID(닉네임) 변경'),
         defaultText: STR(loginProv.selectAccount?.accountName),
         hintText: TR(context, '변경할 닉네임 입력해 주세요.'),
+        minLength: NICK_LENGTH_MIN,
         maxLength: NICK_LENGTH_MAX,
     ).then((text) {
       if (STR(text).isNotEmpty) {
         _backupAccount();
+        var org = loginProv.selectAccount!.accountName;
         loginProv.selectAccount!.accountName = text;
-        _setAccountName();
+        _setAccountName().then((result) {
+          if (!result) {
+            loginProv.selectAccount!.accountName = org;
+          }
+        });
       }
     });
   }
 
   showEditSubTitle() {
     showInputDialog(context,
-        TR(context, '유저 이름 변경'),
+        TR(context, '사용자 이름 변경'),
         defaultText: _getEditSubTitle,
         hintText: TR(context, '변경할 이름을 입력해 주세요.'),
         textInputType: TextInputType.multiline,
@@ -820,12 +835,12 @@ class ProfileViewModel {
         maxHeight: 1024,
         uiSettings: [
           AndroidUiSettings(
-              toolbarTitle: '이미지 자르기',
-              toolbarColor: Colors.white,
-              initAspectRatio: initPreset,
-              lockAspectRatio: lockAspectRatio),
+            toolbarTitle: '이미지 편집',
+            toolbarColor: Colors.white,
+            initAspectRatio: initPreset,
+            lockAspectRatio: lockAspectRatio),
           IOSUiSettings(
-            title: '이미지 자르기',
+            title: '이미지 편집',
           ),
         ],
       );

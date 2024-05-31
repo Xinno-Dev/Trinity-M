@@ -92,7 +92,7 @@ class MarketViewModel {
         future: prov.getProductList(ownerAddr: ownerAddr),
         builder: (context, snapShot) {
           if (snapShot.hasData) {
-            LOG('--> prov.marketRepo.userProductList : ${prov.marketRepo.userProductList.length}');
+            // LOG('--> prov.marketRepo.userProductList : ${prov.marketRepo.userProductList.length}');
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -395,7 +395,7 @@ class MarketViewModel {
               return Container(
                 height: 140.h,
                 alignment: Alignment.center,
-                child: Text('No purchase data..'),
+                child: Text('구매한 상품이 없습니다.'),
               );
             }
           } else {
@@ -475,7 +475,7 @@ class MarketViewModel {
             return Container(
               height: 140.h,
               alignment: Alignment.center,
-              child: Text('No user item data..'),
+              child: Text('보유중이 상품이 없슴니다.'),
             );
           }
         } else {
@@ -609,26 +609,32 @@ class MarketViewModel {
     );
   }
 
-  showPurchaseDate({EdgeInsets? margin}) {
+  showPurchaseDate() {
     return Container(
-      margin: margin,
-      padding: EdgeInsets.symmetric(vertical: 10),
+      height: 52,
+      padding: EdgeInsets.only(bottom: 10),
       color: WHITE,
-      child: Row(
+      child: Column(
         children: [
-          Text(prov.purchaseSearchDate, style: typo14semibold),
-          Spacer(),
-          PrimaryButton(
-            onTap: () {
-              _showPurchaseDatePicker();
-            },
-            text: TR(context, '조회 기간'),
-            height: 30.h,
-            color: WHITE,
-            textStyle: typo12semibold100,
-            isBorderShow: true,
-            isSmallButton: true
+          Row(
+            children: [
+              Text(prov.purchaseSearchDate, style: typo14semibold),
+              Spacer(),
+              PrimaryButton(
+                onTap: () {
+                  _showPurchaseDatePicker();
+                },
+                text: TR(context, '조회 기간'),
+                height: 30.h,
+                color: WHITE,
+                textStyle: typo12semibold100,
+                isBorderShow: true,
+                isSmallButton: true
+              ),
+            ],
           ),
+          Spacer(),
+          Divider(height: 1),
         ],
       ),
     );
@@ -1134,17 +1140,32 @@ class MarketViewModel {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (STR(seller.pfImg).isNotEmpty)...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
-              child: showImage(STR(seller.pfImg),
-                Size.square(PROFILE_RADIUS.r),
-                fit: BoxFit.fill),
+            Container(
+              width:  PROFILE_RADIUS.r,
+              height: PROFILE_RADIUS.r,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(width: 2, color: GRAY_70)
+              ),
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
+                  child: showImage(STR(seller.pfImg),
+                    Size.square(PROFILE_RADIUS.r), fit: BoxFit.fill),
+                ),
+              ),
+            //   borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
+            //   child: showImage(STR(seller.pfImg),
+            //     Size.square(PROFILE_RADIUS.r),
+            //     fit: BoxFit.fill),
             ),
             SizedBox(width: 10.w),
           ],
           if (STR(seller.pfImg).isEmpty)...[
             SvgPicture.asset('assets/svg/icon_profile_00.svg',
-              width: PROFILE_RADIUS.r, height: PROFILE_RADIUS.r, fit: BoxFit.fill,
+              width: PROFILE_RADIUS.r,
+              height: PROFILE_RADIUS.r,
+              fit: BoxFit.fill,
               colorFilter: ColorFilter.mode(GRAY_20, BlendMode.srcIn),
             ),
             SizedBox(width: 10.w),

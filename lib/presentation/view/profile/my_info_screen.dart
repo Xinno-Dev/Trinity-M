@@ -14,7 +14,7 @@ import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/uihelper.dart';
 import '../../../common/provider/market_provider.dart';
-import '../../../domain/model/address_model.dart';
+import '../../../common/const/utils/uihelper.dart';
 import '../signup/login_pass_screen.dart';
 import '../signup/signup_bio_screen.dart';
 import '../signup/signup_mnemonic_screen.dart';
@@ -42,7 +42,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     _viewModel.context = context;
-    return prov.isScreenLocked ? prov.lockScreen(context) :
+    return prov.isScreenLocked ? lockScreen(context) :
     SafeArea(
       top: false,
       child: Scaffold(

@@ -39,26 +39,20 @@ class _ItemSelectScreenState extends ConsumerState<ItemSelectScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-          appBar: AppBar(
-            title: Text(TR(context, '옵션선택')),
-            centerTitle: true,
-            titleTextStyle: typo16bold,
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: false,
+          appBar: defaultAppBar(TR(context, '옵션선택'),
             leading: IconButton(
               onPressed: () {
                 prov.setOptionIndex(-1);
                 context.pop();
               },
               icon: Icon(Icons.close),
-            ),
-          ),
+          )),
           backgroundColor: Colors.white,
           body: ListView(
-              shrinkWrap: true,
-              children: [
-                _viewModel.showOptionSelectList(),
-              ]
+            shrinkWrap: true,
+            children: [
+              _viewModel.showOptionSelectList(),
+            ]
           ),
           bottomNavigationBar: prov.optionIndex >= 0
               ? PrimaryButton(

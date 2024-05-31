@@ -124,7 +124,7 @@ enum LoginErrorType {
 
 final drawerTitleN = [
   '내 정보', '구매 내역', '-',
-  '이용약관', '개인정보처리방침', '버전 정보', '로그아웃',
+  '이용약관', '개인정보처리 방침', '버전 정보', '로그아웃',
   // '로컬정보 삭제(test)'
 ];
 
@@ -257,28 +257,6 @@ class LoginProvider extends ChangeNotifier {
 
   disableLockScreen() {
     isScreenLockReady = false;
-  }
-
-  lockScreen(BuildContext context) {
-    return Scaffold(
-      backgroundColor: WHITE,
-      body: Container(
-        color: WHITE,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                'assets/svg/logo.svg',
-              ),
-              SizedBox(height: 20),
-              Text('${LOCK_SCREEN_DELAY}초 후 화면이 잠김니다.',
-                style: typo18semibold.copyWith(color: GRAY_50)),
-            ],
-          ),
-        ),
-      )
-    );
   }
 
   setLockScreen(BuildContext context, bool status) {
@@ -445,7 +423,7 @@ class LoginProvider extends ChangeNotifier {
 
   setMainPageIndex(int index) {
     mainPageIndex = index;
-    LOG('---> setMainPageIndex : $mainPageIndexOrg / $index');
+    // LOG('---> setMainPageIndex : $mainPageIndexOrg / $index');
     refresh();
   }
 
@@ -877,8 +855,10 @@ class LoginProvider extends ChangeNotifier {
     if (isLogin) {
       if (await setUserNickId(STR(account.accountName))) {
         // nickId 가 변경될경우 jwt 값이 바뀌는 이유로 재로그인 필요..
+        disableLockScreen();
         var result = await startLoginWithKey();
         LOG('--> loginAuto result : $result');
+        enableLockScreen();
         if (result == true) {
           await setLocalAccountInfo(account);
           await _refreshAccountList();
@@ -1016,14 +996,13 @@ class LoginProvider extends ChangeNotifier {
   }
 
   nickInput(String nickId) {
-    if (nickId.length >= NICK_LENGTH_MIN) {
-      inputNick = nickId;
-      final orgStep = nickStep;
-      nickStep = NickCheckStep.ready;
-      if (orgStep != emailStep) {
-        notifyListeners();
-      }
+    nickStep = NickCheckStep.none;
+    if (nickId.length < NICK_LENGTH_MIN) {
+      return '$NICK_LENGTH_MIN 자 이상 입력해 주세요.';
     }
+    inputNick = nickId;
+    nickStep = NickCheckStep.ready;
+    return null;
   }
 
   emailInput(String email) {
@@ -1082,7 +1061,8 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool?> checkNickId({Function(LoginErrorType)? onError, String? nickId}) async {
+  Future<bool?> checkNickId(
+    {Function(LoginErrorType)? onError, String? nickId}) async {
     if (nickId != null) {
       inputNick = nickId;
     }
@@ -1179,7 +1159,8 @@ class LoginProvider extends ChangeNotifier {
   AddressModel? _computeAccount(AddressModel newItem) {
     for (var item in userInfo!.addressList!) {
       if (item.address == newItem.address) {
-        LOG('--> _computeAccount item [${newItem.address}] : ${newItem.image} / ${item.toJson()}');
+        LOG('--> _computeAccount item [${newItem.address}] :'
+          ' ${newItem.image} / ${item.toJson()}');
         return item.copyWithInfo(newItem);
       }
     }
@@ -1247,6 +1228,7 @@ class LoginProvider extends ChangeNotifier {
       setPrompt(title, TR(context, '본인 확인을 위해 생체인증을 사용합니다.'));
       var value = await AesManager().encryptWithDeviceId(userPass);
       var result = await writeBioStorage(BIO_USER_PASS_KEY, value);
+      LOG('--> setBioIdentity localPass : $value');
       if (result == true) {
         setUserBioIdentity(true);
       }
@@ -1303,9 +1285,9 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
-
   Future<String?> readBioStorage(String key) async {
-    var name = key + userEmail;
+    var encEmail = crypto.sha256.convert(utf8.encode(userEmail)).toString();
+    var name = '${key}-${encEmail}';
     var storage = await BiometricStorage().getStorage(name, promptInfo: _prompt);
     var value = await storage.read();
     LOG('--> readBioStorage : $name -> $value');
@@ -1317,7 +1299,8 @@ class LoginProvider extends ChangeNotifier {
     var name = '${key}-${encEmail}';
     try {
       if (value != null) {
-        final storage = await BiometricStorage().getStorage(name, promptInfo: _prompt);
+        final storage = await BiometricStorage().getStorage(
+          name, promptInfo: _prompt);
         await storage.write(value);
         LOG('--> writeBioStorage : $name ($userEmail) -> $value');
       } else {

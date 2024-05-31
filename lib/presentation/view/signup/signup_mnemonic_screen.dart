@@ -59,7 +59,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
-    return prov.isScreenLocked ? prov.lockScreen(context) :
+    return prov.isScreenLocked ? lockScreen(context) :
       SafeArea(
       top: false,
       child: Scaffold(

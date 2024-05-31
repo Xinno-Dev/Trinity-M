@@ -33,6 +33,7 @@ class SignUpNickScreen extends ConsumerStatefulWidget {
 class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
   final textInputController = TextEditingController();
   final textFocusNode = FocusNode();
+  String? _errorText;
 
   @override
   void initState() {
@@ -92,12 +93,15 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                             focusNode: textFocusNode,
                             decoration: InputDecoration(
                               hintText: TR(context, '사용자 이름 입력'),
+                              errorText:  _errorText
                             ),
                             keyboardType: TextInputType.name,
                             scrollPadding: EdgeInsets.only(bottom: 100),
                             maxLength: NICK_LENGTH_MAX,
                             onChanged: (text) {
-                              loginProv.nickInput(text);
+                              setState(() {
+                                _errorText = loginProv.nickInput(text);
+                              });
                             },
                           ),
                           SizedBox(height: 20.h),
@@ -120,12 +124,12 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                               padding: EdgeInsets.symmetric(vertical: 10.h),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: !loginProv.isNickCheckReady ? Border.all(
-                                      width: 2, color: GRAY_20) : null,
-                                  color: loginProv.isNickCheckReady
-                                      ? PRIMARY_90
-                                      : WHITE
+                                borderRadius: BorderRadius.circular(10),
+                                border: !loginProv.isNickCheckReady ? Border.all(
+                                    width: 2, color: GRAY_20) : null,
+                                color: loginProv.isNickCheckReady
+                                    ? PRIMARY_90
+                                    : WHITE
                               ),
                               child: Text(TR(context, '중복 확인'), style: typo14bold),
                             ),

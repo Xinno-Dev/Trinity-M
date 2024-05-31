@@ -1,39 +1,15 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
 import '../../../presentation/view/signup/login_restore_screen.dart';
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/uihelper.dart';
-import '../../../common/const/widget/custom_text_form_field.dart';
-import '../../../common/const/widget/gray_5_button.dart';
-import '../../../common/const/widget/primary_button.dart';
-import '../../../common/const/widget/warning_icon.dart';
 import '../../../common/provider/login_provider.dart';
-import '../../../presentation/view/authpassword_screen.dart';
-import '../../../presentation/view/recover_wallet_input_screen.dart';
-import '../../../common/const/utils/userHelper.dart';
 
-import '../../../common/const/constants.dart';
-import '../../../common/const/utils/appVersionHelper.dart';
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
-import '../../../common/const/utils/localStorageHelper.dart';
-import '../../../common/const/widget/custom_toast.dart';
-import '../../../common/const/widget/rounded_button.dart';
-import '../../../common/provider/market_provider.dart';
 import '../../../common/provider/temp_provider.dart';
-import '../../../services/localization_service.dart';
-import '../../../services/social_service.dart';
 import '../main_screen.dart';
 import 'signup_pass_screen.dart';
 import 'signup_email_screen.dart';
 import 'login_email_screen.dart';
-import 'signup_terms_screen.dart';
-import '../terms_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   LoginScreen({this.isAppStart = true, this.isWillReturn = false, super.key});
@@ -108,14 +84,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       alignment: Alignment.topCenter,
                       child: Container(
                         height: 400 - (!widget.isAppStart ? kToolbarHeight : 0),
-                        margin: EdgeInsets.only(top: 40),
-                        child: SvgPicture.asset(
-                          'assets/svg/logo_text_00.svg',
-                          width: constraints.maxWidth - 60,
-                        ),
-                        // child: SvgPicture.asset(
-                        //   'assets/svg/logo.svg',
-                        // ),
+                        child: logoWidget(),
                       ),
                     ),
                     if (prov.isLoginCheckDone)...[

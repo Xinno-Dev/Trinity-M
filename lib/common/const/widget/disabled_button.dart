@@ -6,6 +6,7 @@ class DisabledButton extends StatelessWidget {
     required this.text,
     this.onTap,
     this.round,
+    this.height,
     this.isSmallButton = false,
   });
 
@@ -13,13 +14,14 @@ class DisabledButton extends StatelessWidget {
   final Function()? onTap;
   final bool isSmallButton;
   final double? round;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: isSmallButton ? 36.h : 56.h,
+        height: height ?? (isSmallButton ? 40.h : 56.h),
         decoration: BoxDecoration(
           color: GRAY_10,
           borderRadius: BorderRadius.circular(round ?? 8),

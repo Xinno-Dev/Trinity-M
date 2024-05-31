@@ -92,7 +92,8 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: defaultAppBar(TR(context, '생체인증 사용동의')),
+        appBar: defaultAppBar(TR(context, '생체인증 사용 동의'),
+          isCanBack: !widget.isShowNext),
         body: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -114,7 +115,8 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                     SizedBox(height: 16.h),
                     Text(
                       TR(context, '본인 확인 목적으로 기기에 등록된 생체정보를\n'
-                          '이용하여 로그인 및 인증작업을 진행하며,\n서버로 전송/저장되지 않습니다.'),
+                        '이용하여 로그인 및 인증작업을 진행하며,\n'
+                        '서버로 전송/저장되지 않습니다.'),
                       style: typo16medium150,
                     ),
                   ],
@@ -146,7 +148,8 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                             });
                         }).then((result) {
                           prov.isScreenLocked = false;
-                          LOG('--> prov.setBioIdentity result : $result / ${widget.isShowNext}');
+                          LOG('--> prov.setBioIdentity result : $result / '
+                            '${widget.isShowNext}');
                           if (BOL(result)) {
                             setState(() {
                               _localAuthAgree = true;
@@ -170,8 +173,10 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
           text: TR(context, _localAuthAgree ? '다음' : '건너뛰기'),
           round: 0,
           onTap: () {
-            UserHelper().setUser(localAuth: _localAuthAgree ? 'true' : 'false');
-            Navigator.of(context).push(createAniRoute(SignUpMnemonicScreen()));
+            UserHelper().setUser(
+              localAuth: _localAuthAgree ? 'true' : 'false');
+            Navigator.of(context).push(
+              createAniRoute(SignUpMnemonicScreen()));
           },
         ) : null,
       ),

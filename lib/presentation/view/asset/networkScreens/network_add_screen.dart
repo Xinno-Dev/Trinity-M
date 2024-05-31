@@ -333,7 +333,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                       if (widget.addType == NetworkAddType.manual || isCheckDone) {
                         // 수동 추가 & 자동 추가 입력
                         if (!isEnableCheck) {
-                          showResultDialog(context, TR(context, '입력 내용을 확인해 주세요.'));
+                          showSimpleDialog(context, TR(context, '입력 내용을 확인해 주세요.'));
                           return;
                         }
                         showConfirmDialog(context, ref.read(languageProvider).isKor ?
@@ -362,7 +362,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                               ref.read(coinProvider).setNetworkFromId(newNetwork.id);
                               context.pop(true);
                             } else {
-                              showResultDialog(context, TR(context, '잘못된 네트워크입니다.'));
+                              showSimpleDialog(context, TR(context, '잘못된 네트워크입니다.'));
                             }
                           }
                         });
@@ -413,7 +413,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                               break;
                             } else {
                               hideLoadingDialog();
-                              showResultDialog(context,
+                              showSimpleDialog(context,
                                 TR(context, '잘못된 네트워크입니다.'), 'assets/svg/icon_error.svg').then((_) {
                                 isCheckDone = false;
                               });
@@ -424,7 +424,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                           hideLoadingDialog();
                         }
                         if (isDuplicated) {
-                          showResultDialog(context, TR(context,
+                          showSimpleDialog(context, TR(context,
                               '이미 추가한 네트워크입니다.\n다시 입력해 주세요.'),
                               'assets/svg/icon_error.svg').then((_) {
                                 setState(() {

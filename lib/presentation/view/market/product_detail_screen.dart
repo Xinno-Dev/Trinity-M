@@ -9,7 +9,7 @@ import '../../../../common/const/utils/uihelper.dart';
 import '../../../../common/provider/market_provider.dart';
 import '../../../../domain/model/product_model.dart';
 
-import '../../../common/const/constants.dart';
+import '../../../common/const/utils/uihelper.dart';
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/widget/dialog_utils.dart';
@@ -46,7 +46,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
     final loginProv = ref.watch(loginProvider);
-    return loginProv.isScreenLocked ? loginProv.lockScreen(context) :
+    return loginProv.isScreenLocked ? lockScreen(context) :
       SafeArea(
       top: false,
       child: Scaffold(
