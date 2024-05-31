@@ -21,6 +21,7 @@ import '../../common/common_package.dart';
 import '../../common/const/utils/appVersionHelper.dart';
 import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
+import '../../common/const/utils/rwfExportHelper.dart';
 import '../../common/const/utils/uihelper.dart';
 import '../../common/provider/market_provider.dart';
 import '../../services/google_service.dart';
@@ -217,9 +218,17 @@ class _MainScreenState extends ConsumerState<MainScreen>
         backgroundColor: Colors.white,
         drawer: _viewModel.mainDrawer(context),
         // floatingActionButton: FloatingActionButton(
-        //   onPressed: () {
+        //   onPressed: () async {
         //     // ApiService().testCheck();
-        //     showSimpleDialog(context, 'test test');
+        //     // showSimpleDialog(context, 'test test');
+        //     var mnemonic = EX_TEST_MN_02;
+        //     var address = prov.accountAddress;
+        //     var keyPair = await prov.getAccountKey(passOrg: '11111');
+        //     if (address != null && keyPair != null) {
+        //       var rwfStr = await RWFExportHelper.encrypt(
+        //           '22222', address, keyPair.d, mnemonic);
+        //       LOG('------> rwfStr : $rwfStr');
+        //     }
         //   },
         //   child: Text('+'),
         // ),

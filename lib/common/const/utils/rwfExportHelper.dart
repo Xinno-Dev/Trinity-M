@@ -10,12 +10,13 @@ import 'package:pointycastle/export.dart';
 import 'convertHelper.dart';
 
 class RWFExportHelper {
-  static Future<String> encrypt(String pin, String address, String privateKey) async {
+  static Future<String> encrypt(String pin, String address, String privateKey,
+    [String? mnemonic]) async {
     int SALT_SIZE = 20;
     int AES_IV_SIZE = 16;
     int RANDOM_COUNT = Random().nextInt(5000) + 1000;
 
-    LOG('--> RWFExportHelper encrypt : $pin / $address / $privateKey ($RANDOM_COUNT)');
+    LOG('--> RWFExportHelper encrypt : $pin / $address / $privateKey / $mnemonic');
     Random rnd = Random.secure();
     Uint8List salt = _getRandomData(rnd, SALT_SIZE);
     Uint8List iv   = _getRandomData(rnd, AES_IV_SIZE);
@@ -63,6 +64,14 @@ class RWFExportHelper {
       cp: cp,
       dkp: dkp,
     );
+
+    if (mnemonic != null) {
+      Uint8List encOrigin =
+      paddedCipher.process(Uint8List.fromList(mnemonic.codeUnits));
+      rwf.origin = base64.encode(encOrigin);
+      LOG('--> RWFExportHelper origin : ${rwf.origin}');
+    }
+
     String rwfString = json.encode(rwf.toJson());
     return rwfString;
   }

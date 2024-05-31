@@ -99,10 +99,10 @@ class GoogleService extends GoogleAccount {
   // Google Drive Utils..
   //
 
-  static uploadKeyToGoogleDrive(context, String title, String privateKey) async {
+  static uploadKeyToGoogleDrive(context, String title, String exportText) async {
     var formatter = DateFormat('yyyyMMdd');
     var fileName = '${title}_${formatter.format(DateTime.now())}.rwf';
-    return await _startGoogleDriveUpload(context, privateKey, fileName);
+    return await _startGoogleDriveUpload(context, exportText, fileName);
   }
 
   static downloadKeyFromGoogleDrive(context) async {
@@ -314,10 +314,10 @@ class GoogleService extends GoogleAccount {
         q: query
       );
       if (list.items != null) {
-        for (var i = 0; i < list.items!.length; i++) {
-          LOG("--> getDriveFiles item [${list.items![i].title}]: ${list.items![i]
-              .mimeType}");
-        }
+        // for (var i = 0; i < list.items!.length; i++) {
+        //   LOG("--> getDriveFiles item [${list.items![i].title}]: ${list.items![i]
+        //       .mimeType}");
+        // }
         return list.items ?? [];
       } else {
         LOG("--> list.items error: ${list.toJson()}");

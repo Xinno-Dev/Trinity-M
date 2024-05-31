@@ -88,7 +88,7 @@ class PassViewModel {
 
 
   get comparePass {
-    LOG('--> comparePass : ${passInputController[0].text} / ${passInputController[1].text}');
+    // LOG('--> comparePass : ${passInputController[0].text} / ${passInputController[1].text}');
     return checkPassMinLength && checkPassMaxLength &&
       passInputController[0].text == passInputController[1].text;
   }
