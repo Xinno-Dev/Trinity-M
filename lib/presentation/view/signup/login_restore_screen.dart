@@ -144,9 +144,10 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
           if (STR(pass).isNotEmpty) {
             // recover mnemonic..
             LOG('--> CloudPassScreen result : $pass / $rwfStr');
-            var mnemonic = await RWFExportHelper.decrypt(pass, rwfStr);
-            if (mnemonic != null) {
+            var result = await RWFExportHelper.decrypt(pass, rwfStr);
+            if (result != null && result.length > 1) {
               // new pass create..
+              var mnemonic = result[1];
               Navigator.of(context)
                   .push(createAniRoute(RecoverPassScreen()))
                   .then((newPass) async {
@@ -187,37 +188,37 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
     }
   }
 
-  _recoverRwfKey(String pass, String rwfStr) async {
-    LOG('--> _recoverRwfKey : $pass / $rwfStr');
-    final loginProv = ref.read(loginProvider);
-    // if (STR(pass).isNotEmpty) {
-    //   final shaConvert = crypto.sha256.convert(utf8.encode(pass));
-    //   final keyStr = await AesManager().decrypt(shaConvert.toString(), keyData);
-    //   LOG('---> privateKey create : $pass -> $keyStr');
-    //   if (keyStr != 'fail') {
-    //     var keyJson = jsonDecode(keyStr);
-    //     var privateKey = STR(keyJson['publicKey']);
-    //   var utf8List = utf8.encode(pass);
-    //   var rwfPass = crypto.sha256.convert(utf8List).toString();
-    //   // var privateKeyStr = await AesManager().decrypt(shaConvert.toString(), encPrivateKey!);
-      var privateKey = await RWFExportHelper.decrypt(pass, rwfStr);
-      LOG('--> recoverUser privateKey : $privateKey');
-      if (STR(privateKey).isNotEmpty) {
-        var keyPair = EccKeyPair.fromJson(jsonDecode(privateKey!));
-        LOG('--> recoverUser keyPair : ${keyPair.toJson()}');
-        if (STR(privateKey).isNotEmpty) {
-          loginProv.recoverUser(loginProv.userPass, privateKey: keyPair.d).then((result) {
-            LOG('--> recoverUser cloud success : $result / ${loginProv.isLogin}');
-            if (loginProv.isLogin) {
-              _moveToMainProfile();
-            }
-          });
-        }
-      }
-    // }
-    //   }
-    // }
-  }
+  // _recoverRwfKey(String pass, String rwfStr) async {
+  //   LOG('--> _recoverRwfKey : $pass / $rwfStr');
+  //   final loginProv = ref.read(loginProvider);
+  //   // if (STR(pass).isNotEmpty) {
+  //   //   final shaConvert = crypto.sha256.convert(utf8.encode(pass));
+  //   //   final keyStr = await AesManager().decrypt(shaConvert.toString(), keyData);
+  //   //   LOG('---> privateKey create : $pass -> $keyStr');
+  //   //   if (keyStr != 'fail') {
+  //   //     var keyJson = jsonDecode(keyStr);
+  //   //     var privateKey = STR(keyJson['publicKey']);
+  //   //   var utf8List = utf8.encode(pass);
+  //   //   var rwfPass = crypto.sha256.convert(utf8List).toString();
+  //   //   // var privateKeyStr = await AesManager().decrypt(shaConvert.toString(), encPrivateKey!);
+  //     var privateKey = await RWFExportHelper.decrypt(pass, rwfStr);
+  //     LOG('--> recoverUser privateKey : $privateKey');
+  //     if (STR(privateKey).isNotEmpty) {
+  //       var keyPair = EccKeyPair.fromJson(jsonDecode(privateKey!));
+  //       LOG('--> recoverUser keyPair : ${keyPair.toJson()}');
+  //       if (STR(privateKey).isNotEmpty) {
+  //         loginProv.recoverUser(loginProv.userPass, privateKey: keyPair.d).then((result) {
+  //           LOG('--> recoverUser cloud success : $result / ${loginProv.isLogin}');
+  //           if (loginProv.isLogin) {
+  //             _moveToMainProfile();
+  //           }
+  //         });
+  //       }
+  //     }
+  //   // }
+  //   //   }
+  //   // }
+  // }
 
   // 프로필 화면으로 이동..
   _moveToMainProfile() {

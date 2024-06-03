@@ -80,7 +80,8 @@ class _LoginPassScreenState extends ConsumerState {
     prov.showUserBioIdentityCheck(context).then((result) {
       LOG('--> showUserBioIdentityCheck result : $result');
       if (result) {
-        _processResult();
+        passInputController.text = prov.userPass;
+        _processResult(result);
       } else {
         setState(() {
           isBioCheckShow = false;
@@ -89,9 +90,8 @@ class _LoginPassScreenState extends ConsumerState {
     });
   }
 
-  _processResult() async {
+  _checkPass() async {
     var prov = ref.read(loginProvider);
-    LOG('--> viewModel.passType : [${prov.userPass}] ${viewModel.passType}');
     FocusScope.of(context).requestFocus(FocusNode()); //remove focus
     await Future.delayed(Duration(milliseconds: 200));
     if (viewModel.passType == PassType.cloudDown) {
@@ -99,23 +99,31 @@ class _LoginPassScreenState extends ConsumerState {
       Navigator.of(context).pop(prov.cloudPass.first);
     } else {
       // 암호 검증..
-      prov.checkWalletPass(prov.userPass).then((result) async {
-        if (result) {
-          prov.isPassInputShow = false;
-          if (viewModel.passType == PassType.openLock) {
-            context.pop();
-            _screenLockOff();
-          } else {
-            Navigator.of(context).pop(prov.userPass);
-          }
-        } else {
-          if (isCanBack && isFailBack) {
-            prov.isPassInputShow = false;
-            context.pop();
-          }
-          showToast(TR(context, '잘못된 비밀번호입니다.'));
-        }
+      var checkPass = passInputController.text;
+      LOG('--> viewModel.passType : [$checkPass] ${viewModel.passType}');
+      prov.checkWalletPass(checkPass).then((result) async {
+        prov.setUserPass(checkPass);
+        _processResult(result);
       });
+    }
+  }
+
+  _processResult(bool result) {
+    var prov = ref.read(loginProvider);
+    if (result) {
+      prov.isPassInputShow = false;
+      if (viewModel.passType == PassType.openLock) {
+        context.pop();
+        _screenLockOff();
+      } else {
+        Navigator.of(context).pop(prov.userPass);
+      }
+    } else {
+      if (isCanBack && isFailBack) {
+        prov.isPassInputShow = false;
+        context.pop();
+      }
+      showToast(TR(context, '잘못된 비밀번호입니다.'));
     }
   }
 
@@ -221,7 +229,7 @@ class _LoginPassScreenState extends ConsumerState {
                       ? PrimaryButton(
                       text: TR(context, '확인'),
                       round: 0,
-                      onTap: _processResult,
+                      onTap: _checkPass,
                     ) : DisabledButton(
                       text: TR(context, '확인'),
                     ),

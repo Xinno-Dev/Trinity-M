@@ -189,13 +189,15 @@ class LoginProvider extends ChangeNotifier {
   String? socialId;
   String? emailVfCode;
   String  appVersion = '';
+  String? userInputPass;
 
   get userPass {
-    return inputPass.first;
+    return STR(userInputPass);
   }
 
   setUserPass(String pass) {
-    inputPass.first = pass;
+    LOG('--> setUserPass : $pass');
+    userInputPass = pass;
   }
 
   get userPassReady {

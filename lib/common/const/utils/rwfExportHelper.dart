@@ -76,7 +76,7 @@ class RWFExportHelper {
     return rwfString;
   }
 
-  static Future<String?> decrypt(String pin, String ciphertext) async {
+  static Future<List<String>?> decrypt(String pin, String ciphertext) async {
     JSON jsonData = jsonDecode(ciphertext);
     var salt      = base64Decode(jsonData['dkp']['ks']);
     var iv        = base64Decode(jsonData['cp']['ci']);
@@ -99,7 +99,15 @@ class RWFExportHelper {
 
     try {
       cipherText = paddedCipher.process(encrypted);
-      return String.fromCharCodes(cipherText);
+      var decText = String.fromCharCodes(cipherText);
+      var result = [decText];
+      if (jsonData['origin'] != null) {
+        var origin = base64Decode(jsonData['origin']);
+        var originText = String.fromCharCodes(paddedCipher.process(origin));
+        LOG('--> RWFExportHelper decrypt result : $originText');
+        result.add(originText);
+      }
+      return result;
     } catch (e) {
       LOG('--> RWFExportHelper decrypt error : $e');
     }

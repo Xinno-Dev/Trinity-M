@@ -171,60 +171,39 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                     ),
                   ),
                   if (IS_CLOUD_BACKUP_ON)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          createAniRoute(CloudPassCreateScreen())).then((pass) async {
-                          if (STR(pass).isNotEmpty) {
-                            prov.disableLockScreen();
-                            if (IS_CLOUD_BACKUP_MN) {
-                              var address = prov.accountFirstAddress;
-                              if (address != null) {
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            createAniRoute(CloudPassCreateScreen())).then((pass) async {
+                            if (STR(pass).isNotEmpty) {
+                              prov.disableLockScreen();
+                              var address = prov.accountAddress;
+                              var keyPair = await prov.getAccountKey();
+                              if (address != null && keyPair != null) {
                                 var rwfStr = await RWFExportHelper.encrypt(
-                                    pass, address, mnemonic);
-                                // var rwfStr = await RWFExportHelper.encrypt(pass, address, mnemonic);
-                                LOG('---> rwfStr mn : $rwfStr / $mnemonic');
+                                    pass, address, keyPair.d, mnemonic);
                                 GoogleService.uploadKeyToGoogleDrive(
-                                  context, prov.userEmail, rwfStr).then((_) {
+                                    context, prov.userEmail, rwfStr).then((_) {
                                   prov.enableLockScreen();
                                 });
                               }
-                            } else {
-                              Navigator.of(context).push(
-                                createAniRoute(LoginPassScreen())).then((
-                                userPass) async {
-                                if (STR(userPass).isNotEmpty) {
-                                  var address = prov.accountAddress;
-                                  var keyPair = await prov.getAccountKey(passOrg: userPass);
-                                  if (address != null && keyPair != null) {
-                                    var rwfStr = await RWFExportHelper.encrypt(
-                                        pass, address, keyPair.d);
-                                    LOG('---> rwfStr key : $rwfStr / ${keyPair.d}');
-                                    GoogleService.uploadKeyToGoogleDrive(
-                                      context, prov.userEmail, rwfStr).then((_) {
-                                      prov.enableLockScreen();
-                                    });
-                                  }
-                                }
-                              });
                             }
-                          }
-                        });
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 10.h),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(width: 2, color: GRAY_20),
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(width: 2, color: GRAY_20),
+                          ),
+                          child: Text(TR(context, '클라우드 백업'), style: typo16bold),
                         ),
-                        child: Text(TR(context, '클라우드 백업'), style: typo16bold),
-                      ),
-                    )
-                  ),
+                      )
+                    ),
                   SizedBox(height: 10),
                 ],
               ),
