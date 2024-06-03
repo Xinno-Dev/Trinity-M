@@ -142,10 +142,6 @@ class showHorizontalDivider extends StatelessWidget {
   }
 }
 
-AnimateMoveAni(BuildContext context, Widget target) {
-
-}
-
 Route createAniRoute(Widget target, {var delay = 200}) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => target,
@@ -442,7 +438,8 @@ Future<String?> showInputDialog(BuildContext context, String title, {
         builder: (BuildContext context, StateSetter stateSetter) {
           return LayoutBuilder(builder: (context, constraints) {
             return Dialog(
-              backgroundColor: Colors.white,
+              backgroundColor: WHITE,
+              surfaceTintColor: WHITE,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
               ),
@@ -462,7 +459,6 @@ Future<String?> showInputDialog(BuildContext context, String title, {
                     padding: const EdgeInsets.symmetric(horizontal: 19.0),
                     child: CustomTextFormField(
                       hintText: hintText ?? '',
-                      constraints: constraints,
                       focusNode:  _focusNode,
                       controller: _textEditingController,
                       minLength: minLength,
@@ -526,10 +522,11 @@ Future<String?> showInputDialog(BuildContext context, String title, {
 
 
 showLoginErrorTextDialog(BuildContext context, String text) async {
-  return await showLoginErrorDialog(context, LoginErrorType.none, text);
+  return await showLoginErrorDialog(context, LoginErrorType.none, text: text);
 }
 
-showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) async {
+showLoginErrorDialog(BuildContext context, LoginErrorType type,
+  {String? text, String? okText, String? cancelText}) async {
   var errorText1 = '';
   var errorText2 = '';
   if (type == LoginErrorType.code && STR(text).isNotEmpty) {
@@ -539,7 +536,7 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
       errorText2 = textList[1];
     }
   }
-  await showDialog<void>(
+  return await showDialog<void>(
     context: context,
     builder: (BuildContext context) =>
       AlertDialog(
@@ -548,7 +545,7 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(12.0))),
         content: Container(
-          height: errorText1.isNotEmpty ? 150.h : 120.h,
+          height: 150,
           constraints: BoxConstraints(
             minWidth: 400.w,
           ),
@@ -560,6 +557,7 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
                   'assets/svg/icon_warning.svg',
                   width: 40.r, height: 40.r),
               if (type == LoginErrorType.code)...[
+                SizedBox(height: 10),
                 Text(errorText1,
                   style: typo16bold,
                   textAlign: TextAlign.center),
@@ -569,6 +567,7 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
                   textAlign: TextAlign.center),
               ],
               if (type != LoginErrorType.code)...[
+                SizedBox(height: 10),
                 Text(type.errorText,
                   style: typo16bold,
                   textAlign: TextAlign.center),
@@ -584,21 +583,36 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type, [String? text]) 
           ),
         ),
         contentPadding: EdgeInsets.only(top: 20.h),
-        actionsPadding: EdgeInsets.fromLTRB(30.w, 10.h, 20.w, 30.h),
-        actionsAlignment: MainAxisAlignment.center,
+        actionsPadding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
+        actionsAlignment: MainAxisAlignment.spaceAround,
         actions: <Widget>[
+          if (STR(cancelText).isNotEmpty)
+            Container(
+              height: 40,
+              width: 120,
+              child: OutlinedButton(
+                onPressed: context.pop,
+                child: Text(
+                  TR(context, cancelText!),
+                  style: typo14normal,
+                ),
+                style: grayBorderButtonStyle,
+              )
+            ),
           Container(
-            width: 127.w,
-            height: 40.h,
+            height: 40,
+              width: 120,
             child: OutlinedButton(
-              onPressed: context.pop,
+              onPressed: () {
+                context.pop(true);
+              },
               child: Text(
-                TR(context, '닫기'),
-                style: typo12semibold100,
+                TR(context, okText ?? '닫기'),
+                style: typo14bold,
               ),
               style: darkBorderButtonStyle,
             )
-          )
+          ),
         ],
       ),
   );

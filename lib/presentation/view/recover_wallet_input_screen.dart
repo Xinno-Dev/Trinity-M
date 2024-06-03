@@ -30,8 +30,8 @@ class RecoverWalletInputScreen extends StatefulWidget {
 class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
   final _focusNodeList =
       List<FocusNode>.generate(12, (index) => FocusNode());
-  final _controllerList = IS_DEV_MODE ?
-      List.generate(12, (index) => TextEditingController(text: EX_TEST_MN_01.split(' ')[index])) :
+  final _controllerList = true ?
+      List.generate(12, (index) => TextEditingController(text: EX_TEST_MN_02.split(' ')[index])) :
       List.generate(12, (index) => TextEditingController());
 
   var _allFilled = IS_DEV_MODE;
@@ -396,12 +396,12 @@ class RecoveryInputColumn extends StatelessWidget {
           ),
           CustomTextFormField(
             hintText: TR(context, '문구 입력'),
-            constraints: constraints,
             focusNode: focusNode,
             controller: controller,
             onChanged: onChanged,
             textAlign: TextAlign.center,
             scrollBottom: 120,
+            isSuffixShow: false,
           ),
         ],
       );

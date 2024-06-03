@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:trinity_m_00/presentation/view/signup/signup_email_screen.dart';
 
 import '../../../../common/const/utils/uihelper.dart';
 import '../../../../common/provider/login_provider.dart';
@@ -20,6 +21,7 @@ import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
+import '../../../common/const/widget/custom_text_form_field.dart';
 import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
@@ -95,7 +97,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
           child: Stack(
             children: [
               Container(
-                // heightFactor: 2.8,
+                padding: EdgeInsets.only(bottom: 20),
                 height: constraints.maxHeight / 2.5,
                 child: logoWidget(),
               ),
@@ -105,13 +107,26 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                   margin: EdgeInsets.symmetric(horizontal: 40.w),
                   child: Column(
                     children: [
-                      TextField(
+                      // TextField(
+                      //   controller: emailInputController,
+                      //   decoration: InputDecoration(
+                      //     hintText: TR(context, '이메일 주소 입력'),
+                      //   ),
+                      //   keyboardType: TextInputType.emailAddress,
+                      //   autofocus: true,
+                      //   onTap: () {
+                      //     setState(() {
+                      //       passErrorText = '';
+                      //       isEmailReady = false;
+                      //     });
+                      //   },
+                      //   onChanged: (text) {
+                      //     _checkNextReady();
+                      //   },
+                      // ),
+                      CustomEmailFormField(
                         controller: emailInputController,
-                        decoration: InputDecoration(
-                          hintText: TR(context, '이메일 주소 입력'),
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        autofocus: true,
+                        hintText: TR(context, '이메일 주소 입력'),
                         onTap: () {
                           setState(() {
                             passErrorText = '';
@@ -127,22 +142,30 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TextField(
+                            CustomPassFormField(
                               controller: passInputController,
-                              decoration: InputDecoration(
-                                hintText: TR(context, '비밀번호 입력'),
-                              ),
-                              keyboardType: TextInputType.visiblePassword,
-                              obscureText: true,
                               focusNode: focusNode,
+                              hintText: TR(context, '비밀번호 입력'),
                               onChanged: (text) {
                                 _checkNextReady();
                               },
                             ),
-                            if (passErrorText.isNotEmpty)...[
-                              SizedBox(height: 5),
-                              Text(TR(context, passErrorText), style: errorStyle)
-                            ]
+                            // TextField(
+                            //   controller: passInputController,
+                            //   decoration: InputDecoration(
+                            //     hintText: TR(context, '비밀번호 입력'),
+                            //   ),
+                            //   keyboardType: TextInputType.visiblePassword,
+                            //   obscureText: true,
+                            //   focusNode: focusNode,
+                            //   onChanged: (text) {
+                            //     _checkNextReady();
+                            //   },
+                            // ),
+                            // if (passErrorText.isNotEmpty)...[
+                            //   SizedBox(height: 5),
+                            //   Text(TR(context, passErrorText), style: errorStyle)
+                            // ]
                           ],
                         )
                       ],
@@ -182,14 +205,22 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                           if (result) {
                             FocusScope.of(context).requestFocus(FocusNode()); //remove focus
                             showLoginErrorDialog(context,
-                                LoginErrorType.recoverRequire, email).then((_) {
+                                LoginErrorType.recoverRequire, text: email).then((_) {
                               Navigator.of(context).push(
                                   createAniRoute(LoginRestoreScreen()));
                             });
                           } else {
                             showLoginErrorDialog(context,
-                                LoginErrorType.signupRequire,
-                                TR(context, '가입되지 않은 이메일입니다.', ));
+                              LoginErrorType.signupRequire,
+                              text: email,
+                              okText: '회원가입',
+                              cancelText: '취소',
+                            ).then((result) {
+                              if (BOL(result)) {
+                                Navigator.of(context).push(
+                                  createAniRoute(SignUpEmailScreen()));
+                              }
+                            });
                           }
                         });
                       }
@@ -239,7 +270,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
           });
         } else {
           showLoginErrorDialog(context,
-              LoginErrorType.passFailEx, null);
+              LoginErrorType.passFailEx);
         }
       } else {
         // 이미 생성된 계정인지 체크..
@@ -247,14 +278,14 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
           if (result) {
             // 계정 복구..
             showLoginErrorDialog(context,
-              LoginErrorType.recoverRequire, prov.userInfo?.email).then((_) {
+              LoginErrorType.recoverRequire, text: prov.userInfo?.email).then((_) {
               Navigator.of(context).push(
                   createAniRoute(LoginRestoreScreen()));
             });
           } else {
             // 회원가입..
             showLoginErrorDialog(context,
-              LoginErrorType.signupRequire, prov.userInfo?.email).then((_) {
+              LoginErrorType.signupRequire, text: prov.userInfo?.email).then((_) {
               prov.setSignUpMode();
               context.pop();
             });

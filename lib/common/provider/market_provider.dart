@@ -241,8 +241,8 @@ class MarketProvider extends ChangeNotifier {
     return _repo.purchaseList;
   }
 
-  List<ProductItemModel> get userItemList {
-    return _repo.userItemList;
+  List<ProductItemModel> userItemList(String ownerAddr) {
+    return _repo.userItemData[ownerAddr] ?? [];
   }
 
   refreshProductList(BuildContext context, String? prodId) async {

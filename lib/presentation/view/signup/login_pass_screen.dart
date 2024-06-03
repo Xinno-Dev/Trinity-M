@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trinity_m_00/common/const/widget/custom_text_form_field.dart';
 import '../../../common/const/constants.dart';
 import '../../../../common/provider/login_provider.dart';
 import '../../../../domain/viewModel/profile_view_model.dart';
@@ -59,6 +60,7 @@ class OpenLockPassScreen extends ConsumerStatefulWidget {
 class _LoginPassScreenState extends ConsumerState {
   _LoginPassScreenState(this.viewModel, this.isFailBack);
   final passInputController = TextEditingController();
+  final focusNode = FocusNode();
   PassViewModel viewModel;
   bool isFailBack;
   var isCanBack = true;
@@ -93,9 +95,9 @@ class _LoginPassScreenState extends ConsumerState {
   _checkPass() async {
     var prov = ref.read(loginProvider);
     FocusScope.of(context).requestFocus(FocusNode()); //remove focus
-    await Future.delayed(Duration(milliseconds: 200));
     if (viewModel.passType == PassType.cloudDown) {
       prov.isPassInputShow = false;
+      await Future.delayed(Duration(milliseconds: 200));
       Navigator.of(context).pop(prov.cloudPass.first);
     } else {
       // 암호 검증..
@@ -103,6 +105,7 @@ class _LoginPassScreenState extends ConsumerState {
       LOG('--> viewModel.passType : [$checkPass] ${viewModel.passType}');
       prov.checkWalletPass(checkPass).then((result) async {
         prov.setUserPass(checkPass);
+        await Future.delayed(Duration(milliseconds: 200));
         _processResult(result);
       });
     }
@@ -263,13 +266,13 @@ class _LoginPassScreenState extends ConsumerState {
       } else {
         prov.inputPass.first = passInputController.text;
       }
-      passErrorText = '';
-      if (passInputController.text.length < PASS_LENGTH_MIN) {
-        passErrorText = '$PASS_LENGTH_MIN 자 이상 입력해 주세요';
-      }
-      if (passInputController.text.length > PASS_LENGTH_MAX) {
-        passErrorText = '$PASS_LENGTH_MAX 자 이하 입력해 주세요';
-      }
+    //   passErrorText = '';
+    //   if (passInputController.text.length < PASS_LENGTH_MIN) {
+    //     passErrorText = '$PASS_LENGTH_MIN 자 이상 입력해 주세요';
+    //   }
+    //   if (passInputController.text.length > PASS_LENGTH_MAX) {
+    //     passErrorText = '$PASS_LENGTH_MAX 자 이하 입력해 주세요';
+    //   }
     });
   }
 
@@ -279,20 +282,16 @@ class _LoginPassScreenState extends ConsumerState {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextField(
+          CustomPassFormField(
             controller: passInputController,
-            decoration: InputDecoration(
-              hintText: TR(context, '비밀번호 입력'),
-            ),
-            keyboardType: TextInputType.visiblePassword,
-            obscureText: true,
-            scrollPadding: EdgeInsets.only(bottom: 200),
+            focusNode: focusNode,
+            hintText: TR(context, '비밀번호 입력'),
             onChanged: _refreshPass,
           ),
-          if (passErrorText.isNotEmpty)...[
-            SizedBox(height: 5),
-            Text(TR(context, passErrorText), style: errorStyle)
-          ],
+          // if (passErrorText.isNotEmpty)...[
+          //   SizedBox(height: 5),
+          //   Text(TR(context, passErrorText), style: errorStyle)
+          // ],
         ],
       )
     );

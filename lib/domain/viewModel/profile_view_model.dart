@@ -490,17 +490,15 @@ class ProfileViewModel {
             height: PROFILE_RADIUS.r,
             child: Stack(
               children: [
-                Container(
-                  width:  PROFILE_RADIUS.r,
-                  height: PROFILE_RADIUS.r,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(width: 2, color: GRAY_70)
-                  ),
-                  child: Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
-                      child: accountPic,
+                Center(
+                  child: Container(
+                    width:  PROFILE_RADIUS.r,
+                    height: PROFILE_RADIUS.r,
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
+                        child: accountPic,
+                      ),
                     ),
                   ),
                 ),
@@ -622,6 +620,7 @@ class ProfileViewModel {
   _selectAccount(AddressModel select) {
     if (loginProv.accountAddress == select.address) return false;
     LOG('---> _selectAccount : ${select.toJson()}');
+    loginProv.disableLockScreen();
     hideProfileSelectBox();
     if (loginProv.userPassReady) {
       _changeAccount(select);
@@ -639,6 +638,7 @@ class ProfileViewModel {
 
   _changeAccount(AddressModel select) {
     loginProv.changeAccount(select).then((result) {
+      loginProv.enableLockScreen();
       if (result) {
         showToast(TR(context, '계정 변경 성공'));
       } else {

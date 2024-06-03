@@ -217,24 +217,24 @@ class _MainScreenState extends ConsumerState<MainScreen>
         ),
         backgroundColor: Colors.white,
         drawer: _viewModel.mainDrawer(context),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            // ApiService().testCheck();
-            // showSimpleDialog(context, 'test test');
-            // var mnemonic = EX_TEST_MN_02;
-            // var address = prov.accountAddress;
-            // var keyPair = await prov.getAccountKey(passOrg: '11111');
-            // if (address != null && keyPair != null) {
-            //   var rwfStr = await RWFExportHelper.encrypt(
-            //       '22222', address, keyPair.d, mnemonic);
-            //   LOG('------> rwfStr : $rwfStr');
-            // }
-            var str = '{"version":"1","address":"746cd77220f91a9c42264bad889751cf3c104f99","origin":"IaErnUvlKy3+RSHSxF4kvm1OgdS4QEe3FKMLsMFr8FGoKJsHpRaDArDKwv2STNkbaJ2+oG9zrD87wTpfpyH/E/pGH4eANkhintLLPAxeH38=","algo":"secp256k1","cp":{"ca":"aes-256-cbc","ct":"PdBIzuoJWr5ySsoBW8npDr6f899VJeY4HeEa9AWGcah2reLCwjBagUCeW5F5nSLP0ZhApf7KL4WqOEIgB6hj0+UGS/UJO1L9himEMBT4wXU=","ci":"qyctDNj+11JXkL6Gf8nfrA=="},"dkp":{"ka":"pbkdf2","kh":"sha256","kc":"4336","ks":"VSFRT6gU2QGnImbZtOrRjOYaR3g=","kl":"32"}}';
-            var result = await RWFExportHelper.decrypt('22222', str);
-            LOG('------> rwfStr : $result');
-          },
-          child: Text('+'),
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () async {
+        //     // ApiService().testCheck();
+        //     // showSimpleDialog(context, 'test test');
+        //     // var mnemonic = EX_TEST_MN_02;
+        //     // var address = prov.accountAddress;
+        //     // var keyPair = await prov.getAccountKey(passOrg: '11111');
+        //     // if (address != null && keyPair != null) {
+        //     //   var rwfStr = await RWFExportHelper.encrypt(
+        //     //       '22222', address, keyPair.d, mnemonic);
+        //     //   LOG('------> rwfStr : $rwfStr');
+        //     // }
+        //     var str = '{"version":"1","address":"746cd77220f91a9c42264bad889751cf3c104f99","origin":"IaErnUvlKy3+RSHSxF4kvm1OgdS4QEe3FKMLsMFr8FGoKJsHpRaDArDKwv2STNkbaJ2+oG9zrD87wTpfpyH/E/pGH4eANkhintLLPAxeH38=","algo":"secp256k1","cp":{"ca":"aes-256-cbc","ct":"PdBIzuoJWr5ySsoBW8npDr6f899VJeY4HeEa9AWGcah2reLCwjBagUCeW5F5nSLP0ZhApf7KL4WqOEIgB6hj0+UGS/UJO1L9himEMBT4wXU=","ci":"qyctDNj+11JXkL6Gf8nfrA=="},"dkp":{"ka":"pbkdf2","kh":"sha256","kc":"4336","ks":"VSFRT6gU2QGnImbZtOrRjOYaR3g=","kl":"32"}}';
+        //     var result = await RWFExportHelper.decrypt('22222', str);
+        //     LOG('------> rwfStr : $result');
+        //   },
+        //   child: Text('+'),
+        // ),
       )
     );
   }

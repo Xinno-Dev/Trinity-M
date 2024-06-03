@@ -125,7 +125,6 @@ enum LoginErrorType {
 final drawerTitleN = [
   '내 정보', '구매 내역', '-',
   '이용약관', '개인정보처리 방침', '버전 정보', '로그아웃',
-  // '로컬정보 삭제(test)'
 ];
 
 enum DrawerActionType {
@@ -136,7 +135,6 @@ enum DrawerActionType {
   privacy,
   version,
   logout;
-  // test_delete;
 
   String get title {
     return drawerTitleN[this.index];
@@ -349,7 +347,6 @@ class LoginProvider extends ChangeNotifier {
         selectAccount = userInfo!.addressList!.first;
       }
     }
-    LOG('--> _refreshSelectAccount result : ${selectAccount?.toJson()}');
     return selectAccount;
   }
 
@@ -489,12 +486,12 @@ class LoginProvider extends ChangeNotifier {
     LOG('----> loginKakao user : $user');
     if (user != null) {
       userInfo = await UserModel.createFromKakao(user);
-      LOG('----> loginKakao email : ${userInfo?.email}');
-      if (STR(userInfo?.email).isNotEmpty) {
+      LOG('----> loginKakao email : ${userEmail}');
+      if (STR(userEmail).isNotEmpty) {
         // read local user info..
-        await UserHelper().setUserKey(userInfo!.email!);
+        await UserHelper().setUserKey(userEmail!);
         await _refreshAccountList();
-        if (await checkUserHasLocalInfo(STR(userInfo?.email))) {
+        if (await checkUserHasLocalInfo(STR(userEmail))) {
           // check login pass..
           var pass = await Navigator.of(context).push(
               createAniRoute(LoginPassScreen()));
@@ -646,9 +643,9 @@ class LoginProvider extends ChangeNotifier {
      Function(LoginErrorType, String?)? onError}) async {
     // set user key..
     userInfo ??= _createEmailUser();
-    LOG('--> recoverUser : [$newPass] ${userInfo?.toJson()}');
+    LOG('--> recoverUser : ${userEmail}');
     inputNick = ''; // nickId unknown..
-    await UserHelper().setUserKey(userInfo!.email!);
+    await UserHelper().setUserKey(userEmail!);
     var result  = await createNewAccount(
         newPass, mnemonic: mnemonic, privateKey: privateKey);
     LOG('--> recoverUser create : $result <= $mnemonic / $privateKey');
@@ -680,8 +677,8 @@ class LoginProvider extends ChangeNotifier {
 
   Future<bool?> startLogin(EccKeyPair? key,
     {Function(LoginErrorType, String?)? onError}) async {
-    LOG('========> startLogin : ${userInfo?.email} / ${userInfo?.loginType} / $key');
-    if (STR(userInfo?.email).isNotEmpty) {
+    LOG('========> startLogin : $userEmail / ${userInfo?.loginType} / $key');
+    if (STR(userEmail).isNotEmpty) {
       var nickStr = STR(account?.accountName);
       var nickId  = Uri.encodeFull(nickStr);
       var type    = STR(userInfo?.loginType?.name);
@@ -710,6 +707,7 @@ class LoginProvider extends ChangeNotifier {
       } else if (type == 'kakaotalk' && token.isEmpty) {
         final user = await startKakaoLogin();
         token = STR(user.properties?['token']);
+        userInfo?.socialToken = token;
       }
       if (token.isNotEmpty) {
         var result = await _api.loginUser(

@@ -23,7 +23,7 @@ class MarketRepository {
   List<ProductModel>  userProductList = [];
   List<CategoryModel> categoryList = [];
   List<PurchaseModel> purchaseList = [];  // 구매 목록 (구매완료, 취소)
-  List<ProductItemModel> userItemList = [];  // 구매한 아이템 목록
+  Map<String, List<ProductItemModel>> userItemData = {};  // 구매한 아이템 목록
 
   var titleN      = ['주말 1박 2일 36홀 (4인) 조식, 숙박, 카트 무료 지원','고메 겟어웨이','제주 봄 미식 프로모션','연박 특가 프로모션','연간 회원권 2024',];
   var sellerN     = ['GoldenBAY Golf & Resort','PARK HYATT Seoul','PARNAS HOTEL JEJU','PARK HYATT Seoul','PARNAS HOTEL JEJU'];
@@ -42,7 +42,7 @@ class MarketRepository {
     productData = {}; // product cache data..
     optionData  = {}; // product item cache data..
     productList = [];
-    userItemList = [];
+    userItemData = {};
     userProductList = [];
     purchaseList = [];
 
@@ -344,6 +344,7 @@ class MarketRepository {
     var jsonData = await _apiService.getUserItemList(ownerAddr);
     if (jsonData != null) {
       var data = jsonData['data'];
+      var userItemList = userItemData[ownerAddr] ?? [];
       for (var item in data) {
         var newItem = ProductItemModel.fromJson(item);
         var isAdd = true;
@@ -358,8 +359,10 @@ class MarketRepository {
           userItemList.add(newItem);
         }
       }
+      userItemData[ownerAddr] = userItemList;
+      return userItemList;
     }
-    return userItemList;
+    return [];
   }
 
   setProductListItem(ProductModel newItem) {

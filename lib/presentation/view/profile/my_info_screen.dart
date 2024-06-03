@@ -13,6 +13,7 @@ import '../../../../presentation/view/signup/login_screen.dart';
 import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/uihelper.dart';
+import '../../../common/const/utils/userHelper.dart';
 import '../../../common/provider/market_provider.dart';
 import '../../../common/const/utils/uihelper.dart';
 import '../signup/login_pass_screen.dart';
@@ -93,6 +94,14 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                     });
                   }
                 })
+              ],
+              if (IS_APP_RESET_ON)...[
+                grayDivider(),
+                _viewModel.myInfoEditItem('앱 초기화', [['로그아웃 & 앱 초기화', '초기화']], onEdit: () {
+                  if (prov.isLogin) {
+                    _clearLocalData();
+                  }
+                })
               ]
             ]
           ),
@@ -139,5 +148,23 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
     } else {
       prov.setUserBioIdentity(false);
     }
+  }
+
+  _clearLocalData() {
+    final prov = ref.read(loginProvider);
+    Navigator.of(context).push(
+      createAniRoute(LoginPassScreen())).then((passOrg) {
+      LOG('--> _showMnemonic : $passOrg');
+      if (STR(passOrg).isNotEmpty) {
+        prov.setUserPass(passOrg);
+        UserHelper().clearAllUser().then((_) {
+          prov.logout().then((_) {
+            context.pop();
+            prov.setMainPageIndex(0);
+            showToast(TR(context, '앱 초기화 완료'));
+          });
+        });
+      }
+    });
   }
 }

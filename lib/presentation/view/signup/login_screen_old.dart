@@ -137,7 +137,6 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                       padding: const EdgeInsets.symmetric(horizontal: 19.0),
                       child: CustomTextFormField(
                           hintText: TR(context, '입력하기'),
-                          constraints: constraints,
                           focusNode: _focusNode,
                           controller: _textEditingController),
                     ),
@@ -525,10 +524,10 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
           }
         });
         showLoginErrorDialog(context,
-            LoginErrorType.recoverRequire, loginProv.userInfo?.email);
+            LoginErrorType.recoverRequire, text: loginProv.userEmail);
       } else {
         showLoginErrorDialog(context,
-            LoginErrorType.signupRequire, loginProv.userInfo?.email);
+            LoginErrorType.signupRequire, text: loginProv.userEmail);
       }
     });
   }
@@ -547,7 +546,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
               loginProv.init();
               if (isSignUp) {
                 loginProv.initSignUpKakao(onError: (code, text) {
-                  showLoginErrorDialog(context, code, text);
+                  showLoginErrorDialog(context, code, text: text);
                 }).then((result) {
                   if (result == true) {
                     Navigator.of(context)
@@ -640,7 +639,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
 
   _loginError(LoginErrorType type, String? error) {
     LOG('--> _loginError : $type, $error');
-    showLoginErrorDialog(context, type, error);
+    showLoginErrorDialog(context, type, text: error);
   }
 
   _buildLogoutButton() {

@@ -442,12 +442,13 @@ class MarketViewModel {
       future: prov.getUserItemList(ownerAddr),
       builder: (context, snapShot) {
         if (snapShot.hasData) {
-          if (prov.userItemList.isNotEmpty) {
+          var userItemList = prov.userItemList(ownerAddr);
+          if (userItemList.isNotEmpty) {
             LOG('--> prov.userItemList : ${prov.userItemList}');
             if (prov.userItemShowGrid) {
               return GridView.builder(
                   shrinkWrap: true,
-                  itemCount: prov.userItemList.length,
+                  itemCount: userItemList.length,
                   padding: EdgeInsets.symmetric(vertical: 5),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
@@ -456,18 +457,18 @@ class MarketViewModel {
                   ),
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
-                    final image = getUserItemImage(prov.userItemList[index]);
+                    final image = getUserItemImage(userItemList[index]);
                     return _userOptionListItem(
-                      prov.userItemList[index], index, image: image);
+                        userItemList[index], index, image: image);
                   }
               );
             } else {
               return ListView.builder(
                 shrinkWrap: true,
-                itemCount: prov.userItemList.length,
+                itemCount: userItemList.length,
                 padding: EdgeInsets.symmetric(vertical: 10),
                 itemBuilder: (context, index) {
-                  return _userProductListItem(prov.userItemList[index]);
+                  return _userProductListItem(userItemList[index]);
                 }
               );
             }

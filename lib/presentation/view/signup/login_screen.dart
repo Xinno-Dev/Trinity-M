@@ -213,10 +213,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           }
         });
         showLoginErrorDialog(context,
-            LoginErrorType.recoverRequire, loginProv.userInfo?.email);
+            LoginErrorType.recoverRequire, text: loginProv.userEmail);
       } else {
         showLoginErrorDialog(context,
-            LoginErrorType.signupRequire, loginProv.userInfo?.email);
+            LoginErrorType.signupRequire, text: loginProv.userEmail);
       }
     });
   }
@@ -235,7 +235,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               loginProv.init();
               if (isSignUp) {
                 loginProv.initSignUpKakao(onError: (code, text) {
-                  showLoginErrorDialog(context, code, text);
+                  showLoginErrorDialog(context, code, text: text);
                 }).then((result) {
                   if (result == true) {
                     Navigator.of(context)
@@ -290,7 +290,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   _loginError(LoginErrorType type, String? error) {
     LOG('--> _loginError : $type, $error');
-    showLoginErrorDialog(context, type, error);
+    showLoginErrorDialog(context, type, text: error);
   }
 
   _buildCreateBox() {

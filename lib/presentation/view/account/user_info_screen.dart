@@ -353,7 +353,6 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 19.0),
                       child: CustomTextFormField(
                         hintText: TR(context, '계정 이름을 입력해주세요'),
-                        constraints: constraints,
                         focusNode: _focusNode,
                         controller: _textEditingController,
                         inputFormatters: [

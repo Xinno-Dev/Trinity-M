@@ -64,6 +64,7 @@ const bool IS_PAYMENT_READY = true;     // 결제 버튼 켜기 / true
 const bool IS_CLOUD_BACKUP_ON = true;   // 클라우드 백업 켜기 / true
 const bool IS_CLOUD_BACKUP_MN = true;   // 클라우드 백업 시 니모닉 or Key / true
 const bool IS_WITHDRAWAL_ON = false;    // 회원탈퇴 메뉴 켜기 / false
+const bool IS_APP_RESET_ON = false;      // 앱 초기화 메뉴 켜기 / false
 
 // byffin.. 출시시 필수 체크..
 const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc API 이용
@@ -102,10 +103,12 @@ const int PAGE_COUNT_MAX = 3;
 const int MARKET_PAGE_COUNT_MAX = 3;
 const int PAGE_COUNT_FULL_MAX = 9999;
 const int EMAIL_SEND_TIME_MAX = 30;
-const int LOCK_SCREEN_DELAY = 0;
+const int LOCK_SCREEN_DELAY = 10;
 
 const int NICK_LENGTH_MIN = 5;
 const int NICK_LENGTH_MAX = 40;
+const int MAIL_LENGTH_MIN = 5;
+const int MAIL_LENGTH_MAX = 40;
 const int PASS_LENGTH_MIN = 5;
 const int PASS_LENGTH_MAX = 12;
 const int SUBTITLE_LENGTH_MAX = 40;

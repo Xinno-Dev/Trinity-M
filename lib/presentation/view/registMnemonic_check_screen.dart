@@ -216,7 +216,6 @@ class _RegistMnemonicCheckScreenState
                                       canRequestFocus: false,
                                       child: CustomTextFormField(
                                         hintText: TR(context, '문구 입력'),
-                                        constraints: constraints,
                                         focusNode: focusNodeList[index],
                                         controller: controllerList[index]),
                                       // onFocusChange: (status) {

@@ -107,24 +107,26 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
 
   // 니모닉으로 계정 복구..
   startRecoverMnemonic() {
-    final loginProv = ref.read(loginProvider);
+    final prov = ref.read(loginProvider);
     Navigator.of(context).push(
       createAniRoute(RecoverWalletInputScreen())).then((mnemonic) {
-      LOG('--> RecoverWalletInputScreen result : $mnemonic');
+      LOG('--> RecoverWalletInputScreen result : ${prov.userEmail} / $mnemonic');
       if (STR(mnemonic).isNotEmpty) {
-        showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
         // create password..
         Navigator.of(context).push(
           createAniRoute(RecoverPassScreen())).then((newPass) {
-          loginProv.recoverUser(
+            prov.setUserPass(newPass);
+            showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
+            prov.recoverUser(
               newPass,
               mnemonic: mnemonic,
               onError: (type, code) {
                 hideLoadingDialog();
-                showLoginErrorDialog(context, type, code);
+                showLoginErrorDialog(context, type, text: code);
                 UserHelper().clearUser();
               }).then((result) {
             LOG('--> recoverUser mn result : $result');
+            hideLoadingDialog();
             _recoverResult(result);
           });
         });
@@ -134,7 +136,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
 
   // 클라우드로 계정 복구..
   startRecoverCloud() {
-    final loginProv = ref.read(loginProvider);
+    final prov = ref.read(loginProvider);
     // downlaod from google drive..
     GoogleService.downloadKeyFromGoogleDrive(context).then((rwfStr) {
       if (STR(rwfStr).isNotEmpty) {
@@ -143,24 +145,24 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
           createAniRoute(CloudPassScreen())).then((pass) async {
           if (STR(pass).isNotEmpty) {
             // recover mnemonic..
-            LOG('--> CloudPassScreen result : $pass / $rwfStr');
             var result = await RWFExportHelper.decrypt(pass, rwfStr);
             if (result != null && result.length > 1) {
+              LOG('--> RWFExportHelper.decrypt result : $pass / ${result.length}');
               // new pass create..
-              var mnemonic = result[1];
+              var mnemonic = result.length > 1 ? result[1] : result[0];
               Navigator.of(context)
                   .push(createAniRoute(RecoverPassScreen()))
                   .then((newPass) async {
                 if (STR(newPass).isNotEmpty) {
-                  loginProv.setUserPass(newPass!);
+                  prov.setUserPass(newPass!);
                   showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
                   // start recover user..
-                  loginProv.recoverUser(
+                  prov.recoverUser(
                     newPass,
                     mnemonic: mnemonic,
                     onError: (type, code) {
                       hideLoadingDialog();
-                      showLoginErrorDialog(context, type, code);
+                      showLoginErrorDialog(context, type, text: code);
                       UserHelper().clearUser();
                     }).then((result) {
                       LOG('--> recoverUser mn result : $result');

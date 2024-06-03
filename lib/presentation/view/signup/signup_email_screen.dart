@@ -15,6 +15,7 @@ import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/back_button.dart';
+import '../../../common/const/widget/custom_text_form_field.dart';
 import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
 import 'signup_pass_screen.dart';
@@ -126,14 +127,23 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                       margin: EdgeInsets.symmetric(horizontal: 40.w),
                       child: Column(
                         children: [
-                          TextField(
+                          // TextField(
+                          //   controller: emailInputController,
+                          //   focusNode: emailFocusNode,
+                          //   decoration: InputDecoration(
+                          //     hintText: TR(context, '이메일 주소 입력'),
+                          //   ),
+                          //   keyboardType: TextInputType.emailAddress,
+                          //   scrollPadding: EdgeInsets.only(bottom: 200),
+                          //   onChanged: (text) {
+                          //     _stopTimer();
+                          //     prov.emailInput(text);
+                          //   },
+                          // ),
+                          CustomEmailFormField(
                             controller: emailInputController,
                             focusNode: emailFocusNode,
-                            decoration: InputDecoration(
-                              hintText: TR(context, '이메일 주소 입력'),
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            scrollPadding: EdgeInsets.only(bottom: 200),
+                            hintText: TR(context, '이메일 주소 입력'),
                             onChanged: (text) {
                               _stopTimer();
                               prov.emailInput(text);
@@ -155,7 +165,6 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                                       prov.sendMail = prov.inputEmail;
                                       showSimpleDialog(context,
                                         TR(context, '인증 링크가 발송 되었습니다.'),
-
                                       );
                                     } else {
                                       prov.sendMail = '';

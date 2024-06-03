@@ -48,7 +48,7 @@ Future<int> showAppUpdateDialog(
             shrinkWrap: true,
             children: [
               // Image(image: AssetImage(APP_LOGO_XL), height: 80, fit: BoxFit.fitHeight),
-              SvgPicture.asset('assets/svg/icon_info.svg',
+              Image.asset('assets/images/app_icon.png',
                 height: APP_NOTICE_SIZE.r, fit: BoxFit.fitHeight),
               SizedBox(height: 20.h),
               Container(
