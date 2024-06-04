@@ -25,10 +25,8 @@ Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) as
   if (isUpdateCheckDone) return true;
   isUpdateCheckDone = true;
   LOG('--> checkAppUpdate start');
-
   var startInfo = await provider.Provider.of<FirebaseProvider>(context,
       listen: false).getAppStartInfo();
-
   if (startInfo == null) return false;
   // check version from server..
   final versionLocal  = await LocalStorageManager.readData(APP_VERSION_KEY);
@@ -43,8 +41,8 @@ Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) as
       if (versionServer.message != null) {
         final dlgMessage = STR(versionServer.message?.text_us);
         var dlgResult = await showAppUpdateDialog(context,
-          dlgMessage.isNotEmpty ? dlgMessage : '스토어에 새 버전이 출시되었습니다!',
-          '${versionApp} > ${versionServer.version}',
+          dlgMessage.isNotEmpty ? dlgMessage : '새버전이 마켓에 출시되었습니다.',
+          '${TR(context, '현재 버전')} $versionApp\n${TR(context, '새 버전')} ${versionServer.version}',
           isForceUpdate: isForceUpdate,
         );
         LOG('----> showAppUpdateDialog result : $dlgResult');
@@ -53,8 +51,8 @@ Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) as
             if (Platform.isAndroid || Platform.isIOS) {
               Future.delayed(Duration(milliseconds: 300)).then((_) {
                 StoreRedirect.redirect(
-                    androidAppId: "com.xinno.trinity_m_00",
-                    iOSAppId: "6469018232"
+                  androidAppId: "com.xinno.trinity_m_00",
+                  iOSAppId: "6503721909"
                 );
               });
             }
@@ -103,7 +101,7 @@ Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) as
       } else if (isForceCheck) {
         showAppUpdateDialog(context,
           TR(context, '현재 최신 버전입니다.'),
-          'v $versionApp',
+          '${TR(context, '현재 버전')} $versionApp',
           title: TR(context, '앱 버전정보'),
           isForceCheck: true).then((result) {
             if (result == 1) {

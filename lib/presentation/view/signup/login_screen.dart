@@ -1,3 +1,5 @@
+import 'package:trinity_m_00/common/const/utils/userHelper.dart';
+
 import '../../../presentation/view/signup/login_restore_screen.dart';
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/uihelper.dart';
@@ -290,7 +292,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   _loginError(LoginErrorType type, String? error) {
     LOG('--> _loginError : $type, $error');
-    showLoginErrorDialog(context, type, text: error);
+    showLoginErrorDialog(context, type, text: error).then((_) async {
+      if (error == '__not_found__') {
+        final loginProv = ref.read(loginProvider);
+        loginProv.logoutWithRemoveNickId();
+      }
+    });
   }
 
   _buildCreateBox() {
@@ -300,22 +307,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           InkWell(
-              onTap: () {
-                ref.read(loginProvider).toggleLogin();
-              },
-              child: Column(
-                children: [
-                  Text(
-                    TR(context, isSignUp ? '로그인' : '회원가입'),
-                    style: typo14semibold.copyWith(color: GRAY_50),
-                  ),
-                  Container(
-                    width: 60.w,
-                    height: 1,
-                    color: GRAY_50,
-                  )
-                ],
-              )
+            onTap: () {
+              ref.read(loginProvider).toggleLogin();
+            },
+            child: Column(
+              children: [
+                Text(
+                  TR(context, isSignUp ? '로그인' : '회원가입'),
+                  style: typo14semibold.copyWith(color: GRAY_50),
+                ),
+                Container(
+                  width: 60.w,
+                  height: 1,
+                  color: GRAY_50,
+                )
+              ],
+            )
           ),
         ],
       ),

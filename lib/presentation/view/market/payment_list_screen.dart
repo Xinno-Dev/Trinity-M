@@ -39,9 +39,7 @@ class _PaymentListScreenState extends ConsumerState<PaymentListScreen> {
     final prov = ref.watch(loginProvider);
     ref.watch(marketProvider);
     return prov.isScreenLocked ? lockScreen(context) :
-      SafeArea(
-      top: false,
-      child: Scaffold(
+      Scaffold(
         appBar: defaultAppBar(TR(context, '구매 내역')),
         backgroundColor: Colors.white,
         body: Container(
@@ -54,7 +52,6 @@ class _PaymentListScreenState extends ConsumerState<PaymentListScreen> {
             ]
           ),
         ),
-      ),
-    );
+      );
   }
 }

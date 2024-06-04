@@ -31,7 +31,7 @@ import '../../common/provider/firebase_provider.dart';
 import '../../common/provider/market_provider.dart';
 import '../../presentation/view/main_screen.dart';
 import '../../presentation/view/market/payment_list_screen.dart';
-import '../../presentation/view/profile/my_info_screen.dart';
+import '../../presentation/view/profile/profile_my_info_screen.dart';
 import '../../presentation/view/profile/profile_Identity_screen.dart';
 import '../../presentation/view/profile/user_item_list_screen.dart';
 import '../../presentation/view/profile/webview_screen.dart';
@@ -213,7 +213,7 @@ class ProfileViewModel {
             case DrawerActionType.my:
               if (loginProv.isLogin) {
                 Navigator.of(context).push(
-                    createAniRoute(MyInfoScreen()));
+                    createAniRoute(ProfileMyInfoScreen()));
               } else {
                 Navigator.of(context).push(
                     createAniRoute(LoginScreen(isAppStart: false)));
@@ -302,7 +302,7 @@ class ProfileViewModel {
         children: [
           _profileImage(padding: EdgeInsets.only(bottom: 20)),
           _profileDescription(padding: EdgeInsets.only(bottom: 30)),
-          _profileButtonBox(),
+          _profileButtonBox(context),
         ],
       );
     } else {
@@ -583,34 +583,34 @@ class ProfileViewModel {
     );
   }
 
-  _profileButtonBox({EdgeInsets? padding}) {
+  _profileButtonBox(BuildContext context, {EdgeInsets? padding}) {
     return Container(
       padding: padding,
       child: Row(
         children: [
           Expanded(
-              child: PrimaryButton(
-                color: GRAY_20,
-                textStyle: typo14semibold,
-                isSmallButton: true,
-                onTap: () {
-                  showEditDescription();
-                },
-                text: TR(context, '프로필 편집'),
-              )
+            child: PrimaryButton(
+              color: GRAY_20,
+              textStyle: typo14semibold,
+              isSmallButton: true,
+              onTap: () {
+                showEditDescription(context);
+              },
+              text: TR(context, '프로필 편집'),
+            )
           ),
           SizedBox(width: 10),
           Expanded(
-              child: PrimaryButton(
-                color: GRAY_20,
-                textStyle: typo14semibold,
-                isSmallButton: true,
-                onTap: () {
-                  Navigator.of(context).push(
-                    createAniRoute(UserItemListScreen()));
-                },
-                text: TR(context, '보유 상품'),
-              )
+            child: PrimaryButton(
+              color: GRAY_20,
+              textStyle: typo14semibold,
+              isSmallButton: true,
+              onTap: () {
+                Navigator.of(context).push(
+                  createAniRoute(UserItemListScreen()));
+              },
+              text: TR(context, '보유 상품'),
+            )
           ),
         ],
       ),
@@ -686,7 +686,7 @@ class ProfileViewModel {
     });
   }
 
-  showEditAccountName() {
+  showEditAccountName(BuildContext context) {
     showInputDialog(context,
         TR(context, 'ID(닉네임) 변경'),
         defaultText: STR(loginProv.selectAccount?.accountName),
@@ -698,7 +698,7 @@ class ProfileViewModel {
         _backupAccount();
         var org = loginProv.selectAccount!.accountName;
         loginProv.selectAccount!.accountName = text;
-        _setAccountName().then((result) {
+        _setAccountName(context).then((result) {
           if (!result) {
             loginProv.selectAccount!.accountName = org;
           }
@@ -707,7 +707,7 @@ class ProfileViewModel {
     });
   }
 
-  showEditSubTitle() {
+  showEditSubTitle(BuildContext context) {
     showInputDialog(context,
         TR(context, '사용자 이름 변경'),
         defaultText: _getEditSubTitle,
@@ -725,7 +725,7 @@ class ProfileViewModel {
     });
   }
 
-  showEditDescription() {
+  showEditDescription(BuildContext context) {
     showInputDialog(context,
         TR(context, '프로필 변경'),
         defaultText: STR(loginProv.selectAccount?.description),
@@ -869,11 +869,11 @@ class ProfileViewModel {
     accountOrg = null;
   }
 
-  _setAccountName() async {
+  _setAccountName(BuildContext context) async {
     var result = await loginProv.checkNickDup(loginProv.selectAccount?.accountName);
     if (!result) {
       showToast(TR(context, '중복된 닉네임입니다'));
-      showEditAccountName();
+      showEditAccountName(context);
       return false;
     }
     var passOrg = loginProv.userPass;

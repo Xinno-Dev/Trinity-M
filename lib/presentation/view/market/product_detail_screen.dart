@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trinity_m_00/common/provider/login_provider.dart';
 import 'package:trinity_m_00/presentation/view/signup/login_screen.dart';
@@ -47,63 +48,71 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     final prov = ref.watch(marketProvider);
     final loginProv = ref.watch(loginProvider);
     return loginProv.isScreenLocked ? lockScreen(context) :
-      SafeArea(
-      top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(TR(context, '상품 정보')),
-          centerTitle: true,
-          titleTextStyle: typo16bold,
-          backgroundColor: Colors.white,
-        ),
-        backgroundColor: Colors.white,
-        body: FutureBuilder(
-          future: prov.getProductDetail(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView(
-                shrinkWrap: true,
-                children: [
-                  _viewModel.showProductDetail(widget.isShowSeller),
-                  if (prov.isShowDetailTab)
-                    _viewModel.showProductInfoTab(ref),
-                ]
-              );
-            } else {
-              return showLoadingFull();
-            }
-          }
-        ),
-        bottomNavigationBar:
-          (widget.isCanBuy && loginProv.isLogin) ?
-          OpenContainer(
-            transitionType: ContainerTransitionType.fadeThrough,
-            closedBuilder: (context, builder) {
-              return PrimaryButton(
-                text: TR(context, '구매하기'),
-                round: 0,
-              );
-            },
-            openBuilder: (context, builder) {
-              return ProductBuyScreen();
-            },
-          ) : PrimaryButton(
-            onTap: () {
-              Navigator.of(context).push(
-                createAniRoute(LoginScreen(
-                isAppStart: false, isWillReturn: true)))
-                .then((result) {
-                  if (BOL(result)) {
-                    prov.refresh();
-                    Navigator.of(context).push(
-                      createAniRoute(ProductBuyScreen()));
-                  }
-              });
-            },
-            text: TR(context, '구매하기'),
-            round: 0,
-          )
+    AnnotatedRegion<SystemUiOverlayStyle>(
+      value:SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: WHITE,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarIconBrightness:Brightness.dark,
       ),
+      child: SafeArea(
+        top: false,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(TR(context, '상품 정보')),
+            centerTitle: true,
+            titleTextStyle: typo16bold,
+            backgroundColor: Colors.white,
+          ),
+          backgroundColor: Colors.white,
+          body: FutureBuilder(
+            future: prov.getProductDetail(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView(
+                  shrinkWrap: true,
+                  children: [
+                    _viewModel.showProductDetail(widget.isShowSeller),
+                    if (prov.isShowDetailTab)
+                      _viewModel.showProductInfoTab(ref),
+                  ]
+                );
+              } else {
+                return showLoadingFull();
+              }
+            }
+          ),
+          bottomNavigationBar:
+            (widget.isCanBuy && loginProv.isLogin) ?
+            OpenContainer(
+              transitionType: ContainerTransitionType.fadeThrough,
+              closedBuilder: (context, builder) {
+                return PrimaryButton(
+                  text: TR(context, '구매하기'),
+                  round: 0,
+                );
+              },
+              openBuilder: (context, builder) {
+                return ProductBuyScreen();
+              },
+            ) : PrimaryButton(
+              onTap: () {
+                Navigator.of(context).push(
+                  createAniRoute(LoginScreen(
+                  isAppStart: false, isWillReturn: true)))
+                  .then((result) {
+                    if (BOL(result)) {
+                      prov.refresh();
+                      Navigator.of(context).push(
+                        createAniRoute(ProductBuyScreen()));
+                    }
+                });
+              },
+              text: TR(context, '구매하기'),
+              round: 0,
+            )
+        ),
+      )
     );
   }
 }

@@ -561,10 +561,12 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type,
                 Text(errorText1,
                   style: typo16bold,
                   textAlign: TextAlign.center),
-                SizedBox(height: 10),
-                Text(errorText2,
-                  style: typo14normal.copyWith(color: SECONDARY_90),
-                  textAlign: TextAlign.center),
+                if (STR(errorText2).isNotEmpty)...[
+                  SizedBox(height: 10),
+                  Text(STR(errorText2),
+                    style: typo14normal.copyWith(color: SECONDARY_90),
+                    textAlign: TextAlign.center),
+                ]
               ],
               if (type != LoginErrorType.code)...[
                 SizedBox(height: 10),
@@ -633,6 +635,8 @@ getLoginErrorCodeText(String codeText) {
       return ['잘못된 서명입니다.', '복구한 계정일 경우,\n복구 파일 or 단어를 확인해 주세요.'];
     case '__invalid_token__':
       return ['잘못된 토큰입니다.', '로그아웃후 다시 로그인 해 주세요.'];
+    case '__not_found__':
+      return ['대상을 찾을 수 없습니다.', '다시 로그인 해 주세요.'];
   }
   return codeText;
 }

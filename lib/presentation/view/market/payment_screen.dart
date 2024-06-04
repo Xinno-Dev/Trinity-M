@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iamport_flutter/iamport_payment.dart';
 import 'package:iamport_flutter/model/payment_data.dart';
 import 'package:trinity_m_00/common/const/utils/uihelper.dart';
+import 'package:trinity_m_00/common/const/widget/dialog_utils.dart';
 import 'package:trinity_m_00/common/provider/market_provider.dart';
 import 'package:trinity_m_00/presentation/view/market/payment_done_screen.dart';
 import 'package:trinity_m_00/presentation/view/market/product_detail_screen.dart';
@@ -57,8 +58,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         LOG('--> show payment result : $result');
         if (BOL(result['success'])) {
           if (IS_PAYMENT_ON) {
+            showLoadingDialog(context, TR(context, '결제 검증중입니다.'));
+            prov.checkCount = 0;
             prov.checkPurchase(result).then((checkResult) {
               LOG('--> checkResult : $checkResult');
+              hideLoadingDialog();
               if (checkResult) {
                 showToast(TR(context, '결제에 성공했습니다.'));
                 context.pushReplacementNamed(PaymentDoneScreen.routeName);

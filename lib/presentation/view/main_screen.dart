@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trinity_m_00/common/const/constants.dart';
 import 'package:trinity_m_00/services/api_service.dart';
@@ -85,12 +86,18 @@ class _MainScreenState extends ConsumerState<MainScreen>
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     _movePage();
-    return SafeArea(
-      top: false,
-      child: prov.isScreenLocked ? lockScreen(context) :
-      Scaffold(
+    return prov.isScreenLocked ? lockScreen(context) :
+      AnnotatedRegion<SystemUiOverlayStyle>(
+        value:SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: WHITE,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarIconBrightness:Brightness.dark,
+      ),
+      child: Scaffold(
         key: _scaffoldController,
         drawerEnableOpenDragGesture: false,
+        backgroundColor: WHITE,
         appBar: AppBar(
           title: _viewModel.getPageTitle(context),
           titleSpacing: 0,
@@ -163,59 +170,60 @@ class _MainScreenState extends ConsumerState<MainScreen>
             SizedBox(width: 45),
           ],
         ),
-        body: Stack(
-          children: [
-            PageView(
-              controller: _pageController,
-              onPageChanged: _selectPage,
-              physics: NeverScrollableScrollPhysics(),
-              children: _mainPages,
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: kToolbarHeight,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    topLeft:  Radius.circular(20),
-                  ),
-                  color: Colors.white,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          _selectPage(0);
-                        },
-                        child: Center(
-                          child: Text(TR(context, 'Market'),
-                            style: prov.mainPageIndex == 0 ?
-                            typo16bold.copyWith(color: PRIMARY_100) : typo16regular),
-                        ),
-                      )
+        body: SafeArea(
+          child: Stack(
+            children: [
+              PageView(
+                controller: _pageController,
+                onPageChanged: _selectPage,
+                physics: NeverScrollableScrollPhysics(),
+                children: _mainPages,
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: kToolbarHeight,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft:  Radius.circular(20),
                     ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          _selectPage(1);
-                        },
-                        child: Center(
-                          child: SvgPicture.asset('assets/svg/'
-                            'icon_profile_0${prov.mainPageIndex == 1 ? '1' : '0'}.svg'),
+                    color: Colors.white,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              _selectPage(0);
+                            },
+                            child: Center(
+                              child: Text(TR(context, 'Market'),
+                                  style: prov.mainPageIndex == 0 ?
+                                  typo16bold.copyWith(color: PRIMARY_100) : typo16regular),
+                            ),
+                          )
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            _selectPage(1);
+                          },
+                          child: Center(
+                            child: SvgPicture.asset('assets/svg/'
+                                'icon_profile_0${prov.mainPageIndex == 1 ? '1' : '0'}.svg'),
+                          ),
                         ),
                       ),
-                    ),
-                  ]
+                    ]
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
-        backgroundColor: Colors.white,
         drawer: _viewModel.mainDrawer(context),
         // floatingActionButton: FloatingActionButton(
         //   onPressed: () async {

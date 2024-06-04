@@ -17,7 +17,7 @@ class FirebaseProvider extends ChangeNotifier {
   String? pushToken;
   AppStartModel? startInfo;
 
-  FirebaseProvider() {
+  initFirebase() {
     messaging ??= FirebaseMessaging.instance;
     messaging!.getToken().then((token) {
       pushToken = token;
@@ -28,7 +28,8 @@ class FirebaseProvider extends ChangeNotifier {
     var result = await api.getAppStartInfo();
     if (result != null) {
       startInfo = AppStartModel.fromJson(result);
-      print('---> getAppStartInfo result : ${getServerVersion('android')}');
+      print('---> getAppStartInfo result : '
+        '${getServerVersion('android')} / ${getServerVersion('ios')}');
       return startInfo;
     }
     return null;

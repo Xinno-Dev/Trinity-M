@@ -445,7 +445,7 @@ class LoginProvider extends ChangeNotifier {
       if (STR(userNickId).isEmpty) {
         await UserHelper().setUserKey(STR(userInfo?.email));
         await _refreshAccountList();
-        userInfo = await _updateUserInfo();
+        userInfo = await updateUserInfo();
         if (userInfo != null) {
           userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
           return true;
@@ -493,11 +493,11 @@ class LoginProvider extends ChangeNotifier {
         await _refreshAccountList();
         if (await checkUserHasLocalInfo(STR(userEmail))) {
           // check login pass..
-          var pass = await Navigator.of(context).push(
+          final pass = await Navigator.of(context).push(
               createAniRoute(LoginPassScreen()));
           if (STR(pass).isNotEmpty) {
             setUserPass(pass!);
-            var result = await startLoginWithKey(onError: (type, text) {
+            final result = await startLoginWithKey(onError: (type, text) {
               if (!isAutoLogin && onError != null) {
                 onError(type, text);
               }
@@ -704,18 +704,24 @@ class LoginProvider extends ChangeNotifier {
         } else {
           if (onError != null) onError(LoginErrorType.loginFail, null);
         }
-      } else if (type == 'kakaotalk' && token.isEmpty) {
-        final user = await startKakaoLogin();
-        token = STR(user.properties?['token']);
-        userInfo?.socialToken = token;
+      // } else if (type == 'kakaotalk' && token.isEmpty) {
+      //   final user = await startKakaoLogin();
+      //   token = STR(user.properties?['token']);
+      //   userInfo?.socialToken = token;
       }
       if (token.isNotEmpty) {
         var result = await _api.loginUser(
-            nickStr, type, email, token, onError: onError);
+          nickStr, type, email, token, onError: (code, text) {
+            if (text == '__not_found__') {
+
+            }
+            if (onError != null) onError(code, text);
+          }
+        );
         if (result) {
           // // get all account info when nickId empty..
           // if (STR(userNickId).isEmpty) {
-            userInfo = await _updateUserInfo();
+            userInfo = await updateUserInfo();
           // }
           userInfo!.uid = await UserHelper().get_uid();
           userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
@@ -1104,6 +1110,21 @@ class LoginProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  logoutWithRemoveNickId() async {
+    LOG('--> logoutWithRemoveNickId : ${userInfo?.addressList?.length}');
+    if (userInfo?.addressList != null) {
+      var addrListJson = [];
+      for (AddressModel item in userInfo!.addressList!) {
+        item.accountName = '';
+        addrListJson.add(item.toJson());
+      }
+      await UserHelper().setUser(addressList: jsonEncode(addrListJson));
+    }
+    if (isLogin) {
+      await logout();
+    }
+  }
+
   logout([var isRefresh = true]) async {
     switch(loginType) {
       case LoginType.kakaotalk:
@@ -1123,7 +1144,8 @@ class LoginProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<UserModel?> _updateUserInfo() async {
+  Future<UserModel?> updateUserInfo() async {
+    LOG('-------> _updateUserInfo()');
     var tmpUserInfo = await getUserInfo();
     if (tmpUserInfo?.addressList != null) {
       var accountCount = INT(userInfo?.addressList?.length);

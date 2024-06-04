@@ -48,63 +48,60 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
     final prov = ref.watch(marketProvider);
     final loginProv = ref.watch(loginProvider);
     return loginProv.isScreenLocked ? lockScreen(context) :
-      SafeArea(
-        top: false,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(TR(context, '구매하기')),
-            centerTitle: true,
-            titleTextStyle: typo16bold,
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: false,
-            leading: IconButton(
-              onPressed: context.pop,
-              icon: Icon(Icons.close),
-            ),
-          ),
+      Scaffold(
+        appBar: AppBar(
+          title: Text(TR(context, '구매하기')),
+          centerTitle: true,
+          titleTextStyle: typo16bold,
           backgroundColor: Colors.white,
-          body: Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    _viewModel.showBuyBox(),
-                  ]
-                ),
-              ),
-              if (!prov.purchaseReady)
-                Padding(padding: EdgeInsets.all(10),
-                child: Text(TR(context, '* 옵션을 선택해 주세요.'),
-                  style: typo12bold.copyWith(color: Colors.red))),
-            ],
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: context.pop,
+            icon: Icon(Icons.close),
           ),
-          bottomNavigationBar: IS_PAYMENT_READY && prov.purchaseReady ?
-            PrimaryButton(
-              text: TR(context, '결제하기'),
-              round: 0,
-              onTap: () {
-                loginProv.disableLockScreen();
-                LOG('--> userIdentityYN : ${loginProv.userIdentityYN}');
-                if (loginProv.userIdentityYN) {
-                  _startPurchase();
-                } else {
-                  // 본인인증이 안되있을경우 본인인증 부터..
-                  Navigator.of(context).push(
-                    createAniRoute(ProfileIdentityScreen())).then((result) {
-                      if (BOL(result)) {
-                        loginProv.userInfo!.certUpdt = DateTime.now().toString();
-                        _startPurchase();
-                      } else {
-                        loginProv.enableLockScreen();
-                      }
-                  });
-                }
-              },
-            ) : DisabledButton(
-              text: TR(context, '결제하기'),
-            )
         ),
+        backgroundColor: Colors.white,
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  _viewModel.showBuyBox(),
+                ]
+              ),
+            ),
+            if (!prov.purchaseReady)
+              Padding(padding: EdgeInsets.all(10),
+              child: Text(TR(context, '* 옵션을 선택해 주세요.'),
+                style: typo12bold.copyWith(color: Colors.red))),
+          ],
+        ),
+        bottomNavigationBar: IS_PAYMENT_READY && prov.purchaseReady ?
+          PrimaryButton(
+            text: TR(context, '결제하기'),
+            round: 0,
+            onTap: () {
+              loginProv.disableLockScreen();
+              LOG('--> userIdentityYN : ${loginProv.userIdentityYN}');
+              if (loginProv.userIdentityYN) {
+                _startPurchase();
+              } else {
+                // 본인인증이 안되있을경우 본인인증 부터..
+                Navigator.of(context).push(
+                  createAniRoute(ProfileIdentityScreen())).then((result) {
+                    if (BOL(result)) {
+                      loginProv.userInfo!.certUpdt = DateTime.now().toString();
+                      _startPurchase();
+                    } else {
+                      loginProv.enableLockScreen();
+                    }
+                });
+              }
+            },
+          ) : DisabledButton(
+            text: TR(context, '결제하기'),
+          )
       );
   }
 

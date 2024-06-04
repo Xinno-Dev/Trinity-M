@@ -58,12 +58,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCZaK-tqgUr-UKL8Gaes43GuGc0a7mKy_o',
-    appId: '1:817174764301:android:14b693dc56484d2dd16e44',
+    apiKey: 'AIzaSyCAsyBW8RmebcPd2vQmqym915U1JqDytB4',
+    appId: '1:817174764301:ios:7e92898f55d345b7d16e44',
     messagingSenderId: '817174764301',
     projectId: 'trinity-m-00',
     storageBucket: 'trinity-m-00.appspot.com',
-    iosClientId: '817174764301-lbhai89qrrml3hs9hnqg2v7lhmdd083i.apps.googleusercontent.com',
+    iosClientId: '817174764301-5hs25hmn82h0t644ha098jdn4s1mhni4.apps.googleusercontent.com',
     iosBundleId: 'com.xinno.trinity-m-00',
   );
 }

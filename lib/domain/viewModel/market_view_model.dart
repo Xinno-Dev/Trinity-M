@@ -19,7 +19,7 @@ import '../../common/const/widget/primary_button.dart';
 import '../../presentation/view/market/item_select_screen.dart';
 import '../../presentation/view/market/payment_item_screen.dart';
 import '../../presentation/view/market/product_detail_screen.dart';
-import '../../presentation/view/profile/profile_targetl_screen.dart';
+import '../../presentation/view/profile/profile_target_screen.dart';
 import '../model/product_item_model.dart';
 import '../model/product_model.dart';
 import '../model/seller_model.dart';
@@ -532,7 +532,9 @@ class MarketViewModel {
                 ),
               ],
               _barcodeSelectButtonBox(item),
-              _contentTitleBarFromItem(item, isShowAmount: false),
+              _contentTitleBarFromItem(item,
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  isShowAmount: false),
               _contentDescriptionFromItem(item),
               if (STR(item.externalUrl).isNotEmpty)
                 _contextExternalImage(STR(item.externalUrl),
@@ -568,8 +570,8 @@ class MarketViewModel {
                         color: Colors.transparent,
                         alignment: Alignment.center,
                         child: Text(TR(context, '바코드'),
-                            style: typo14bold.copyWith(
-                                color: !isQR ? GRAY_80 : GRAY_30)),
+                          style: typo14bold.copyWith(
+                            color: !isQR ? GRAY_80 : GRAY_30)),
                       ),
                     )),
                     Container(
@@ -588,8 +590,8 @@ class MarketViewModel {
                         color: Colors.transparent,
                         alignment: Alignment.center,
                         child: Text(TR(context, 'QR'),
-                            style: typo14bold.copyWith(
-                              color: isQR ? GRAY_80 : GRAY_20))
+                          style: typo14bold.copyWith(
+                            color: isQR ? GRAY_80 : GRAY_20))
                       ),
                     )),
                   ],

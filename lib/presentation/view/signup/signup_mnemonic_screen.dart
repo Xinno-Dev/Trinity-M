@@ -60,9 +60,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     return prov.isScreenLocked ? lockScreen(context) :
-      SafeArea(
-      top: false,
-      child: Scaffold(
+      Scaffold(
         backgroundColor: WHITE,
         appBar: defaultAppBar(TR(context, '계정 복구 단어 백업')),
         body: LayoutBuilder(builder: (context, constraints) {
@@ -220,7 +218,6 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
             showToast(TR(context, '회원가입 완료'));
           },
         ) : null,
-      ),
     );
   }
 }

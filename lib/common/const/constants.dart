@@ -113,6 +113,7 @@ const int PASS_LENGTH_MIN = 5;
 const int PASS_LENGTH_MAX = 12;
 const int SUBTITLE_LENGTH_MAX = 40;
 const int PROFILE_LENGTH_MAX = 300;
+const int CHECK_PURCHASE_DELAY = 2; // 구매 체크 delay..
 
 const int DECIMAL_PLACES = 8;
 const double PROFILE_RADIUS = 80.0;

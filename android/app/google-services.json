@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "817174764301-bkl1bh96e0jhkeo65vq9t28q69oic8bc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xinno.trinity_m_00",
+            "certificate_hash": "c8a36f8f28b7c61f32e853ae57f3bcf220879c15"
+          }
+        },
+        {
           "client_id": "817174764301-ln8vn1q02r5s863selqa9l0t26tk4cqn.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -45,6 +53,14 @@
             {
               "client_id": "817174764301-ln8vn1q02r5s863selqa9l0t26tk4cqn.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "817174764301-5hs25hmn82h0t644ha098jdn4s1mhni4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.xinno.trinity-m-00",
+                "app_store_id": "6503721909"
+              }
             }
           ]
         }

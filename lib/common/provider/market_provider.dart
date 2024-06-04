@@ -10,7 +10,7 @@ import '../../../../common/const/utils/convertHelper.dart';
 import '../../../../common/const/widget/primary_button.dart';
 import '../../../../domain/model/product_model.dart';
 import '../../../../domain/repository/market_repository.dart';
-import '../../presentation/view/profile/profile_targetl_screen.dart';
+import '../../presentation/view/profile/profile_target_screen.dart';
 import '../../../../services/api_service.dart';
 
 import '../../domain/model/category_model.dart';
@@ -48,6 +48,7 @@ class MarketProvider extends ChangeNotifier {
   late DateTime purchaseEndDate;
   late PaymentData payData;
 
+  var checkCount = 0;
   var selectCategory = 0;
   var selectDetailTab = 0;
   var optionIndex = -1;
@@ -365,15 +366,22 @@ class MarketProvider extends ChangeNotifier {
   }
 
   Future<bool> checkPurchase(JSON info) async {
-    LOG('--> checkPurchase : $info');
+    LOG('--> checkPurchase : $info / $checkCount');
+    if (checkCount++ > 5) return false;
     var impUid      = STR(info['imp_uid'      ]);
     var status      = STR(info['status'       ]);
     var merchantId  = STR(info['merchant_uid' ]);
-    await Future.delayed(Duration(seconds: 1)); // 딜레이.. 1초..
+    await Future.delayed(Duration(seconds: CHECK_PURCHASE_DELAY)); // 딜레이.. 1초..
     var result = await _repo.checkPurchase(impUid, merchantId, status);
     LOG('--> checkPurchase result : ${STR(result?['status'])}');
-    if (result != null && STR(result['status']) == '4') {
-      return updatePurchaseInfo(info);
+    if (result != null) {
+      // 결제 완료..
+      if (STR(result['status']) == '4') {
+        return updatePurchaseInfo(info);
+        // 결제 검증중..
+      } else if (STR(result['status']) == '3') {
+        return await checkPurchase(info);
+      }
     }
     return false;
   }

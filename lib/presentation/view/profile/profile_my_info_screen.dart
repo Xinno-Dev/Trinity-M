@@ -21,15 +21,15 @@ import '../signup/signup_bio_screen.dart';
 import '../signup/signup_mnemonic_screen.dart';
 import 'profile_Identity_screen.dart';
 
-class MyInfoScreen extends ConsumerStatefulWidget {
-  MyInfoScreen({super.key});
-  static String get routeName => 'myInfoScreen';
+class ProfileMyInfoScreen extends ConsumerStatefulWidget {
+  ProfileMyInfoScreen({super.key});
+  static String get routeName => 'profileMyInfoScreen';
 
   @override
-  ConsumerState<MyInfoScreen> createState() => _MyInfoScreenState();
+  ConsumerState<ProfileMyInfoScreen> createState() => _MyInfoScreenState();
 }
 
-class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
+class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
   late ProfileViewModel _viewModel;
   late MarketViewModel _marketViewModel;
 
@@ -44,9 +44,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
     final prov = ref.watch(loginProvider);
     _viewModel.context = context;
     return prov.isScreenLocked ? lockScreen(context) :
-    SafeArea(
-      top: false,
-      child: Scaffold(
+      Scaffold(
         appBar: defaultAppBar(TR(context, '내 정보')),
         body: Scaffold(
           backgroundColor: Colors.white,
@@ -60,12 +58,12 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
               grayDivider(),
               _viewModel.myInfoEditItem('ID(닉네임)',
                 [[prov.userId,'변경']], onEdit: () {
-                  _viewModel.showEditAccountName();
+                  _viewModel.showEditAccountName(context);
                 }),
               grayDivider(),
               _viewModel.myInfoEditItem('사용자 이름',
                 [[prov.userName,'변경']], onEdit: () {
-                  _viewModel.showEditSubTitle();
+                  _viewModel.showEditSubTitle(context);
                 }),
               grayDivider(),
               _viewModel.myInfoEditItem('본인인증',
@@ -105,7 +103,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
               ]
             ]
           ),
-        ),
       )
     );
   }

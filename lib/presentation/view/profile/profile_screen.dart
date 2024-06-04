@@ -40,36 +40,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     return prov.isScreenLocked ? lockScreen(context) :
-      SafeArea(
-        top: false,
-        child: GestureDetector(
-          onTap: _viewModel.hideProfileSelectBox,
-          child: Scaffold(
-            backgroundColor: Colors.white,
-            body: Stack(
+    GestureDetector(
+      onTap: _viewModel.hideProfileSelectBox,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: [
+            ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.symmetric(horizontal: 20),
               children: [
-                 ListView(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  children: [
-                    SizedBox(height: 10.h),
-                    if (prov.isLogin)...[
-                      _viewModel.showProfile(context),
-                      _marketViewModel.showUserProductList(
-                        TR(context, 'Market'),
-                        prov.accountAddress,
-                        isShowSeller: false, isCanBuy: false),
-                    ]
-                  ]
-                ),
-                if (prov.isShowMask)
-                  Container(
-                    color: Colors.black38,
-                  )
+                SizedBox(height: 10.h),
+                if (prov.isLogin)...[
+                  _viewModel.showProfile(context),
+                  _marketViewModel.showUserProductList(
+                    TR(context, 'Market'),
+                    prov.accountAddress,
+                    isShowSeller: false, isCanBuy: false),
+                ]
               ]
-            )
-          ),
+            ),
+            if (prov.isShowMask)
+              Container(
+                color: Colors.black38,
+              )
+          ]
         )
-      );
+      ),
+    );
   }
 }

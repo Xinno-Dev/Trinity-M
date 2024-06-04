@@ -38,9 +38,7 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
     final prov = ref.watch(loginProvider);
     ref.watch(marketProvider);
     return prov.isScreenLocked ? lockScreen(context) :
-      SafeArea(
-      top: false,
-      child: Scaffold(
+      Scaffold(
         appBar: defaultAppBar(TR(context, '보유 상품')),
         backgroundColor: WHITE,
         body: Stack(
@@ -57,7 +55,6 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
             )
           ]
         ),
-      ),
-    );
+      );
   }
 }

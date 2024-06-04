@@ -41,9 +41,7 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
     final prov = ref.watch(marketProvider);
     final loginProv = ref.watch(loginProvider);
     return loginProv.isScreenLocked ? lockScreen(context) :
-    SafeArea(
-      top: false,
-      child: Scaffold(
+      Scaffold(
         appBar: AppBar(
           title: Text(TR(context, STR(widget.seller.nickId))),
           centerTitle: true,
@@ -67,7 +65,6 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
                 isShowSeller: false, isCanBuy: true),
           ]
         )
-      ),
     );
   }
 }

@@ -38,19 +38,17 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
-    return SafeArea(
-      top: false,
-      child: Container(
-        child: Stack(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 40.h),
-              child: _viewModel.showProductList(),
-            ),
-            _viewModel.showCategoryBar(),
-          ]
-        )
+    return Container(
+      child: Stack(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 40.h),
+            child: _viewModel.showProductList(),
+          ),
+          _viewModel.showCategoryBar(),
+        ]
       )
     );
+
   }
 }

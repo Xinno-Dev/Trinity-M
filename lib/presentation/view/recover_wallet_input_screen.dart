@@ -30,7 +30,7 @@ class RecoverWalletInputScreen extends StatefulWidget {
 class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
   final _focusNodeList =
       List<FocusNode>.generate(12, (index) => FocusNode());
-  final _controllerList = true ?
+  final _controllerList = IS_DEV_MODE ?
       List.generate(12, (index) => TextEditingController(text: EX_TEST_MN_02.split(' ')[index])) :
       List.generate(12, (index) => TextEditingController());
 

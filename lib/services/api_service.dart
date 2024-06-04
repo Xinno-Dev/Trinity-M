@@ -257,7 +257,7 @@ class ApiService {
   //////////////////////////////////////////////////////////////////////////
   //
   //  유저 로그인
-  //  /auth/signIn/{email}
+  //  /auth/sign-in/{email}
   //
 
   Future<bool> loginUser(
@@ -272,7 +272,7 @@ class ApiService {
     try {
       LOG('------> API loginUser [$email] : $nickId, $type, $authToken');
       final response = await http.post(
-        Uri.parse(httpUrl + '/auth/signIn/$email'),
+        Uri.parse(httpUrl + '/auth/sign-in/$email'),
         headers: {
           'accept': 'application/json',
           'Content-Type': 'application/json',
@@ -284,7 +284,7 @@ class ApiService {
         })
       );
       LOG('--> API loginUser response :'
-          ' ${response.statusCode} / ${response.body}');
+        ' ${response.statusCode} / ${response.body}');
       var resultJson = jsonDecode(response.body);
       if (isSuccess(response.statusCode)) {
         if (resultJson['result'] != null) {

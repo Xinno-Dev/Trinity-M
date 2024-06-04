@@ -8,7 +8,7 @@
 PRODUCT_NAME = larba_00
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.exino.larba00
+PRODUCT_BUNDLE_IDENTIFIER = com.xinno.trinity-m-00
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 com.exino. All rights reserved.

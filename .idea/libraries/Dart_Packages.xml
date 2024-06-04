@@ -1041,7 +1041,7 @@
         <entry key="image_picker">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/image_picker-1.1.1/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/image_picker-1.1.2/lib" />
             </list>
           </value>
         </entry>
@@ -2137,7 +2137,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image_cropper-5.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image_cropper_for_web-3.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image_cropper_platform_interface-5.0.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image_picker-1.1.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image_picker-1.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image_picker_for_web-3.0.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image_picker_ios-0.8.11/lib" />

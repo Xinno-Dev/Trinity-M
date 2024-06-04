@@ -1,4 +1,6 @@
 
+import 'package:trinity_m_00/common/const/widget/primary_button.dart';
+
 import '../../../common/common_package.dart';
 import 'package:flutter/material.dart';
 
@@ -27,9 +29,11 @@ Future<int> showAppUpdateDialog(
           alignment: Alignment.center,
           child: Text(TR(context, title ?? '앱 업데이트'), style: typo16bold),
         ),
+        backgroundColor: WHITE,
+        surfaceTintColor: WHITE,
         insetPadding: EdgeInsets.all(30.r),
         contentPadding: EdgeInsets.all(20.r),
-        actionsPadding: EdgeInsets.only(left: 30.w, right: 30.w, bottom: 10.h),
+        actionsPadding: EdgeInsets.only(left: 30.w, right: 30.w, bottom: 5.h),
         actionsAlignment: isForceCheck ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20.r))),
@@ -60,21 +64,24 @@ Future<int> showAppUpdateDialog(
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: 30.h),
+              SizedBox(height: 20.h),
               if (msg!.isNotEmpty)...[
                 Container(
                   width: double.infinity,
                   alignment: Alignment.center,
                   child: Text(
                     msg,
-                    style: typo16bold.copyWith(color: SECONDARY_90),
+                    style: typo16medium.copyWith(color: SECONDARY_90),
                   ),
                 ),
               ],
-              SizedBox(height: 30.h),
-              RoundedButton.active(TR(context, '마켓으로 이동'),
-                backgroundColor: PRIMARY_100,
-                onPressed: () {
+              SizedBox(height: 20.h),
+              PrimaryButton(
+                text: TR(context, '마켓으로 이동'),
+                textStyle: typo14bold,
+                isBorderShow: true,
+                color: WHITE,
+                onTap: () {
                   Navigator.of(context).pop(1);
                 },
               )

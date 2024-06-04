@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:biometric_storage/biometric_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../../../common/const/utils/uihelper.dart';
@@ -152,8 +153,16 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                           loginProv.signUpUser().then((result) {
                             hideLoadingDialog();
                             if (loginProv.isLogin) {
-                              Navigator.of(context).push(
-                                  createAniRoute(SignUpBioScreen()));
+                              BiometricStorage().canAuthenticate().then((response) {
+                                LOG('---> canAuthenticate : $response');
+                                if (response == CanAuthenticateResponse.success) {
+                                  Navigator.of(context).push(
+                                      createAniRoute(SignUpBioScreen()));
+                                } else {
+                                  Navigator.of(context).push(
+                                      createAniRoute(SignUpMnemonicScreen()));
+                                }
+                              });
                             }
                             showToast(TR(context,
                                 loginProv.isLogin ? '회원가입 성공' : '회원가입 실패'));
