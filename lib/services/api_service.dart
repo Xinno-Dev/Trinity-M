@@ -319,6 +319,7 @@ class ApiService {
     {
       String? subTitle,
       String? desc,
+      Function(LoginErrorType, String?)? onError,
     }
   ) async {
     var jwt = await AesManager().localJwt;
@@ -344,9 +345,13 @@ class ApiService {
         );
         LOG('--> API addAddress response : ${response.statusCode} / ${response
             .body}');
+        var resultJson = jsonDecode(response.body);
         if (isSuccess(response.statusCode)) {
-          var result = jsonDecode(response.body)['result'];
-          return STR(result['address']).isNotEmpty;
+          return STR(resultJson['result']['address']).isNotEmpty;
+        } else {
+          var errorCode = STR(resultJson['err' ]?['code']);
+          LOG('--> API addAccount error : $errorCode');
+          if (onError != null) onError(LoginErrorType.code, errorCode);
         }
       } catch (e) {
         LOG('--> API addAddress error : $e');
@@ -362,7 +367,9 @@ class ApiService {
   //  /users/{uid}
   //
 
-  Future<JSON?> getUserInfo() async {
+  Future<JSON?> getUserInfo({
+      Function(LoginErrorType, String?)? onError,
+    }) async {
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
@@ -376,11 +383,13 @@ class ApiService {
         },
       );
       LOG('--> API getUserInfo response : ${response.statusCode} / ${response.body}');
+      var resultJson = jsonDecode(response.body);
       if (isSuccess(response.statusCode)) {
-        var resultJson = jsonDecode(response.body);
-        if (resultJson['result'] != null) {
-          return resultJson['result'];
-        }
+        return resultJson['result'];
+      } else {
+        var errorCode = STR(resultJson['err' ]?['code']);
+        LOG('--> API getUserInfo error : $errorCode');
+        if (onError != null) onError(LoginErrorType.code, errorCode);
       }
     } catch (e) {
       LOG('--> API getUserInfo error : $e');
@@ -401,6 +410,7 @@ class ApiService {
     String? subTitle,
     String? desc,
     String? imageUrl,
+    Function(LoginErrorType, String?)? onError,
   }) async {
     try {
       var jwt = await AesManager().localJwt;
@@ -424,8 +434,13 @@ class ApiService {
         })
       );
       LOG('--> API setUserInfo response : ${response.statusCode} / ${response.body}');
+      var resultJson = jsonDecode(response.body);
       if (isSuccess(response.statusCode)) {
         return true;
+      } else {
+        var errorCode = STR(resultJson['err' ]?['code']);
+        LOG('--> API getUserInfo error : $errorCode');
+        if (onError != null) onError(LoginErrorType.code, errorCode);
       }
       return false;
     } catch (e) {

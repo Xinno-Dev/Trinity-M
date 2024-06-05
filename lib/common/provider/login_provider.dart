@@ -144,6 +144,9 @@ enum DrawerActionType {
 final testEmail = 'jubal2000@hanmail.net';
 final testPass  = 'testpass00';
 
+final mainScaffoldKey = GlobalKey<ScaffoldState>();
+
+
 final loginProvider = ChangeNotifierProvider<LoginProvider>((_) {
   return LoginProvider();
 });
@@ -805,7 +808,7 @@ class LoginProvider extends ChangeNotifier {
     LOG('--> setUserNickId : [$newNickId] / $message');
     var sig = await createSign(message);
     if (sig != null) {
-      var addResult = await _api.addAccount(nickId, walletAddress, sig);
+      var addResult = await _api.addAccount(nickId, walletAddress, sig, onError: _apiError);
       if (addResult == true) {
         LOG('--> setUserNickId success !!');
         return true;
@@ -981,6 +984,15 @@ class LoginProvider extends ChangeNotifier {
         'verifyCode': vfCodeEnc
       };
     }
+  }
+
+  _apiError(LoginErrorType type, String? error) {
+    LOG('--> _apiError : $type, $error');
+    showLoginErrorDialog(mainScaffoldKey.currentContext!, type, text: error).then((_) async {
+      if (error == '__not_found__' || error == '__unauthorized__') {
+        await logoutWithRemoveNickId();
+      }
+    });
   }
 
   ////////////////////////////////////////////////////////////////////////
@@ -1308,12 +1320,18 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<String?> readBioStorage(String key) async {
-    var encEmail = crypto.sha256.convert(utf8.encode(userEmail)).toString();
-    var name = '${key}-${encEmail}';
-    var storage = await BiometricStorage().getStorage(name, promptInfo: _prompt);
-    var value = await storage.read();
-    LOG('--> readBioStorage : $name -> $value');
-    return value;
+    try {
+      var encEmail = crypto.sha256.convert(utf8.encode(userEmail)).toString();
+      var name = '${key}-${encEmail}';
+      var storage = await BiometricStorage().getStorage(
+          name, promptInfo: _prompt);
+      var value = await storage.read();
+      LOG('--> readBioStorage : $name -> $value');
+      return value;
+    } catch (e) {
+      LOG('--> readBioStorage error : $e');
+    }
+    return null;
   }
 
   Future<bool?> writeBioStorage(String key, [String? value]) async {

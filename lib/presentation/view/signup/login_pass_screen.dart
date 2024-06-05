@@ -67,6 +67,7 @@ class _LoginPassScreenState extends ConsumerState {
   var isBioCheckShow = false;
   var isBioCheckDone = false;
   var passErrorText = '';
+  var autoFocus = false;
 
   _screenLockOff() {
     var prov = ref.read(loginProvider);
@@ -84,10 +85,6 @@ class _LoginPassScreenState extends ConsumerState {
       if (result) {
         passInputController.text = prov.userPass;
         _processResult(result);
-      } else {
-        setState(() {
-          isBioCheckShow = false;
-        });
       }
     });
   }
@@ -139,13 +136,15 @@ class _LoginPassScreenState extends ConsumerState {
     isCanBack = viewModel.passType != PassType.openLock;
     passInputController.text = IS_DEV_MODE ? EX_TEST_PASS_00 : '';
     if ((viewModel.passType == PassType.open ||
-        viewModel.passType == PassType.openLock) && prov.userBioYN) {
+         viewModel.passType == PassType.openLock) && prov.userBioYN) {
       isBioCheckShow = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(Duration(milliseconds: 200)).then((_) {
           _showBioCheck();
         });
       });
+    } else {
+      autoFocus = true;
     }
   }
 
@@ -285,6 +284,7 @@ class _LoginPassScreenState extends ConsumerState {
           CustomPassFormField(
             controller: passInputController,
             focusNode: focusNode,
+            autoFocus: autoFocus,
             hintText: TR(context, '비밀번호 입력'),
             onChanged: _refreshPass,
           ),

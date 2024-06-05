@@ -508,12 +508,12 @@ class MarketViewModel {
           child: Stack(
             children: [
               Container(
-                height: 30,
+                height: 35,
                 alignment: Alignment.center,
                 margin: EdgeInsets.only(bottom: 12),
                 child: Container(
                   width: 60,
-                  height: 6,
+                  height: 5,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: GRAY_20,
@@ -758,12 +758,13 @@ class MarketViewModel {
           InkWell(
             onTap: () {
               if (isShowDetail) {
-                prov.getProductDetailFromId(STR(item.prodSaleId)).then((result) {
-                  if (result != null) {
-                    prov.selectProduct = result;
-                    Navigator.of(context).push(createAniRoute(ProductDetailScreen()));
-                  }
-                });
+                _showPurchaseItemDetail(item);
+                // prov.getProductDetailFromId(STR(item.prodSaleId)).then((result) {
+                //   if (result != null) {
+                //     prov.selectProduct = result;
+                //     Navigator.of(context).push(createAniRoute(ProductDetailScreen()));
+                //   }
+                // });
               }
             },
             child: Container(
@@ -824,10 +825,7 @@ class MarketViewModel {
                   ),
                   InkWell(
                     onTap: () {
-                      prov.purchaseInfo = item;
-                      Navigator.of(context).push(createAniRoute(PaymentDetailScreen(
-                        title: _purchaseStatusTitle(item.status),
-                      )));
+                      _showPurchaseItemDetail(item);
                     },
                     child: Text(TR(context, '구매 상세'), style: typo14semibold),
                   ),
@@ -839,6 +837,11 @@ class MarketViewModel {
         ],
       )
     );
+  }
+
+  _showPurchaseItemDetail(PurchaseModel item) {
+    prov.purchaseInfo = item;
+    Navigator.of(context).push(createAniRoute(PaymentDetailScreen()));
   }
 
   _purchaseStatusTitle(String? num) {

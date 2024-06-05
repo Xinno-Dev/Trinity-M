@@ -57,7 +57,7 @@ class _PaymentDoneScreenState extends ConsumerState {
     return loginProv.isScreenLocked ? lockScreen(context) :
       Scaffold(
         appBar: AppBar(
-          title: Text(title ?? TR(context, '구매 완료')),
+          title: Text(title ?? TR(context, '구매 상세')),
           centerTitle: true,
           titleTextStyle: typo16bold,
           backgroundColor: Colors.white,

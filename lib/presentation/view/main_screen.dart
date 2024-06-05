@@ -42,7 +42,6 @@ class MainScreen extends ConsumerStatefulWidget {
 
 class _MainScreenState extends ConsumerState<MainScreen>
   with WidgetsBindingObserver {
-  final _scaffoldController = GlobalKey<ScaffoldState>();
   late PageController _pageController;
   late ProfileViewModel _viewModel;
 
@@ -95,7 +94,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
         systemNavigationBarIconBrightness:Brightness.dark,
       ),
       child: Scaffold(
-        key: _scaffoldController,
+        key: mainScaffoldKey,
         drawerEnableOpenDragGesture: false,
         backgroundColor: WHITE,
         appBar: AppBar(
@@ -112,7 +111,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
             child: prov.isShowMask ? null : InkWell(
               onTap: () {
                 _viewModel.hideProfileSelectBox();
-                _scaffoldController.currentState!.openDrawer();
+                mainScaffoldKey.currentState!.openDrawer();
               },
               borderRadius: BorderRadius.circular(100),
               child: Container(
