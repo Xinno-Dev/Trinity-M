@@ -497,6 +497,7 @@ class MarketViewModel {
       builder: (context) {
         return Container(
           height: height,
+          padding: EdgeInsets.symmetric(horizontal: 15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(16.0.sp),
@@ -504,9 +505,7 @@ class MarketViewModel {
             ),
             color: WHITE,
           ),
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+          child: Stack(
             children: [
               Container(
                 height: 30,
@@ -521,26 +520,34 @@ class MarketViewModel {
                   ),
                 ),
               ),
-              if (item.issuer != null)...[
-                _contentSellerBar(item.issuer!),
-              ],
-              SizedBox(height: 10),
-              if (image.isNotEmpty)...[
-                Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: showImage(image, Size.square(width))
+              Container(
+                margin: EdgeInsets.only(top: 35),
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    if (item.issuer != null)...[
+                      _contentSellerBar(item.issuer!),
+                    ],
+                    SizedBox(height: 10),
+                    if (image.isNotEmpty)...[
+                      Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: showImage(image, Size.square(width))
+                      ),
+                    ],
+                    _barcodeSelectButtonBox(item),
+                    _contentTitleBarFromItem(item,
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        isShowAmount: false),
+                    _contentDescriptionFromItem(item),
+                    if (STR(item.externalUrl).isNotEmpty)
+                      _contextExternalImage(STR(item.externalUrl),
+                          padding: EdgeInsets.only(top: 10)),
+                  ],
                 ),
-              ],
-              _barcodeSelectButtonBox(item),
-              _contentTitleBarFromItem(item,
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  isShowAmount: false),
-              _contentDescriptionFromItem(item),
-              if (STR(item.externalUrl).isNotEmpty)
-                _contextExternalImage(STR(item.externalUrl),
-                  padding: EdgeInsets.only(top: 10)),
-            ],
-          ),
+              )
+            ]
+          )
         );
       },
     );
