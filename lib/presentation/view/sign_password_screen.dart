@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:basic_utils/basic_utils.dart';
+import 'package:trinity_m_00/main.dart';
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/PinBox.dart';
@@ -122,7 +123,7 @@ class _SignPasswordScreenState extends ConsumerState<SignPasswordScreen> {
       required Stakes stakes,
       required StakingType stakingType}) {
 
-    final lang = AppLocalization.of(context)!.locale.languageCode;
+    final lang = appLocaleDelegate.appLocale.locale.languageCode;
     String amount = stakes.power ?? '0';
     amount = getFormattedText(value: double.parse(amount));
 

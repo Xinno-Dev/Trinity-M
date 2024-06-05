@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:trinity_m_00/presentation/view/settings/settings_language_screen.dart';
 import '../../../common/const/utils/userHelper.dart';
 import '../../../common/const/widget/dialog_utils.dart';
 import '../../../common/provider/login_provider.dart';
@@ -69,7 +70,6 @@ class ProfileViewModel {
   }
 
   getPageTitle(BuildContext context) {
-    this.context = context;
     final pageIndex = loginProv.mainPageIndex;
     return Center(
       child: pageIndex == 0 ?
@@ -244,6 +244,10 @@ class ProfileViewModel {
               isUpdateCheckDone = false;
               checkAppUpdate(context, isForceCheck: true);
               break;
+            case DrawerActionType.language:
+              Navigator.of(context).push(
+                  createAniRoute(SettingsLanguageScreen()));
+              break;
             case DrawerActionType.logout:
               if (loginProv.isLogin) {
                 loginProv.logout().then((_) {
@@ -295,14 +299,13 @@ class ProfileViewModel {
 
   ////////////////////////////////////////////////////////////////////////
 
-  showProfile(BuildContext context) {
-    this.context = context;
+  showProfile() {
     if (loginProv.userInfo != null) {
       return Column(
         children: [
           _profileImage(padding: EdgeInsets.only(bottom: 20)),
           _profileDescription(padding: EdgeInsets.only(bottom: 30)),
-          _profileButtonBox(context),
+          _profileButtonBox(),
         ],
       );
     } else {
@@ -312,21 +315,22 @@ class ProfileViewModel {
     }
   }
 
-  BuildContext? _accountContext;
+  BuildContext? _profileContext;
 
   hideProfileSelectBox() {
     loginProv.setMaskStatus(false);
-    if (_accountContext != null && _accountContext!.mounted) {
-      ScaffoldMessenger.of(_accountContext!).hideCurrentMaterialBanner();
+    if (_profileContext != null) {
+      ScaffoldMessenger.of(_profileContext!).hideCurrentMaterialBanner();
+      _profileContext = null;
     }
   }
 
-  showProfileSelectBox(BuildContext context,
+  showProfileSelectBox(BuildContext profileContext,
     {Function(AddressModel)? onSelect, Function()? onAdd}) {
     if (loginProv.isShowMask || loginProv.userInfo == null) return false;
-    _accountContext = context;
+    _profileContext = profileContext;
     loginProv.setMaskStatus(true);
-    ScaffoldMessenger.of(context).showMaterialBanner(
+    ScaffoldMessenger.of(profileContext).showMaterialBanner(
       MaterialBanner(
         elevation: 10,
         surfaceTintColor: Colors.white,
@@ -366,7 +370,7 @@ class ProfileViewModel {
                       children: [
                         Icon(Icons.add_circle_outline, size: 30, weight: 1, color: GRAY_30),
                         SizedBox(width: 10),
-                        Text(TR(_accountContext!, '계정 추가'), style: typo14bold),
+                        Text(TR(profileContext, '계정 추가'), style: typo14bold),
                       ],
                     ),
                   ),
@@ -583,7 +587,7 @@ class ProfileViewModel {
     );
   }
 
-  _profileButtonBox(BuildContext context, {EdgeInsets? padding}) {
+  _profileButtonBox({EdgeInsets? padding}) {
     return Container(
       padding: padding,
       child: Row(
@@ -594,7 +598,7 @@ class ProfileViewModel {
               textStyle: typo14semibold,
               isSmallButton: true,
               onTap: () {
-                showEditDescription(context);
+                showEditDescription();
               },
               text: TR(context, '프로필 편집'),
             )
@@ -686,7 +690,7 @@ class ProfileViewModel {
     });
   }
 
-  showEditAccountName(BuildContext context) {
+  showEditAccountName() {
     showInputDialog(context,
         TR(context, 'ID(닉네임) 변경'),
         defaultText: STR(loginProv.selectAccount?.accountName),
@@ -698,7 +702,7 @@ class ProfileViewModel {
         _backupAccount();
         var org = loginProv.selectAccount!.accountName;
         loginProv.selectAccount!.accountName = text;
-        _setAccountName(context).then((result) {
+        _setAccountName().then((result) {
           if (!result) {
             loginProv.selectAccount!.accountName = org;
           }
@@ -707,7 +711,7 @@ class ProfileViewModel {
     });
   }
 
-  showEditSubTitle(BuildContext context) {
+  showEditSubTitle() {
     showInputDialog(context,
         TR(context, '사용자 이름 변경'),
         defaultText: _getEditSubTitle,
@@ -725,7 +729,7 @@ class ProfileViewModel {
     });
   }
 
-  showEditDescription(BuildContext context) {
+  showEditDescription() {
     showInputDialog(context,
         TR(context, '프로필 변경'),
         defaultText: STR(loginProv.selectAccount?.description),
@@ -869,11 +873,11 @@ class ProfileViewModel {
     accountOrg = null;
   }
 
-  _setAccountName(BuildContext context) async {
+  _setAccountName() async {
     var result = await loginProv.checkNickDup(loginProv.selectAccount?.accountName);
     if (!result) {
       showToast(TR(context, '중복된 닉네임입니다'));
-      showEditAccountName(context);
+      showEditAccountName();
       return false;
     }
     var passOrg = loginProv.userPass;

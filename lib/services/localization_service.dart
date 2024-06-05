@@ -10,9 +10,9 @@ class AppLocalization {
 
   final Locale locale;
 
-  static AppLocalization? of(BuildContext context) {
-    return Localizations.of<AppLocalization>(context, AppLocalization);
-  }
+  // static AppLocalization? of(BuildContext context) {
+  //   return Localizations.of<AppLocalization>(context, AppLocalization);
+  // }
 
   static Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -521,7 +521,8 @@ class AppLocalization {
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalization> {
-  const AppLocalizationDelegate();
+  AppLocalizationDelegate();
+  late AppLocalization appLocale;
 
   @override
   bool isSupported(Locale locale) {
@@ -530,11 +531,14 @@ class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalization> {
 
   @override
   Future<AppLocalization> load(Locale locale) {
-    return SynchronousFuture<AppLocalization>(
-      AppLocalization(locale),
-    );
+    appLocale = AppLocalization(locale);
+    return SynchronousFuture<AppLocalization>(appLocale);
   }
 
   @override
   bool shouldReload(AppLocalizationDelegate old) => false;
+
+  translate(String text) {
+    return appLocale.translate(text);
+  }
 }

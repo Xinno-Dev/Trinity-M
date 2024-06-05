@@ -58,12 +58,12 @@ class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
               grayDivider(),
               _viewModel.myInfoEditItem('ID(닉네임)',
                 [[prov.userId,'변경']], onEdit: () {
-                  _viewModel.showEditAccountName(context);
+                  _viewModel.showEditAccountName();
                 }),
               grayDivider(),
               _viewModel.myInfoEditItem('사용자 이름',
                 [[prov.userName,'변경']], onEdit: () {
-                  _viewModel.showEditSubTitle(context);
+                  _viewModel.showEditSubTitle();
                 }),
               grayDivider(),
               _viewModel.myInfoEditItem('본인인증',

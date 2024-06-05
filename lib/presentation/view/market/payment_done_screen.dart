@@ -45,7 +45,7 @@ class _PaymentDoneScreenState extends ConsumerState {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel(context);
+    _viewModel = MarketViewModel();
     super.initState();
   }
 

@@ -34,6 +34,7 @@ class _SettingsLanguageScreenState
 
   @override
   Widget build(BuildContext context) {
+    var prov = ref.watch(languageProvider);
     return Scaffold(
         backgroundColor: WHITE,
         appBar: AppBar(

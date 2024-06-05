@@ -277,7 +277,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final loginProv = ref.read(loginProvider);
     bool? result = false;
     switch(index) {
-      case 0: result = await loginProv.loginKakao(context, onError: _loginError); break;
+      case 0: result = await loginProv.loginKakao(onError: _loginError); break;
       case 1: result = await loginProv.loginGoogle(onError: _loginError); break;
     // case 2:  loginProv.loginNaver(); break;
     // case 3:  loginProv.loginApple(); break;

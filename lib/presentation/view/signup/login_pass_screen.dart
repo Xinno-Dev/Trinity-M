@@ -80,7 +80,7 @@ class _LoginPassScreenState extends ConsumerState {
     if (isBioCheckDone) return;
     isBioCheckDone = true;
     var prov = ref.read(loginProvider);
-    prov.showUserBioIdentityCheck(context).then((result) {
+    prov.showUserBioIdentityCheck().then((result) {
       LOG('--> showUserBioIdentityCheck result : $result');
       if (result) {
         passInputController.text = prov.userPass;

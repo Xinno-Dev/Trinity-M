@@ -39,7 +39,7 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
   void initState() {
     final prov = ref.read(marketProvider);
     prov.optionIndex = -1;
-    _viewModel = MarketViewModel(context);
+    _viewModel = MarketViewModel();
     super.initState();
   }
 

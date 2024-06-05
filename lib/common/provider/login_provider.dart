@@ -124,7 +124,8 @@ enum LoginErrorType {
 
 final drawerTitleN = [
   '내 정보', '구매 내역', '-',
-  '이용약관', '개인정보처리 방침', '버전 정보', '로그아웃',
+  '이용약관', '개인정보처리 방침', '버전 정보',
+  '언어 설정', '로그아웃',
 ];
 
 enum DrawerActionType {
@@ -134,6 +135,7 @@ enum DrawerActionType {
   terms,
   privacy,
   version,
+  language,
   logout;
 
   String get title {
@@ -143,9 +145,6 @@ enum DrawerActionType {
 
 final testEmail = 'jubal2000@hanmail.net';
 final testPass  = 'testpass00';
-
-final mainScaffoldKey = GlobalKey<ScaffoldState>();
-
 
 final loginProvider = ChangeNotifierProvider<LoginProvider>((_) {
   return LoginProvider();
@@ -161,6 +160,8 @@ class LoginProvider extends ChangeNotifier {
 
   UserModel?    userInfo;
   AddressModel? selectAccount;
+  late BuildContext context;
+
   int lockTime = 0;
 
   var isLoginCheckDone = false;
@@ -262,7 +263,7 @@ class LoginProvider extends ChangeNotifier {
     isScreenLockReady = false;
   }
 
-  setLockScreen(BuildContext context, bool status) {
+  setLockScreen(bool status) {
     LOG('--> setLockScreen : $status / $isScreenLocked / $isScreenLockReady / ${!isPassInputShow}');
     if (IS_AUTO_LOCK_MODE && isLogin && isScreenLockReady) {
       if (!status && isScreenLocked && !isPassInputShow) {
@@ -304,8 +305,8 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
-  showUserBioIdentityCheck(BuildContext context) async {
-    return await getBioIdentity(context,
+  showUserBioIdentityCheck() async {
+    return await getBioIdentity(
       TR(context, '본인확인'),
       onError: (err) {
         showLoginErrorTextDialog(context, err);
@@ -481,7 +482,7 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool?> loginKakao(BuildContext context,
+  Future<bool?> loginKakao(
     {Function(LoginErrorType, String?)? onError, var isAutoLogin = false})
     async {
     init();
@@ -988,7 +989,7 @@ class LoginProvider extends ChangeNotifier {
 
   _apiError(LoginErrorType type, String? error) {
     LOG('--> _apiError : $type, $error');
-    showLoginErrorDialog(mainScaffoldKey.currentContext!, type, text: error).then((_) async {
+    showLoginErrorDialog(context, type, text: error).then((_) async {
       if (error == '__not_found__' || error == '__unauthorized__') {
         await logoutWithRemoveNickId();
       }
@@ -1255,7 +1256,7 @@ class LoginProvider extends ChangeNotifier {
     );
   }
 
-  Future<bool?> setBioIdentity(BuildContext context, String title,
+  Future<bool?> setBioIdentity(String title,
       {Function(String)? onError}) async {
     // final auth = LocalAuthentication();
     try {
@@ -1298,7 +1299,7 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool?> getBioIdentity(BuildContext context, String title,
+  Future<bool?> getBioIdentity(String title,
       {Function(String)? onError}) async {
     try {
       setPrompt(title, TR(context, '본인 확인을 위해 생체인증을 사용합니다.'));

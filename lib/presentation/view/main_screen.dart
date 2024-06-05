@@ -42,6 +42,7 @@ class MainScreen extends ConsumerStatefulWidget {
 
 class _MainScreenState extends ConsumerState<MainScreen>
   with WidgetsBindingObserver {
+  final _mainScaffoldKey = GlobalKey<ScaffoldState>();
   late PageController _pageController;
   late ProfileViewModel _viewModel;
 
@@ -53,6 +54,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
   @override
   void initState() {
     final prov = ref.read(loginProvider);
+    prov.context = context;
     prov.mainPageIndex = widget.selectedPage;
     prov.enableLockScreen();
     _viewModel = ProfileViewModel();
@@ -66,11 +68,11 @@ class _MainScreenState extends ConsumerState<MainScreen>
     final prov = ref.read(loginProvider);
     switch (state) {
       case AppLifecycleState.resumed:
-        prov.setLockScreen(context, false);
+        prov.setLockScreen(false);
         _pageController = PageController(initialPage: prov.mainPageIndex);
         break;
       case AppLifecycleState.inactive:
-        prov.setLockScreen(context, true);
+        prov.setLockScreen(true);
         break;
     }
   }
@@ -94,7 +96,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
         systemNavigationBarIconBrightness:Brightness.dark,
       ),
       child: Scaffold(
-        key: mainScaffoldKey,
+        key: _mainScaffoldKey,
         drawerEnableOpenDragGesture: false,
         backgroundColor: WHITE,
         appBar: AppBar(
@@ -111,7 +113,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
             child: prov.isShowMask ? null : InkWell(
               onTap: () {
                 _viewModel.hideProfileSelectBox();
-                mainScaffoldKey.currentState!.openDrawer();
+                _mainScaffoldKey.currentState!.openDrawer();
               },
               borderRadius: BorderRadius.circular(100),
               child: Container(

@@ -39,7 +39,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     prov.optionIndex = -1;
     prov.selectDetailTab = 0;
     prov.clearCheckDetailId();
-    _viewModel = MarketViewModel(context);
+    _viewModel = MarketViewModel();
     super.initState();
   }
 

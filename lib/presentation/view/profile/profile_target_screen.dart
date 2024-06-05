@@ -32,7 +32,7 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel(context);
+    _viewModel = MarketViewModel();
     super.initState();
   }
 

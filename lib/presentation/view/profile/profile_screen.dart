@@ -32,7 +32,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     _viewModel = ProfileViewModel();
-    _marketViewModel = MarketViewModel(context);
+    _marketViewModel = MarketViewModel();
     super.initState();
   }
 
@@ -52,7 +52,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 SizedBox(height: 10.h),
                 if (prov.isLogin)...[
-                  _viewModel.showProfile(context),
+                  _viewModel.showProfile(),
                   _marketViewModel.showUserProductList(
                     TR(context, 'Market'),
                     prov.accountAddress,

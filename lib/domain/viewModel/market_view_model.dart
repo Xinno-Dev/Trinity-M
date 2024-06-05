@@ -25,9 +25,12 @@ import '../model/product_model.dart';
 import '../model/seller_model.dart';
 
 class MarketViewModel {
-  MarketViewModel(BuildContext context) {
-    this.context = context;
+  factory MarketViewModel() {
+    return _singleton;
   }
+  MarketViewModel._internal();
+  static final _singleton = MarketViewModel._internal();
+
   late BuildContext context;
   final prov = MarketProvider();
 

@@ -139,7 +139,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                           _localAuthAgree = false;
                         });
                       } else {
-                        prov.setBioIdentity(context,
+                        prov.setBioIdentity(
                           TR(context, '생체인증 등록'),
                           onError: (err) {
                             setState(() {

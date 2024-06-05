@@ -103,7 +103,7 @@ const int PAGE_COUNT_MAX = 3;
 const int MARKET_PAGE_COUNT_MAX = 3;
 const int PAGE_COUNT_FULL_MAX = 9999;
 const int EMAIL_SEND_TIME_MAX = 30;
-const int LOCK_SCREEN_DELAY = 0;
+const int LOCK_SCREEN_DELAY = 10;
 
 const int NICK_LENGTH_MIN = 5;
 const int NICK_LENGTH_MAX = 40;

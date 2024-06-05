@@ -3,6 +3,7 @@ import '../../../common/common_package.dart';
 
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/widget/back_button.dart';
+import '../../main.dart';
 import '../../services/localization_service.dart';
 
 class TermsDetailScreen extends ConsumerStatefulWidget {
@@ -26,7 +27,7 @@ class _TermsDetailScreenState extends ConsumerState<TermsDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final lang = AppLocalization.of(context)!.locale.languageCode;
+    final lang = appLocaleDelegate.appLocale.locale.languageCode;
     return Scaffold(
       backgroundColor: WHITE,
       appBar: AppBar(

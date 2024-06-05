@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:trinity_m_00/domain/viewModel/market_view_model.dart';
 
 import '../../../common/const/constants.dart';
 import '../../../common/const/utils/uihelper.dart';
@@ -43,6 +44,7 @@ import 'common/provider/go_router.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'common/provider/language_provider.dart';
+import 'domain/viewModel/profile_view_model.dart';
 
 /////////////////////////////
 final logger = Logger(
@@ -53,10 +55,11 @@ final loggerNoStack = Logger(
 );
 ///////////////////////////////
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 late AndroidNotificationChannel channel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 String? _lastConsumedMessageId;
-final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 DateTime? currentBackPressTime;
 
 @pragma('vm:entry-point')
@@ -247,6 +250,8 @@ class LoggerProvder extends ProviderObserver {
   }
 }
 
+final appLocaleDelegate = AppLocalizationDelegate();
+
 class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -269,7 +274,7 @@ class MyApp extends ConsumerWidget {
         routeInformationParser: router.routeInformationParser,
         routeInformationProvider: router.routeInformationProvider,
         localizationsDelegates: [
-          AppLocalizationDelegate(),
+          appLocaleDelegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate
@@ -459,10 +464,13 @@ class _FirebaseSetupState extends ConsumerState<FirebaseSetup> {
   @override
   Widget build(BuildContext context) {
     final loginProv = ref.read(loginProvider);
+    MarketViewModel().context = context;
+    ProfileViewModel().context = context;
+
     // LOG('---> main : ${loginProv.isLogin}');
     return loginProv.isLogin ? MainScreen() :
       FutureBuilder(
-      future: LoginProvider().checkLogin(),
+      future: loginProv.checkLogin(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return MainScreen();

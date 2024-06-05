@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trinity_m_00/main.dart';
 
 import '../../../services/localization_service.dart';
 import '../../common_package.dart';
@@ -68,7 +69,11 @@ class LanguageHelper {
   }
 }
 
-String TR(BuildContext context, String text) {
-  return AppLocalization.of(context)!.translate(text);
+String TR(BuildContext context, String? text) {
+  // return AppLocalization.of(context)!.translate(text);
+  if (text != null) {
+    return appLocaleDelegate.translate(text);
+  }
+  return '';
 }
 
