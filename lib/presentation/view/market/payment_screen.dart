@@ -26,7 +26,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   final controller  = ScrollController();
 
   _showFailMessage() {
-    showToast(TR(context, '결제에 실패했습니다.'));
+    showToast(TR('결제에 실패했습니다.'));
     context.pop();
   }
 
@@ -34,7 +34,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
     return IamportPayment(
-      appBar: defaultAppBar(TR(context, '결제하기'),
+      appBar: defaultAppBar(TR('결제하기'),
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: context.pop,
@@ -47,7 +47,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
             children: [
               showLoadingFull(60),
               SizedBox(height: 40),
-              Text(TR(context, '잠시만 기다려주세요...'), style: typo18semibold),
+              Text(TR('잠시만 기다려주세요...'), style: typo18semibold),
             ],
           ),
         ),
@@ -58,13 +58,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         LOG('--> show payment result : $result');
         if (BOL(result['success'])) {
           if (IS_PAYMENT_ON) {
-            showLoadingDialog(context, TR(context, '결제 검증중입니다.'));
+            showLoadingDialog(context, TR('결제 검증중입니다.'));
             prov.checkCount = 0;
             prov.checkPurchase(result).then((checkResult) {
               LOG('--> checkResult : $checkResult');
               hideLoadingDialog();
               if (checkResult) {
-                showToast(TR(context, '결제에 성공했습니다.'));
+                showToast(TR('결제에 성공했습니다.'));
                 context.pushReplacementNamed(PaymentDoneScreen.routeName);
               } else {
                 _showFailMessage();

@@ -97,7 +97,7 @@ class _StakingCautionScreen extends ConsumerState<StakingCautionScreen> {
           children: [
             Expanded(child:
               AutoSizeText(
-                '${TR(context, getAppBarTitle(stakingType))} ${TR(context, '기능 이용 주의 사항')}',
+                '${TR(getAppBarTitle(stakingType))} ${TR('기능 이용 주의 사항')}',
                 style: typo18semibold,
                 maxLines: 1,
                 textAlign: TextAlign.center,
@@ -120,7 +120,7 @@ class _StakingCautionScreen extends ConsumerState<StakingCautionScreen> {
                 shrinkWrap: true,
                 children: [
                   Text(
-                      TR(context, getDescription(stakingType, language)),
+                      TR(getDescription(stakingType, language)),
                       maxLines: null,
                   )
                 ]
@@ -134,7 +134,7 @@ class _StakingCautionScreen extends ConsumerState<StakingCautionScreen> {
                     height: 20.r,
                   ),
                   Expanded(child: AutoSizeText(
-                    TR(context,
+                    TR(
                         '스테이킹 신청 시, 취소 또는 변경 하실 수 없습니다.'),
                     style: typo14medium,
                     maxLines: 1,

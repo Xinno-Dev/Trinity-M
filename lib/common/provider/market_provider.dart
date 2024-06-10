@@ -252,7 +252,7 @@ class MarketProvider extends ChangeNotifier {
       LOG('-------> update product list!! : $prodId');
       _repo.checkLastId = int.parse(STR(prodId, defaultValue: '0'));
       if (!await getProductList()) {
-        showToast(TR(context, '상품 목록 마지막입니다.'));
+        showToast(TR('상품 목록 마지막입니다.'));
         return false;
       }
     }
@@ -265,7 +265,7 @@ class MarketProvider extends ChangeNotifier {
       LOG('-------> update product item list!! : $itemId');
       selectProduct?.itemCheckId = int.parse(STR(itemId));
       if (!await getProductOptionList()) {
-        showToast(TR(context, '옵션 목록 마지막입니다.'));
+        showToast(TR('옵션 목록 마지막입니다.'));
         return true;
       }
     }
@@ -308,21 +308,21 @@ class MarketProvider extends ChangeNotifier {
       LOG('--> createPurchaseData : $name / $amount');
       payData = PaymentData(
         pg: PAYMENT_PG,
+        merchantUid: MERCHANT_UID,
         payMethod: payMethod,
         escrow: false,
         name: name,
         amount: amount,
-        merchantUid: '',
         buyerName:  userInfo.userName,
         buyerEmail: userInfo.email,
         buyerTel:   STR(userInfo.mobile),
         appScheme: 'iamport_payment',
         niceMobileV2: true,
         popup: false,
-        period: {
-          'from': '20240101',
-          'to': '20241231',
-        }
+        // period: {
+        //   'from': '20240101',
+        //   'to': '20241231',
+        // }
       );
       // 할부개월 설정..
       if (payMethod == 'card' && cardQuota != '0') {
@@ -375,11 +375,12 @@ class MarketProvider extends ChangeNotifier {
     var result = await _repo.checkPurchase(impUid, merchantId, status);
     LOG('--> checkPurchase result : ${STR(result?['status'])}');
     if (result != null) {
+      var status = STR(result['status']);
       // 결제 완료..
-      if (STR(result['status']) == '4') {
+      if (status == '4') {
         return updatePurchaseInfo(info);
         // 결제 검증중..
-      } else if (STR(result['status']) == '3') {
+      } else if (status == '3' || status == '2') {
         return await checkPurchase(info);
       }
     }

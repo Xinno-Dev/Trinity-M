@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:trinity_m_00/common/provider/login_provider.dart';
 import 'package:trinity_m_00/presentation/view/market/payment_done_screen.dart';
 import '../../../../common/common_package.dart';
@@ -32,14 +33,14 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
   late MarketViewModel _viewModel;
 
   _showFailMessage(BuildContext context) {
-    showLoginErrorTextDialog(context, TR(context, '결제에 실패했습니다!'));
+    showLoginErrorTextDialog(context, TR('결제에 실패했습니다!'));
   }
 
   @override
   void initState() {
     final prov = ref.read(marketProvider);
     prov.optionIndex = -1;
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -48,60 +49,63 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
     final prov = ref.watch(marketProvider);
     final loginProv = ref.watch(loginProvider);
     return loginProv.isScreenLocked ? lockScreen(context) :
-      Scaffold(
-        appBar: AppBar(
-          title: Text(TR(context, '구매하기')),
-          centerTitle: true,
-          titleTextStyle: typo16bold,
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            onPressed: context.pop,
-            icon: Icon(Icons.close),
-          ),
+      AnnotatedRegion<SystemUiOverlayStyle>(
+        value:SystemUiOverlayStyle(
+          systemNavigationBarColor: WHITE,
         ),
-        backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  _viewModel.showBuyBox(),
-                ]
+        child: SafeArea(
+          top: false,
+          child: Scaffold(
+            appBar: defaultAppBar(TR('구매하기'),
+              leading: IconButton(
+                onPressed: context.pop,
+                icon: Icon(Icons.close),
               ),
             ),
-            if (!prov.purchaseReady)
-              Padding(padding: EdgeInsets.all(10),
-              child: Text(TR(context, '* 옵션을 선택해 주세요.'),
-                style: typo12bold.copyWith(color: Colors.red))),
-          ],
-        ),
-        bottomNavigationBar: IS_PAYMENT_READY && prov.purchaseReady ?
-          PrimaryButton(
-            text: TR(context, '결제하기'),
-            round: 0,
-            onTap: () {
-              loginProv.disableLockScreen();
-              LOG('--> userIdentityYN : ${loginProv.userIdentityYN}');
-              if (loginProv.userIdentityYN) {
-                _startPurchase();
-              } else {
-                // 본인인증이 안되있을경우 본인인증 부터..
-                Navigator.of(context).push(
-                  createAniRoute(ProfileIdentityScreen())).then((result) {
+            backgroundColor: Colors.white,
+            body: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        _viewModel.showBuyBox(),
+                      ]
+                  ),
+                ),
+                if (!prov.purchaseReady)
+                  Padding(padding: EdgeInsets.all(10),
+                    child: Text(TR('* 옵션을 선택해 주세요.'),
+                      style: typo12bold.copyWith(color: Colors.red))),
+              ],
+            ),
+            bottomNavigationBar: IS_PAYMENT_READY && prov.purchaseReady ?
+            PrimaryButton(
+              text: TR('결제하기'),
+              round: 0,
+              onTap: () {
+                loginProv.disableLockScreen();
+                LOG('--> userIdentityYN : ${loginProv.userIdentityYN}');
+                if (loginProv.userIdentityYN) {
+                  _startPurchase();
+                } else {
+                  // 본인인증이 안되있을경우 본인인증 부터..
+                  Navigator.of(context).push(
+                      createAniRoute(ProfileIdentityScreen())).then((result) {
                     if (BOL(result)) {
                       loginProv.userInfo!.certUpdt = DateTime.now().toString();
                       _startPurchase();
                     } else {
                       loginProv.enableLockScreen();
                     }
-                });
-              }
-            },
-          ) : DisabledButton(
-            text: TR(context, '결제하기'),
+                  });
+                }
+              },
+            ) : DisabledButton(
+              text: TR('결제하기'),
+            )
           )
+        )
       );
   }
 
@@ -112,7 +116,7 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
     var data = prov.createPurchaseData(userInfo: loginProv.userInfo!);
     if (data != null) {
       prov.requestPurchaseWithImageId(onError: (error) {
-        showLoginErrorTextDialog(context, TR(context, error));
+        showLoginErrorTextDialog(context, TR(error));
       }).then((info) {
         if (info == true) {
           Navigator.of(context).push(

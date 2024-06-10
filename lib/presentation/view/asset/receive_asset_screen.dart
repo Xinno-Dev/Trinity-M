@@ -63,7 +63,7 @@ class _ReceiveAssetScreenState extends State<ReceiveAssetScreen> {
                 width: 10.0,
               ),
               Expanded(
-                child: Text(TR(context,
+                child: Text(TR(
                   'RIGO 네트워크 자산만 받을 수 있습니다.\n'
                   '지원하지 않는 자산을 입금한 경우, 회사의 고의나\n'
                   '과실이 있지 않는 한 회사는 책임지지 않습니다.'),
@@ -97,7 +97,7 @@ class _ReceiveAssetScreenState extends State<ReceiveAssetScreen> {
               Row(
                 children: [
                   Text(
-                    TR(context, '지갑주소'),
+                    TR('지갑주소'),
                     style: typo16semibold,
                   ),
                   SizedBox(
@@ -134,7 +134,7 @@ class _ReceiveAssetScreenState extends State<ReceiveAssetScreen> {
           children: [
             Expanded(
               child: LineButton(
-                text: TR(context, '공유'),
+                text: TR('공유'),
                 onTap: () {
                   try {
                     final Size size = MediaQuery
@@ -146,7 +146,7 @@ class _ReceiveAssetScreenState extends State<ReceiveAssetScreen> {
                           0, 0, size.width, size.height / 2),
                     );
                   } catch (e) {
-                    _showToast(TR(context, '공유하기 실패'));
+                    _showToast(TR('공유하기 실패'));
                   }
                   //Share.share(walletAddress);
                 },
@@ -157,12 +157,12 @@ class _ReceiveAssetScreenState extends State<ReceiveAssetScreen> {
             ),
             Expanded(
               child: PrimaryButton(
-                text: TR(context, '복사'),
+                text: TR('복사'),
                 onTap: () async {
                   await Clipboard.setData(ClipboardData(text: walletAddress));
                   final androidInfo = await DeviceInfoPlugin().androidInfo;
                   if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
-                  _showToast(TR(context, '복사를 완료했습니다'));
+                  _showToast(TR('복사를 완료했습니다'));
                 },
               ),
             ),

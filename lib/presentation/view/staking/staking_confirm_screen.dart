@@ -99,7 +99,7 @@ class StakingConfirmScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, getAppBarTitle(stakingType)),
+          TR(getAppBarTitle(stakingType)),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -111,7 +111,7 @@ class StakingConfirmScreen extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                TR(context, '정보를 확인해 주세요'),
+                TR('정보를 확인해 주세요'),
                 style: typo20bold,
               ),
               SizedBox(height: 30.h),
@@ -124,7 +124,7 @@ class StakingConfirmScreen extends StatelessWidget {
                           children: [
                             if (stakingType == StakingType.delegate)
                             DetailResizeRow(
-                              title: TR(context, '검증인'),
+                              title: TR('검증인'),
                               content: stakes.owner != null ?
                               Text(
                                 stakes.owner!,
@@ -136,12 +136,12 @@ class StakingConfirmScreen extends StatelessWidget {
                               ),
                             ),
                             DetailQuantityRow(
-                              title: TR(context, '수수료(예상)'),
+                              title: TR('수수료(예상)'),
                               quantity: snapshot.data!,
                               unit: 'RIGO',
                             ),
                             DetailQuantityRow(
-                              title: '${TR(context, getAppBarTitle(stakingType))} ${TR(context, '수량')}',
+                              title: '${TR(getAppBarTitle(stakingType))} ${TR('수량')}',
                               quantity: DBL(stakes.power).toStringAsFixed(8),
                               unit: 'RIGO',
                             ),
@@ -158,7 +158,7 @@ class StakingConfirmScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   TotalStakingRow(
-                                    title: TR(context, '총 수량\n(수수료 포함)'),
+                                    title: TR('총 수량\n(수수료 포함)'),
                                     balance: getTotalAmount(stakes),
                                   ),
                                   // SizedBox(
@@ -179,7 +179,7 @@ class StakingConfirmScreen extends StatelessWidget {
                         );
                       } else if (snapshot.hasError) {
                         return Text(
-                          TR(context, '오류가 발생했습니다. 다시 시도해주세요.'),
+                          TR('오류가 발생했습니다. 다시 시도해주세요.'),
                           style: typo28bold,
                         );
                       } else {
@@ -211,7 +211,7 @@ class StakingConfirmScreen extends StatelessWidget {
                     });
                   },
                   child: Text(
-                    TR(context, getButtonText(stakingType)),
+                    TR(getButtonText(stakingType)),
                     style: typo16bold.copyWith(color: WHITE),
                   ),
                   style: primaryButtonStyle,

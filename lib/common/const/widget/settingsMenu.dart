@@ -60,7 +60,7 @@ class SettingsMenu extends StatelessWidget {
                     : SizedBox(width: 5.w),
             hasRightString
                 ? Text(
-                    TR(context, '최신 버전 사용 중'),
+                    TR('최신 버전 사용 중'),
                     style: typo14regular.copyWith(color: GRAY_50),
                   )
                 : leftImage

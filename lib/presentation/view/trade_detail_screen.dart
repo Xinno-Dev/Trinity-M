@@ -51,14 +51,14 @@ class TradeDetailScreen extends StatelessWidget {
     return Column(
       children: [
         DetailRow(
-          title: TR(context, '상태'),
+          title: TR('상태'),
           content: Text(
-            TR(context, '완료'),
+            TR('완료'),
             style: typo18semibold.copyWith(color: SUCCESS_90),
           ),
         ),
         DetailRow(
-          title: TR(context, '날짜'),
+          title: TR('날짜'),
           content: Text(
             txHistory.time,
             style: typo16regular,
@@ -71,20 +71,20 @@ class TradeDetailScreen extends StatelessWidget {
           child: Column(
             children: [
               DetailQuantityRow(
-                title: TR(context, '수량'),
+                title: TR('수량'),
                 quantity: amount,
                 unit: coin,
                 isBalanceRow: true,
               ),
               DetailQuantityRow(
-                title: TR(context, '수수료'),
+                title: TR('수수료'),
                 quantity: txHistory.gas,
                 unit: txHistory.peeToken,
                 isBalanceRow: true,
               ),
               Divider(),
               DetailQuantityRow(
-                title: TR(context, '총 수량'),
+                title: TR('총 수량'),
                 quantity: totalAmount,
                 unit: coin,
                 color: PRIMARY_90,
@@ -96,8 +96,8 @@ class TradeDetailScreen extends StatelessWidget {
             ],
           ),
         ),
-        AddressColumn(title: TR(context, '보내는 주소'), content: '0x' + txHistory.from),
-        AddressColumn(title: TR(context, '받는 주소'), content: '0x' + txHistory.to),
+        AddressColumn(title: TR('보내는 주소'), content: '0x' + txHistory.from),
+        AddressColumn(title: TR('받는 주소'), content: '0x' + txHistory.to),
         AddressColumn(
           title: 'TXID',
           content: '0x' + txHistory.txId,
@@ -145,7 +145,7 @@ class AddressColumn extends StatelessWidget {
           await Clipboard.setData(ClipboardData(text: content));
           final androidInfo = await DeviceInfoPlugin().androidInfo;
           if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
-          _showToast(TR(context, '복사를 완료했습니다'));
+          _showToast(TR('복사를 완료했습니다'));
         }
       },
       child: Container(

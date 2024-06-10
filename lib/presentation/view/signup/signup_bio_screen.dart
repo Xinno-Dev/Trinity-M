@@ -92,7 +92,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: defaultAppBar(TR(context, '생체인증 사용 동의'),
+        appBar: defaultAppBar(TR('생체인증 사용 동의'),
           isCanBack: !widget.isShowNext),
         body: SingleChildScrollView(
           child: Column(
@@ -109,12 +109,12 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      TR(context, '빠른 이용을 위해\n생체인증을 설정하세요.'),
+                      TR('빠른 이용을 위해\n생체인증을 설정하세요.'),
                       style: typo24bold150,
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      TR(context, '본인 확인 목적으로 기기에 등록된 생체정보를\n'
+                      TR('본인 확인 목적으로 기기에 등록된 생체정보를\n'
                         '이용하여 로그인 및 인증작업을 진행하며,\n'
                         '서버로 전송/저장되지 않습니다.'),
                       style: typo16medium150,
@@ -129,7 +129,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                 Padding(
                   padding: EdgeInsets.only(left: 20.r),
                   child: CustomCheckbox(
-                    title: TR(context, '생체인증 사용 동의'),
+                    title: TR('생체인증 사용 동의'),
                     checked: _localAuthAgree,
                     pushed: false,
                     localAuth: true,
@@ -140,7 +140,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                         });
                       } else {
                         prov.setBioIdentity(
-                          TR(context, '생체인증 등록'),
+                          TR('생체인증 등록'),
                           onError: (err) {
                             setState(() {
                               _localAuthAgree = false;
@@ -156,7 +156,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                               prov.setUserBioIdentity(_localAuthAgree);
                               if (!widget.isShowNext) {
                                 context.pop(result);
-                                showToast(TR(context, '생체인증 설정 완료'));
+                                showToast(TR('생체인증 설정 완료'));
                               }
                             });
                           }
@@ -170,7 +170,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
           ),
         ),
         bottomNavigationBar: widget.isShowNext ? PrimaryButton(
-          text: TR(context, _localAuthAgree ? '다음' : '건너뛰기'),
+          text: TR(_localAuthAgree ? '다음' : '건너뛰기'),
           round: 0,
           onTap: () {
             UserHelper().setUser(

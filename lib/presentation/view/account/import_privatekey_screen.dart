@@ -61,7 +61,7 @@ class _ImportPrivateKeyScreenState
             ),
             centerTitle: true,
             title: Text(
-              TR(context, '계정 불러오기'),
+              TR('계정 불러오기'),
               style: typo18semibold,
             ),
             elevation: 0,
@@ -78,8 +78,8 @@ class _ImportPrivateKeyScreenState
               indicatorColor: GRAY_90,
               indicatorPadding: EdgeInsets.symmetric(horizontal: 30.0),
               tabs: [
-                Tab(text: TR(context, '개인키')),
-                Tab(text: TR(context, 'RWF')),
+                Tab(text: TR('개인키')),
+                Tab(text: TR('RWF')),
               ],
             ),
           ),
@@ -102,7 +102,7 @@ class _ImportPrivateKeyScreenState
                     Container(
                       child: isEnableButton
                           ? PrimaryButton(
-                        text: TR(context, buttonText),
+                        text: TR(buttonText),
                         onTap: () async {
                           if (tabIndex == 0) {
                             _execImport(_textcontroller0.text);
@@ -122,7 +122,7 @@ class _ImportPrivateKeyScreenState
                             }
                           }
                         },
-                      ) : DisabledButton(text: TR(context, buttonText)),
+                      ) : DisabledButton(text: TR(buttonText)),
                     ),
                     SizedBox(
                       height: 20.h,
@@ -151,8 +151,8 @@ class _ImportPrivateKeyScreenState
         builder: (BuildContext context) {
           return SimpleCheckDialog(
             hasTitle: true,
-            titleString: TR(context, '개인키가 일치하지 않습니다'),
-            infoString: TR(context, '확인 후 다시 시도해 주세요.'),
+            titleString: TR('개인키가 일치하지 않습니다'),
+            infoString: TR('확인 후 다시 시도해 주세요.'),
             defaultTapOption: () {
               context.pop();
             },
@@ -167,7 +167,7 @@ class _ImportPrivateKeyScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          TR(context, '개인키 문자열을 입력해 주세요'),
+          TR('개인키 문자열을 입력해 주세요'),
           style: typo16medium.copyWith(color: GRAY_70),
         ),
         SizedBox(height: 10.h),
@@ -195,7 +195,7 @@ class _ImportPrivateKeyScreenState
                 borderRadius: BorderRadius.circular(8),
               ),
               hintText:
-              '${TR(context, '_예')})b1e4a513cb068d7611c671f9fdf71d0e633fd8b5a76c1de863a1e4a51306bd1d',
+              '${TR('_예')})b1e4a513cb068d7611c671f9fdf71d0e633fd8b5a76c1de863a1e4a51306bd1d',
               hintStyle:
               typo16regular150.copyWith(color: GRAY_30),
               suffixIconConstraints:
@@ -223,7 +223,7 @@ class _ImportPrivateKeyScreenState
         ),
         IconBorderButton(
           imageAssetName: 'assets/svg/icon_copy.svg',
-          text: TR(context, '붙여넣기'),
+          text: TR('붙여넣기'),
           onPressed: () async {
             ClipboardData? cdata = await Clipboard.getData(Clipboard.kTextPlain);
             setState(() {
@@ -245,7 +245,7 @@ class _ImportPrivateKeyScreenState
         Row(
           children: [
             Text(
-              TR(context, 'RWF 문자열을 입력해 주세요.'),
+              TR('RWF 문자열을 입력해 주세요.'),
               style: typo16medium.copyWith(color: GRAY_70),
             ),
             SizedBox(width: 5.w),
@@ -282,7 +282,7 @@ class _ImportPrivateKeyScreenState
                 borderRadius: BorderRadius.circular(8),
               ),
               hintText:
-              '${TR(context, '_예')})b1e4a513cb068d7611c671f9fdf71d0e633fd8b5a76c1de863a1e4a51306bd1d',
+              '${TR('_예')})b1e4a513cb068d7611c671f9fdf71d0e633fd8b5a76c1de863a1e4a51306bd1d',
               hintStyle:
               typo16regular150.copyWith(color: GRAY_30),
               suffixIconConstraints:
@@ -312,7 +312,7 @@ class _ImportPrivateKeyScreenState
           children: [
             IconBorderButton(
               imageAssetName: 'assets/svg/icon_copy.svg',
-              text: TR(context, '붙여넣기'),
+              text: TR('붙여넣기'),
               onPressed: () async {
                 ClipboardData? cdata = await Clipboard.getData(Clipboard.kTextPlain);
                 setState(() {
@@ -326,7 +326,7 @@ class _ImportPrivateKeyScreenState
         Row(
           children: [
             Text(
-              TR(context, '비밀번호를 입력해 주세요.'),
+              TR('비밀번호를 입력해 주세요.'),
               style: typo16medium.copyWith(color: GRAY_70),
             ),
             SizedBox(width: 5.w),
@@ -376,7 +376,7 @@ class _ImportPrivateKeyScreenState
           width: 5.w,
         ),
         Text(
-          TR(context, '불러온 계정은 지갑 복구 시,\n지갑 복구용 문구로는 복구 할 수 없습니다.'),
+          TR('불러온 계정은 지갑 복구 시,\n지갑 복구용 문구로는 복구 할 수 없습니다.'),
           style: typo14medium.copyWith(color: GRAY_70, height: 1.5),
         ),
       ],

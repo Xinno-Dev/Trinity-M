@@ -131,7 +131,7 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, typeText),
+          TR(typeText),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -155,7 +155,7 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              TR(context, '수량'),
+                              TR('수량'),
                               style: typo14semibold,
                             ),
                             SizedBox(
@@ -246,7 +246,7 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                                     return Row(
                                       children: [
                                         Text(
-                                          TR(context, '코인 보유량'),
+                                          TR('코인 보유량'),
                                           style: typo14medium.copyWith(
                                               color: GRAY_50),
                                         ),
@@ -289,7 +289,7 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                             children: [
                               if (isDelegate)
                                 DetailRow(
-                                  title: TR(context, '검증인'),
+                                  title: TR('검증인'),
                                   content: Text(
                                     getShortAddressText(toAddress, 6),
                                     style: typo18semibold.copyWith(
@@ -297,17 +297,17 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                                   ),
                                 ),
                               DetailQuantityRow(
-                                title: TR(context, isDelegate ? '위임 금액' : '금액'),
+                                title: TR(isDelegate ? '위임 금액' : '금액'),
                                 quantity: formattedSendAmount,
                                 unit: 'RIGO',
                               ),
                               DetailQuantityRow(
-                                title: TR(context, '연 수익율'),
+                                title: TR('연 수익율'),
                                 quantity: '5~15',
                                 unit: '%',
                               ),
                               DetailRow(
-                                title: TR(context, '예상 수익(연)'),
+                                title: TR('예상 수익(연)'),
                                 content: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
@@ -331,7 +331,7 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                                   ? Row(
                                       children: [
                                         Text(
-                                          TR(context, '총 위임 금액'),
+                                          TR('총 위임 금액'),
                                           style: typo16medium.copyWith(
                                               color: GRAY_70),
                                         ),
@@ -356,7 +356,7 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                                       ],
                                     )
                                   : TotalStakingRow(
-                                      title: '${TR(context, '총')} ${TR(context, typeText)}${TR(context, ' 금액')}',
+                                      title: '${TR('총')} ${TR(typeText)}${TR(' 금액')}',
                                       balance: formattedSendAmount,
                                     ),
                               SizedBox(
@@ -385,7 +385,7 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                           height: 16,
                         ),
                         CustomCheckbox(
-                          title: '${TR(context, typeText)} ${TR(context, '기능 이용 주의사항')}',
+                          title: '${TR(typeText)} ${TR('기능 이용 주의사항')}',
                           onChanged: (value) {
                             setState(() {
                               agree_1 = value!;
@@ -402,8 +402,8 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                         ),
                         CustomCheckbox(
                           title: ref.read(languageProvider).isKor ?
-                            '${TR(context, typeText)}의 위험을 이해하고 진행합니다.' :
-                            'Understand the risks of ${TR(context, typeText)} and proceed.',
+                            '${TR(typeText)}의 위험을 이해하고 진행합니다.' :
+                            'Understand the risks of ${TR(typeText)} and proceed.',
                           checked: agree_2,
                           pushed: false,
                           localAuth: true,
@@ -419,10 +419,10 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                 ),
                 (agree_1 && agree_2 && !quantityTextFieldIsEmpty)
                     ? PrimaryButton(
-                        text: TR(context, '다음'),
+                        text: TR('다음'),
                         onTap: () {
                           if (double.parse(sendAmount) > balance) {
-                            _showToast(TR(context, '보유한 수량이 부족합니다'));
+                            _showToast(TR('보유한 수량이 부족합니다'));
                             return;
                           }
                           provider.Provider.of<StakesData>(context,
@@ -434,7 +434,7 @@ class _StakingInputScreenState extends ConsumerState<StakingInputScreen> {
                           context.pushNamed(StakingConfirmScreen.routeName);
                         },
                       )
-                    : DisabledButton(text: TR(context, '다음'))
+                    : DisabledButton(text: TR('다음'))
               ],
             ),
           ),

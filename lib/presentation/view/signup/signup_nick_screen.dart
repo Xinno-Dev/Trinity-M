@@ -51,7 +51,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: defaultAppBar(TR(context, '사용자 이름 등록')),
+        appBar: defaultAppBar(TR('사용자 이름 등록')),
         body: LayoutBuilder(builder: (context, constraints) {
           return ConstrainedBox(
             constraints: BoxConstraints(
@@ -70,12 +70,12 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            TR(context, '사용자 이름을\n등록해 주세요.'),
+                            TR('사용자 이름을\n등록해 주세요.'),
                             style: typo24bold150,
                           ),
                           SizedBox(height: 16.h),
                           Text(
-                            TR(context, '서비스에서 사용 될 ID(닉네임)입니다.\n가입 후 변경 가능합니다.'),
+                            TR('서비스에서 사용 될 ID(닉네임)입니다.\n가입 후 변경 가능합니다.'),
                             style: typo16medium150.copyWith(
                               color: GRAY_70,
                             ),
@@ -93,7 +93,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                             controller: textInputController,
                             focusNode: textFocusNode,
                             decoration: InputDecoration(
-                              hintText: TR(context, '사용자 이름 입력'),
+                              hintText: TR('사용자 이름 입력'),
                               errorText:  _errorText
                             ),
                             keyboardType: TextInputType.name,
@@ -115,7 +115,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                                     showLoginErrorDialog(context, type)).then((
                                     result) {
                                   if (BOL(result)) {
-                                    showToast(TR(context, '중복 확인 완료'));
+                                    showToast(TR('중복 확인 완료'));
                                   }
                                 });
                               }
@@ -132,7 +132,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                                     ? PRIMARY_90
                                     : WHITE
                               ),
-                              child: Text(TR(context, '중복 확인'), style: typo14bold),
+                              child: Text(TR('중복 확인'), style: typo14bold),
                             ),
                           ),
                         ],
@@ -144,7 +144,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                   alignment: Alignment.bottomCenter,
                   child: loginProv.isNickCheckDone
                     ? PrimaryButton(
-                      text: TR(context, '다음'),
+                      text: TR('다음'),
                       round: 0,
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode()); //remove focus
@@ -164,13 +164,13 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                                 }
                               });
                             }
-                            showToast(TR(context,
+                            showToast(TR(
                                 loginProv.isLogin ? '회원가입 성공' : '회원가입 실패'));
                           });
                         });
                       },
                     ) : DisabledButton(
-                      text: TR(context, '다음'),
+                      text: TR('다음'),
                     ),
                   ),
                 ],

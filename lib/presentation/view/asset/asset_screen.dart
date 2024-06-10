@@ -199,9 +199,9 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
                     if (INT(result) > 0) {
                       Future.delayed(Duration(milliseconds: 200)).then((_) {
                         if (result == 1) {
-                          _showToast(TR(context, '네트워크를 변경했습니다'));
+                          _showToast(TR('네트워크를 변경했습니다'));
                         } else if (result == 2) {
-                          _showToast(TR(context, '네트워크를 추가했습니다'));
+                          _showToast(TR('네트워크를 추가했습니다'));
                         } else if (result == 3) {
                           setState(() {});
                         }
@@ -255,7 +255,7 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
                                   width: 89.w,
                                   child: ButtonWithImage(
                                     style: whiteImageButtonStyle,
-                                    buttonText: TR(context, '보내기'),
+                                    buttonText: TR('보내기'),
                                     imageAssetName:
                                         'assets/svg/filled_round_arrow_up.svg',
                                     onPressed: () {
@@ -274,13 +274,13 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
                                   width: 89.w,
                                   child: ButtonWithImage(
                                     style: whiteImageButtonStyle,
-                                    buttonText: TR(context, '받기'),
+                                    buttonText: TR('받기'),
                                     imageAssetName:
                                         'assets/svg/filled_round_arrow_down.svg',
                                     onPressed: () {
                                       UiHelper().buildRoundBottomSheet(
                                         context: context,
-                                        title: TR(context, '내 주소로 받기'),
+                                        title: TR('내 주소로 받기'),
                                         child: ReceiveAssetScreen(
                                           walletAddress: walletAddress,
                                         ),
@@ -296,7 +296,7 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
                                     width: 89.w,
                                     child: ButtonWithImage(
                                       style: whiteImageButtonStyle,
-                                      buttonText: TR(context, '스왑 '),
+                                      buttonText: TR('스왑 '),
                                       imageAssetName: isSwapEnable ? 'assets/svg/icon_swap.svg' : 'assets/svg/icon_swap_off.svg',
                                       isEnable: isSwapEnable,
                                       onPressed: () {
@@ -326,10 +326,10 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
                       indicatorPadding: EdgeInsets.zero,
                       tabs: <Widget> [
                         Tab(
-                          text: TR(context, '전송 내역'),
+                          text: TR('전송 내역'),
                         ),
                         Tab(
-                          text: TR(context, '_자산'),
+                          text: TR('_자산'),
                         ),
                       ],
                     ),
@@ -386,7 +386,7 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
                           child: Row(
                               children: [
                                 AutoSizeText(
-                                  accountInfo?.accountName ?? TR(context, '계정 정보 없음'),
+                                  accountInfo?.accountName ?? TR('계정 정보 없음'),
                                   style: typo18semibold,
                                   maxLines: 1,
                                   maxFontSize: 18,
@@ -394,7 +394,7 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
                                 SizedBox(width: 4),
                                 if (!select_hasMnemonic)
                                   CustomBadge(
-                                    text: TR(context, '불러옴'),
+                                    text: TR('불러옴'),
                                     isSmall: true,
                                   ),
                                 SvgPicture.asset(
@@ -503,7 +503,7 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
                     final androidInfo = await DeviceInfoPlugin().androidInfo;
                     LOG('----> androidInfo.version.sdkInt : ${androidInfo.version.sdkInt}');
                     if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
-                      _showToast(TR(context, '복사를 완료했습니다'));
+                      _showToast(TR('복사를 완료했습니다'));
                   },
                 ),
               ],
@@ -526,7 +526,7 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
   // buildNetworkBottomSheet(networkList) {
   //   return UiHelper().buildRoundBottomSheet(
   //     context: context,
-  //     title: TR(context, '네트워크 변경'),
+  //     title: TR('네트워크 변경'),
   //     child: StatefulBuilder(
   //         builder: (BuildContext context, StateSetter setModalState) {
   //       return Column(
@@ -552,7 +552,7 @@ class _AssetScreenState extends ConsumerState<AssetScreen> with WidgetsBindingOb
   //           )).toList(),
   //           SizedBox(height: 20),
   //           PrimaryButton(
-  //             text: TR(context, '네트워크 추가'),
+  //             text: TR('네트워크 추가'),
   //             isSmallButton: true,
   //             onTap: () async {
   //               Navigator.of(context).pop(true);

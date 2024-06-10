@@ -50,7 +50,7 @@ class _SwapConfirmScreenState extends ConsumerState<SwapConfirmScreen> {
             onPressed: context.pop,
           ),
           title: Text(
-            TR(context, '스왑'),
+            TR('스왑'),
             style: typo18semibold,
           ),
           titleSpacing: 0,
@@ -64,10 +64,10 @@ class _SwapConfirmScreenState extends ConsumerState<SwapConfirmScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               showStepNumber(2),
-              Text(TR(context, '스왑 정보를 확인해주세요'), style: typo16medium),
+              Text(TR('스왑 정보를 확인해주세요'), style: typo16medium),
               SizedBox(height: 20.h),
               _buildInfoWidget(
-                TR(context, '보내는 정보'),
+                TR('보내는 정보'),
                 STR(widget.swapModel.fromNetwork?.name),
                 STR(widget.swapModel.fromCoin?.name),
                 STR(widget.swapModel.fromCoin?.walletAddress),
@@ -78,7 +78,7 @@ class _SwapConfirmScreenState extends ConsumerState<SwapConfirmScreen> {
                 child: Icon(Icons.arrow_downward),
               ),
               _buildInfoWidget(
-                TR(context, '받는 정보'),
+                TR('받는 정보'),
                 STR(widget.swapModel.toNetwork?.name),
                 STR(widget.swapModel.toCoin?.name),
                 STR(widget.swapModel.toAddress),
@@ -88,7 +88,7 @@ class _SwapConfirmScreenState extends ConsumerState<SwapConfirmScreen> {
               Container(
                 padding: EdgeInsets.symmetric(vertical: 10.h),
                 child: isEnableButton ? PrimaryButton(
-                  text: TR(context, '스왑'),
+                  text: TR('스왑'),
                   onTap: () {
                     final stack = Stakes(
                       // fromTokenAddress: widget.swapModel.fromCoin?.chainCode,
@@ -108,7 +108,7 @@ class _SwapConfirmScreenState extends ConsumerState<SwapConfirmScreen> {
                     LOG('---> toCoin : ${widget.swapModel.toCoin?.toJson()}');
                     Navigator.of(context).push(createAniRoute(SignPasswordScreen()));
                   },
-                ) : DisabledButton(text: TR(context, '스왑')),
+                ) : DisabledButton(text: TR('스왑')),
               ),
             ],
           ),
@@ -131,9 +131,9 @@ class _SwapConfirmScreenState extends ConsumerState<SwapConfirmScreen> {
             ),
             child: Column(
               children: [
-                _buildInfoItem(TR(context, '네트워크'), network),
-                _buildInfoItem(TR(context, '토큰'   ), token),
-                _buildInfoItem(TR(context, '주소'   ), address),
+                _buildInfoItem(TR('네트워크'), network),
+                _buildInfoItem(TR('토큰'   ), token),
+                _buildInfoItem(TR('주소'   ), address),
               ],
             ),
           ),
@@ -161,11 +161,11 @@ class _SwapConfirmScreenState extends ConsumerState<SwapConfirmScreen> {
       margin: EdgeInsets.only(bottom: 20.h),
       child: Column(
         children: [
-          _buildAmountItem(TR(context, '보내는 수량'  ), amount: STR(swapInfo.fromAmount), unit: fromUnit),
-          _buildAmountItem(TR(context, '수수료'      ), amount: STR(swapInfo.swapFee), unit: fromUnit),
-          _buildAmountItem(TR(context, '교환비율(예상)'), desc: '1 $fromUnit ≈ ${DBL(swapInfo.swapRate)} $toUnit'),
+          _buildAmountItem(TR('보내는 수량'  ), amount: STR(swapInfo.fromAmount), unit: fromUnit),
+          _buildAmountItem(TR('수수료'      ), amount: STR(swapInfo.swapFee), unit: fromUnit),
+          _buildAmountItem(TR('교환비율(예상)'), desc: '1 $fromUnit ≈ ${DBL(swapInfo.swapRate)} $toUnit'),
           Divider(height: 20, thickness: 2.0, color: GRAY_20),
-          _buildAmountItem(TR(context, '받을수량(예상)'), amount: STR(swapInfo.toAmount), unit: toUnit),
+          _buildAmountItem(TR('받을수량(예상)'), amount: STR(swapInfo.toAmount), unit: toUnit),
         ],
       ),
     );

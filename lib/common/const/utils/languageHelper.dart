@@ -69,7 +69,7 @@ class LanguageHelper {
   }
 }
 
-String TR(BuildContext context, String? text) {
+String TR(String? text) {
   // return AppLocalization.of(context)!.translate(text);
   if (text != null) {
     return appLocaleDelegate.translate(text);

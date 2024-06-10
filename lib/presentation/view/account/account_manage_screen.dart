@@ -81,7 +81,7 @@ class _AccountManageScreenState extends ConsumerState<AccountManageScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '계정 관리'),
+          TR('계정 관리'),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -103,7 +103,7 @@ class _AccountManageScreenState extends ConsumerState<AccountManageScreen> {
                     context.pushNamed(ImportPrivateKeyScreen.routeName);
                   },
                   child: Text(
-                    TR(context, '계정 불러오기'),
+                    TR('계정 불러오기'),
                     style: typo16semibold.copyWith(color: GRAY_40),
                   ),
                   style: whiteButtonStyle.copyWith(
@@ -167,8 +167,8 @@ class _AccountManageScreenState extends ConsumerState<AccountManageScreen> {
                       builder: (BuildContext context) {
                         return SimpleCheckDialog(
                           hasTitle: true,
-                          titleString: TR(context, '새 계정을 추가하시겠어요?'),
-                          infoString: TR(context, '새 계정이 목록에 추가됩니다.'),
+                          titleString: TR('새 계정을 추가하시겠어요?'),
+                          infoString: TR('새 계정이 목록에 추가됩니다.'),
                           defaultButtonText: '취소',
                           defaultTapOption: () {
                             context.pop();
@@ -185,7 +185,7 @@ class _AccountManageScreenState extends ConsumerState<AccountManageScreen> {
                     );
                   },
                   child: Text(
-                      TR(context, '계정 추가하기'),
+                      TR('계정 추가하기'),
                     style: typo16semibold.copyWith(color: GRAY_70),
                   ),
                   style: popupGrayButtonStyle.copyWith(
@@ -219,7 +219,7 @@ class _AccountManageScreenState extends ConsumerState<AccountManageScreen> {
           SizedBox(width: 4.0),
           if (!addressList[index].hasMnemonic!)
             CustomBadge(
-              text: TR(context, '불러옴'),
+              text: TR('불러옴'),
               isSmall: true,
             ),
         ],
@@ -234,7 +234,7 @@ class _AccountManageScreenState extends ConsumerState<AccountManageScreen> {
       ),
       onTap: () {
         log('----> onTap : $index');
-        // showLoadingDialog(context, TR(context, '계정 정보를 가져오는 중입니다'));
+        // showLoadingDialog(context, TR('계정 정보를 가져오는 중입니다'));
         UserHelper().setUser(
           publickey: addressList[index].publicKey!,
           key: addressList[index].keyPair!,

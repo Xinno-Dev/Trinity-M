@@ -108,7 +108,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with WidgetsBin
                     Padding(
                       padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
                       child: Text(
-                        TR(context, '설정'),
+                        TR('설정'),
                         style: typo18semibold,
                       ),
                     ),
@@ -116,21 +116,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with WidgetsBin
                       height: 20.h,
                     ),
                     SettingsMenu(
-                      title: TR(context, '언어 설정'),
+                      title: TR('언어 설정'),
                       imageName: 'settings',
                       touchupinside: () {
                         context.pushNamed(SettingsLanguageScreen.routeName);
                       },
                     ),
                     SettingsMenu(
-                      title: TR(context, '보안 및 개인정보 보호'),
+                      title: TR('보안 및 개인정보 보호'),
                       imageName: 'security',
                       touchupinside: () {
                         context.pushNamed(SettingsSecurityScreen.routeName);
                       },
                     ),
                     SettingsMenu(
-                      title: TR(context, '약관 및 정책'),
+                      title: TR('약관 및 정책'),
                       imageName: 'policy',
                       touchupinside: () {
                         context.pushNamed(SettingsPolicyScreen.routeName);
@@ -146,8 +146,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with WidgetsBin
                         }
                       },
                       child: SettingsMenu(
-                        title: '${TR(context, '앱 버전')} ${_packageInfo.version}'
-                          '${isShowUpdate ? ' (${TR(context, '마켓 버전')}: ${serverVersion})' : ''}',
+                        title: '${TR('앱 버전')} ${_packageInfo.version}'
+                          '${isShowUpdate ? ' (${TR('마켓 버전')}: ${serverVersion})' : ''}',
                         imageName: 'info',
                         hasRightString: !isShowUpdate,
                       )
@@ -161,7 +161,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with WidgetsBin
                       padding: EdgeInsets.all(20),
                       child: TextButton(
                         child: Text(
-                          TR(context, '지갑 잠금'),
+                          TR('지갑 잠금'),
                           style: typo14semibold.copyWith(color: GRAY_50),
                         ),
                         style: TextButton.styleFrom(
@@ -174,13 +174,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> with WidgetsBin
                             context: context,
                             builder: (BuildContext context) {
                               return SimpleCheckDialog(
-                                titleString: TR(context, '지갑 잠금 유의사항'),
+                                titleString: TR('지갑 잠금 유의사항'),
                                 infoString:
-                                  TR(context, '지갑 복구용 문구를 보관하지 않고\n지갑을 잠그실 경우,\n보유하신 자산에 접근할 수 없습니다.'),
+                                  TR('지갑 복구용 문구를 보관하지 않고\n지갑을 잠그실 경우,\n보유하신 자산에 접근할 수 없습니다.'),
                                 hasTitle: true,
-                                defaultButtonText: TR(context, '취소'),
+                                defaultButtonText: TR('취소'),
                                 hasOptions: true,
-                                optionButtonText: TR(context, '잠금'),
+                                optionButtonText: TR('잠금'),
                                 hasIcon: true,
                                 icon: WarningIcon(),
                                 defaultTapOption: () {

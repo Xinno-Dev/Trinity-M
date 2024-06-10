@@ -488,12 +488,79 @@ class AppLocalization {
       // QuantityColumn..........................
       '스테이킹 보유량': 'Staking holdings',
 
-
       '잠금 해제': 'Unlock',
       '지갑 초기화': 'Reset wallet',
       '지갑 만들기': 'Create wallet',
       '지갑 복구': 'Recover wallet',
       '_예': 'ex',
+
+      // trinity M
+      'Market': 'Market',
+      '내 정보': 'My Info',
+      'ID(닉네임)': 'ID(nickname)',
+      '사용자 이름': 'User name',
+      '본인인증': 'Identity verification',
+      '계정': 'Account',
+      '인증': 'Verification',
+      '인증 완료': 'Verification completed',
+      '계정 복구 단어 보기': 'View account recovery words',
+      '회원 탈퇴 신청': 'Apply for membership withdrawal',
+      '신청': 'Application',
+      '회원 탈퇴 신청 완료': 'Withdrawal application completed',
+      '로그아웃 & 앱 초기화': 'Log out & reset app',
+      '구매 내역': 'Purchase history',
+      '이용약관': 'Terms of use',
+      '개인정보처리 방침': 'Privacy policy',
+      '버전 정보': 'App version',
+      '로그아웃': 'Log out',
+      '조회 기간': 'Inquiry period',
+      '상품 정보': 'Product information',
+      '구매 상세': 'Purchase details',
+      '선택완료': 'Complete',
+      '상품이 없습니다.': 'There are no products.',
+      '구매하기': 'Purchase',
+      '구매 상품': 'Purchase product',
+      '결제 금액': 'Amount of payment',
+      '거래 일시': 'Transaction time',
+      '결제 수단': 'Payment method',
+      '바코드': 'Barcode',
+      '결제 예정 금액을 확인해 주세요.': 'Please check the amount to be paid.',
+      '상품 금액': 'Product amount',
+      '결제 예정 금액': 'Payment amount',
+      '(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다. '
+          '이에 따라, 당사는 상품, 거래정보 및 거래에 대하여 책임을 지지 않습니다.':
+      'Exino Inc. is a mail order intermediary and is not a party to the mail order. '
+          'Accordingly, we are not responsible for products, transaction information, or transactions.',
+      '결제하기': 'Make payment',
+      '프로필 편집': 'Edit profile',
+      '보유 상품': 'Products you own',
+      '판매중인 상품이 없습니다.': 'There are no products for sale.',
+      '계정 추가': 'Add account',
+      '계정 선택': 'Select account',
+      '계정명을 입력해 주세요.': 'Please enter your account name.',
+      '프로필 변경': 'Change profile',
+      '변경할 프로필 내용을 입력해 주세요.': 'Please enter the profile information you want to change.',
+      '비밀번호 입력': 'Enter password',
+      '현재 버전': 'Current version',
+      '앱 버전정보': 'App version information',
+      '현재 최신 버전입니다.': 'This is currently the latest version.',
+      '사용자 이름 변경': 'Change username',
+      '변경할 이름을 입력해 주세요.': 'Please enter the name you want to change.',
+      'ID(닉네임) 변경': 'Change ID(nickname)',
+      '프로필 정보가 없습니다.': 'There is no profile information.',
+      '사업자명: Xinno Inc.\n'
+          '대표이사: 이지민\n'
+          '등록번호: 644-86-03081\n'
+          '대표번호: 070-4304-5778\n'
+          '서울시 서초구 서운로 13 126-나94호':
+      'Business name: Xinno Inc.\n'
+          'CEO: Ji-min Lee\n'
+          'Registration number: 644-86-03081\n'
+          'Phone number: 070-4304-5778\n'
+          '#126-Na94, 13 Seoun-ro, Seocho-gu, Seoul',
+      '새 버전': 'New version',
+      '': '',
+      '': '',
     },
     'ko': {
       '_예': '예',

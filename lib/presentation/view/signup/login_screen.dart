@@ -41,7 +41,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   @override
   void didChangeDependencies() {
     if (!widget.isAppStart && isShowToast) {
-      showToast(TR(context, '로그인이 필요한 서비스입니다.'));
+      showToast(TR('로그인이 필요한 서비스입니다.'));
       isShowToast = false;
     }
     super.didChangeDependencies();
@@ -66,7 +66,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: WHITE,
-        appBar: !widget.isAppStart ? defaultAppBar(TR(context, '로그인')) : null,
+        appBar: !widget.isAppStart ? defaultAppBar(TR('로그인')) : null,
         body: SafeArea(
           // bottom: false,
           child: LayoutBuilder(builder: (context, constraints) {
@@ -100,7 +100,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             height: 30.h,
                             margin: EdgeInsets.only(bottom: 10.h),
                             child: Text(
-                              TR(context, prov.isSignUpMode ? '회원가입' : '로그인'),
+                              TR(prov.isSignUpMode ? '회원가입' : '로그인'),
                               style: typo16bold.copyWith(color: PRIMARY_100),
                             ),
                           ),
@@ -175,7 +175,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     ),
                     Center(
                       child: Text(
-                        TR(context, '이메일로 ${isSignUp ? '회원가입' : '로그인'}'),
+                        TR('이메일로 ${isSignUp ? '회원가입' : '로그인'}'),
                         style: typo14bold,
                       ),
                     )
@@ -260,7 +260,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   ),
                   Center(
                     child: Text(
-                      TR(context, '카카오로 ${isSignUp ? '회원가입' : '로그인'}'),
+                      TR('카카오로 ${isSignUp ? '회원가입' : '로그인'}'),
                       style: typo14bold,
                     ),
                   )
@@ -313,7 +313,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             child: Column(
               children: [
                 Text(
-                  TR(context, isSignUp ? '로그인' : '회원가입'),
+                  TR(isSignUp ? '로그인' : '회원가입'),
                   style: typo14semibold.copyWith(color: GRAY_50),
                 ),
                 Container(

@@ -76,7 +76,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
           leadingWidth: 40.w,
           titleSpacing: 0,
           centerTitle: true,
-          title: Text(TR(context, isCheckDone ? '토큰 정보 확인' : '토큰 주소 조회'),
+          title: Text(TR(isCheckDone ? '토큰 정보 확인' : '토큰 주소 조회'),
             style: typo18semibold,
           ),
           elevation: 0,
@@ -91,7 +91,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (widget.networkModel.isRigo)...[
-                      Text(TR(context,
+                      Text(TR(
                         '\'Ox\' 문자를 제외한 토큰 주소를 입력해 주세요.'),
                         maxLines: 2,
                         style: typo16bold),
@@ -116,7 +116,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
                       ),
                     ],
                     if (!widget.networkModel.isRigo)...[
-                      Text(TR(context, '체인코드를 입력해 주세요.'),
+                      Text(TR('체인코드를 입력해 주세요.'),
                         maxLines: 2,
                         style: typo16bold),
                       showTextEdit('체인코드',
@@ -144,7 +144,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
                     //     },
                     //     child: Row(
                     //       children: [
-                    //         Text(TR(context, 'REP-20 기반의 토큰 추가만 지원합니다.'),
+                    //         Text(TR('REP-20 기반의 토큰 추가만 지원합니다.'),
                     //             style: typo14medium.copyWith(color: SECONDARY_90)),
                     //         SizedBox(width: 5),
                     //         SvgPicture.asset('assets/svg/icon_question.svg'),
@@ -159,7 +159,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
                 padding: EdgeInsets.only(bottom: 10),
                 child: isEnableCheck ?
                 PrimaryButton(
-                  text: TR(context, isCheckDone ? '추 가' : '조 회'),
+                  text: TR(isCheckDone ? '추 가' : '조 회'),
                   onTap: () async {
                     if (isCheckDone) {
                       showConfirmDialog(newCoin.name).then((result) {
@@ -226,7 +226,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
                       }
                       setState(() {
                         if (!isCheckDone) {
-                          showSimpleDialog(context, TR(context,
+                          showSimpleDialog(context, TR(
                               '올바르지 않은 토큰 주소입니다.\n주소를 다시 확인해 주세요.'),
                               'assets/svg/icon_error.svg');
                         }
@@ -234,7 +234,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
                     }
                   }
                 ) : DisabledButton(
-                  text: TR(context, isCheckDone ? '추 가' : '조 회'),
+                  text: TR(isCheckDone ? '추 가' : '조 회'),
                 )
               )
             ]
@@ -259,7 +259,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(TR(context, title), style: typo14medium),
+          Text(TR(title), style: typo14medium),
           SizedBox(height: 10.h),
           TextField(
             controller: controller ?? TextEditingController(text: desc ?? ''),
@@ -289,8 +289,8 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
         AlertDialog(
           content: Text(
             ref.read(languageProvider).isKor ?
-            TR(context, '\'$tokenName\' 토큰을\n추가하시겠습니까?') :
-            TR(context, 'Would you like to\nadd a \'$tokenName\' token?'),
+            TR('\'$tokenName\' 토큰을\n추가하시겠습니까?') :
+            TR('Would you like to\nadd a \'$tokenName\' token?'),
             style: typo16dialog, textAlign: TextAlign.center),
           contentPadding: EdgeInsets.only(top: 40.h, bottom: 10.h),
           actionsPadding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 15.h),
@@ -304,7 +304,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
                   OutlinedButton(
                     onPressed: context.pop,
                     child: Text(
-                      TR(context, '취소'),
+                      TR('취소'),
                       style: typo12semibold100,
                     ),
                     style: darkBorderButtonStyle,
@@ -316,7 +316,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
                       Navigator.of(context).pop(true);
                     },
                     child: Text(
-                      TR(context, '추가'),
+                      TR('추가'),
                       style: typo12semibold100.copyWith(color: WHITE),
                     ),
                     style: primaryBorderButtonStyle,
@@ -336,8 +336,8 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
         AlertDialog(
           content: Text(
             ref.read(languageProvider).isKor ?
-            TR(context, '토큰 추가 기능은 리고 메인 네트워크에서\n발행된 토큰(REP-20) 만 지원됩니다.') :
-            TR(context, 'The token addition feature only supports tokens\n(REP-20) issued on the Rigo main network.'),
+            TR('토큰 추가 기능은 리고 메인 네트워크에서\n발행된 토큰(REP-20) 만 지원됩니다.') :
+            TR('The token addition feature only supports tokens\n(REP-20) issued on the Rigo main network.'),
             style: typo12dialog, textAlign: TextAlign.center),
           contentPadding: EdgeInsets.fromLTRB(20, 30, 20, 10),
           actionsPadding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 15.h),
@@ -355,7 +355,7 @@ class _TokenAddScreenState extends ConsumerState<TokenAddScreen> {
                         Navigator.of(context).pop(true);
                       },
                       child: Text(
-                        TR(context, '확인'),
+                        TR('확인'),
                         style: typo12semibold100,
                       ),
                       style: darkBorderButtonStyle,

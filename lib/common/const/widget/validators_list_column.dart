@@ -34,7 +34,7 @@ class ValidatorsListColumn extends StatelessWidget {
                     style: typo16semibold,
                   ),
                   Spacer(),
-                  CustomBadge(isSmall: true, text: TR(context, '스테이킹 비율')),
+                  CustomBadge(isSmall: true, text: TR('스테이킹 비율')),
                   SizedBox(
                     width: 4,
                   ),
@@ -57,7 +57,7 @@ class ValidatorsListColumn extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    TR(context, '총 스테이킹'),
+                    TR('총 스테이킹'),
                     style: typo14medium.copyWith(color: GRAY_50),
                   ),
                   Spacer(),
@@ -80,7 +80,7 @@ class ValidatorsListColumn extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    TR(context, '보상량'),
+                    TR('보상량'),
                     style: typo14medium.copyWith(color: GRAY_50),
                   ),
                   Spacer(),

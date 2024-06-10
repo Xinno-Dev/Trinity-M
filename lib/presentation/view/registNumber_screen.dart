@@ -54,9 +54,9 @@ class _RegistNumberScreenState extends ConsumerState<RegistNumberScreen> {
           builder: (BuildContext context) {
             return SimpleCheckDialog(
               hasTitle: true,
-              titleString: TR(context, '이미 등록되어 있는 이메일 입니다'),
-              infoString: TR(context, '사용가능한 이메일을 입력해 주세요.'),
-              defaultButtonText: TR(context, '돌아가기'),
+              titleString: TR('이미 등록되어 있는 이메일 입니다'),
+              infoString: TR('사용가능한 이메일을 입력해 주세요.'),
+              defaultButtonText: TR('돌아가기'),
             );
           },
         );
@@ -68,8 +68,8 @@ class _RegistNumberScreenState extends ConsumerState<RegistNumberScreen> {
           context: context,
           builder: (BuildContext context) {
             return SimpleCheckDialog(
-              infoString: TR(context, '사용 가능한 이메일 입니다'),
-              defaultButtonText: TR(context, '돌아가기'),
+              infoString: TR('사용 가능한 이메일 입니다'),
+              defaultButtonText: TR('돌아가기'),
             );
           },
         );
@@ -92,7 +92,7 @@ class _RegistNumberScreenState extends ConsumerState<RegistNumberScreen> {
           ),
           centerTitle: true,
           title: Text(
-            TR(context, '회원가입'),
+            TR('회원가입'),
             style: typo18semibold,
           ),
           elevation: 0,
@@ -116,7 +116,7 @@ class _RegistNumberScreenState extends ConsumerState<RegistNumberScreen> {
                       Padding(
                         padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 0),
                         child: Text(
-                          TR(context, '이메일을 입력해 주세요'),
+                          TR('이메일을 입력해 주세요'),
                           style: typo24bold150,
                         ),
                       ),
@@ -124,7 +124,7 @@ class _RegistNumberScreenState extends ConsumerState<RegistNumberScreen> {
                       Padding(
                         padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 0),
                         child: Text(
-                          TR(context, 'BYFFIN 지갑을 이용하기 위해 필요합니다'),
+                          TR('BYFFIN 지갑을 이용하기 위해 필요합니다'),
                           style: typo16medium150,
                         ),
                       ),
@@ -134,7 +134,7 @@ class _RegistNumberScreenState extends ConsumerState<RegistNumberScreen> {
                       Padding(
                         padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 0),
                         child: Text(
-                          TR(context, '이메일'),
+                          TR('이메일'),
                           style: typo14semibold,
                         ),
                       ),
@@ -189,7 +189,7 @@ class _RegistNumberScreenState extends ConsumerState<RegistNumberScreen> {
                                   ? _nextPress
                                   : null,
                           child: Text(
-                            TR(context, '다음'),
+                            TR('다음'),
                             style: typo16bold.copyWith(
                               color: EmailValidator.validate(_userEmail)
                                   ? WHITE

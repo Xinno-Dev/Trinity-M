@@ -179,7 +179,7 @@ class GoogleService extends GoogleAccount {
       builder: (context) {
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
-            title: Text(TR(context, isUpload ? '저장 위치 선택' : '복구 파일 선택'), style: typo16semibold),
+            title: Text(TR(isUpload ? '저장 위치 선택' : '복구 파일 선택'), style: typo16semibold),
             titlePadding: EdgeInsets.fromLTRB(20, 20, 10, 0),
             insetPadding: EdgeInsets.zero,
             actionsPadding: EdgeInsets.fromLTRB(0, 0, 20, 5),
@@ -194,13 +194,13 @@ class GoogleService extends GoogleAccount {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(TR(context, '파일명'), style: typo12bold),
+                        Text(TR('파일명'), style: typo12bold),
                         SizedBox(height: 5),
                         Text(STR(ext), style: typo14normal),
                       ],
                     ),
                   ),
-                Text(TR(context, '저장폴더'), style: typo12bold),
+                Text(TR('저장폴더'), style: typo12bold),
                 SizedBox(height: 5),
                 FutureBuilder(
                   future: _getDriveFileList(isFolderOnly: isUpload, ext: ext),

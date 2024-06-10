@@ -33,7 +33,7 @@ class _StakingMainScreenState extends ConsumerState<StakingMainScreen> {
         appBar: AppBar(
           backgroundColor: WHITE,
           title: Text(
-            TR(context, '스테이킹'),
+            TR('스테이킹'),
             style: typo18semibold,
           ),
           centerTitle: false,
@@ -50,10 +50,10 @@ class _StakingMainScreenState extends ConsumerState<StakingMainScreen> {
               //   text: '스테이킹',
               // ),
               Tab(
-                text: TR(context, '위임'),
+                text: TR('위임'),
               ),
               Tab(
-                text: TR(context, '검증인'),
+                text: TR('검증인'),
               ),
             ],
           ),

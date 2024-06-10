@@ -39,7 +39,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     prov.optionIndex = -1;
     prov.selectDetailTab = 0;
     prov.clearCheckDetailId();
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -50,20 +50,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     return loginProv.isScreenLocked ? lockScreen(context) :
     AnnotatedRegion<SystemUiOverlayStyle>(
       value:SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
         systemNavigationBarColor: WHITE,
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarIconBrightness:Brightness.dark,
       ),
       child: SafeArea(
         top: false,
         child: Scaffold(
-          appBar: AppBar(
-            title: Text(TR(context, '상품 정보')),
-            centerTitle: true,
-            titleTextStyle: typo16bold,
-            backgroundColor: Colors.white,
-          ),
+          appBar: defaultAppBar(TR('상품 정보')),
           backgroundColor: Colors.white,
           body: FutureBuilder(
             future: prov.getProductDetail(),
@@ -83,12 +75,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             }
           ),
           bottomNavigationBar:
-            (widget.isCanBuy && loginProv.isLogin) ?
+            widget.isCanBuy ? loginProv.isLogin ?
             OpenContainer(
               transitionType: ContainerTransitionType.fadeThrough,
               closedBuilder: (context, builder) {
                 return PrimaryButton(
-                  text: TR(context, '구매하기'),
+                  text: TR('구매하기'),
                   round: 0,
                 );
               },
@@ -108,11 +100,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     }
                 });
               },
-              text: TR(context, '구매하기'),
+              text: TR('구매하기'),
               round: 0,
-            )
-        ),
-      )
-    );
+            ) : null
+          )
+        )
+      );
   }
 }

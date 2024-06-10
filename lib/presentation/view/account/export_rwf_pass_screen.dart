@@ -58,7 +58,7 @@ class _ScreenState extends State<ExportRWFPassScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '개인키 보기'), style: typo18semibold
+          TR('개인키 보기'), style: typo18semibold
         ),
         elevation: 0,
       ),
@@ -106,7 +106,7 @@ class _ScreenState extends State<ExportRWFPassScreen> {
                 child: Padding(
                   padding: MediaQuery.of(context).viewInsets,
                   child: PrimaryButton(
-                    text: TR(context, '다음'),
+                    text: TR('다음'),
                     onTap: () async {
                       if (inputPass.length >= 6 && inputPass == inputPassRe) {
                         // var rwfText = await _createWallet(inputPass);

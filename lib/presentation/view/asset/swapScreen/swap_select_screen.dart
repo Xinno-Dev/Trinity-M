@@ -84,7 +84,7 @@ class _SwapSelectScreenState extends ConsumerState<SwapSelectScreen> {
         leadingWidth: 40.w,
         titleSpacing: 0,
         centerTitle: true,
-        title: Text(TR(context, '토큰'),
+        title: Text(TR('토큰'),
           style: typo18semibold,
         ),
         elevation: 0,

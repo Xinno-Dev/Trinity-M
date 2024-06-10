@@ -159,7 +159,7 @@ String getFormattedText({int decimalPlaces = 0, required num value}) {
 
 // ignore: non_constant_identifier_names
 LOG(String msg) {
-  if (kDebugMode)
+  // if (kDebugMode)
     print(msg);
 }
 

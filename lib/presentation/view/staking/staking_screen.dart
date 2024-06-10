@@ -170,7 +170,7 @@ class _StakingScreenState extends ConsumerState<StakingScreen> with WidgetsBindi
         child: Column(
           children: [
             WhiteContainerWithTitle(
-              title: '${TR(context, '내')} ${TR(context, typeText)} ${TR(context, '_수량')}',
+              title: '${TR('내')} ${TR(typeText)} ${TR('_수량')}',
               children: [
                 FutureBuilder<String>(
                   future: getFormattedAmount(),
@@ -247,7 +247,7 @@ class _StakingScreenState extends ConsumerState<StakingScreen> with WidgetsBindi
               ],
             ),
             WhiteContainerWithTitle(
-              title: '${TR(context, '내')} ${TR(context, typeText)} ${TR(context, '보상')}',
+              title: '${TR('내')} ${TR(typeText)} ${TR('보상')}',
               children: [
                 FutureBuilder<Map<String, dynamic>>(
                     future: getRewardAmount(),
@@ -299,7 +299,7 @@ class _StakingScreenState extends ConsumerState<StakingScreen> with WidgetsBindi
                   Expanded(
                     child: hasAmount
                         ? Primary10Button(
-                            text: TR(context, cancelButtonText),
+                            text: TR(cancelButtonText),
                             onTap: () {
                               if (stakingType == StakingType.staking) {
                                 provider.Provider.of<StakesData>(context,
@@ -316,7 +316,7 @@ class _StakingScreenState extends ConsumerState<StakingScreen> with WidgetsBindi
                             },
                           )
                         : DisabledButton(
-                            text: TR(context, cancelButtonText),
+                            text: TR(cancelButtonText),
                             // isSmallButton: true,
                           ),
                   ),
@@ -326,7 +326,7 @@ class _StakingScreenState extends ConsumerState<StakingScreen> with WidgetsBindi
                   // 스테이킹/위임 버튼
                   Expanded(
                     child: PrimaryButton(
-                        text: TR(context, typeText),
+                        text: TR(typeText),
                         onTap: () {
                           provider.Provider.of<StakesData>(context,
                                   listen: false)

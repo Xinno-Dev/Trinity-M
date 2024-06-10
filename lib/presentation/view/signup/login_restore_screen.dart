@@ -60,7 +60,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: defaultAppBar(TR(context, '지갑 복구')),
+        appBar: defaultAppBar(TR('지갑 복구')),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -73,14 +73,13 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    TR(context, '지갑 복구 수단을\n선택해 주세요.'),
+                    TR('지갑 복구 수단을\n선택해 주세요.'),
                     style: typo24bold150,
                   ),
                   SizedBox(height: 16.h),
                   Text(
-                    TR(context,
-                        '서비스 이용을 위해 지갑 복구가 필요합니다.\n'
-                            '지갑 복구방식을 선택해 주세요.'),
+                    TR('서비스 이용을 위해 지갑 복구가 필요합니다.\n'
+                       '지갑 복구방식을 선택해 주세요.'),
                     style: typo16medium150.copyWith(
                       color: GRAY_70,
                     ),
@@ -116,7 +115,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
         Navigator.of(context).push(
           createAniRoute(RecoverPassScreen())).then((newPass) {
             prov.setUserPass(newPass);
-            showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
+            showLoadingDialog(context, TR('계정 복구중입니다...'));
             prov.recoverUser(
               newPass,
               mnemonic: mnemonic,
@@ -155,7 +154,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
                   .then((newPass) async {
                 if (STR(newPass).isNotEmpty) {
                   prov.setUserPass(newPass!);
-                  showLoadingDialog(context, TR(context, '계정 복구중입니다...'));
+                  showLoadingDialog(context, TR('계정 복구중입니다...'));
                   // start recover user..
                   prov.recoverUser(
                     newPass,
@@ -174,7 +173,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
                 }
               });
             } else {
-              showLoginErrorTextDialog(context, TR(context, '잘못된 복구 비밀번호입니다.'));
+              showLoginErrorTextDialog(context, TR('잘못된 복구 비밀번호입니다.'));
             }
           }
         });
@@ -227,10 +226,10 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
     hideLoadingDialog();
     final loginProv = ref.read(loginProvider);
     if (!loginProv.isLogin) {
-      showToast(TR(context, '로그인 실패'));
+      showToast(TR('로그인 실패'));
       return;
     }
-    showToast(TR(context, '로그인 성공'));
+    showToast(TR('로그인 성공'));
     ref.read(loginProvider).mainPageIndexOrg = 0;
     context.pushReplacementNamed(
         MainScreen.routeName, queryParams: {'selectedPage': '1'});
@@ -249,7 +248,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
       padding: EdgeInsets.symmetric(vertical: 10),
       child: PrimaryButton(
         onTap: onTap,
-        text: TR(context, title),
+        text: TR(title),
       ),
     );
   }

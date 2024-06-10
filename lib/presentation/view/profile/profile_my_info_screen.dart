@@ -35,7 +35,7 @@ class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
 
   @override
   void initState() {
-    _viewModel = ProfileViewModel();
+    _viewModel = ProfileViewModel(context);
     super.initState();
   }
 
@@ -45,7 +45,7 @@ class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
     _viewModel.context = context;
     return prov.isScreenLocked ? lockScreen(context) :
       Scaffold(
-        appBar: defaultAppBar(TR(context, '내 정보')),
+        appBar: defaultAppBar(TR('내 정보')),
         body: Scaffold(
           backgroundColor: Colors.white,
           body: ListView(
@@ -67,7 +67,7 @@ class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
                 }),
               grayDivider(),
               _viewModel.myInfoEditItem('본인인증',
-                [[prov.userIdentityYN ? '인증 완료' : '인증 미완료',
+                [[TR(prov.userIdentityYN ? '인증 완료' : '인증 미완료'),
                   prov.userIdentityYN ? '' : '인증']], onEdit: () {
                     Navigator.of(context).push(
                       createAniRoute(ProfileIdentityScreen())).then((result) {
@@ -77,25 +77,25 @@ class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
                 }),
               grayDivider(),
               _viewModel.myInfoEditItem('계정',
-                [['계정 복구 단어 보기','보기']], onEdit: _showMnemonic),
+                [[TR('계정 복구 단어 보기'),'보기']], onEdit: _showMnemonic),
               grayDivider(),
               _viewModel.myInfoEditItem('인증',
-                [['생체 인증 사용', prov.userBioYN ? 'on' : 'off']], onToggle: _showBioIdentity),
+                [[TR('생체 인증 사용'), prov.userBioYN ? 'on' : 'off']], onToggle: _showBioIdentity),
               if (IS_WITHDRAWAL_ON)...[
                 grayDivider(),
-                _viewModel.myInfoEditItem('회원 탈퇴', [['회원 탈퇴 신청하기', '신청']], onEdit: () {
+                _viewModel.myInfoEditItem('회원 탈퇴', [[TR('회원 탈퇴 신청'), '신청']], onEdit: () {
                   if (prov.isLogin) {
                     prov.logout().then((_) {
                       context.pop();
                       prov.setMainPageIndex(0);
-                      showToast(TR(context, '회원 탈퇴 신청 완료'));
+                      showToast(TR('회원 탈퇴 신청 완료'));
                     });
                   }
                 })
               ],
               if (IS_APP_RESET_ON)...[
                 grayDivider(),
-                _viewModel.myInfoEditItem('앱 초기화', [['로그아웃 & 앱 초기화', '초기화']], onEdit: () {
+                _viewModel.myInfoEditItem('앱 초기화', [[TR('로그아웃 & 앱 초기화'), '초기화']], onEdit: () {
                   if (prov.isLogin) {
                     _clearLocalData();
                   }
@@ -158,7 +158,7 @@ class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
           prov.logout().then((_) {
             context.pop();
             prov.setMainPageIndex(0);
-            showToast(TR(context, '앱 초기화 완료'));
+            showToast(TR('앱 초기화 완료'));
           });
         });
       }

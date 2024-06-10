@@ -77,14 +77,14 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
                   children: [
                     Expanded(
                       child: ButtonWithImage(
-                        buttonText: TR(context, '받기'),
+                        buttonText: TR('받기'),
                         imageAssetName:
                             'assets/svg/filled_round_arrow_down.svg',
                         style: primaryImageButtonStyle,
                         onPressed: () {
                           UiHelper().buildRoundBottomSheet(
                             context: context,
-                            title: TR(context, '내 주소로 받기'),
+                            title: TR('내 주소로 받기'),
                             child: ReceiveAssetScreen(
                               walletAddress: '',
                             ),
@@ -97,7 +97,7 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
                     ),
                     Expanded(
                       child: ButtonWithImage(
-                        buttonText: TR(context, '보내기'),
+                        buttonText: TR('보내기'),
                         imageAssetName: 'assets/svg/filled_round_arrow_up.svg',
                         style: primaryImageButtonStyle,
                         onPressed: () {
@@ -119,7 +119,7 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                TR(context, '거래내역'),
+                TR('거래내역'),
                 style: typo16semibold,
               ),
             ),

@@ -50,7 +50,7 @@ class _SwapAddressScreenState extends ConsumerState<SwapAddressScreen> {
             onPressed: context.pop,
           ),
           title: Text(
-            TR(context, '스왑'),
+            TR('스왑'),
             style: typo18semibold,
           ),
           titleSpacing: 0,
@@ -69,12 +69,12 @@ class _SwapAddressScreenState extends ConsumerState<SwapAddressScreen> {
               Container(
                 padding: EdgeInsets.symmetric(vertical: 10.h),
                 child: isEnableButton ? PrimaryButton(
-                  text: TR(context, '다음'),
+                  text: TR('다음'),
                   onTap: () {
                     widget.swapModel.toAddress = _inputController.text;
                     Navigator.of(context).push(createAniRoute(SwapConfirmScreen(widget.swapModel)));
                   },
-                ) : DisabledButton(text: TR(context, '다음')),
+                ) : DisabledButton(text: TR('다음')),
               ),
           ],
         ),
@@ -87,9 +87,9 @@ class _SwapAddressScreenState extends ConsumerState<SwapAddressScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(TR(context, '받는 주소'), style: typo16medium),
+          Text(TR('받는 주소'), style: typo16medium),
           SizedBox(height: 20.h),
-          Text(TR(context, '기본 입력 주소 - 내 주소로 설정'), style: typo14medium),
+          Text(TR('기본 입력 주소 - 내 주소로 설정'), style: typo14medium),
           Container(
             margin:  EdgeInsets.symmetric(vertical: 20.h),
             child: Column(
@@ -122,7 +122,7 @@ class _SwapAddressScreenState extends ConsumerState<SwapAddressScreen> {
                   children: [
                     IconBorderButton(
                       imageAssetName: 'assets/svg/icon_scan.svg',
-                      text: TR(context, 'QR코드 스캔'),
+                      text: TR('QR코드 스캔'),
                       onPressed: () {
                         _pasteFromQRCode();
                       },
@@ -132,7 +132,7 @@ class _SwapAddressScreenState extends ConsumerState<SwapAddressScreen> {
                     ),
                     IconBorderButton(
                       imageAssetName: 'assets/svg/icon_copy.svg',
-                      text: TR(context, '붙여넣기'),
+                      text: TR('붙여넣기'),
                       onPressed: _pasteFromClipboard,
                     ),
                     SizedBox(
@@ -140,7 +140,7 @@ class _SwapAddressScreenState extends ConsumerState<SwapAddressScreen> {
                     ),
                     IconBorderButton(
                       imageAssetName: 'assets/svg/policy.svg',
-                      text: TR(context, '즐겨찾기 주소'),
+                      text: TR('즐겨찾기 주소'),
                       onPressed: _pasteFromClipboard,
                     ),
                   ],

@@ -84,7 +84,7 @@ class SimpleCheckDialog extends StatelessWidget {
                           : defaultTapOption,
                       // onPressed: () => dismiss,
                       child: Text(
-                        TR(context, defaultButtonText),
+                        TR(defaultButtonText),
                         style: typo14bold100.copyWith(color: SECONDARY_90),
                       ),
                       style: popupGrayButtonStyle.copyWith(
@@ -111,7 +111,7 @@ class SimpleCheckDialog extends StatelessWidget {
                         onPressed: onTapOption,
                         // onPressed: () => dismiss,
                         child: Text(
-                          TR(context, optionButtonText),
+                          TR(optionButtonText),
                           style: typo14bold100.copyWith(color: WHITE),
                         ),
                         style: popupSecondaryButtonStyle.copyWith(

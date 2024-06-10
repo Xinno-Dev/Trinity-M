@@ -76,7 +76,7 @@ class _RegistMnemonicScreenState extends ConsumerState<RegistMnemonicScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, hasCheck ? '지갑 복구용 문구 보기' : '지갑 만들기'),
+          TR(hasCheck ? '지갑 복구용 문구 보기' : '지갑 만들기'),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -104,7 +104,7 @@ class _RegistMnemonicScreenState extends ConsumerState<RegistMnemonicScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                TR(context, '지갑 복구용 문구'),
+                                TR('지갑 복구용 문구'),
                                 style: typo24bold,
                               ),
                               SizedBox(
@@ -116,7 +116,7 @@ class _RegistMnemonicScreenState extends ConsumerState<RegistMnemonicScreen> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return SimpleCheckDialog(
-                                        infoString: TR(context, '복구용 문구는 지갑을 만들때 '
+                                        infoString: TR('복구용 문구는 지갑을 만들때 '
                                             '\n보안을 위해 자동으로 생성된 단어이며,'
                                             '\n자산을 복구하기 위한'
                                             '\n유일한 수단입니다.'),
@@ -135,7 +135,7 @@ class _RegistMnemonicScreenState extends ConsumerState<RegistMnemonicScreen> {
                           ),
                           Center(
                             child: Text(
-                              TR(context, '문구를 안전한 곳에 보관해주세요.\n문구가 없으실 경우엔 계정 복구가 불가합니다.'),
+                              TR('문구를 안전한 곳에 보관해주세요.\n문구가 없으실 경우엔 계정 복구가 불가합니다.'),
                               style:
                                   typo16medium150.copyWith(color: GRAY_70),
                               textAlign: TextAlign.center,
@@ -154,12 +154,12 @@ class _RegistMnemonicScreenState extends ConsumerState<RegistMnemonicScreen> {
                         children: [
                           SizedBox(height: 16.h),
                             Text(
-                              TR(context, '지갑 복구용 문구를 보관하세요'),
+                              TR('지갑 복구용 문구를 보관하세요'),
                               style: typo24bold,
                           ),
                           SizedBox(height: 16.h),
                              Text(
-                              TR(context, '문구를 복사하여 안전한 곳에 보관해주세요.\n'
+                              TR('문구를 복사하여 안전한 곳에 보관해주세요.\n'
                                 '문구를 잃어버리실 경우 지갑 복구가 불가합니다.'),
                               style: typo16medium150.copyWith(
                                   color: GRAY_70),
@@ -227,7 +227,7 @@ class _RegistMnemonicScreenState extends ConsumerState<RegistMnemonicScreen> {
                               width: 4,
                             ),
                             Text(
-                              TR(context, '문구 복사하기'),
+                              TR('문구 복사하기'),
                               style:
                                   typo14bold100.copyWith(color: SECONDARY_90),
                             ),
@@ -238,7 +238,7 @@ class _RegistMnemonicScreenState extends ConsumerState<RegistMnemonicScreen> {
                         await Clipboard.setData(ClipboardData(text: mnemonic));
                         final androidInfo = await DeviceInfoPlugin().androidInfo;
                         if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
-                        _showToast(TR(context, '문구가 복사되었습니다'));
+                        _showToast(TR('문구가 복사되었습니다'));
                       },
                     ),
                   ),
@@ -248,22 +248,22 @@ class _RegistMnemonicScreenState extends ConsumerState<RegistMnemonicScreen> {
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: PrimaryButton(
-                            text: TR(context, '다음'),
+                            text: TR('다음'),
                             onTap: () {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return SimpleCheckDialog(
-                                    titleString: TR(context, '문구 보관을 확인하세요'),
-                                    infoString: TR(context, '지갑 복구용 문구를 보관하셨나요?\n'
+                                    titleString: TR('문구 보관을 확인하세요'),
+                                    infoString: TR('지갑 복구용 문구를 보관하셨나요?\n'
                                         '보관 확인 과정을 진행하세요\n\n'
                                         '문구를 잃어버리실 경우 지갑 복구가\n'
                                         '불가하며,  바이핀은 사용자의 지갑\n'
                                         '복구용 문구를 보관하지 않습니다.'),
                                     hasTitle: true,
-                                    defaultButtonText: TR(context, '넘어가기'),
+                                    defaultButtonText: TR('넘어가기'),
                                     hasOptions: true,
-                                    optionButtonText: TR(context, '보관 확인하기'),
+                                    optionButtonText: TR('보관 확인하기'),
                                     hasIcon: true,
                                     icon: WarningIcon(),
                                     defaultTapOption: () {

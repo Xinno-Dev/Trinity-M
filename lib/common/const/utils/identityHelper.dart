@@ -25,7 +25,7 @@ Future<bool?> showBioIdentityDialog(BuildContext context, String title,
       cancelButton: '취소',
     );
     result = await auth.authenticate(
-      localizedReason: TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
+      localizedReason: TR('본인 확인을 위해 생체인증을 사용합니다.'),
       authMessages: <AuthMessages>[
         androidStrings,
         iosStrings,

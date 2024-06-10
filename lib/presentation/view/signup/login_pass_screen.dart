@@ -80,12 +80,17 @@ class _LoginPassScreenState extends ConsumerState {
     if (isBioCheckDone) return;
     isBioCheckDone = true;
     var prov = ref.read(loginProvider);
-    prov.showUserBioIdentityCheck().then((result) {
-      LOG('--> showUserBioIdentityCheck result : $result');
-      if (result) {
-        passInputController.text = prov.userPass;
-        _processResult(result);
-      }
+    prov.bioIdentityCheck().then((isShow) {
+      setState(() {
+        if (isShow) {
+          isBioCheckShow = true;
+          Future.delayed(Duration(milliseconds: 200)).then((_) {
+            prov.showUserBioIdentityCheck().then((result) {
+              _processResult(result);
+            });
+          });
+        }
+      });
     });
   }
 
@@ -123,7 +128,7 @@ class _LoginPassScreenState extends ConsumerState {
         prov.isPassInputShow = false;
         context.pop();
       }
-      showToast(TR(context, '잘못된 비밀번호입니다.'));
+      showToast(TR('잘못된 비밀번호입니다.'));
     }
   }
 
@@ -137,11 +142,8 @@ class _LoginPassScreenState extends ConsumerState {
     passInputController.text = IS_DEV_MODE ? EX_TEST_PASS_00 : '';
     if ((viewModel.passType == PassType.open ||
          viewModel.passType == PassType.openLock) && prov.userBioYN) {
-      isBioCheckShow = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Future.delayed(Duration(milliseconds: 200)).then((_) {
-          _showBioCheck();
-        });
+        _showBioCheck();
       });
     } else {
       autoFocus = true;
@@ -163,7 +165,7 @@ class _LoginPassScreenState extends ConsumerState {
         top: false,
         child: Scaffold(
           backgroundColor: WHITE,
-          appBar: defaultAppBar(TR(context, '비밀번호 입력'),
+          appBar: defaultAppBar(TR('비밀번호 입력'),
             isCanBack: isCanBack,
             leading: isCanBack ? IconButton(
               onPressed: context.pop,
@@ -189,12 +191,12 @@ class _LoginPassScreenState extends ConsumerState {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                TR(context, viewModel.passType.info1),
+                                TR(viewModel.passType.info1),
                                 style: typo24bold150,
                               ),
                               SizedBox(height: 16.h),
                               Text(
-                                TR(context, viewModel.passType.info2),
+                                TR(viewModel.passType.info2),
                                 style: typo16medium150.copyWith(
                                   color: GRAY_70,
                                 ),
@@ -229,11 +231,11 @@ class _LoginPassScreenState extends ConsumerState {
                     alignment: Alignment.bottomCenter,
                     child: IS_DEV_MODE || _checkPassLength()
                       ? PrimaryButton(
-                      text: TR(context, '확인'),
+                      text: TR('확인'),
                       round: 0,
                       onTap: _checkPass,
                     ) : DisabledButton(
-                      text: TR(context, '확인'),
+                      text: TR('확인'),
                     ),
                   )
                 ],
@@ -285,12 +287,12 @@ class _LoginPassScreenState extends ConsumerState {
             controller: passInputController,
             focusNode: focusNode,
             autoFocus: autoFocus,
-            hintText: TR(context, '비밀번호 입력'),
+            hintText: TR('비밀번호 입력'),
             onChanged: _refreshPass,
           ),
           // if (passErrorText.isNotEmpty)...[
           //   SizedBox(height: 5),
-          //   Text(TR(context, passErrorText), style: errorStyle)
+          //   Text(TR(passErrorText), style: errorStyle)
           // ],
         ],
       )

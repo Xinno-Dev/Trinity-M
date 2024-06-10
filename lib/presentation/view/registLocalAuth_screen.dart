@@ -92,7 +92,7 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
           );
 
       authenticated = await auth.authenticate(
-        localizedReason: TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
+        localizedReason: TR('본인 확인을 위해 생체인증을 사용합니다.'),
         authMessages: <AuthMessages>[
           androidStrings,
           iosStrings,
@@ -113,7 +113,7 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
         context: context,
         builder: (BuildContext context) {
           return SimpleCheckDialog(
-            infoString: TR(context, '권한이 허용되지 않았습니다.'),
+            infoString: TR('권한이 허용되지 않았습니다.'),
           );
         },
       );
@@ -168,7 +168,7 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '생체인증 사용동의'),
+          TR('생체인증 사용동의'),
           style: typo16bold,
         ),
         elevation: 0,
@@ -192,7 +192,7 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
                     Padding(
                       padding: EdgeInsets.only(left: 20.r, right: 20.r),
                       child: Text(
-                        TR(context, '빠른 이용을 위해\n생체인증을 설정하세요'),
+                        TR('빠른 이용을 위해\n생체인증을 설정하세요'),
                         style: typo24bold150,
                       ),
                     ),
@@ -202,7 +202,7 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
                     Padding(
                       padding: EdgeInsets.only(left: 20.r, right: 20.r),
                       child: Text(
-                        TR(context, '본인 확인 목적으로 기기에 등록된 생체정보를\n'
+                        TR('본인 확인 목적으로 기기에 등록된 생체정보를\n'
                           '이용하여 로그인 및 인증작업을 진행하며\n서버로 전송/저장되지 않습니다.'),
                         style: typo16medium150,
                       ),
@@ -213,7 +213,7 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
                     Padding(
                       padding: EdgeInsets.only(left: 20.r),
                       child: CustomCheckbox(
-                        title: TR(context, '생체인증 사용 동의'),
+                        title: TR('생체인증 사용 동의'),
                         checked: _localAuthAgree,
                         pushed: false,
                         localAuth: true,
@@ -232,7 +232,7 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
                       child: Column(
                         children: [
                           Gray5Button(
-                            text: TR(context, '다음에 하기'),
+                            text: TR('다음에 하기'),
                             onTap: () {
                               UserHelper().setUser(localAuth: 'false');
                               setPushNextPage();
@@ -243,13 +243,13 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
                           ),
                           _localAuthAgree
                               ? PrimaryButton(
-                                  text: TR(context, '생체인증 사용'),
+                                  text: TR('생체인증 사용'),
                                   onTap: () {
                                     UserHelper().setUser(localAuth: 'true');
                                     setPushNextPage();
                                   },
                                 )
-                              : DisabledButton(text: TR(context, '생체인증 사용')),
+                              : DisabledButton(text: TR('생체인증 사용')),
                         ],
                       ),
                     ),

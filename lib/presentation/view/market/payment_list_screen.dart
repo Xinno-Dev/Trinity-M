@@ -30,7 +30,7 @@ class _PaymentListScreenState extends ConsumerState<PaymentListScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -40,7 +40,7 @@ class _PaymentListScreenState extends ConsumerState<PaymentListScreen> {
     ref.watch(marketProvider);
     return prov.isScreenLocked ? lockScreen(context) :
       Scaffold(
-        appBar: defaultAppBar(TR(context, '구매 내역')),
+        appBar: defaultAppBar(TR('구매 내역')),
         backgroundColor: Colors.white,
         body: Container(
           padding: EdgeInsets.symmetric(horizontal: 15),

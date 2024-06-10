@@ -31,7 +31,7 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
 
   @override
   void initState() {
-    _viewModel = ProfileViewModel();
+    _viewModel = ProfileViewModel(context);
     super.initState();
   }
 
@@ -40,7 +40,7 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
     final prov = ref.watch(loginProvider);
     LOG('--> ProfileIdentityScreen');
     return IamportCertification(
-      appBar: defaultAppBar(TR(context, '본인인증')),
+      appBar: defaultAppBar(TR('본인인증')),
       /* 웹뷰 로딩 컴포넌트 */
       initialChild: Container(
         child: Center(
@@ -89,12 +89,12 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
   }
 
   _identitySuccess() {
-    showToast(TR(context, '본인인증 성공'));
+    showToast(TR('본인인증 성공'));
     context.pop(true);
   }
 
   _identityFail() {
-    showToast(TR(context, '본인인증 실패'));
+    showToast(TR('본인인증 실패'));
     context.pop();
   }
 }

@@ -65,7 +65,7 @@ class _ScanQRScreenState extends State<ScanQRScreen> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      TR(context, 'QR 코드 스캔'),
+                      TR('QR 코드 스캔'),
                       style: typo18semibold.copyWith(color: WHITE),
                     ),
                   ),

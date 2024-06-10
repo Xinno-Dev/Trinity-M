@@ -110,8 +110,8 @@ class _RegistPasswordScreenState extends ConsumerState<RegistPasswordScreen> {
               context: context,
               builder: (BuildContext context) {
                 return SimpleCheckDialog(
-                    infoString: TR(context, '이전 비밀번호와 동일한\n비밀번호를 등록할 수 없습니다.'),
-                    defaultButtonText: TR(context, '돌아가기'));
+                    infoString: TR('이전 비밀번호와 동일한\n비밀번호를 등록할 수 없습니다.'),
+                    defaultButtonText: TR('돌아가기'));
               },
             );
           } else {
@@ -203,7 +203,7 @@ class _RegistPasswordScreenState extends ConsumerState<RegistPasswordScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, isReset ? '비밀번호 변경' : '지갑 만들기'),
+          TR(isReset ? '비밀번호 변경' : '지갑 만들기'),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -232,14 +232,14 @@ class _RegistPasswordScreenState extends ConsumerState<RegistPasswordScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            TR(context, isChecked
+                            TR(isChecked
                               ? '비밀번호를 한번 더\n등록해주세요'
                               : '비밀번호를 등록해주세요'),
                             style: isChecked ? typo24bold150 : typo24bold,
                           ),
                           SizedBox(height: 16.h),
                           Text(
-                            TR(context, isChecked
+                            TR(isChecked
                               ? '비밀번호 확인을 위해 필요합니다.'
                               : 'BYFFIN 지갑 사용을 위한 비밀번호\n숫자 6자리를 등록합니다.'),
                             style: typo16medium150.copyWith(color: GRAY_70),

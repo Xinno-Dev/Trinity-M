@@ -119,7 +119,7 @@ class _RecoverWalletRegisterPasswordState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: WHITE,
-      appBar: BasicAppBar(title: TR(context, '지갑 복구')),
+      appBar: BasicAppBar(title: TR('지갑 복구')),
       body: SafeArea(
         child: LayoutBuilder(builder: (context, constraints) {
           return SingleChildScrollView(
@@ -142,8 +142,8 @@ class _RecoverWalletRegisterPasswordState
                               padding: EdgeInsets.only(left: 20.r, right: 20.r),
                               child: Text(
                                 isChecked
-                                    ? TR(context, '비밀번호를 한번 더\n등록해주세요')
-                                    : TR(context, '비밀번호를 등록해주세요'),
+                                    ? TR('비밀번호를 한번 더\n등록해주세요')
+                                    : TR('비밀번호를 등록해주세요'),
                                 style: isChecked ? typo24bold150 : typo24bold,
                               ),
                             ),
@@ -152,8 +152,8 @@ class _RecoverWalletRegisterPasswordState
                               padding: EdgeInsets.only(left: 20.r, right: 20.r),
                               child: Text(
                                 isChecked
-                                    ? TR(context, '비밀번호 확인을 위해 필요합니다.')
-                                    : TR(context, 'BYFFIN 지갑 사용을 위한 비밀번호\n숫자 6자리를 등록합니다.'),
+                                    ? TR('비밀번호 확인을 위해 필요합니다.')
+                                    : TR('BYFFIN 지갑 사용을 위한 비밀번호\n숫자 6자리를 등록합니다.'),
                                 style: typo16medium150.copyWith(color: GRAY_70),
                               ),
                             ),

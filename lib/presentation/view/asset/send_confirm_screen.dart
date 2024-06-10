@@ -46,7 +46,7 @@ class SendConfirmScreen extends StatelessWidget {
                 children: [
                   Center(
                     child: Text(
-                      TR(context, '아래 정보로 전송할까요?'),
+                      TR('아래 정보로 전송할까요?'),
                       style: typo18semibold,
                     ),
                   ),
@@ -57,7 +57,7 @@ class SendConfirmScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        TR(context, '보내는 주소'),
+                        TR('보내는 주소'),
                         style: typo16semibold,
                       ),
                       SizedBox(
@@ -92,7 +92,7 @@ class SendConfirmScreen extends StatelessWidget {
                         QuantityRow(
                           padding: EdgeInsets.symmetric(vertical: 16),
                           leftWidget: Text(
-                            TR(context, '총 수량'),
+                            TR('총 수량'),
                             style: typo16semibold,
                           ),
                           rightWidgetList: [
@@ -108,7 +108,7 @@ class SendConfirmScreen extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              TR(context, '총 수량'),
+                              TR('총 수량'),
                               style: typo16semibold.copyWith(
                                 color: Color.fromRGBO(119, 121, 134, 1),
                               ),
@@ -149,7 +149,7 @@ class SendConfirmScreen extends StatelessWidget {
                         QuantityRow(
                           padding: EdgeInsets.symmetric(vertical: 16),
                           leftWidget: Text(
-                            TR(context, '예상 수수료'),
+                            TR('예상 수수료'),
                             style: typo14medium.copyWith(color: GRAY_50),
                           ),
                           rightWidgetList: [
@@ -200,7 +200,7 @@ class SendConfirmScreen extends StatelessWidget {
                               Navigator.pop(context);
                             },
                             child: Text(
-                              TR(context, '취소'),
+                              TR('취소'),
                               style: typo16semibold.copyWith(color: PRIMARY_90),
                             ),
                             style: whiteButtonStyle,
@@ -246,7 +246,7 @@ class SendConfirmScreen extends StatelessWidget {
                               // context.goNamed(SendCompletedScreen.routeName);
                             },
                             child: Text(
-                              TR(context, '전송'),
+                              TR('전송'),
                               style: typo16bold.copyWith(color: WHITE),
                             ),
                             style: primaryButtonStyle,

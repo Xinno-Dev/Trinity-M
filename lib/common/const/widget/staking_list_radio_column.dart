@@ -49,7 +49,7 @@ class StakingListRadioColumn extends StatelessWidget {
                   Spacer(),
                   CustomBadge(
                     isSmall: true,
-                    text: TR(context, isUnDelegate ? '지분 비율' : '스테이킹 비율')),
+                    text: TR(isUnDelegate ? '지분 비율' : '스테이킹 비율')),
                   SizedBox(
                     width: 4,
                   ),
@@ -72,7 +72,7 @@ class StakingListRadioColumn extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    TR(context, isStaking ? '총 스테이킹' : '위임 금액'),
+                    TR(isStaking ? '총 스테이킹' : '위임 금액'),
                     style: typo14medium.copyWith(color: GRAY_50),
                   ),
                   Spacer(),
@@ -98,7 +98,7 @@ class StakingListRadioColumn extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          TR(context, isStaking ? '일일 보상량' : '보상량'),
+                          TR(isStaking ? '일일 보상량' : '보상량'),
                           style: typo14medium.copyWith(color: GRAY_50),
                         ),
                         Spacer(),

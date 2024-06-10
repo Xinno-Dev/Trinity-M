@@ -57,7 +57,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
     prov.context = context;
     prov.mainPageIndex = widget.selectedPage;
     prov.enableLockScreen();
-    _viewModel = ProfileViewModel();
+    _viewModel = ProfileViewModel(context);
     WidgetsBinding.instance.addObserver(this);
     _pageController = PageController(initialPage: prov.mainPageIndex);
     super.initState();
@@ -100,7 +100,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
         drawerEnableOpenDragGesture: false,
         backgroundColor: WHITE,
         appBar: AppBar(
-          title: _viewModel.getPageTitle(context),
+          title: _viewModel.getPageTitle(),
           titleSpacing: 0,
           titleTextStyle: typo16bold,
           backgroundColor: WHITE,
@@ -122,52 +122,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
               ),
             )
           ),
-          // bottom: prov.mainPageIndex == 0 ? PreferredSize(
-          //   preferredSize: Size.fromHeight(35),
-          //   child: MarketViewModel().showCategoryBar(),
-          // ) : null,
           actions: [
-            // InkWell(
-            //   onTap: () {
-            //   },
-            //   child: Padding(
-            //       padding: EdgeInsets.symmetric(horizontal: 5),
-            //       child: Icon(Icons.search)
-            //   ),
-            // ),
-            // InkWell(
-            //   onTap: () {
-            //     GoogleService.uploadKeyToGoogleDrive(context).then((result) {
-            //       LOG('---> uploadKeyToGoogleDrive result : $result');
-            //     });
-            //   },
-            //   child: Padding(
-            //       padding: EdgeInsets.symmetric(horizontal: 5),
-            //       child: Icon(Icons.upload)
-            //   ),
-            // ),
-            // InkWell(
-            //   onTap: () {
-            //     GoogleService.downloadKeyFromGoogleDrive(context).then((rwf) {
-            //       LOG('---> downloadKeyFromGoogleDrive result : $rwf');
-            //     });
-            //   },
-            //   child: Padding(
-            //       padding: EdgeInsets.symmetric(horizontal: 5),
-            //       child: Icon(Icons.download)
-            //   ),
-            // ),
-            // InkWell(
-            //   onTap: () {
-            //     ref.read(loginProvider).logout().then((_) {
-            //       context.replaceNamed(MainScreen.routeName);
-            //     });
-            //   },
-            //   child: Padding(
-            //       padding: EdgeInsets.symmetric(horizontal: 5),
-            //       child: Icon(Icons.logout)
-            //   ),
-            // ),
             SizedBox(width: 45),
           ],
         ),
@@ -196,16 +151,17 @@ class _MainScreenState extends ConsumerState<MainScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              _selectPage(0);
-                            },
-                            child: Center(
-                              child: Text(TR(context, 'Market'),
-                                  style: prov.mainPageIndex == 0 ?
-                                  typo16bold.copyWith(color: PRIMARY_100) : typo16regular),
-                            ),
-                          )
+                        child: InkWell(
+                          onTap: () {
+                            _selectPage(0);
+                          },
+                          child: Center(
+                            child: Text(TR('Market'),
+                              style: prov.mainPageIndex == 0 ?
+                              typo16bold.copyWith(color: PRIMARY_100) :
+                              typo16regular),
+                          ),
+                        )
                       ),
                       Expanded(
                         child: InkWell(
@@ -214,7 +170,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
                           },
                           child: Center(
                             child: SvgPicture.asset('assets/svg/'
-                                'icon_profile_0${prov.mainPageIndex == 1 ? '1' : '0'}.svg'),
+                              'icon_profile_0${prov.mainPageIndex == 1 ? '1' : '0'}.svg'),
                           ),
                         ),
                       ),

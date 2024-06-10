@@ -44,7 +44,7 @@ class _SettingsLanguageScreenState
           ),
           centerTitle: true,
           title: Text(
-            TR(context, '언어 설정'),
+            TR('언어 설정'),
             style: typo18semibold,
           ),
           elevation: 0,

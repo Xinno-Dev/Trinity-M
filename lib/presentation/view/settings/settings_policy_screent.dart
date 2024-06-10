@@ -30,7 +30,7 @@ class _SettingsPolicyScreenState extends ConsumerState<SettingsPolicyScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '약관 및 정책'),
+          TR('약관 및 정책'),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -55,26 +55,26 @@ class _SettingsPolicyScreenState extends ConsumerState<SettingsPolicyScreen> {
                     for(var i=0; i<title.length; i++)
                     SettingsMenu(
                       leftImage: false,
-                      title: TR(context, title[i]),
+                      title: TR(title[i]),
                       touchupinside: () {
                         context.pushNamed(TermsDetailScreen.routeName,
-                            queryParams: {'title': TR(context, title[i]), 'type': '$i'});
+                            queryParams: {'title': TR(title[i]), 'type': '$i'});
                       },
                     ),
                     // SettingsMenu(
                     //   leftImage: false,
-                    //   title: TR(context, title[1]),
+                    //   title: TR(title[1]),
                     //   touchupinside: () {
                     //     context.pushNamed(TermsDetailScreen.routeName,
-                    //         queryParams: {'title': TR(context, title[1]), 'type': '1'});
+                    //         queryParams: {'title': TR(title[1]), 'type': '1'});
                     //   },
                     // ),
                     // SettingsMenu(
                     //   leftImage: false,
-                    //   title: TR(context, title[2]),
+                    //   title: TR(title[2]),
                     //   touchupinside: () {
                     //     context.pushNamed(TermsDetailScreen.routeName,
-                    //         queryParams: {'title': TR(context, title[2]), 'type': '2'});
+                    //         queryParams: {'title': TR(title[2]), 'type': '2'});
                     //   },
                     // ),
                   ],

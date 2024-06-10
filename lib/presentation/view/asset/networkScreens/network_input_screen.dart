@@ -136,7 +136,7 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
             leadingWidth: 40.w,
             titleSpacing: 0,
             centerTitle: true,
-            title: Text(TR(context,
+            title: Text(TR(
               widget.addType == NetworkAddType.auto ?
               '네트워크 정보 확인' : '네트워크 수동 추가'),
               style: typo18semibold,
@@ -154,7 +154,7 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(TR(context, '다음 정보를 입력해 주세요.'), style: typo16bold),
+                        Text(TR('다음 정보를 입력해 주세요.'), style: typo16bold),
                         showTextEdit('RPC 주소',
                             controller: _controller[InputType.httpUrl.index],
                             onChanged: (value) {
@@ -201,12 +201,12 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
                     padding: EdgeInsets.only(bottom: 10),
                     child: isEnableCheck ?
                     PrimaryButton(
-                      text: TR(context, '추 가'),
+                      text: TR('추 가'),
                       onTap: () async {
                         if (widget.addType == NetworkAddType.manual || isCheckDone) {
                           // 수동 추가 & 자동 추가 입력
                           if (!isEnableCheck) {
-                            showSimpleDialog(context, TR(context, '입력 내용을 확인해 주세요.'));
+                            showSimpleDialog(context, TR('입력 내용을 확인해 주세요.'));
                             return;
                           }
                           showConfirmDialog(widget.newNetwork.name).then((result) async {
@@ -230,7 +230,7 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
                                 ref.read(coinProvider).setNetworkFromId(widget.newNetwork.id);
                                 context.pop(true);
                               } else {
-                                showSimpleDialog(context, TR(context, '잘못된 네트워크입니다.'));
+                                showSimpleDialog(context, TR('잘못된 네트워크입니다.'));
                               }
                             }
                           });
@@ -278,7 +278,7 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
                         }
                       }
                   ) : DisabledButton(
-                    text: TR(context, isCheckDone ? '추 가' : '조 회'),
+                    text: TR(isCheckDone ? '추 가' : '조 회'),
                   )
                 )
               ]
@@ -355,8 +355,8 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
           AlertDialog(
             content: Text(
                 ref.read(languageProvider).isKor ?
-                TR(context, '\'$tokenName\'\n네트워크를 추가하시겠습니까?') :
-                TR(context, 'Would you like to add a\n\'$tokenName\' network?'),
+                TR('\'$tokenName\'\n네트워크를 추가하시겠습니까?') :
+                TR('Would you like to add a\n\'$tokenName\' network?'),
                 style: typo16dialog, textAlign: TextAlign.center),
             contentPadding: EdgeInsets.only(top: 40.h, bottom: 10.h),
             actionsPadding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 15.h),
@@ -370,7 +370,7 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
                     OutlinedButton(
                       onPressed: context.pop,
                       child: Text(
-                        TR(context, '취소'),
+                        TR('취소'),
                         style: typo12semibold100,
                       ),
                       style: darkBorderButtonStyle,
@@ -382,7 +382,7 @@ class _NetworkInputScreenState extends ConsumerState<NetworkInputScreen> {
                         Navigator.of(context).pop(true);
                       },
                       child: Text(
-                        TR(context, '추가'),
+                        TR('추가'),
                         style: typo12semibold100.copyWith(color: WHITE),
                       ),
                       style: primaryBorderButtonStyle,

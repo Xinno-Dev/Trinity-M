@@ -90,7 +90,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: defaultAppBar(TR(context, '이메일 등록')),
+        appBar: defaultAppBar(TR('이메일 등록')),
         body: LayoutBuilder(builder: (context, constraints) {
           return ConstrainedBox(
             constraints: BoxConstraints(
@@ -108,12 +108,12 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            TR(context, '이메일을\n등록해 주세요.'),
+                            TR('이메일을\n등록해 주세요.'),
                             style: typo24bold150,
                           ),
                           SizedBox(height: 16.h),
                           Text(
-                            TR(context, '이메일 인증을 진행합니다.'),
+                            TR('이메일 인증을 진행합니다.'),
                             style: typo16medium150.copyWith(
                               color: GRAY_70,
                             ),
@@ -131,7 +131,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                           //   controller: emailInputController,
                           //   focusNode: emailFocusNode,
                           //   decoration: InputDecoration(
-                          //     hintText: TR(context, '이메일 주소 입력'),
+                          //     hintText: TR('이메일 주소 입력'),
                           //   ),
                           //   keyboardType: TextInputType.emailAddress,
                           //   scrollPadding: EdgeInsets.only(bottom: 200),
@@ -143,7 +143,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                           CustomEmailFormField(
                             controller: emailInputController,
                             focusNode: emailFocusNode,
-                            hintText: TR(context, '이메일 주소 입력'),
+                            hintText: TR('이메일 주소 입력'),
                             onChanged: (text) {
                               _stopTimer();
                               prov.emailInput(text);
@@ -164,7 +164,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                                       _startTimer();
                                       prov.sendMail = prov.inputEmail;
                                       showSimpleDialog(context,
-                                        TR(context, '인증 링크가 발송 되었습니다.'),
+                                        TR('인증 링크가 발송 되었습니다.'),
                                       );
                                     } else {
                                       prov.sendMail = '';
@@ -176,7 +176,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                             text: '인증 링크 받기',
                             height: 45,
                           ) : DisabledButton(
-                            text: TR(context, prov.isEmailSendDone
+                            text: TR(prov.isEmailSendDone
                               ? '발송 완료 / 재발송 ${EMAIL_SEND_TIME_MAX - _seconds}'
                               : '인증 링크 받기'),
                             height: 45,
@@ -196,7 +196,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                             //   //         ? PRIMARY_90
                             //   //         : WHITE
                             //   //   ),
-                            //   //   child: Text(TR(context, prov.isEmailSendDone
+                            //   //   child: Text(TR(prov.isEmailSendDone
                             //   //       ? '발송 완료 / 재전송 ${EMAIL_SEND_TIME_MAX - _seconds}'
                             //   //       : '인증 링크 받기'),
                             //   //     style: prov.isEmailSendDone ?
@@ -213,7 +213,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                     alignment: Alignment.bottomCenter,
                     child: prov.isEmailSendReady || prov.isEmailSendDone
                       ? PrimaryButton(
-                      text: TR(context, '인증 완료'),
+                      text: TR('인증 완료'),
                       round: 0,
                       onTap: () async {
                         await UserHelper().setUserKey(prov.inputEmail);
@@ -221,7 +221,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                           showLoginErrorTextDialog(context, error.errorText);
                         }).then((result) {
                           if (result == true) {
-                            showToast(TR(context, '이메일 인증 완료'));
+                            showToast(TR('이메일 인증 완료'));
                             Navigator.of(context).push(
                                 createAniRoute(SignUpPassScreen()));
                           } else if (result == false) {
@@ -231,7 +231,7 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                         });
                       },
                     ) : DisabledButton(
-                      text: TR(context, '다음'),
+                      text: TR('다음'),
                     ),
                   )
                 ],

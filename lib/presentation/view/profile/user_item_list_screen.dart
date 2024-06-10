@@ -29,7 +29,7 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -39,7 +39,7 @@ class _UserItemListScreenState extends ConsumerState<UserItemListScreen> {
     ref.watch(marketProvider);
     return prov.isScreenLocked ? lockScreen(context) :
       Scaffold(
-        appBar: defaultAppBar(TR(context, '보유 상품')),
+        appBar: defaultAppBar(TR('보유 상품')),
         backgroundColor: WHITE,
         body: Stack(
           children: [

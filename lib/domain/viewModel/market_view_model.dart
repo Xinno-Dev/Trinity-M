@@ -25,12 +25,9 @@ import '../model/product_model.dart';
 import '../model/seller_model.dart';
 
 class MarketViewModel {
-  factory MarketViewModel() {
-    return _singleton;
+  MarketViewModel(BuildContext context) {
+    this.context = context;
   }
-  MarketViewModel._internal();
-  static final _singleton = MarketViewModel._internal();
-
   late BuildContext context;
   final prov = MarketProvider();
 
@@ -84,7 +81,7 @@ class MarketViewModel {
       return Container(
         height: 200,
         alignment: Alignment.center,
-        child: Text(TR(context, '상품이 없습니다.')),
+        child: Text(TR('상품이 없습니다.')),
       );
     }
   }
@@ -113,7 +110,7 @@ class MarketViewModel {
                     Container(
                       height: 200,
                       alignment: Alignment.center,
-                      child: Text(TR(context, '판매중인 상품이 없습니다.')),
+                      child: Text(TR('판매중인 상품이 없습니다.')),
                     )
                   ]
                 ],
@@ -193,11 +190,11 @@ class MarketViewModel {
                         tabs: <Widget>[
                           if (prov.canOptionSelect)
                             Tab(
-                              text: TR(context, '옵션 정보'),
+                              text: TR('옵션 정보'),
                             ),
                           if (prov.catShowExternalPic)
                             Tab(
-                              text: TR(context, '상세 정보'),
+                              text: TR('상세 정보'),
                             ),
                         ],
                       ),
@@ -237,7 +234,7 @@ class MarketViewModel {
       return Container(
         height: 120.h,
         child: Center(
-          child: Text(TR(context, 'No options..')),
+          child: Text(TR('No options..')),
         ),
       );
     }
@@ -291,7 +288,7 @@ class MarketViewModel {
         children: [
           Padding(
             padding: EdgeInsets.only(bottom: 15),
-            child: Text(TR(context, '구매 상품'), style: typo16bold),
+            child: Text(TR('구매 상품'), style: typo16bold),
           ),
           _contentSellerBar(prov.selectProduct!.seller!),
           _contentBuyDetailBox(prov.selectProduct!),
@@ -300,13 +297,13 @@ class MarketViewModel {
           Divider(height: 50),
           Padding(
             padding: EdgeInsets.only(bottom: 10),
-            child: Text(TR(context, '결제 예정 금액을 확인해 주세요.'), style: typo16bold),
+            child: Text(TR('결제 예정 금액을 확인해 주세요.'), style: typo16bold),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 10),
             child: Row(
               children: [
-                Text(TR(context, '상품 금액'), style: typo16medium),
+                Text(TR('상품 금액'), style: typo16medium),
                 Spacer(),
                 Text(prov.selectProduct!.priceText, style: typo16medium),
               ],
@@ -316,13 +313,13 @@ class MarketViewModel {
             padding: EdgeInsets.only(bottom: 50),
             child: Row(
               children: [
-                Text(TR(context, '결제 예정 금액'), style: typo18bold),
+                Text(TR('결제 예정 금액'), style: typo18bold),
                 Spacer(),
                 Text(prov.selectProduct!.priceText, style: typo18bold),
               ],
             ),
           ),
-          Text(TR(context, '(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다. '
+          Text(TR('(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다. '
               '이에 따라, 당사는 상품, 거래정보 및 거래에 대하여 책임을 지지 않습니다.'),
               style: typo14normal),
         ],
@@ -579,7 +576,7 @@ class MarketViewModel {
                         height: 30,
                         color: Colors.transparent,
                         alignment: Alignment.center,
-                        child: Text(TR(context, '바코드'),
+                        child: Text(TR('바코드'),
                           style: typo14bold.copyWith(
                             color: !isQR ? GRAY_80 : GRAY_30)),
                       ),
@@ -599,7 +596,7 @@ class MarketViewModel {
                         height: 30,
                         color: Colors.transparent,
                         alignment: Alignment.center,
-                        child: Text(TR(context, 'QR'),
+                        child: Text(TR('QR'),
                           style: typo14bold.copyWith(
                             color: isQR ? GRAY_80 : GRAY_20))
                       ),
@@ -637,7 +634,7 @@ class MarketViewModel {
                 onTap: () {
                   _showPurchaseDatePicker();
                 },
-                text: TR(context, '조회 기간'),
+                text: TR('조회 기간'),
                 height: 30.h,
                 color: WHITE,
                 textStyle: typo12semibold100,
@@ -688,7 +685,7 @@ class MarketViewModel {
                 child: Row(
                   children: [
                     Text(
-                      TR(context, '구매일 : '),
+                      TR('구매일 : '),
                       style: typo14bold,
                     ),
                     Text(
@@ -717,7 +714,7 @@ class MarketViewModel {
       ),
       firstDate: DateTime.now().subtract(Duration(days: 365)),
       lastDate: DateTime.now(),
-      saveText: TR(context, '선택완료'),
+      saveText: TR('선택완료'),
     ).then((result) {
       if (result != null) {
         var range = result as DateTimeRange;
@@ -815,11 +812,12 @@ class MarketViewModel {
                       prov.getProductDetailFromId(STR(item.prodSaleId)).then((result) {
                         if (result != null) {
                           prov.selectProduct = result;
-                          Navigator.of(context).push(createAniRoute(ProductDetailScreen()));
+                          Navigator.of(context).push(createAniRoute(
+                            ProductDetailScreen(isCanBuy: false)));
                         }
                       });
                     },
-                    child: Text(TR(context, '상품 정보'), style: typo14semibold),
+                    child: Text(TR('상품 정보'), style: typo14semibold),
                   ),
                   Container(
                     width: 1,
@@ -830,7 +828,7 @@ class MarketViewModel {
                     onTap: () {
                       _showPurchaseItemDetail(item);
                     },
-                    child: Text(TR(context, '구매 상세'), style: typo14semibold),
+                    child: Text(TR('구매 상세'), style: typo14semibold),
                   ),
                 ],
               ),
@@ -1029,7 +1027,7 @@ class MarketViewModel {
           //           //   }
           //           // });
           //         },
-          //         child: Text(TR(context, '상품 정보'), style: typo14semibold),
+          //         child: Text(TR('상품 정보'), style: typo14semibold),
           //       ),
           //       Container(
           //         width: 1,
@@ -1043,7 +1041,7 @@ class MarketViewModel {
           //           //   title: '',
           //           // )));
           //         },
-          //         child: Text(TR(context, '구매 상세'), style: typo14semibold),
+          //         child: Text(TR('구매 상세'), style: typo14semibold),
           //       ),
           //     ],
           //   ),
@@ -1191,8 +1189,8 @@ class MarketViewModel {
           //   child: Row(
           //     mainAxisAlignment: MainAxisAlignment.spaceAround,
           //     children: [
-          //       _contentFollowBox(TR(context, '팔로워'), CommaIntText(item.sellerFollower)),
-          //       _contentFollowBox(TR(context, '팔로잉'), CommaIntText(item.sellerFollowing)),
+          //       _contentFollowBox(TR('팔로워'), CommaIntText(item.sellerFollower)),
+          //       _contentFollowBox(TR('팔로잉'), CommaIntText(item.sellerFollowing)),
           //     ],
           //   ),
           // )
@@ -1429,13 +1427,13 @@ class MarketViewModel {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Text(TR(context, 'TICKET'), style: typo14bold),
+                // Text(TR('TICKET'), style: typo14bold),
                 // if (item.edition != null)...[
                 //   Row(
                 //     children: [
-                //       Text(TR(context, '에디션'), style: typo14medium),
+                //       Text(TR('에디션'), style: typo14medium),
                 //       Spacer(),
-                //       Text(TR(context, item.edition!), style: typo14medium),
+                //       Text(TR(item.edition!), style: typo14medium),
                 //     ],
                 //   )
                 // ],
@@ -1472,7 +1470,7 @@ class MarketViewModel {
             isBorderShow: true,
             isSmallButton: true,
             textStyle: typo14bold.copyWith(color: prov.optionIndex >= 0 ? GRAY_80 : Colors.red),
-            text: TR(context, '옵션 선택'),
+            text: TR('옵션 선택'),
           ),
           Spacer(),
           // if (prov.optionIndex >= 0)...[
@@ -1526,7 +1524,7 @@ class MarketViewModel {
           //           isBorderShow: true,
           //           isSmallButton: true,
           //           textStyle: typo14bold.copyWith(color: prov.optionIndex >= 0 ? GRAY_80 : Colors.red),
-          //           text: TR(context, '옵션 선택'),
+          //           text: TR('옵션 선택'),
           //         ),
           //         Spacer(),
           //       ],
@@ -1549,7 +1547,7 @@ class MarketViewModel {
               onTap: () {
 
               },
-              text: TR(context, '팔로우'),
+              text: TR('팔로우'),
             )
         ),
       ],

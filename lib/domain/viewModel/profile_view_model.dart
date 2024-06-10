@@ -43,12 +43,9 @@ import '../../services/iamport_service.dart';
 import '../model/address_model.dart';
 
 class ProfileViewModel {
-  factory ProfileViewModel() {
-    return _singleton;
+  ProfileViewModel(BuildContext context) {
+    this.context = context;
   }
-  static final _singleton = ProfileViewModel._internal();
-  ProfileViewModel._internal();
-
   final loginProv   = LoginProvider();
   final marketProv  = MarketProvider();
   final fireProv    = FirebaseProvider();
@@ -69,11 +66,11 @@ class ProfileViewModel {
         colorFilter: ColorFilter.mode(GRAY_20, BlendMode.srcIn));
   }
 
-  getPageTitle(BuildContext context) {
+  getPageTitle() {
     final pageIndex = loginProv.mainPageIndex;
     return Center(
       child: pageIndex == 0 ?
-      Text(TR(context, 'Market')) :
+      Text(TR('Market')) :
       FittedBox(
         fit: BoxFit.fitWidth,
         child: InkWell(
@@ -95,10 +92,10 @@ class ProfileViewModel {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (loginProv.isShowMask)...[
-                  Text(TR(context, '계정 선택')),
+                  Text(TR('계정 선택')),
                 ],
                 if (!loginProv.isShowMask)...[
-                  Text(TR(context, loginProv.accountName)),
+                  Text(loginProv.accountName),
                   Icon(Icons.arrow_drop_down_sharp),
                 ]
               ],
@@ -163,7 +160,7 @@ class ProfileViewModel {
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(width: 1, color: GRAY_50),
                           ),
-                          child: Text(TR(context, '로그인하기'), style: typo12bold),
+                          child: Text(TR('로그인하기'), style: typo12bold),
                         ),
                       )
                     ]
@@ -176,11 +173,11 @@ class ProfileViewModel {
             Spacer(),
             ListTile(
               title: Text(
-                '사업자명: Xinno Inc.\n'
-                '대표이사: 이지민\n'
-                '등록번호: 644-86-03081\n'
-                '대표번호: 070-4304-5778\n'
-                '서울시 서초구 서운로 13 126-나94호',
+                TR('사업자명: Xinno Inc.\n'
+                    '대표이사: 이지민\n'
+                    '등록번호: 644-86-03081\n'
+                    '대표번호: 070-4304-5778\n'
+                    '서울시 서초구 서운로 13 126-나94호'),
                 style: typo12semibold100.copyWith(color: GRAY_40),
               ),
               onTap: context.pop,
@@ -195,14 +192,19 @@ class ProfileViewModel {
     if (type.title == '-') {
       return Divider();
     }
-    var showTitle = type.title;
+    if (type == DrawerActionType.language && !IS_LANGUAGE_ON) {
+      return Container();
+    }
+    var showTitle = TR(type.title);
     if (type == DrawerActionType.version) {
       showTitle += ' ${loginProv.appVersion}';
     }
     var isTest = type.title.contains('(test)');
     var isEnable = (type == DrawerActionType.terms ||
-        type == DrawerActionType.privacy || type == DrawerActionType.version) ||
-        loginProv.isLogin;
+        type == DrawerActionType.privacy ||
+        type == DrawerActionType.version ||
+        type == DrawerActionType.language
+        ) || loginProv.isLogin;
     return InkWell(
         onTap: () {
         LOG('--> _mainDrawerItem: $type / $isEnable');
@@ -231,13 +233,13 @@ class ProfileViewModel {
             case DrawerActionType.terms:
               Navigator.of(context).push(
                   createAniRoute(WebviewScreen(
-                      title: TR(context, '이용약관'),
+                      title: TR('이용약관'),
                       url: '$API_HOST/terms/1')));
               break;
             case DrawerActionType.privacy:
               Navigator.of(context).push(
                   createAniRoute(WebviewScreen(
-                      title: TR(context, '개인정보처리 방침'),
+                      title: TR('개인정보처리 방침'),
                       url: '$API_HOST/terms/2')));
               break;
             case DrawerActionType.version:
@@ -253,7 +255,7 @@ class ProfileViewModel {
                 loginProv.logout().then((_) {
                   marketProv.initRepo();
                   loginProv.setMainPageIndex(0);
-                  showToast(TR(context, '로그아웃 완료'));
+                  showToast(TR('로그아웃 완료'));
                 });
               }
               break;
@@ -261,7 +263,7 @@ class ProfileViewModel {
           //   if (loginProv.isLogin) {
           //     loginProv.logout().then((_) {
           //       loginProv.setMainPageIndex(0);
-          //       showToast(TR(context, '회원탈퇴 완료'));
+          //       showToast(TR('회원탈퇴 완료'));
           //     });
           //   }
           //   break;
@@ -276,7 +278,7 @@ class ProfileViewModel {
           //   UserHelper().clearAllUser().then((_) {
           //     loginProv.logout().then((_) {
           //       loginProv.setMainPageIndex(0);
-          //       showToast(TR(context, '로컬정보 삭제 완료'));
+          //       showToast(TR('로컬정보 삭제 완료'));
           //     });
           //   });
           //   break;
@@ -310,27 +312,21 @@ class ProfileViewModel {
       );
     } else {
       return Center(
-        child: Text('No profile info..'),
+        child: Text(TR('프로필 정보가없습니다.')),
       );
     }
   }
 
-  BuildContext? _profileContext;
-
   hideProfileSelectBox() {
     loginProv.setMaskStatus(false);
-    if (_profileContext != null) {
-      ScaffoldMessenger.of(_profileContext!).hideCurrentMaterialBanner();
-      _profileContext = null;
-    }
+      ScaffoldMessenger.of(context!).hideCurrentMaterialBanner();
   }
 
   showProfileSelectBox(BuildContext profileContext,
     {Function(AddressModel)? onSelect, Function()? onAdd}) {
     if (loginProv.isShowMask || loginProv.userInfo == null) return false;
-    _profileContext = profileContext;
     loginProv.setMaskStatus(true);
-    ScaffoldMessenger.of(profileContext).showMaterialBanner(
+    ScaffoldMessenger.of(context).showMaterialBanner(
       MaterialBanner(
         elevation: 10,
         surfaceTintColor: Colors.white,
@@ -354,7 +350,6 @@ class ProfileViewModel {
                 ),
                 child: InkWell(
                   onTap: () {
-                    LOG('---> account add');
                     if (onAdd != null) onAdd();
                   },
                   borderRadius: BorderRadius.circular(10),
@@ -370,7 +365,7 @@ class ProfileViewModel {
                       children: [
                         Icon(Icons.add_circle_outline, size: 30, weight: 1, color: GRAY_30),
                         SizedBox(width: 10),
-                        Text(TR(profileContext, '계정 추가'), style: typo14bold),
+                        Text(TR('계정 추가'), style: typo14bold),
                       ],
                     ),
                   ),
@@ -400,7 +395,7 @@ class ProfileViewModel {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(TR(context, title), style: typo16bold),
+          Text(TR(title), style: typo16bold),
           ...items.map((e) => _myInfoItem(e, onEdit, onToggle)),
         ],
       ),
@@ -414,7 +409,7 @@ class ProfileViewModel {
         child: Row(
           children: [
             Expanded(
-              child: Text(TR(context, STR(item[0])),
+              child: Text(STR(item[0]),
                 style: typo16regular, maxLines: 2),
             ),
             if (STR(item[1]).isNotEmpty)...[
@@ -422,7 +417,7 @@ class ProfileViewModel {
                 OutlinedButton(
                   onPressed: onEdit,
                   style: darkBorderButtonStyle,
-                  child: Text(TR(context, STR(item[1])),
+                  child: Text(TR(STR(item[1])),
                     style: typo14semibold),
                 ),
               if (STR(item[1]) == 'on' || STR(item[1]) == 'off')
@@ -521,7 +516,7 @@ class ProfileViewModel {
                             'data': data,
                           };
                           showLoadingDialog(context,
-                            TR(context, '이미지 업로드 중입니다...'));
+                            TR('이미지 업로드 중입니다...'));
                           fireProv.uploadProfileImage(imageInfo).then((picUrl) async {
                             LOG('---> uploadProfileImage result : $picUrl');
                             if (STR(picUrl).isNotEmpty) {
@@ -550,8 +545,8 @@ class ProfileViewModel {
           //   child: Row(
           //     mainAxisAlignment: MainAxisAlignment.spaceAround,
           //     children: [
-          //       _profileFollowBox(TR(context, '팔로워'), STR(account?.follower ?? '0')),
-          //       _profileFollowBox(TR(context, '팔로잉'), STR(account?.following ?? '0')),
+          //       _profileFollowBox(TR('팔로워'), STR(account?.follower ?? '0')),
+          //       _profileFollowBox(TR('팔로잉'), STR(account?.following ?? '0')),
           //     ],
           //   ),
           // )
@@ -577,8 +572,8 @@ class ProfileViewModel {
         margin: EdgeInsets.symmetric(horizontal: 30.w),
         child: Text(STR(loginProv.account?.description ??
           '이국적 풍치의 이탈리아 투스카니 스타일 클럽하우스와 '
-              '대저택 컨셉의 최고급 호텔 시설로 휴양과 메이저급 골프코스의 다이나믹을 함께 즐길 수'
-              ' 있는 태안반도에 위치한 휴양형 고급 골프 리조트입니다.'),
+          '대저택 컨셉의 최고급 호텔 시설로 휴양과 메이저급 골프코스의 다이나믹을 함께 즐길 수'
+          ' 있는 태안반도에 위치한 휴양형 고급 골프 리조트입니다.'),
           style: typo14medium, textAlign: TextAlign.center),
       );
     }
@@ -600,7 +595,7 @@ class ProfileViewModel {
               onTap: () {
                 showEditDescription();
               },
-              text: TR(context, '프로필 편집'),
+              text: TR('프로필 편집'),
             )
           ),
           SizedBox(width: 10),
@@ -613,7 +608,7 @@ class ProfileViewModel {
                 Navigator.of(context).push(
                   createAniRoute(UserItemListScreen()));
               },
-              text: TR(context, '보유 상품'),
+              text: TR('보유 상품'),
             )
           ),
         ],
@@ -644,9 +639,9 @@ class ProfileViewModel {
     loginProv.changeAccount(select).then((result) {
       loginProv.enableLockScreen();
       if (result) {
-        showToast(TR(context, '계정 변경 성공'));
+        showToast(TR('계정 변경 성공'));
       } else {
-        showToast(TR(context, '계정 변경 실패'));
+        showToast(TR('계정 변경 실패'));
       }
     });
     return true;
@@ -655,9 +650,9 @@ class ProfileViewModel {
   _accountAdd() {
     hideProfileSelectBox();
     showInputDialog(context,
-      TR(context, '계정 추가'),
+      TR('계정 추가'),
       defaultText: IS_DEV_MODE ? EX_TEST_ACCCOUNT_00_1 : '',
-      hintText: TR(context, '계정명을 입력해 주세요.')).then((newNickId) {
+      hintText: TR('계정명을 입력해 주세요.')).then((newNickId) {
       LOG('---> account add name : $newNickId');
       if (STR(newNickId).isNotEmpty) {
         // nickId duplicate check..
@@ -692,9 +687,9 @@ class ProfileViewModel {
 
   showEditAccountName() {
     showInputDialog(context,
-        TR(context, 'ID(닉네임) 변경'),
+        TR('ID(닉네임) 변경'),
         defaultText: STR(loginProv.selectAccount?.accountName),
-        hintText: TR(context, '변경할 닉네임 입력해 주세요.'),
+        hintText: TR('변경할 닉네임 입력해 주세요.'),
         minLength: NICK_LENGTH_MIN,
         maxLength: NICK_LENGTH_MAX,
     ).then((text) {
@@ -713,9 +708,9 @@ class ProfileViewModel {
 
   showEditSubTitle() {
     showInputDialog(context,
-        TR(context, '사용자 이름 변경'),
+        TR('사용자 이름 변경'),
         defaultText: _getEditSubTitle,
-        hintText: TR(context, '변경할 이름을 입력해 주세요.'),
+        hintText: TR('변경할 이름을 입력해 주세요.'),
         textInputType: TextInputType.multiline,
         textAlign: TextAlign.start,
         maxLine: 1,
@@ -731,9 +726,9 @@ class ProfileViewModel {
 
   showEditDescription() {
     showInputDialog(context,
-        TR(context, '프로필 변경'),
+        TR('프로필 변경'),
         defaultText: STR(loginProv.selectAccount?.description),
-        hintText: TR(context, '변경할 프로필 내용을 입력해 주세요.'),
+        hintText: TR('변경할 프로필 내용을 입력해 주세요.'),
         textInputType: TextInputType.multiline,
         textAlign: TextAlign.start,
         maxLine: 5,
@@ -876,7 +871,7 @@ class ProfileViewModel {
   _setAccountName() async {
     var result = await loginProv.checkNickDup(loginProv.selectAccount?.accountName);
     if (!result) {
-      showToast(TR(context, '중복된 닉네임입니다'));
+      showToast(TR('중복된 닉네임입니다'));
       showEditAccountName();
       return false;
     }

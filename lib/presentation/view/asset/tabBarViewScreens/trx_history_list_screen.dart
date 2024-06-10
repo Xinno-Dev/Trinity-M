@@ -84,7 +84,7 @@ class _TrxHistoryListScreenState extends ConsumerState<TrxHistoryListScreen> {
     if (widget.isEmpty) {
       return Center(
         child: Text(
-          TR(context, '거래내역이 없습니다'),
+          TR('거래내역이 없습니다'),
           style: typo16medium.copyWith(color: GRAY_70),
         ),
       );
@@ -98,7 +98,7 @@ class _TrxHistoryListScreenState extends ConsumerState<TrxHistoryListScreen> {
               networkModel: networkModel
           ),
         firstPageErrorIndicatorBuilder: (_) => FirstPageExceptionIndicator(
-          title: TR(context, '에러가 발생했습니다'),
+          title: TR('에러가 발생했습니다'),
           onTryAgain: () {
             setState(() {
             });
@@ -107,7 +107,7 @@ class _TrxHistoryListScreenState extends ConsumerState<TrxHistoryListScreen> {
         newPageErrorIndicatorBuilder: (_) => Container(),
         noItemsFoundIndicatorBuilder: (_) => Center(
           child: Text(
-            TR(context, '거래내역이 없습니다'),
+            TR('거래내역이 없습니다'),
             style: typo16medium.copyWith(color: GRAY_70),
           ),
         ),

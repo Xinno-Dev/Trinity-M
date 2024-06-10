@@ -72,11 +72,11 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
 
   get _nameValidateError {
     return !isNameValidated ? newNetwork.name.isEmpty ?
-    TR(context, '네트워크 이름을 입력해 주세요.') : TR(context, '이미 등록된 네트워크 이름입니다.') : null;
+    TR('네트워크 이름을 입력해 주세요.') : TR('이미 등록된 네트워크 이름입니다.') : null;
   }
 
   get _chainIdValidateError {
-    return !isIdValidated ? TR(context, '이미 등록된 네트워크입니다.') : null;
+    return !isIdValidated ? TR('이미 등록된 네트워크입니다.') : null;
   }
 
   DropdownMenuItem channelItem(text, value) {
@@ -188,7 +188,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
             leadingWidth: 40.w,
             titleSpacing: 0,
             centerTitle: true,
-            title: Text(TR(context, '네트워크 추가'),
+            title: Text(TR('네트워크 추가'),
               style: typo18semibold,
             ),
             elevation: 0,
@@ -206,7 +206,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (!isCheckDone)...[
-                          Text(TR(context, 'RPC 주소를 입력해 주세요.'),
+                          Text(TR('RPC 주소를 입력해 주세요.'),
                             maxLines: 2,
                             style: typo16bold),
                           // if (newNetwork.isRigo)
@@ -264,14 +264,14 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                                 _refreshCheck();
                             }),
                           if (isExplorerError)
-                            _buildErrorItem(TR(context, '블록 탐색기 주소를 확인해 주세요.')),
+                            _buildErrorItem(TR('블록 탐색기 주소를 확인해 주세요.')),
                           if (isDuplicated)...[
                             SizedBox(height: 20),
-                            _buildErrorItem(TR(context, '* 이미 등록된 네트워크입니다.')),
+                            _buildErrorItem(TR('* 이미 등록된 네트워크입니다.')),
                           ]
                         ],
                         // if (!isCheckDone)...[
-                        //   Text(TR(context, 'MDL 기반의 네트워크 추가만 지원합니다.'),
+                        //   Text(TR('MDL 기반의 네트워크 추가만 지원합니다.'),
                         //       style: typo14medium.copyWith(color: SECONDARY_90)),
                         // ],
                         SizedBox(height: 500)
@@ -279,7 +279,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                     ) : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(TR(context, '다음 정보를 입력해 주세요.'), style: typo16bold),
+                        Text(TR('다음 정보를 입력해 주세요.'), style: typo16bold),
                         showTextEdit('RPC 주소',
                           controller: _controller[NetworkInputType.httpUrl.index],
                           onChanged: (value) {
@@ -326,19 +326,19 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                   padding: EdgeInsets.only(bottom: 10),
                   child: isEnableCheck ?
                   PrimaryButton(
-                    text: TR(context,
+                    text: TR(
                       (widget.addType == NetworkAddType.manual || isCheckDone) ?
                       '추 가' : '조 회'),
                     onTap: () async {
                       if (widget.addType == NetworkAddType.manual || isCheckDone) {
                         // 수동 추가 & 자동 추가 입력
                         if (!isEnableCheck) {
-                          showSimpleDialog(context, TR(context, '입력 내용을 확인해 주세요.'));
+                          showSimpleDialog(context, TR('입력 내용을 확인해 주세요.'));
                           return;
                         }
                         showConfirmDialog(context, ref.read(languageProvider).isKor ?
-                          TR(context, '\'${newNetwork.name}\'\n네트워크를 추가하시겠습니까?') :
-                          TR(context, 'Would you like to add a\n\'${newNetwork.name}\' network?')).then((result) async {
+                          TR('\'${newNetwork.name}\'\n네트워크를 추가하시겠습니까?') :
+                          TR('Would you like to add a\n\'${newNetwork.name}\' network?')).then((result) async {
                           if (result != null && result) {
                             // final validate = await ref.read(jsonRpcServiceProvider)
                             //   .validateNetwork(newNetwork);
@@ -362,7 +362,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                               ref.read(coinProvider).setNetworkFromId(newNetwork.id);
                               context.pop(true);
                             } else {
-                              showSimpleDialog(context, TR(context, '잘못된 네트워크입니다.'));
+                              showSimpleDialog(context, TR('잘못된 네트워크입니다.'));
                             }
                           }
                         });
@@ -414,7 +414,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                             } else {
                               hideLoadingDialog();
                               showSimpleDialog(context,
-                                TR(context, '잘못된 네트워크입니다.'), 'assets/svg/icon_error.svg').then((_) {
+                                TR('잘못된 네트워크입니다.'), 'assets/svg/icon_error.svg').then((_) {
                                 isCheckDone = false;
                               });
                               return;
@@ -424,7 +424,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                           hideLoadingDialog();
                         }
                         if (isDuplicated) {
-                          showSimpleDialog(context, TR(context,
+                          showSimpleDialog(context, TR(
                               '이미 추가한 네트워크입니다.\n다시 입력해 주세요.'),
                               'assets/svg/icon_error.svg').then((_) {
                                 setState(() {
@@ -436,7 +436,7 @@ class _NetworkAddScreenState extends ConsumerState<NetworkAddScreen> {
                       }
                     }
                   ) : DisabledButton(
-                    text: TR(context, isCheckDone ? '추 가' : '조 회'),
+                    text: TR(isCheckDone ? '추 가' : '조 회'),
                   )
                 )
               ]

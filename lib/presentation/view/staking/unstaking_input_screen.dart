@@ -60,9 +60,9 @@ class _UnStakingInputScreenState extends ConsumerState<UnStakingInputScreen> {
     Stakes stakes =
         provider.Provider.of<StakesData>(context, listen: false).stakes;
     if (stakingType == StakingType.unStaking) {
-      typeText = TR(context, '스테이킹');
+      typeText = TR('스테이킹');
     } else {
-      typeText = TR(context, '위임');
+      typeText = TR('위임');
     }
     String stringAmount = stakes.power!;
     //stakingAmount = stringAmount.substring(0, stringAmount.length - 2); // TODO : check
@@ -120,7 +120,7 @@ class _UnStakingInputScreenState extends ConsumerState<UnStakingInputScreen> {
         ),
         centerTitle: true,
         title: Text(
-          '$typeText ${TR(context, '종료')}',
+          '$typeText ${TR('종료')}',
           style: typo18semibold,
         ),
         elevation: 0,
@@ -149,7 +149,7 @@ class _UnStakingInputScreenState extends ConsumerState<UnStakingInputScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      TR(context, '수량'),
+                                      TR('수량'),
                                       style: typo14semibold,
                                     ),
                                     SizedBox(
@@ -193,7 +193,7 @@ class _UnStakingInputScreenState extends ConsumerState<UnStakingInputScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          '$typeText ${TR(context, '보유량')}',
+                                          '$typeText ${TR('보유량')}',
                                           style: typo14medium.copyWith(
                                               color: GRAY_50),
                                         ),
@@ -221,7 +221,7 @@ class _UnStakingInputScreenState extends ConsumerState<UnStakingInputScreen> {
                                         children: [
                                           if (isDelegate)
                                             DetailRow(
-                                              title: TR(context, '검증인'),
+                                              title: TR('검증인'),
                                               content: Text(
                                                 validator,
                                                 style: typo18semibold.copyWith(
@@ -229,7 +229,7 @@ class _UnStakingInputScreenState extends ConsumerState<UnStakingInputScreen> {
                                               ),
                                             ),
                                           DetailRow(
-                                            title: '$typeText ${TR(context, '종료 금액')}',
+                                            title: '$typeText ${TR('종료 금액')}',
                                             content: Row(
                                               children: [
                                                 Text(
@@ -252,7 +252,7 @@ class _UnStakingInputScreenState extends ConsumerState<UnStakingInputScreen> {
                                           Row(
                                             children: [
                                               Text(
-                                                '${TR(context, '남은')} $typeText${TR(context, ' 금액')}',
+                                                '${TR('남은')} $typeText${TR(' 금액')}',
                                                 style: typo16medium.copyWith(
                                                     color: GRAY_70),
                                               ),
@@ -301,7 +301,7 @@ class _UnStakingInputScreenState extends ConsumerState<UnStakingInputScreen> {
                           height: 16,
                         ),
                         CustomCheckbox(
-                          title: '$typeText${TR(context, ' 기능 이용 주의사항')}',
+                          title: '$typeText${TR(' 기능 이용 주의사항')}',
                           onChanged: (value) {
                             setState(() {
                               agree_1 = value!;
@@ -345,7 +345,7 @@ class _UnStakingInputScreenState extends ConsumerState<UnStakingInputScreen> {
                       context.pushNamed(StakingConfirmScreen.routeName);
                     },
                     child: Text(
-                      TR(context, '다음'),
+                      TR('다음'),
                       style: typo16bold.copyWith(
                           color: (agree_1 && agree_2) ? WHITE : GRAY_40),
                     ),

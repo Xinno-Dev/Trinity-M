@@ -50,7 +50,7 @@ class _UserEditScreenState extends ConsumerState<UserEditScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '계정 이름 변경'),
+          TR('계정 이름 변경'),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -73,7 +73,7 @@ class _UserEditScreenState extends ConsumerState<UserEditScreen> {
                 children: [
                   Expanded(
                     child: PrimaryButton(
-                      text: TR(context, '취소'),
+                      text: TR('취소'),
                       color: GRAY_10,
                       textStyle: typo16medium,
                       isBorderShow: true,
@@ -83,7 +83,7 @@ class _UserEditScreenState extends ConsumerState<UserEditScreen> {
                   SizedBox(width: 10.w),
                   Expanded(
                     child: PrimaryButton(
-                      text: TR(context, '변경'),
+                      text: TR('변경'),
                       textStyle: typo16medium.copyWith(color: WHITE),
                       isSmallButton: true,
                       onTap: () {

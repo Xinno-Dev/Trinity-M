@@ -57,7 +57,7 @@ class SendCompletedScreen extends StatelessWidget {
                 height: 20,
               ),
               Text(
-                TR(context, '코인 전송이 요청되었습니다.'),
+                TR('코인 전송이 요청되었습니다.'),
                 style: typo24bold150,
               ),
               Spacer(),
@@ -71,7 +71,7 @@ class SendCompletedScreen extends StatelessWidget {
                         context.go('/firebaseSetup');
                       },
                       child: Text(
-                        TR(context, '확인'),
+                        TR('확인'),
                         style: typo16bold.copyWith(color: WHITE),
                       ),
                       style: primaryButtonStyle),

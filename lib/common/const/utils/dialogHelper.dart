@@ -27,7 +27,7 @@ Future<int> showAppUpdateDialog(
         title: Container(
           width: double.infinity,
           alignment: Alignment.center,
-          child: Text(TR(context, title ?? '앱 업데이트'), style: typo16bold),
+          child: Text(TR(title ?? '앱 업데이트'), style: typo16bold),
         ),
         backgroundColor: WHITE,
         surfaceTintColor: WHITE,
@@ -71,13 +71,14 @@ Future<int> showAppUpdateDialog(
                   alignment: Alignment.center,
                   child: Text(
                     msg,
+                    textAlign: TextAlign.center,
                     style: typo16medium.copyWith(color: SECONDARY_90),
                   ),
                 ),
               ],
               SizedBox(height: 20.h),
               PrimaryButton(
-                text: TR(context, '마켓으로 이동'),
+                text: TR('마켓으로 이동'),
                 textStyle: typo14bold,
                 isBorderShow: true,
                 color: WHITE,
@@ -92,14 +93,15 @@ Future<int> showAppUpdateDialog(
           if (!isForceUpdate)...[
             if (!isForceCheck)
               TextButton(
-                child: Text(TR(context, '다시 보지 않기'), style: TextStyle(color: Colors.blueAccent)),
+                child: Text(TR('다시 보지 않기'),
+                  style: TextStyle(color: Colors.blueAccent)),
                 onPressed: () {
                   Navigator.of(context).pop(2);
                 },
               ),
             TextButton(
               // child: Text(isForceUpdate ? '마켓으로 이동' : '확인'),
-              child: Text(TR(context, '닫기')),
+              child: Text(TR('닫기')),
               onPressed: () {
                 Navigator.of(context).pop(0);
               },
@@ -175,14 +177,14 @@ Future<int> showAppNoticeDialog(
           ),
           actions: <Widget>[
             TextButton(
-              child: Text(TR(context, '다시 보지 않기'), style: TextStyle(color: Colors.blueAccent)),
+              child: Text(TR('다시 보지 않기'), style: TextStyle(color: Colors.blueAccent)),
               onPressed: () {
                 Navigator.of(context).pop(2);
               },
             ),
             TextButton(
               // child: Text(isForceUpdate ? '마켓으로 이동' : '확인'),
-              child: Text(TR(context, '닫기')),
+              child: Text(TR('닫기')),
               onPressed: () {
                 Navigator.of(context).pop(0);
               },

@@ -90,7 +90,7 @@ class _ExportPrivateKeyScreenState extends State<ExportPrivateKeyScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '개인키 보기'),
+          TR('개인키 보기'),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -122,7 +122,7 @@ class _ExportPrivateKeyScreenState extends State<ExportPrivateKeyScreen> {
                               WarningIcon(height: 24.0),
                               SizedBox(width: 8),
                               Text(
-                                TR(context, '개인키가 타인에게 노출되지 않도록 주의하세요.\n개인키가 있으면 누구든 귀하의 자산에 접근 할 수\n있습니다.'),
+                                TR('개인키가 타인에게 노출되지 않도록 주의하세요.\n개인키가 있으면 누구든 귀하의 자산에 접근 할 수\n있습니다.'),
                                 style: typo14medium150.copyWith(color: GRAY_70),
                               ),
                             ],
@@ -147,7 +147,7 @@ class _ExportPrivateKeyScreenState extends State<ExportPrivateKeyScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    accountName + ' ${TR(context, '개인키')}',
+                                    accountName + ' ${TR('개인키')}',
                                     style:
                                         typo18semibold.copyWith(color: GRAY_90),
                                   ),
@@ -169,7 +169,7 @@ class _ExportPrivateKeyScreenState extends State<ExportPrivateKeyScreen> {
                                             BorderRadius.circular(4.0),
                                       ),
                                       child: Text(
-                                        TR(context, buttonText),
+                                        TR(buttonText),
                                         style: typo14bold100,
                                       ),
                                     ),
@@ -192,13 +192,13 @@ class _ExportPrivateKeyScreenState extends State<ExportPrivateKeyScreen> {
                                   ? IconBorderButton(
                                       imageAssetName:
                                           'assets/svg/icon_copy.svg',
-                                      text: TR(context, '복사하기'),
+                                      text: TR('복사하기'),
                                       onPressed: () async {
                                         await Clipboard.setData(
                                             ClipboardData(text: keyPair.d));
                                         final androidInfo = await DeviceInfoPlugin().androidInfo;
                                         if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
-                                          _showToast(TR(context, '개인키가 복사되었습니다'));
+                                          _showToast(TR('개인키가 복사되었습니다'));
                                       },
                                     )
                                   : Container(),

@@ -34,7 +34,7 @@ CustomTextEdit(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (title.isNotEmpty)
-            Text(TR(context, title), style: typo14medium),
+            Text(TR(title), style: typo14medium),
           if (isShowOutline)
             SizedBox(height: 8.h),
           StatefulBuilder(

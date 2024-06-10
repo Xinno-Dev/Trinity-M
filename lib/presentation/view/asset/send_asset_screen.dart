@@ -200,7 +200,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
             onPressed: context.pop,
           ),
           title: Text(
-            TR(context, '보내기'),
+            TR('보내기'),
             style: typo18semibold,
           ),
           titleSpacing: 0,
@@ -222,7 +222,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                     SizedBox(
                       height: 20.h,
                     ),
-                    ColumnTitle(titleText: TR(context, '받는 사람')),
+                    ColumnTitle(titleText: TR('받는 사람')),
                     SizedBox(
                       height: 16.h,
                     ),
@@ -239,7 +239,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                           Align(
                             alignment: AlignmentDirectional.centerStart,
                             child: Text(
-                              TR(context, '확인할 수 없는 지갑 주소입니다'),
+                              TR('확인할 수 없는 지갑 주소입니다'),
                               style: typo16regular.copyWith(color: ERROR_90),
                             ),
                           ),
@@ -252,7 +252,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                       children: [
                         IconBorderButton(
                           imageAssetName: 'assets/svg/icon_scan.svg',
-                          text: TR(context, 'QR코드 스캔'),
+                          text: TR('QR코드 스캔'),
                           onPressed: () {
                             _navigateAndInsertAddress(context);
                           },
@@ -262,7 +262,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                         ),
                         IconBorderButton(
                           imageAssetName: 'assets/svg/icon_copy.svg',
-                          text: TR(context, '붙여넣기'),
+                          text: TR('붙여넣기'),
                           onPressed: pasteFromClipboard,
                         ),
                       ],
@@ -289,7 +289,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                     children: [
                       QuantityRow(
                         leftWidget: Text(
-                          TR(context, '수수료(예상)'),
+                          TR('수수료(예상)'),
                           style: typo16medium,
                         ),
                         rightWidgetList: [
@@ -319,7 +319,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                                   // );
                                 } else if (snapshot.hasError) {
                                   return Text(
-                                    TR(context, '-'),
+                                    TR('-'),
                                     style: typo16regular,
                                   );
                                 } else {
@@ -341,7 +341,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                       ),
                       QuantityRow(
                         leftWidget: Text(
-                          TR(context, '총 수량'),
+                          TR('총 수량'),
                           style: typo16semibold,
                         ),
                         rightWidgetList: [
@@ -394,7 +394,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                           !quantityTextFieldIsEmpty) {
                         if (double.parse(currentAmount) <
                             double.parse(totalAmount)) {
-                          _showToast(TR(context, '보유한 수량이 부족합니다'));
+                          _showToast(TR('보유한 수량이 부족합니다'));
                           return;
                         }
 
@@ -440,7 +440,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
     return Column(
       children: [
         ColumnTitle(
-          titleText: TR(context, '보내는 자산'),
+          titleText: TR('보내는 자산'),
         ),
         SizedBox(
           height: 16,
@@ -488,7 +488,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                           Row(
                             children: [
                               Text(
-                                TR(context, '잔고'),
+                                TR('잔고'),
                                 style: typo14regular.copyWith(color: GRAY_50),
                               ),
                               SizedBox(
@@ -536,7 +536,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
         SizedBox(
           height: 20,
         ),
-        ColumnTitle(titleText: TR(context, '보낼 수량')),
+        ColumnTitle(titleText: TR('보낼 수량')),
         SizedBox(
           height: 16,
         ),
@@ -557,7 +557,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
         border: addressTextFieldIsEmpty ? InputBorder.none : grayBorder,
         contentPadding:
             EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-        hintText: TR(context, '0x로 시작하는 주소를 입력해주세요.'),
+        hintText: TR('0x로 시작하는 주소를 입력해주세요.'),
         hintStyle: typo16regular150.copyWith(color: GRAY_40),
       ),
       minLines: 2,
@@ -584,7 +584,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
       onPressed: () {
         UiHelper().buildRoundBottomSheet(
           context: context,
-          title: TR(context, '네트워크 변경'),
+          title: TR('네트워크 변경'),
           child: StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
             return Column(
@@ -635,10 +635,10 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                         }
                       });
                       Navigator.pop(context);
-                      _showToast(TR(context, '네트워크를 변경했습니다'));
+                      _showToast(TR('네트워크를 변경했습니다'));
                     },
                     child: Text(
-                      TR(context, '네트워크 변경'),
+                      TR('네트워크 변경'),
                       style: typo16bold.copyWith(
                         color: WHITE,
                       ),
@@ -652,7 +652,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
         );
       },
       child: Text(
-        TR(context, '변경'),
+        TR('변경'),
         style: typo14semibold.copyWith(color: SECONDARY_90),
       ),
       style: TextButton.styleFrom(
@@ -666,7 +666,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
   Future<dynamic> buildTokenBottomSheet(BuildContext context) {
     return UiHelper().buildRoundBottomSheet(
       context: context,
-      title: TR(context, '전송할 토큰 변경'),
+      title: TR('전송할 토큰 변경'),
       child: StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
         return Column(
@@ -728,7 +728,7 @@ class _SendAssetScreenState extends ConsumerState<SendAssetScreen> {
                   // _showToast('네트워크를 변경했습니다');
                 },
                 child: Text(
-                  TR(context, '토큰 변경'),
+                  TR('토큰 변경'),
                   style: typo16bold.copyWith(
                     color: WHITE,
                   ),
@@ -833,7 +833,7 @@ class SendAssetButton extends StatelessWidget {
     return TextButton(
       onPressed: onPressed,
       child: Text(
-        TR(context, '보내기'),
+        TR('보내기'),
         style: typo16bold.copyWith(
             color: (!addressTextFieldIsEmpty &&
                     !quantityTextFieldIsEmpty &&

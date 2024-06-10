@@ -45,7 +45,7 @@ class TradeHistoryColumn extends StatelessWidget {
       onTap: () {
         UiHelper().buildRoundBottomSheet(
           context: context,
-          title: TR(context, getContentText(txHistory.type)),
+          title: TR(getContentText(txHistory.type)),
           child: TradeDetailScreen(
             txHistory: txHistory,
             coin: txHistory.token,
@@ -73,7 +73,7 @@ class TradeHistoryColumn extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  TR(context, getContentText(txHistory.type)),
+                  TR(getContentText(txHistory.type)),
                   style: typo16semibold,
                 ),
                 Spacer(),
@@ -93,7 +93,7 @@ class TradeHistoryColumn extends StatelessWidget {
               height: 8,
             ),
             Text(
-              TR(context, '완료'),
+              TR('완료'),
               style: typo14semibold.copyWith(color: SUCCESS_90),
             ),
           ],

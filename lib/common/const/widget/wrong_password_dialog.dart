@@ -11,9 +11,9 @@ class WrongPasswordDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleCheckDialog(
       hasTitle: true,
-      titleString: TR(context, '비밀번호가 일치하지 않습니다'),
-      infoString: TR(context, '비밀번호를 다시 입력해 주세요.'),
-      defaultButtonText: TR(context, '돌아가기'),
+      titleString: TR('비밀번호가 일치하지 않습니다'),
+      infoString: TR('비밀번호를 다시 입력해 주세요.'),
+      defaultButtonText: TR('돌아가기'),
     );
   }
 }

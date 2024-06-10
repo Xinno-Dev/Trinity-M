@@ -80,7 +80,7 @@ class _NetworkListScreenState extends ConsumerState<NetworkListScreen> {
           leadingWidth: 40.w,
           titleSpacing: 0,
           centerTitle: true,
-          title: Text(TR(context, '네트워크'),
+          title: Text(TR('네트워크'),
             style: typo18semibold,
           ),
           elevation: 0,
@@ -133,7 +133,7 @@ class _NetworkListScreenState extends ConsumerState<NetworkListScreen> {
                 child: Padding(
                   padding: EdgeInsets.only(bottom: 20.h),
                   child: PrimaryButton(
-                    text: '${TR(context, '네트워크 추가')} +',
+                    text: '${TR('네트워크 추가')} +',
                     isSmallButton: false,
                     onTap: () {
                       // _buildNetworkAddSheet();
@@ -141,7 +141,7 @@ class _NetworkListScreenState extends ConsumerState<NetworkListScreen> {
                         createAniRoute(NetworkAddScreen(NetworkAddType.auto))
                       ).then((result) {
                         if (BOL(result)) {
-                          _showToast(TR(context, '네트워크를 추가했습니다.'));
+                          _showToast(TR('네트워크를 추가했습니다.'));
                         }
                       });
                     }
@@ -158,7 +158,7 @@ class _NetworkListScreenState extends ConsumerState<NetworkListScreen> {
   _buildNetworkAddSheet() {
     return UiHelper().buildRoundBottomSheet(
       context: context,
-      title: TR(context, '네트워크 추가'),
+      title: TR('네트워크 추가'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -169,7 +169,7 @@ class _NetworkListScreenState extends ConsumerState<NetworkListScreen> {
                 createAniRoute(NetworkAddScreen(NetworkAddType.manual))
               ).then((result) {
                 if (BOL(result)) {
-                  _showToast(TR(context, '네트워크를 추가했습니다.'));
+                  _showToast(TR('네트워크를 추가했습니다.'));
                 }
               });
             },
@@ -178,7 +178,7 @@ class _NetworkListScreenState extends ConsumerState<NetworkListScreen> {
               padding: EdgeInsets.symmetric(vertical: 15.h),
               color: Colors.transparent,
               child: Text(
-                TR(context, '네트워크 수동 추가'),
+                TR('네트워크 수동 추가'),
                 style: typo16semibold,
               ),
             ),
@@ -191,7 +191,7 @@ class _NetworkListScreenState extends ConsumerState<NetworkListScreen> {
                 createAniRoute(NetworkAddScreen(NetworkAddType.auto))
               ).then((result) {
                 if (BOL(result)) {
-                  _showToast(TR(context, '네트워크를 추가했습니다.'));
+                  _showToast(TR('네트워크를 추가했습니다.'));
                 }
               });
             },
@@ -200,7 +200,7 @@ class _NetworkListScreenState extends ConsumerState<NetworkListScreen> {
               padding: EdgeInsets.symmetric(vertical: 15.h),
               color: Colors.transparent,
               child: Text(
-                TR(context, '네트워크 조회'),
+                TR('네트워크 조회'),
                 style: typo16semibold,
               ),
             ),

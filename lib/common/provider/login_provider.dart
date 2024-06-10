@@ -125,7 +125,8 @@ enum LoginErrorType {
 final drawerTitleN = [
   '내 정보', '구매 내역', '-',
   '이용약관', '개인정보처리 방침', '버전 정보',
-  '언어 설정', '로그아웃',
+  '언어 설정',
+  '로그아웃',
 ];
 
 enum DrawerActionType {
@@ -307,11 +308,17 @@ class LoginProvider extends ChangeNotifier {
 
   showUserBioIdentityCheck() async {
     return await getBioIdentity(
-      TR(context, '본인확인'),
+      TR('본인확인'),
       onError: (err) {
         showLoginErrorTextDialog(context, err);
       }
     );
+  }
+
+  bioIdentityCheck() async {
+    final response = await BiometricStorage().canAuthenticate();
+    LOG('---> canAuthenticate : $response');
+    return response == CanAuthenticateResponse.success;
   }
 
   // local에 있는 address 목록을 userInfo 에 추가 & 케싱 한다..
@@ -397,10 +404,7 @@ class LoginProvider extends ChangeNotifier {
   }
 
   get accountName {
-    if (account?.accountName != null) {
-      return account?.accountName;
-    }
-    return '';
+    return account?.accountName ?? '';
   }
 
   get accountSubtitle {
@@ -689,7 +693,9 @@ class LoginProvider extends ChangeNotifier {
       var email   = STR(userInfo?.email);
       var token   = STR(userInfo?.socialToken);
       LOG('--> startLogin info : $type / $email / $nickId / $userPass / $token');
-      if (type == 'email') {
+      // 토큰이 없을 경우엔 이메일 로그인으로 변경..
+      if (token.isEmpty) {
+        type = 'email';
         if (key != null) {
           var pubKey = await getPublicKey(key.d);
           var shareKey = formatBytesAsHexString(pubKey.Q!.getEncoded());
@@ -716,9 +722,6 @@ class LoginProvider extends ChangeNotifier {
       if (token.isNotEmpty) {
         var result = await _api.loginUser(
           nickStr, type, email, token, onError: (code, text) {
-            if (text == '__not_found__') {
-
-            }
             if (onError != null) onError(code, text);
           }
         );
@@ -772,7 +775,7 @@ class LoginProvider extends ChangeNotifier {
   // add new account..
   Future<bool> addNewAccount(String passOrg, String newNickId) async {
     LOG('--> addNewAccount : $passOrg / $newNickId');
-    var pass    = crypto.sha256.convert(utf8.encode(passOrg)).toString();
+    var pass = crypto.sha256.convert(utf8.encode(passOrg)).toString();
     var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
     var keyResult = await eccImpl.addKeyPair(pass, nickId: newNickId);
     if (keyResult) {
@@ -914,7 +917,7 @@ class LoginProvider extends ChangeNotifier {
   // passOrg : 실제로 입력 받은 패스워드 문자열..
   Future<bool> checkWalletPass(String passOrg) async {
     var keyEnc = await getAccountKey(passOrg: passOrg);
-    LOG('--> checkWalletPass result : $keyEnc');
+    LOG('--> checkWalletPass result : ${keyEnc != null} <= $keyEnc');
     return keyEnc != null;
   }
 
@@ -1260,7 +1263,7 @@ class LoginProvider extends ChangeNotifier {
       {Function(String)? onError}) async {
     // final auth = LocalAuthentication();
     try {
-      setPrompt(title, TR(context, '본인 확인을 위해 생체인증을 사용합니다.'));
+      setPrompt(title, TR('본인 확인을 위해 생체인증을 사용합니다.'));
       var value = await AesManager().encryptWithDeviceId(userPass);
       var result = await writeBioStorage(BIO_USER_PASS_KEY, value);
       LOG('--> setBioIdentity localPass : $value');
@@ -1281,7 +1284,7 @@ class LoginProvider extends ChangeNotifier {
       //   cancelButton: '취소',
       // );
       // result = await auth.authenticate(
-      //   localizedReason: TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
+      //   localizedReason: TR('본인 확인을 위해 생체인증을 사용합니다.'),
       //   authMessages: <AuthMessages>[
       //     androidStrings,
       //     iosStrings,
@@ -1302,7 +1305,7 @@ class LoginProvider extends ChangeNotifier {
   Future<bool?> getBioIdentity(String title,
       {Function(String)? onError}) async {
     try {
-      setPrompt(title, TR(context, '본인 확인을 위해 생체인증을 사용합니다.'));
+      setPrompt(title, TR('본인 확인을 위해 생체인증을 사용합니다.'));
       var localPass = await readBioStorage(BIO_USER_PASS_KEY);
       LOG('--> getBioIdentity localPass : $localPass');
       if (STR(localPass).isNotEmpty) {
@@ -1312,6 +1315,8 @@ class LoginProvider extends ChangeNotifier {
           setUserPass(passOrg);
           return true;
         }
+      } else if (localPass == null) {
+        return null;
       }
     } on PlatformException catch (e) {
       LOG('--> getBioIdentity error : $e');

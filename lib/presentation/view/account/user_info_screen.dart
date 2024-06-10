@@ -113,7 +113,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '계정 정보'),
+          TR('계정 정보'),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -180,7 +180,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                             Row(
                               children: [
                                 Text(
-                                  TR(context, '지갑주소'),
+                                  TR('지갑주소'),
                                   style:
                                       typo16semibold.copyWith(color: GRAY_70),
                                 ),
@@ -209,7 +209,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                         child: Container(
                           width: 150,
                           child: PrimaryButton(
-                            text: TR(context, '주소 복사'),
+                            text: TR('주소 복사'),
                             color: Colors.transparent,
                             textStyle: typo14medium,
                             icon: Icon(Icons.copy),
@@ -224,7 +224,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                               );
                               final androidInfo = await DeviceInfoPlugin().androidInfo;
                               if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
-                              _showToast(TR(context, '지갑주소가 복사되었습니다'));
+                              _showToast(TR('지갑주소가 복사되었습니다'));
                             }
                           )
                         ),
@@ -233,7 +233,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                         height: 64.h,
                       ),
                       PrimaryButton(
-                        text: TR(context, '개인키 보기'),
+                        text: TR('개인키 보기'),
                         color: Colors.transparent,
                         textStyle: typo16medium,
                         isSmallButton: true,
@@ -247,7 +247,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                         height: 16.h,
                       ),
                       PrimaryButton(
-                        text: TR(context, 'RWF 로 내보내기'),
+                        text: TR('RWF 로 내보내기'),
                         afterIcon: Icon(Icons.exit_to_app_rounded),
                         color: Colors.transparent,
                         textStyle: typo16medium,
@@ -275,7 +275,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                       )
                       // SettingsMenu(
                       //   leftImage: false,
-                      //   title: TR(context, '개인키 보기'),
+                      //   title: TR('개인키 보기'),
                       //   touchupinside: () {
                       //     context.pushNamed(AuthPasswordScreen.routeName,
                       //       queryParams: {'export_privateKey': 'true'});
@@ -284,7 +284,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                       // Spacer(),
                       // SettingsMenu(
                       //   leftImage: false,
-                      //   title: TR(context, 'RWF 내보내기'),
+                      //   title: TR('RWF 내보내기'),
                       //   touchupinside: () {
                       //     context.pushNamed(AuthPasswordScreen.routeName,
                       //         queryParams: {'export_privateKeyRwf': 'true'});
@@ -344,7 +344,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                       height: 20,
                     ),
                     Text(
-                      TR(context, '계정 이름 변경'),
+                      TR('계정 이름 변경'),
                     ),
                     SizedBox(
                       height: 20,
@@ -352,7 +352,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 19.0),
                       child: CustomTextFormField(
-                        hintText: TR(context, '계정 이름을 입력해주세요'),
+                        hintText: TR('계정 이름을 입력해주세요'),
                         focusNode: _focusNode,
                         controller: _textEditingController,
                         inputFormatters: [
@@ -376,7 +376,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                                 _textEditingController.clear();
                               },
                               child: Text(
-                                TR(context, '취소'),
+                                TR('취소'),
                                 style: typo14bold100.copyWith(
                                     color: SECONDARY_90),
                               ),
@@ -402,7 +402,7 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                                 context.pop(_textEditingController.text);
                               },
                               child: Text(
-                                TR(context, '확인'),
+                                TR('확인'),
                                 style: typo14bold100.copyWith(color: WHITE),
                               ),
                               style: popupSecondaryButtonStyle.copyWith(

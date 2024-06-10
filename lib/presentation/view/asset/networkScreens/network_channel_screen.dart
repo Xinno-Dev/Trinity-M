@@ -33,7 +33,7 @@ class _NetworkChannelScreenState extends State<NetworkChannelScreen> {
           leadingWidth: 40.w,
           titleSpacing: 0,
           centerTitle: true,
-          title: Text(TR(context, '네트워크 채널 선택'),
+          title: Text(TR('네트워크 채널 선택'),
             style: typo18semibold,
           ),
           elevation: 0,
@@ -44,7 +44,7 @@ class _NetworkChannelScreenState extends State<NetworkChannelScreen> {
           child: ListView(
             padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w),
             children: [
-              Text(TR(context, '채널을 선택해 주세요.'),
+              Text(TR('채널을 선택해 주세요.'),
                 style: typo16medium,
               ),
               SizedBox(height: 10.h),

@@ -58,7 +58,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '지갑 만들기'),
+          TR('지갑 만들기'),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -83,12 +83,12 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          TR(context, '약관에 동의해 주세요'),
+                          TR('약관에 동의해 주세요'),
                           style: typo24bold150,
                         ),
                         SizedBox(height: 16.h),
                         Text(
-                          TR(context, 'BYFFIN 지갑을 이용해주셔서 감사합니다.\n서비스 이용을 위해 약관 동의가 필요합니다.'),
+                          TR('BYFFIN 지갑을 이용해주셔서 감사합니다.\n서비스 이용을 위해 약관 동의가 필요합니다.'),
                           style: typo16medium150.copyWith(
                             color: GRAY_70,
                           ),
@@ -110,7 +110,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                           child: Column(
                             children: [
                               CustomCheckbox(
-                                title: TR(context, '전체 동의'),
+                                title: TR('전체 동의'),
                                 checked: agree_all,
                                 pushed: false,
                                 onChanged: (agree) {
@@ -130,7 +130,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                               ),
                               SizedBox(height: 16.h),
                               CustomCheckbox(
-                                title: TR(context, title[0]) + ' ${TR(context, '(필수)')}',
+                                title: TR(title[0]) + ' ${TR('(필수)')}',
                                 checked: agree_1,
                                 onChanged: (agree) {
                                   setState(() {
@@ -145,7 +145,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                               ),
                               SizedBox(height: 4.h),
                               CustomCheckbox(
-                                title: TR(context, title[1]) + ' ${TR(context, '(필수)')}',
+                                title: TR(title[1]) + ' ${TR('(필수)')}',
                                 checked: agree_2,
                                 onChanged: (agree) {
                                   setState(() {
@@ -160,7 +160,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                               ),
                               // SizedBox(height: 4.h),
                               // CustomCheckbox(
-                              //   title: TR(context, title[2]) + ' ${TR(context, '(선택)')}',
+                              //   title: TR(title[2]) + ' ${TR('(선택)')}',
                               //   checked: agree_3,
                               //   onChanged: (agree) {
                               //     setState(() {
@@ -188,7 +188,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
                       child: agreeEnable == true
                           ? PrimaryButton(
-                        text: TR(context, '다음'),
+                        text: TR('다음'),
                         onTap: () {
                           // Navigator.of(context).push(SlideInOutPage(RegistPasswordScreen()));
                           context
@@ -198,7 +198,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                         },
                       )
                       : DisabledButton(
-                        text: TR(context, '다음'),
+                        text: TR('다음'),
                       ),
                     ),
                   ],

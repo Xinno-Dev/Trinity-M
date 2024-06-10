@@ -99,12 +99,12 @@ class _SignUpPassScreenState extends ConsumerState {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                TR(context, viewModel.info1),
+                                TR(viewModel.info1),
                                 style: typo24bold150,
                               ),
                               SizedBox(height: 16.h),
                               Text(
-                                TR(context, viewModel.info2),
+                                TR(viewModel.info2),
                                 style: typo16medium150.copyWith(
                                   color: GRAY_70,
                                 ),
@@ -132,11 +132,11 @@ class _SignUpPassScreenState extends ConsumerState {
                     alignment: Alignment.bottomCenter,
                     child: viewModel.comparePass
                       ? PrimaryButton(
-                      text: TR(context, '다음'),
+                      text: TR('다음'),
                       round: 0,
                       onTap: _processNext,
                     ) : DisabledButton(
-                      text: TR(context, '다음'),
+                      text: TR('다음'),
                     ),
                   )
                 ],
@@ -170,11 +170,11 @@ class _SignUpPassScreenState extends ConsumerState {
   _checkPassLength() {
     errorMsg = null;
     if (!viewModel.checkPassMinLength) {
-      errorMsg = TR(context,
+      errorMsg = TR(
           '$PASS_LENGTH_MIN 자 이상 입력해주세요.');
     }
     if (!viewModel.checkPassMaxLength) {
-      errorMsg = TR(context,
+      errorMsg = TR(
           '$PASS_LENGTH_MAX 자 이하로 입력해주세요.');
     }
   }
@@ -204,7 +204,7 @@ class _SignUpPassScreenState extends ConsumerState {
           CustomPassFormField(
             controller: viewModel.passInputController[index],
             focusNode: focusNode[index],
-            hintText: TR(context, index == 0 ? '비밀번호 입력' : '비밀번호 재입력'),
+            hintText: TR(index == 0 ? '비밀번호 입력' : '비밀번호 재입력'),
             textInputAction: TextInputAction.next,
             errorText: _errorText(index),
             onTap: () {
@@ -230,7 +230,7 @@ class _SignUpPassScreenState extends ConsumerState {
           // TextField(
           //   controller: viewModel.passInputController[index],
           //   decoration: InputDecoration(
-          //     hintText: TR(context, index == 0 ? '비밀번호 입력' : '비밀번호 재입력'),
+          //     hintText: TR(index == 0 ? '비밀번호 입력' : '비밀번호 재입력'),
           //   ),
           //   keyboardType: TextInputType.visiblePassword,
           //   textInputAction: index == 0 ? TextInputAction.next : TextInputAction.done,

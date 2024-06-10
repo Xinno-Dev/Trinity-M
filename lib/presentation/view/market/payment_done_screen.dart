@@ -45,7 +45,7 @@ class _PaymentDoneScreenState extends ConsumerState {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -57,7 +57,7 @@ class _PaymentDoneScreenState extends ConsumerState {
     return loginProv.isScreenLocked ? lockScreen(context) :
       Scaffold(
         appBar: AppBar(
-          title: Text(title ?? TR(context, '구매 상세')),
+          title: Text(title ?? TR('구매 상세')),
           centerTitle: true,
           titleTextStyle: typo16bold,
           backgroundColor: Colors.white,
@@ -78,7 +78,7 @@ class _PaymentDoneScreenState extends ConsumerState {
               padding: EdgeInsets.only(bottom: 10),
               child: Row(
                 children: [
-                  Text(TR(context, '결제 금액'), style: typo16bold),
+                  Text(TR('결제 금액'), style: typo16bold),
                   Spacer(),
                   Text(STR(info?.payText), style: typo16bold),
                 ],
@@ -88,7 +88,7 @@ class _PaymentDoneScreenState extends ConsumerState {
               padding: EdgeInsets.only(bottom: 10),
               child: Row(
                 children: [
-                  Text(TR(context, '상품 금액'), style: typo14medium),
+                  Text(TR('상품 금액'), style: typo14medium),
                   Spacer(),
                   Text(STR(info?.priceText), style: typo14medium),
                 ],
@@ -98,7 +98,7 @@ class _PaymentDoneScreenState extends ConsumerState {
               padding: EdgeInsets.only(bottom: 50),
               child: Row(
                 children: [
-                  Text(TR(context, '거래 일시'), style: typo14medium),
+                  Text(TR('거래 일시'), style: typo14medium),
                   Spacer(),
                   Text(SERVER_TIME_STR(info?.txDateTime), style: typo14medium),
                 ],
@@ -108,9 +108,9 @@ class _PaymentDoneScreenState extends ConsumerState {
               padding: EdgeInsets.only(bottom: 10),
               child: Row(
                 children: [
-                  Text(TR(context, '결제 수단'), style: typo14bold),
+                  Text(TR('결제 수단'), style: typo14bold),
                   Spacer(),
-                  Text(TR(context, '신용카드 결제'), style: typo14bold),
+                  Text(TR('신용카드 결제'), style: typo14bold),
                 ],
               ),
             ),
@@ -118,9 +118,9 @@ class _PaymentDoneScreenState extends ConsumerState {
               padding: EdgeInsets.only(bottom: 50),
               child: Row(
                 children: [
-                  Text(TR(context, STR(info?.cardType)), style: typo14medium),
+                  Text(TR(STR(info?.cardType)), style: typo14medium),
                   Spacer(),
-                  Text(TR(context, STR(info?.cardNum)), style: typo14medium),
+                  Text(TR(STR(info?.cardNum)), style: typo14medium),
                 ],
               ),
             ),
@@ -129,7 +129,7 @@ class _PaymentDoneScreenState extends ConsumerState {
                 onTap: () {
                   Navigator.of(context).push(createAniRoute(PaymentListScreen()));
                 },
-                text: TR(context, '구매 내역'),
+                text: TR('구매 내역'),
                 isBorderShow: true,
                 color: WHITE,
                 textStyle: typo16semibold
@@ -137,7 +137,7 @@ class _PaymentDoneScreenState extends ConsumerState {
           ]
         ),
       bottomNavigationBar: !isDetailMode ? PrimaryButton(
-        text: TR(context, '확인'),
+        text: TR('확인'),
         round: 0,
         onTap: () {
           loginProv.enableLockScreen();

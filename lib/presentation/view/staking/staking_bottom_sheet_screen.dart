@@ -68,17 +68,17 @@ class _StakingBottomSheetScreenState extends State<StakingBottomSheetScreen> {
                     child: Column(
                       children: [
                         DetailQuantityRow(
-                          title: TR(context, '금액'),
+                          title: TR('금액'),
                           quantity: '0',
                           unit: 'RIGO',
                         ),
                         DetailQuantityRow(
-                          title: TR(context, '연 수익율'),
+                          title: TR('연 수익율'),
                           quantity: '85.25',
                           unit: 'RIGO',
                         ),
                         DetailQuantityRow(
-                          title: TR(context, '예상 수익(연)'),
+                          title: TR('예상 수익(연)'),
                           quantity: '0',
                           unit: 'RIGO',
                         ),
@@ -90,7 +90,7 @@ class _StakingBottomSheetScreenState extends State<StakingBottomSheetScreen> {
                           height: 24,
                         ),
                         TotalStakingRow(
-                          title: TR(context, '총 스테이킹 금액'),
+                          title: TR('총 스테이킹 금액'),
                           balance: '1,100,000',
                         ),
                         SizedBox(
@@ -116,7 +116,7 @@ class _StakingBottomSheetScreenState extends State<StakingBottomSheetScreen> {
                     height: 16,
                   ),
                   CustomCheckbox(
-                    title: TR(context, '스테이킹 기능 이용 주의사항'),
+                    title: TR('스테이킹 기능 이용 주의사항'),
                     onChanged: (value) {
                       setState(() {
                         agree_1 = value!;
@@ -129,7 +129,7 @@ class _StakingBottomSheetScreenState extends State<StakingBottomSheetScreen> {
                     height: 16,
                   ),
                   CustomCheckbox(
-                    title: TR(context, '스테이킹의 위험을 이해하고 진행합니다.'),
+                    title: TR('스테이킹의 위험을 이해하고 진행합니다.'),
                     checked: agree_2,
                     pushed: false,
                     localAuth: true,
@@ -148,7 +148,7 @@ class _StakingBottomSheetScreenState extends State<StakingBottomSheetScreen> {
                         _toggleScreen();
                       },
                       child: Text(
-                        TR(context, '다음'),
+                        TR('다음'),
                         style: typo16bold.copyWith(
                             color: (agree_1 && agree_2) ? WHITE : GRAY_40),
                       ),
@@ -176,12 +176,12 @@ class StakingConfirmBottomSheet extends StatelessWidget {
           child: Column(
             children: [
               DetailQuantityRow(
-                title: TR(context, '가스(예상치)'),
+                title: TR('가스(예상치)'),
                 quantity: '500.00',
                 unit: 'RIGO',
               ),
               DetailQuantityRow(
-                title: TR(context, '최대요금'),
+                title: TR('최대요금'),
                 quantity: '600.00',
                 unit: 'RIGO',
               ),
@@ -193,7 +193,7 @@ class StakingConfirmBottomSheet extends StatelessWidget {
                 height: 24,
               ),
               TotalStakingRow(
-                title: TR(context, '합계'),
+                title: TR('합계'),
                 balance: '100,500',
               ),
               SizedBox(
@@ -220,13 +220,13 @@ class StakingConfirmBottomSheet extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return SimpleCheckDialog(
-                    infoString: TR(context, '100,000개의 RIGO 토큰의\n스테이킹이 완료되었습니다.'),
+                    infoString: TR('100,000개의 RIGO 토큰의\n스테이킹이 완료되었습니다.'),
                   );
                 },
               );
             },
             child: Text(
-              TR(context, '스테이킹'),
+              TR('스테이킹'),
               style: typo16bold.copyWith(color: WHITE),
             ),
             style: primaryButtonStyle,

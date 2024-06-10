@@ -63,7 +63,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
           backgroundColor: WHITE,
           centerTitle: true,
           title: Text(
-            TR(context, '약관 동의'),
+            TR('약관 동의'),
             style: typo18semibold,
           ),
           titleSpacing: 0,
@@ -80,12 +80,12 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      TR(context, '약관에 동의해 주세요'),
+                      TR('약관에 동의해 주세요'),
                       style: typo24bold150,
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      TR(context, 'Trinity M 을 이용해주셔서 감사합니다.\n'
+                      TR('Trinity M 을 이용해주셔서 감사합니다.\n'
                         '서비스 이용을 위해 약관 동의가 필요합니다.'),
                       style: typo16medium150.copyWith(
                         color: GRAY_70,
@@ -108,7 +108,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                         child: Column(
                           children: [
                             CustomCheckbox(
-                              title: TR(context, '전체 동의'),
+                              title: TR('전체 동의'),
                               checked: agree_all,
                               pushed: false,
                               onChanged: (agree) {
@@ -128,8 +128,8 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                             ),
                             SizedBox(height: 16.h),
                             CustomCheckbox(
-                              title: TR(context, title[0]) +
-                                  ' ${TR(context, '(필수)')}',
+                              title: TR(title[0]) +
+                                  ' ${TR('(필수)')}',
                               checked: agree_1,
                               onChanged: (agree) {
                                 setState(() {
@@ -142,14 +142,14 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                                 //   queryParams: {'title': title[0], 'type': '0'});
                                 Navigator.of(context).push(
                                   createAniRoute(WebviewScreen(
-                                    title: TR(context, title[0]),
+                                    title: TR(title[0]),
                                     url: '$API_HOST/terms/1')));
                               },
                             ),
                             SizedBox(height: 4.h),
                             CustomCheckbox(
-                              title: TR(context, title[1]) +
-                                  ' ${TR(context, '(필수)')}',
+                              title: TR(title[1]) +
+                                  ' ${TR('(필수)')}',
                               checked: agree_2,
                               onChanged: (agree) {
                                 setState(() {
@@ -162,7 +162,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                                 //   queryParams: {'title': title[1], 'type': '1'});
                                 Navigator.of(context).push(
                                   createAniRoute(WebviewScreen(
-                                    title: TR(context, title[1]),
+                                    title: TR(title[1]),
                                     url: '$API_HOST/terms/2')));
                               },
                             ),
@@ -178,14 +178,14 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
         ),
         bottomNavigationBar: IS_DEV_MODE || agreeEnable
             ? PrimaryButton(
-          text: TR(context, '다음'),
+          text: TR('다음'),
           round: 0,
           onTap: () {
             Navigator.of(context).push(
                 createAniRoute(SignUpNickScreen()));
           },
         ) : DisabledButton(
-          text: TR(context, '다음'),
+          text: TR('다음'),
         ),
       ),
     );

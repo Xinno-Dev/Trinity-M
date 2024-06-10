@@ -24,14 +24,14 @@ class NetworkErrorScreen extends StatelessWidget {
               height: 40,
             ),
             Text(
-              TR(context, '네트워크에 문제가 생겼어요'),
+              TR('네트워크에 문제가 생겼어요'),
               style: typo22bold,
             ),
             SizedBox(
               height: 16,
             ),
             Text(
-              TR(context, '문제를 해결하기 위해 열심히 노력하고 있습니다.\n잠시 후 다시 확인해주세요.'),
+              TR('문제를 해결하기 위해 열심히 노력하고 있습니다.\n잠시 후 다시 확인해주세요.'),
               style: typo16medium150,
               textAlign: TextAlign.center,
             ),

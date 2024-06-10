@@ -140,7 +140,7 @@ class _SignPasswordScreenState extends ConsumerState<SignPasswordScreen> {
           titleString: lang == 'ko' ?
             '$amount개의 RIGO 코인의 스테이킹이 종료되었습니다' :
             '$amount RIGO coins staking has ended.',
-          infoString: TR(context, '락업 종료일 이후에\n자동으로 입금됩니다.'),
+          infoString: TR('락업 종료일 이후에\n자동으로 입금됩니다.'),
         );
       case StakingType.delegate:
         String shortTo = getShortAddressText(stakes.to!, 6);
@@ -155,7 +155,7 @@ class _SignPasswordScreenState extends ConsumerState<SignPasswordScreen> {
           titleString: lang == 'ko' ?
             '$amount개의 RIGO 코인의 위임이 종료되었습니다.' :
             '$amount RIGO coins delegation has ended.',
-          infoString: TR(context, '락업 종료일 이후에\n자동으로 입금됩니다.'),
+          infoString: TR('락업 종료일 이후에\n자동으로 입금됩니다.'),
         );
       case StakingType.setDoc:
         return SimpleCheckDialog(
@@ -200,7 +200,7 @@ class _SignPasswordScreenState extends ConsumerState<SignPasswordScreen> {
       final currentCoin =
           await ref.read(coinProvider).currentCoin;
 
-      // showLoadingDialog(context, TR(context, getLoadingText(stakingType)));
+      // showLoadingDialog(context, TR(getLoadingText(stakingType)));
       var address = await UserHelper().get_address();
 
       // if (networkModel.isRigo && stakingType != StakingType.bridge) {
@@ -377,8 +377,8 @@ class _SignPasswordScreenState extends ConsumerState<SignPasswordScreen> {
                 builder: (BuildContext context) {
                   return SimpleCheckDialog(
                     hasTitle: true,
-                    titleString: TR(context, '전송이 실패했습니다.'),
-                    infoString: TR(context, '다시 시도해주세요.'),
+                    titleString: TR('전송이 실패했습니다.'),
+                    infoString: TR('다시 시도해주세요.'),
                   );
                 },
               );
@@ -484,7 +484,7 @@ class _SignPasswordScreenState extends ConsumerState<SignPasswordScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '본인확인'),
+          TR('본인확인'),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -504,7 +504,7 @@ class _SignPasswordScreenState extends ConsumerState<SignPasswordScreen> {
                     Padding(
                       padding: EdgeInsets.only(left: 20.r, right: 20.r),
                       child: Text(
-                        TR(context, '비밀번호를 입력해주세요'),
+                        TR('비밀번호를 입력해주세요'),
                         style: typo24bold150,
                       ),
                     ),
@@ -512,7 +512,7 @@ class _SignPasswordScreenState extends ConsumerState<SignPasswordScreen> {
                     Padding(
                       padding: EdgeInsets.only(left: 20.r, right: 20.r),
                       child: Text(
-                        TR(context, '사용중인 비밀번호를 입력합니다.'),
+                        TR('사용중인 비밀번호를 입력합니다.'),
                         style: typo16medium.copyWith(color: GRAY_70),
                       ),
                     ),

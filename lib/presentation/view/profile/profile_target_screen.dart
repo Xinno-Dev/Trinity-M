@@ -32,7 +32,7 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -43,7 +43,7 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
     return loginProv.isScreenLocked ? lockScreen(context) :
       Scaffold(
         appBar: AppBar(
-          title: Text(TR(context, STR(widget.seller.nickId))),
+          title: Text(TR(STR(widget.seller.nickId))),
           centerTitle: true,
           titleTextStyle: typo16bold,
           backgroundColor: Colors.white,
@@ -60,7 +60,7 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
           children: [
             _viewModel.showStoreDetail(widget.seller),
             _viewModel.showUserProductList(
-                TR(context, 'Market'),
+                TR('Market'),
                 STR(widget.seller.address),
                 isShowSeller: false, isCanBuy: true),
           ]

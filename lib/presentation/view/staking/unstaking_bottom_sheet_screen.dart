@@ -44,7 +44,7 @@ class _UnStakingBottomSheetScreenState
               child: Column(
                 children: [
                   DetailRow(
-                    title: TR(context, '스테이킹 종료금액'),
+                    title: TR('스테이킹 종료금액'),
                     content: Row(
                       children: [
                         Text(
@@ -64,7 +64,7 @@ class _UnStakingBottomSheetScreenState
                   Row(
                     children: [
                       Text(
-                        TR(context, '남은 스테이킹 금액'),
+                        TR('남은 스테이킹 금액'),
                         style: typo16medium.copyWith(color: GRAY_70),
                       ),
                       Spacer(),
@@ -107,11 +107,11 @@ class _UnStakingBottomSheetScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       StakingWaitingColumn(
-                        title: TR(context, '스테이킹 대기'),
+                        title: TR('스테이킹 대기'),
                         content: '2023년 4월 5일 14:00:00 (UTC +9)',
                       ),
                       StakingWaitingColumn(
-                        title: TR(context, '언스테이킹 대기'),
+                        title: TR('언스테이킹 대기'),
                         content: '2023년 9월 30일  17:30:55(UTC +9)',
                       ),
                     ],
@@ -126,7 +126,7 @@ class _UnStakingBottomSheetScreenState
               height: 16,
             ),
             CustomCheckbox(
-              title: TR(context, '스테이킹 기능 이용 주의사항'),
+              title: TR('스테이킹 기능 이용 주의사항'),
               onChanged: (value) {
                 setState(() {
                   agree_1 = value!;
@@ -139,7 +139,7 @@ class _UnStakingBottomSheetScreenState
               height: 16,
             ),
             CustomCheckbox(
-              title: TR(context, '스테이킹의 위험을 이해하고 진행합니다.'),
+              title: TR('스테이킹의 위험을 이해하고 진행합니다.'),
               checked: agree_2,
               pushed: false,
               localAuth: true,
@@ -187,7 +187,7 @@ class _UnStakingBottomSheetScreenState
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: Text(
-            TR(context, '스테이킹 리스트 선택'),
+            TR('스테이킹 리스트 선택'),
             style: typo16semibold,
           ),
         ),
@@ -239,11 +239,11 @@ class _UnStakingBottomSheetScreenState
         Spacer(),
         selectListIndex < 0
             ? DisabledButton(
-                text: TR(context, '다음'),
+                text: TR('다음'),
                 onTap: () {},
               )
             : PrimaryButton(
-                text: TR(context, '다음'),
+                text: TR('다음'),
                 onTap: () {
                   setState(() {
                     _currentPageIndex = 1;

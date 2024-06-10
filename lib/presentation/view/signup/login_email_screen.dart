@@ -88,7 +88,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: defaultAppBar(TR(context, '이메일 로그인')),
+        appBar: defaultAppBar(TR('이메일 로그인')),
         body: LayoutBuilder(builder: (context, constraints) {
           return ConstrainedBox(
             constraints: BoxConstraints(
@@ -110,7 +110,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                       // TextField(
                       //   controller: emailInputController,
                       //   decoration: InputDecoration(
-                      //     hintText: TR(context, '이메일 주소 입력'),
+                      //     hintText: TR('이메일 주소 입력'),
                       //   ),
                       //   keyboardType: TextInputType.emailAddress,
                       //   autofocus: true,
@@ -126,7 +126,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                       // ),
                       CustomEmailFormField(
                         controller: emailInputController,
-                        hintText: TR(context, '이메일 주소 입력'),
+                        hintText: TR('이메일 주소 입력'),
                         onTap: () {
                           setState(() {
                             passErrorText = '';
@@ -145,7 +145,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                             CustomPassFormField(
                               controller: passInputController,
                               focusNode: focusNode,
-                              hintText: TR(context, '비밀번호 입력'),
+                              hintText: TR('비밀번호 입력'),
                               onChanged: (text) {
                                 _checkNextReady();
                               },
@@ -153,7 +153,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                             // TextField(
                             //   controller: passInputController,
                             //   decoration: InputDecoration(
-                            //     hintText: TR(context, '비밀번호 입력'),
+                            //     hintText: TR('비밀번호 입력'),
                             //   ),
                             //   keyboardType: TextInputType.visiblePassword,
                             //   obscureText: true,
@@ -164,7 +164,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                             // ),
                             // if (passErrorText.isNotEmpty)...[
                             //   SizedBox(height: 5),
-                            //   Text(TR(context, passErrorText), style: errorStyle)
+                            //   Text(TR(passErrorText), style: errorStyle)
                             // ]
                           ],
                         )
@@ -177,7 +177,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                 alignment: Alignment.bottomCenter,
                 child: IS_DEV_MODE || isNextReady ?
                 PrimaryButton(
-                text: TR(context, '다음'),
+                text: TR('다음'),
                 round: 0,
                 onTap: () async {
                   var email = emailInputController.text;
@@ -228,7 +228,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
                   }
                 },
               ) : DisabledButton(
-                text: TR(context, '다음'),
+                text: TR('다음'),
               )),
             ],
           ),

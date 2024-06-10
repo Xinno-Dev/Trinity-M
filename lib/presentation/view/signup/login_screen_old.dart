@@ -105,7 +105,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                       // margin: EdgeInsets.all(0),
                       child: Center(
                         child: Text(
-                          TR(context, '지갑 초기화 유의사항'),
+                          TR('지갑 초기화 유의사항'),
                           style: typo16semibold,
                           textAlign: TextAlign.center,
                         ),
@@ -117,16 +117,16 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
-                        text: TR(context, 'reset_00'),
+                        text: TR('reset_00'),
                         style: typo14medium150.copyWith(color: GRAY_70),
                         children: [
                           TextSpan(
-                            text: TR(context, 'reset_01'),
+                            text: TR('reset_01'),
                           ),
                           TextSpan(
-                              text: TR(context, 'reset_02'),
+                              text: TR('reset_02'),
                               style: TextStyle(color: PRIMARY_90)),
-                          TextSpan(text: TR(context, 'reset_03')),
+                          TextSpan(text: TR('reset_03')),
                         ],
                       ),
                     ),
@@ -136,7 +136,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 19.0),
                       child: CustomTextFormField(
-                          hintText: TR(context, '입력하기'),
+                          hintText: TR('입력하기'),
                           focusNode: _focusNode,
                           controller: _textEditingController),
                     ),
@@ -147,7 +147,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              TR(context, '문구가 일치하지 않습니다'),
+                              TR('문구가 일치하지 않습니다'),
                               style: typo14regular.copyWith(color: ERROR_90),
                             ),
                           ],
@@ -167,7 +167,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                                 _textEditingController.clear();
                               },
                               child: Text(
-                                TR(context, '취소'),
+                                TR('취소'),
                                 style: typo14bold100.copyWith(
                                     color: SECONDARY_90),
                               ),
@@ -191,7 +191,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                             child: ElevatedButton(
                               onPressed: () async {
                                 if (_textEditingController.text ==
-                                  TR(context, '초기화')) {
+                                  TR('초기화')) {
                                   // TODO: 초기화 후 다시 첫 화면으로 돌아가도록
                                   print('초기화!!');
                                   clearWallet();
@@ -199,7 +199,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                                   context.pop();
                                   fToast.showToast(
                                     child: CustomToast(
-                                      msg: TR(context, '지갑이 초기화되었습니다'),
+                                      msg: TR('지갑이 초기화되었습니다'),
                                     ),
                                     gravity: ToastGravity.BOTTOM,
                                     toastDuration: Duration(seconds: 2),
@@ -212,7 +212,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                                 }
                               },
                               child: Text(
-                                TR(context, '초기화 하기'),
+                                TR('초기화 하기'),
                                 style: typo14bold100.copyWith(color: WHITE),
                               ),
                               style: popupSecondaryButtonStyle.copyWith(
@@ -264,7 +264,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
   @override
   void didChangeDependencies() {
     if (!widget.isAppStart && isShowToast) {
-      showToast(TR(context, '로그인이 필요한 서비스입니다.'));
+      showToast(TR('로그인이 필요한 서비스입니다.'));
       isShowToast = false;
     }
     super.didChangeDependencies();
@@ -307,7 +307,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
         resizeToAvoidBottomInset: false,
         backgroundColor: WHITE,
         appBar: !widget.isAppStart ? AppBar(
-          title: Text(TR(context, '로그인'), style: typo16bold),
+          title: Text(TR('로그인'), style: typo16bold),
           centerTitle: true,
           backgroundColor: Colors.white,
         ) : null,
@@ -345,7 +345,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                             height: 30.h,
                             margin: EdgeInsets.only(bottom: 10.h),
                             child: Text(
-                              TR(context, prov.isSignUpMode ? '회원가입' : '로그인'),
+                              TR(prov.isSignUpMode ? '회원가입' : '로그인'),
                               style: typo16bold.copyWith(color: PRIMARY_100),
                             ),
                           ),
@@ -394,8 +394,8 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                 context.pushNamed(TermsScreen.routeName);
               }
             },
-            text: hasAddress ? TR(context, '잠금 해제') :
-            TR(context, '지갑 만들기'),
+            text: hasAddress ? TR('잠금 해제') :
+            TR('지갑 만들기'),
           ),
           SizedBox(
             height: 16.h,
@@ -410,8 +410,8 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                     hasIcon: true,
                     icon: WarningIcon(),
                     hasTitle: true,
-                    titleString: TR(context, '지갑 초기화 유의사항'),
-                    infoString: TR(context,
+                    titleString: TR('지갑 초기화 유의사항'),
+                    infoString: TR(
                       '지갑 복구는 비밀 복구 구문을 입력하여\n'
                       '복구하는 과정이며, 먼저 지갑을\n'
                       '초기화 한 후 진행할 수 있습니다.\n\n'
@@ -420,8 +420,8 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                       '정말로 지갑을 초기화 하시겠습니까?',
                     ),
                     hasOptions: true,
-                    defaultButtonText: TR(context, '취소'),
-                    optionButtonText: TR(context, '다음'),
+                    defaultButtonText: TR('취소'),
+                    optionButtonText: TR('다음'),
                     onTapOption: () {
                       Navigator.pop(context);
                       _showInputDialog();
@@ -433,7 +433,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
               RecoverWalletInputScreen.routeName);
             },
             text: hasAddress ?
-            TR(context, '지갑 초기화') : TR(context, '지갑 복구'),
+            TR('지갑 초기화') : TR('지갑 복구'),
           ),
           SizedBox(height: 10.h),
           _buildLogoutButton(),
@@ -484,7 +484,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                   ),
                   Center(
                     child: Text(
-                      TR(context, '이메일로 ${isSignUp ? '회원가입' : '로그인'}'),
+                      TR('이메일로 ${isSignUp ? '회원가입' : '로그인'}'),
                       style: typo14bold,
                     ),
                   )
@@ -569,7 +569,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
                   ),
                   Center(
                     child: Text(
-                      TR(context, '카카오로 시작하기'),
+                      TR('카카오로 시작하기'),
                       style: typo14bold,
                     ),
                   )
@@ -591,7 +591,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: Text(
-              TR(context, '또는'),
+              TR('또는'),
               style: typo12normal,
             ),
           ),
@@ -647,7 +647,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
     return GestureDetector(
       onTap: () {
         loginProv.logout().then((_) {
-          showToast(TR(context, '로그아웃 완료'));
+          showToast(TR('로그아웃 완료'));
         });
       },
       child: Container(
@@ -671,7 +671,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
             child: Column(
               children: [
                 Text(
-                  TR(context, isSignUp ? '로그인' : '회원가입'),
+                  TR(isSignUp ? '로그인' : '회원가입'),
                   style: typo14semibold.copyWith(color: GRAY_50),
                 ),
                 Container(
@@ -695,7 +695,7 @@ class _LoginScreenOldState extends ConsumerState<LoginScreenOld>
           //   child: Column(
           //     children: [
           //       Text(
-          //         TR(context, 'ID/PW 찾기'),
+          //         TR('ID/PW 찾기'),
           //         style: typo14normal.copyWith(color: GRAY_50),
           //       ),
           //       Container(

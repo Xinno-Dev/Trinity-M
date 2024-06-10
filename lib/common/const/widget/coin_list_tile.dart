@@ -165,7 +165,7 @@ class CoinListItem extends StatelessWidget {
             //   height: 20.r, fit: BoxFit.fitHeight
             // ),
             LineButton(
-              text: TR(context, coin.isHide ? '보이기' : '감추기'),
+              text: TR(coin.isHide ? '보이기' : '감추기'),
               color: GRAY_80,
               textColor: GRAY_80,
               isSmallButton: true,

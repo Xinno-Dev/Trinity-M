@@ -49,14 +49,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '인증내역'),
+          TR('인증내역'),
           style: typo18semibold,
         ),
         elevation: 0,
       ),
       body: SafeArea(
           child: Center(
-        child: Text(TR(context, '인증 목록')),
+        child: Text(TR('인증 목록')),
       )),
     );
   }

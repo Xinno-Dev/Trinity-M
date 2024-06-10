@@ -284,7 +284,7 @@ Future<void> showSimpleDialog(
             child: OutlinedButton(
               onPressed: context.pop,
               child: Text(
-                TR(context, '확인'),
+                TR('확인'),
                 style: typo12semibold100,
               ),
               style: darkBorderBoldButtonStyle,
@@ -317,7 +317,7 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
                 OutlinedButton(
                   onPressed: context.pop,
                   child: Text(
-                    cancelText ?? TR(context, '취소'),
+                    cancelText ?? TR('취소'),
                     style: typo12semibold100,
                   ),
                   style: grayBorderButtonStyle,
@@ -329,7 +329,7 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
                     Navigator.of(context).pop(true);
                   },
                   child: Text(
-                    okText ?? TR(context, '확인'),
+                    okText ?? TR('확인'),
                     style: typo12semibold100,
                   ),
                   style: primaryBorderButtonStyle,
@@ -377,7 +377,7 @@ lockScreen(BuildContext context) {
             children: [
               logoWidget(),
               SizedBox(height: 20),
-              Text('${LOCK_SCREEN_DELAY}초 후 화면이 잠김니다.',
+              Text(TR('${LOCK_SCREEN_DELAY}초 후 화면이 잠김니다.'),
                 style: typo18semibold.copyWith(color: GRAY_50)),
             ],
           ),
@@ -485,7 +485,7 @@ Future<String?> showInputDialog(BuildContext context, String title, {
                               color: Colors.transparent,
                               alignment: Alignment.center,
                               child: Text(
-                                cancelText ?? TR(context, '취소'),
+                                cancelText ?? TR('취소'),
                                 style: typo14normal,
                               ),
                             ),
@@ -503,7 +503,7 @@ Future<String?> showInputDialog(BuildContext context, String title, {
                               color: Colors.transparent,
                               alignment: Alignment.center,
                               child: Text(
-                                okText ?? TR(context, '확인'),
+                                okText ?? TR('확인'),
                                 style: typo14bold,
                               )
                             ),
@@ -595,7 +595,7 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type,
               child: OutlinedButton(
                 onPressed: context.pop,
                 child: Text(
-                  TR(context, cancelText!),
+                  TR(cancelText!),
                   style: typo14normal,
                 ),
                 style: grayBorderButtonStyle,
@@ -609,7 +609,7 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type,
                 context.pop(true);
               },
               child: Text(
-                TR(context, okText ?? '닫기'),
+                TR(okText ?? '닫기'),
                 style: typo14bold,
               ),
               style: darkBorderButtonStyle,

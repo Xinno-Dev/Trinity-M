@@ -25,7 +25,7 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       checkAppUpdate(context);
     });
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     FlutterNativeSplash.remove();
     super.initState();
   }

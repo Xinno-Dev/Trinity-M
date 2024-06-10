@@ -49,7 +49,7 @@ class _SettingsSecurityScreenState
         ),
         centerTitle: true,
         title: Text(
-          TR(context, '보안 및 개인정보 보호'),
+          TR('보안 및 개인정보 보호'),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -73,7 +73,7 @@ class _SettingsSecurityScreenState
                     ),
                     SettingsMenu(
                       leftImage: false,
-                      title: TR(context, '비밀번호 변경'),
+                      title: TR('비밀번호 변경'),
                       touchupinside: () {
                         context.pushNamed(AuthPasswordScreen.routeName,
                             queryParams: {'reset': 'true'});
@@ -81,7 +81,7 @@ class _SettingsSecurityScreenState
                     ),
                     SettingsMenu(
                       leftImage: false,
-                      title: TR(context, '지갑 복구용 문구 보기'),
+                      title: TR('지갑 복구용 문구 보기'),
                       touchupinside: () {
                         context.pushNamed(AuthPasswordScreen.routeName,
                             queryParams: {'mnemonic': 'true'});
@@ -98,7 +98,7 @@ class _SettingsSecurityScreenState
                             width: 20,
                           ),
                           Text(
-                            TR(context, '생체 인증 사용'),
+                            TR('생체 인증 사용'),
                             style: typo16medium150,
                           ),
                           Spacer(),

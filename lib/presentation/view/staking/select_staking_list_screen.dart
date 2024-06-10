@@ -204,7 +204,7 @@ class _SelectStakingListScreenState extends State<SelectStakingListScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, appBarTitle),
+          TR(appBarTitle),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -218,7 +218,7 @@ class _SelectStakingListScreenState extends State<SelectStakingListScreen> {
               Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: Text(
-                  TR(context, subTitle),
+                  TR(subTitle),
                   style: typo16semibold,
                 ),
               ),
@@ -228,11 +228,11 @@ class _SelectStakingListScreenState extends State<SelectStakingListScreen> {
               ),
               selectListIndex < 0
                   ? DisabledButton(
-                      text: TR(context, '다음'),
+                      text: TR('다음'),
                       onTap: () {},
                     )
                   : PrimaryButton(
-                      text: TR(context, '다음'),
+                      text: TR('다음'),
                       onTap: nextButtonPressed,
                     )
             ],

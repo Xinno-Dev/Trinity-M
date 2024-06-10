@@ -33,17 +33,17 @@ class _RecoverWalletCompleteScreenState
               ),
               SizedBox(height: 40.h),
               Text(
-                TR(context, 'BYFFIN 지갑이\n복구되었습니다'),
+                TR('BYFFIN 지갑이\n복구되었습니다'),
                 style: typo24bold150,
               ),
               SizedBox(height: 16.h),
               Text(
-                TR(context, 'BYFFIN의 여러 디앱 서비스를\n사용해 보세요!'),
+                TR('BYFFIN의 여러 디앱 서비스를\n사용해 보세요!'),
                 style: typo16medium150,
               ),
               Spacer(),
               PrimaryButton(
-                text: TR(context, '지갑 사용하기'),
+                text: TR('지갑 사용하기'),
                 onTap: () {
                   // DateTime now = DateTime.now();
                   // DateFormat formatter = DateFormat('yyyy.MM.dd');

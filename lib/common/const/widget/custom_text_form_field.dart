@@ -123,10 +123,10 @@ class CustomTextFormField extends StatelessWidget {
   _checkError(context) {
     var text = controller.text;
     return (minLength != null && text.length < minLength!)
-        ? '${minLength!}${TR(context, '자 이상 입력해 주세요.')}'
+        ? '${minLength!}${TR('자 이상 입력해 주세요.')}'
         : (textInputType == TextInputType.emailAddress &&
           !EmailValidator.validate(text)) ?
-        TR(context, '이메일 형식을 확인해 주세요') : null;
+        TR('이메일 형식을 확인해 주세요') : null;
   }
 
   @override

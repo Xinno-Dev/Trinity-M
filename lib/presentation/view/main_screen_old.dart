@@ -48,8 +48,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         builder: (BuildContext context) {
           return SimpleCheckDialog(
               hasTitle: true,
-              titleString: TR(context, '계정이 여러개 있으신가요?'),
-              infoString: TR(context, '복구용 문구에 여러 계정이'
+              titleString: TR('계정이 여러개 있으신가요?'),
+              infoString: TR('복구용 문구에 여러 계정이'
                   '\n연결 되어도, 최초로 생성한 계정만'
                   '\n복구됩니다.'
                   '\n\n계정이 한개 이상이실 경우,'
@@ -67,7 +67,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       context: context,
       builder: (BuildContext context) {
         return SimpleCheckDialog(
-            infoString: TR(context, 'RIGO 코인에서만 사용가능합니다'),
+            infoString: TR('RIGO 코인에서만 사용가능합니다'),
             defaultButtonText: '확인');
       },
     );
@@ -116,17 +116,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     icon: SvgPicture.asset('assets/svg/bnb_asset_off.svg'),
                     activeIcon:
                         SvgPicture.asset('assets/svg/bnb_asset_active.svg'),
-                    label: TR(context, '자산')),
+                    label: TR('자산')),
                 // BottomNavigationBarItem(
                 //     icon: SvgPicture.asset('assets/svg/bnb_staking_off.svg'),
                 //     activeIcon:
                 //         SvgPicture.asset('assets/svg/bnb_staking_active.svg'),
-                //     label: TR(context, '스테이킹')),
+                //     label: TR('스테이킹')),
                 BottomNavigationBarItem(
                     icon: SvgPicture.asset('assets/svg/bnb_setting_off.svg'),
                     activeIcon:
                         SvgPicture.asset('assets/svg/bnb_setting_active.svg'),
-                    label: TR(context, '설정')),
+                    label: TR('설정')),
               ],
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,

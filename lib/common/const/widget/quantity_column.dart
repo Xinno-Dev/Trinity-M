@@ -39,7 +39,7 @@ class QuantityColumn extends StatelessWidget {
         Row(
           children: [
             Text(
-              TR(context, helpText),
+              TR(helpText),
               style: typo14medium.copyWith(color: GRAY_50),
             ),
             SizedBox(

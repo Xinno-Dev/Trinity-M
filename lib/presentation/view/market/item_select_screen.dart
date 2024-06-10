@@ -29,7 +29,7 @@ class _ItemSelectScreenState extends ConsumerState<ItemSelectScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -39,7 +39,7 @@ class _ItemSelectScreenState extends ConsumerState<ItemSelectScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-          appBar: defaultAppBar(TR(context, '옵션선택'),
+          appBar: defaultAppBar(TR('옵션선택'),
             leading: IconButton(
               onPressed: () {
                 prov.setOptionIndex(-1);
@@ -56,13 +56,13 @@ class _ItemSelectScreenState extends ConsumerState<ItemSelectScreen> {
           ),
           bottomNavigationBar: prov.optionIndex >= 0
               ? PrimaryButton(
-            text: TR(context, '선택완료'),
+            text: TR('선택완료'),
             round: 0,
             onTap: () {
               context.pop(prov.optionIndex);
             },
           ) : DisabledButton(
-            text: TR(context, '선택완료'),
+            text: TR('선택완료'),
           )
       ),
     );

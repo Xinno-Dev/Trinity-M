@@ -271,7 +271,7 @@ class _AuthPasswordScreenState extends State<AuthPasswordScreen> {
               context: context,
               builder: (BuildContext context) {
                 return SimpleCheckDialog(
-                  infoString: TR(context, '계정 불러오기에 실패했습니다.'),
+                  infoString: TR('계정 불러오기에 실패했습니다.'),
                   defaultTapOption: () {
                     context.go('/firebaseSetup');
                   },
@@ -289,7 +289,7 @@ class _AuthPasswordScreenState extends State<AuthPasswordScreen> {
             context: context,
             builder: (BuildContext context) {
               return SimpleCheckDialog(
-                infoString: TR(context, '본인인증에 실패하였습니다.'),
+                infoString: TR('본인인증에 실패하였습니다.'),
                 defaultTapOption: () {
                   context.go('/firebaseSetup');
                 },
@@ -352,7 +352,7 @@ class _AuthPasswordScreenState extends State<AuthPasswordScreen> {
           );
 
       authenticated = await auth.authenticate(
-        localizedReason: TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
+        localizedReason: TR('본인 확인을 위해 생체인증을 사용합니다.'),
         authMessages: <AuthMessages>[
           androidStrings,
           iosStrings,
@@ -412,7 +412,7 @@ class _AuthPasswordScreenState extends State<AuthPasswordScreen> {
         ),
         centerTitle: true,
         title: Text(
-          TR(context, titleString),
+          TR(titleString),
           style: typo18semibold,
         ),
         elevation: 0,
@@ -432,7 +432,7 @@ class _AuthPasswordScreenState extends State<AuthPasswordScreen> {
                     Padding(
                       padding: EdgeInsets.only(left: 20.r, right: 20.r),
                       child: Text(
-                        TR(context, '비밀번호를 입력해주세요'),
+                        TR('비밀번호를 입력해주세요'),
                         style: typo24bold150,
                       ),
                     ),
@@ -440,7 +440,7 @@ class _AuthPasswordScreenState extends State<AuthPasswordScreen> {
                     Padding(
                       padding: EdgeInsets.only(left: 20.r, right: 20.r),
                       child: Text(
-                        TR(context, '사용중인 비밀번호를 입력합니다.'),
+                        TR('사용중인 비밀번호를 입력합니다.'),
                         style: typo16medium.copyWith(color: GRAY_70),
                       ),
                     ),

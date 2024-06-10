@@ -81,7 +81,7 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
         top: false,
         child: Scaffold(
           backgroundColor: WHITE,
-          appBar: keyboardHideAppBar(context, TR(context, '계정 복구')),
+          appBar: keyboardHideAppBar(context, TR('계정 복구')),
           body: LayoutBuilder(builder: (context, constraints) {
             return ConstrainedBox(
               constraints: BoxConstraints(
@@ -101,12 +101,12 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
                           padding: EdgeInsets.only(bottom: 10),
                           children: [
                             Text(
-                              TR(context, '계정 복구 단어를 입력해주세요.'),
+                              TR('계정 복구 단어를 입력해주세요.'),
                               style: typo24bold,
                             ),
                             SizedBox(height: 10),
                             Text(
-                              TR(context, '회원가입시 제공된 계정 복구 단어는\n'
+                              TR('회원가입시 제공된 계정 복구 단어는\n'
                                   '12개의 단어로 이루어져있습니다.'),
                               style: typo16medium150.copyWith(color: GRAY_70),
                             ),
@@ -130,7 +130,7 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
                             //       mainAxisSize: MainAxisSize.min,
                             //       children: [
                             //         Text(
-                            //           TR(context, '지갑 복구용 문구란'),
+                            //           TR('지갑 복구용 문구란'),
                             //           style: typo14medium.copyWith(
                             //               color: SECONDARY_90),
                             //         ),
@@ -205,7 +205,7 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
 
   _showButton() {
     return _allFilled ? PrimaryButton(
-      text: TR(context, '다음'),
+      text: TR('다음'),
       round: 0,
       onTap: () {
         mnemonic = '';
@@ -231,15 +231,15 @@ class _RecoverWalletInputScreenState extends State<RecoverWalletInputScreen> {
             builder: (BuildContext context) {
               return SimpleCheckDialog(
                 hasTitle: true,
-                titleString: TR(context, '복구 문구가 일치하지 않습니다'),
-                infoString: TR(context, '다시 입력해주세요.'));
+                titleString: TR('복구 문구가 일치하지 않습니다'),
+                infoString: TR('다시 입력해주세요.'));
             },
           );
         }
       },
     ) : DisabledButton(
       round: 0,
-      text: TR(context, '다음'),
+      text: TR('다음'),
     );
   }
 
@@ -313,13 +313,13 @@ class InfoTextColumn extends StatelessWidget {
             children: [
               InfoRow(
                 text:
-                TR(context, '복구용 문구는 지갑을 만들때 보안을 위해 자동으로\n생성된 단어이며, 자산을 복구하기 위한 유일한 수단\n입니다.'),
+                TR('복구용 문구는 지갑을 만들때 보안을 위해 자동으로\n생성된 단어이며, 자산을 복구하기 위한 유일한 수단\n입니다.'),
               ),
               SizedBox(
                 height: 8,
               ),
               InfoRow(text:
-                TR(context, '바이핀 지갑-> 설정메뉴-> 내 지갑 복구용 문구 보기\n메뉴에서 확인할 수 있습니다.')),
+                TR('바이핀 지갑-> 설정메뉴-> 내 지갑 복구용 문구 보기\n메뉴에서 확인할 수 있습니다.')),
               SizedBox(
                 height: 16,
               ),
@@ -395,7 +395,7 @@ class RecoveryInputColumn extends StatelessWidget {
             height: 8,
           ),
           CustomTextFormField(
-            hintText: TR(context, '문구 입력'),
+            hintText: TR('문구 입력'),
             focusNode: focusNode,
             controller: controller,
             onChanged: onChanged,

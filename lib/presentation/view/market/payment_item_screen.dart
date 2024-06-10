@@ -28,7 +28,7 @@ class _PaymentItemScreenState extends ConsumerState<PaymentItemScreen> {
 
   @override
   void initState() {
-    _viewModel = MarketViewModel();
+    _viewModel = MarketViewModel(context);
     super.initState();
   }
 
@@ -39,7 +39,7 @@ class _PaymentItemScreenState extends ConsumerState<PaymentItemScreen> {
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(TR(context, '상품 정보')),
+          title: Text(TR('상품 정보')),
           centerTitle: true,
           titleTextStyle: typo16bold,
           backgroundColor: Colors.white,
@@ -56,7 +56,7 @@ class _PaymentItemScreenState extends ConsumerState<PaymentItemScreen> {
           ]
         ),
         // bottomNavigationBar: PrimaryButton(
-        //   text: TR(context, '사용하기'),
+        //   text: TR('사용하기'),
         //   round: 0,
         //   onTap: () {
         //

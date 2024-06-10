@@ -72,7 +72,7 @@ class _AuthCompletedScreenState extends ConsumerState<AuthCompletedScreen>
             Padding(
               padding: EdgeInsets.only(left: 20.r, right: 20.r),
               child: Text(
-                '${notiMap['Service']} ${TR(context, '로그인 완료')}',
+                '${notiMap['Service']} ${TR('로그인 완료')}',
                 style: typo24bold150,
               ),
             ),
@@ -86,7 +86,7 @@ class _AuthCompletedScreenState extends ConsumerState<AuthCompletedScreen>
                     context.go('/firebaseSetup');
                   },
                   child: Text(
-                      TR(context, '닫기'),
+                      TR('닫기'),
                     style: typo16bold.copyWith(color: WHITE),
                   ),
                   style: primaryButtonStyle),

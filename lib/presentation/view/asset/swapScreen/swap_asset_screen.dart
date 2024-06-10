@@ -128,7 +128,7 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
           onPressed: context.pop,
         ),
         title: Text(
-          TR(context, '스왑'),
+          TR('스왑'),
           style: typo18semibold,
         ),
         titleSpacing: 0,
@@ -154,11 +154,11 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
             Container(
               padding: EdgeInsets.symmetric(vertical: 10.h),
               child: isEnableButton ? PrimaryButton(
-                text: TR(context, '다음'),
+                text: TR('다음'),
                 onTap: () async {
                   Navigator.of(context).push(createAniRoute(SwapAddressScreen(swapInfo)));
                 },
-              ) : DisabledButton(text: TR(context, '다음')),
+              ) : DisabledButton(text: TR('다음')),
             ),
           ],
         )
@@ -177,7 +177,7 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(TR(context, '보내는 자산'), style: typo16medium),
+          Text(TR('보내는 자산'), style: typo16medium),
           Container(
             margin: EdgeInsets.only(top: 15.r),
             child: Row(
@@ -224,7 +224,7 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(TR(context, '교환 비율(예상)'), style: typo12dialog),
+              Text(TR('교환 비율(예상)'), style: typo12dialog),
               if (swapInfo.fromCoin?.isMDL)
                 Text('${swapInfo.swapRate} ${STR(swapInfo.fromCoin?.symbol)} ≈ '
                   '1 ${swapInfo.toCoin?.symbol}',
@@ -245,7 +245,7 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(TR(context, '받는 자산'), style: typo16medium),
+          Text(TR('받는 자산'), style: typo16medium),
           Container(
             margin:  EdgeInsets.symmetric(vertical: 10.h),
             padding: EdgeInsets.all(10.r),
@@ -266,7 +266,7 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
                     child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(TR(context, ''), style: typo16medium),
+                      Text(TR(''), style: typo16medium),
                       BalanceRow(balance: swapInfo.toAmount,
                         tokenUnit: swapInfo.toCoin?.symbol,
                         fontSize: 16, height: 20),
@@ -327,7 +327,7 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
             if (coinModel == null)...[
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 9),
-                child: Text(TR(context, '토큰 선택'),
+                child: Text(TR('토큰 선택'),
                   style: typo16medium.copyWith(color: GRAY_30)),
               )
             ],
@@ -363,7 +363,7 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(width: 2, color: SECONDARY_50),
               ),
-              hintText: TR(context, '수량 입력'),
+              hintText: TR('수량 입력'),
               hintStyle: typo16semibold.copyWith(color: GRAY_40),
               suffixIcon: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -390,11 +390,11 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   walletBalance = STR(snapshot.data);
-                  _errorMsg = isBalanceOk ? '' : TR(context, '수량이 부족합니다.');
+                  _errorMsg = isBalanceOk ? '' : TR('수량이 부족합니다.');
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(TR(context, '보유수량 : '), style: typo14medium),
+                      Text(TR('보유수량 : '), style: typo14medium),
                       BalanceRow(balance: walletBalance,
                         tokenUnit: swapInfo.fromCoin?.symbol, fontSize: 14, height: 20),
                     ],
@@ -428,7 +428,7 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
                           btnValueN[btnTextN.indexOf(e)]).toString();
                 }
                 _amountController.text = STR(swapInfo.fromAmount);
-                _errorMsg = isBalanceOk ? '' : TR(context, '수량이 부족합니다.');
+                _errorMsg = isBalanceOk ? '' : TR('수량이 부족합니다.');
               });
             },
             child: Container(
@@ -441,7 +441,7 @@ class _SwapAssetScreenState extends ConsumerState<SwapAssetScreen> {
                 borderRadius: BorderRadius.circular(6),
                 color: Colors.black12,
               ),
-              child: Text(TR(context, e), style: typo12semibold100),
+              child: Text(TR(e), style: typo12semibold100),
           )))).toList(),
       ),
     );

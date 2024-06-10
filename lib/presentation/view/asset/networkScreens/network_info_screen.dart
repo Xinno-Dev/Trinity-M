@@ -58,7 +58,7 @@ class _NetworkInfoScreenState extends ConsumerState<NetworkInfoScreen> {
           leadingWidth: 40.w,
           titleSpacing: 0,
           centerTitle: true,
-          title: Text(TR(context, _isEditMode ? '네트워크 편집' : '네트워크 정보'),
+          title: Text(TR(_isEditMode ? '네트워크 편집' : '네트워크 정보'),
             style: typo18semibold,
           ),
           elevation: 0,
@@ -98,9 +98,9 @@ class _NetworkInfoScreenState extends ConsumerState<NetworkInfoScreen> {
                       }
                     ),
                     if (isNameEmpty)
-                      _buildErrorItem(TR(context, '네트워크 이름을 입력해 주세요.')),
+                      _buildErrorItem(TR('네트워크 이름을 입력해 주세요.')),
                     if (isNameDuplicated)
-                      _buildErrorItem(TR(context, '이미 등록된 네트워크 이름입니다.')),
+                      _buildErrorItem(TR('이미 등록된 네트워크 이름입니다.')),
                     if (widget.networkModel.isRigo)...[
                       _buildInfoItem('블록 탐색기 주소(선택)', _inputExplore,
                         controller: _exploreController,
@@ -112,7 +112,7 @@ class _NetworkInfoScreenState extends ConsumerState<NetworkInfoScreen> {
                         }
                       ),
                       if (isExplorerError)
-                        _buildErrorItem(TR(context, '블록 탐색기 주소를 확인해 주세요.')),
+                        _buildErrorItem(TR('블록 탐색기 주소를 확인해 주세요.')),
                       SizedBox(height: 300),
                     ],
                   ],
@@ -124,7 +124,7 @@ class _NetworkInfoScreenState extends ConsumerState<NetworkInfoScreen> {
                   children: [
                     Expanded(
                       child: PrimaryButton(
-                        text: TR(context, _isEditMode ? '취소' : '삭제'),
+                        text: TR(_isEditMode ? '취소' : '삭제'),
                         isSmallButton: false,
                         isBorderShow: true,
                         color: Colors.transparent,
@@ -136,7 +136,7 @@ class _NetworkInfoScreenState extends ConsumerState<NetworkInfoScreen> {
                             if (_isEditMode) {
                               _isEditMode = !_isEditMode;
                             } else if (widget.isCanDelete) {
-                              showConfirmDialog(context, TR(context, '네트워크를 삭제하시겠습니까?')).then((result) {
+                              showConfirmDialog(context, TR('네트워크를 삭제하시겠습니까?')).then((result) {
                                 if (BOL(result)) {
                                   var networkProv = provider.Provider.of<NetworkProvider>(context, listen: false);
                                   if (networkProv.removeNetwork(widget.networkModel)) {
@@ -152,7 +152,7 @@ class _NetworkInfoScreenState extends ConsumerState<NetworkInfoScreen> {
                     SizedBox(width: 10.w),
                     Expanded(
                       child: PrimaryButton(
-                        text:TR(context, _isEditMode ? '저장' : '편집'),
+                        text:TR(_isEditMode ? '저장' : '편집'),
                         isSmallButton: false,
                         color: isButtonEnable ? PRIMARY_90 : GRAY_30,
                         onTap: () {
@@ -168,7 +168,7 @@ class _NetworkInfoScreenState extends ConsumerState<NetworkInfoScreen> {
                               widget.networkModel.exploreUrl = _inputExplore;
                               var networkProv = provider.Provider.of<NetworkProvider>(context, listen: false);
                               if (networkProv.setNetwork(widget.networkModel)) {
-                                _showToast(TR(context, '네트워크 편집이 완료되었습니다.'));
+                                _showToast(TR('네트워크 편집이 완료되었습니다.'));
                               }
                             }
                             _isEditMode = !_isEditMode;
@@ -223,7 +223,7 @@ class _NetworkInfoScreenState extends ConsumerState<NetworkInfoScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(TR(context, title), style: typo16bold),
+            Text(TR(title), style: typo16bold),
             if (text != null)...[
               SizedBox(height: 5.h),
               Text(STR(text), style: typo14medium150),

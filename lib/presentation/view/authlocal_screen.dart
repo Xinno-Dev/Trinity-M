@@ -96,7 +96,7 @@ class _LocalAuthScreenState extends ConsumerState<AuthLocalScreen> {
           );
 
       authenticated = await auth.authenticate(
-        localizedReason: TR(context, '본인 확인을 위해 생체인증을 사용합니다.'),
+        localizedReason: TR('본인 확인을 위해 생체인증을 사용합니다.'),
         authMessages: <AuthMessages>[
           androidStrings,
           iosStrings,
@@ -164,14 +164,14 @@ class _LocalAuthScreenState extends ConsumerState<AuthLocalScreen> {
               height: 40.h,
             ),
             Text(
-              TR(context, '본인확인'),
+              TR('본인확인'),
               style: typo24bold150,
             ),
             SizedBox(
               height: 16.h,
             ),
             Text(
-              TR(context, 'Mauth에서 본인확인을 진행할 수 있도록\n생체인증을 진행해 주세요.'),
+              TR('Mauth에서 본인확인을 진행할 수 있도록\n생체인증을 진행해 주세요.'),
               style: typo16medium150,
               textAlign: TextAlign.center,
             ),
@@ -188,7 +188,7 @@ class _LocalAuthScreenState extends ConsumerState<AuthLocalScreen> {
                         queryParams: {'auth': 'false'});
                   },
                   child: Text(
-                      TR(context, '비밀번호 인증하기'),
+                      TR('비밀번호 인증하기'),
                     style: typo14bold.copyWith(color: PRIMARY_90),
                   ),
                   style: grayButtonStyle),

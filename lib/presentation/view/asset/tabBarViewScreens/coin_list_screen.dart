@@ -137,7 +137,7 @@ class CoinListScreenState extends ConsumerState<CoinListScreen> {
           Expanded(
             child: Center(
             child: Text(
-              TR(context, '자산이 없습니다.\n토큰을 추가해 주세요'),
+              TR('자산이 없습니다.\n토큰을 추가해 주세요'),
               style: typo16dialog.copyWith(color: GRAY_70),
               textAlign: TextAlign.center,
             ),
@@ -147,7 +147,7 @@ class CoinListScreenState extends ConsumerState<CoinListScreen> {
           alignment: Alignment.centerLeft,
           // child: TextButton(
           //   child: Text(
-          //     TR(context, '+ 토큰 가져오기'),
+          //     TR('+ 토큰 가져오기'),
           //     style: typo16semibold.copyWith(color: PRIMARY_90)
           //   ),
           //   onPressed: () {
@@ -165,14 +165,14 @@ class CoinListScreenState extends ConsumerState<CoinListScreen> {
           child: Row(
             children: [
               // Text(
-              //   TR(context, '토큰이 보이지 않나요?'),
+              //   TR('토큰이 보이지 않나요?'),
               //   style: typo14medium150,
               // ),
               // SizedBox(height: 10.h),
               if (!isEditMode)
                 Expanded(
                   child: PrimaryButton(
-                    text: '${TR(context, '토큰 추가')}+',
+                    text: '${TR('토큰 추가')}+',
                     color: isEditMode ? GRAY_10 : GRAY_20,
                     textStyle: typo16medium,
                     isSmallButton: true,
@@ -186,7 +186,7 @@ class CoinListScreenState extends ConsumerState<CoinListScreen> {
                           print('----> TokenAddScreen result : $result');
                           if (result != null && result) {
                             Future.delayed(Duration(milliseconds: 200)).then((_) {
-                              showSimpleDialog(context, TR(context, '추가하였습니다.'),
+                              showSimpleDialog(context, TR('추가하였습니다.'),
                                   'assets/svg/success.svg', 70.h);
                             });
                           }
@@ -200,7 +200,7 @@ class CoinListScreenState extends ConsumerState<CoinListScreen> {
                 if (isEditMode)
                   Expanded(
                     child: PrimaryButton(
-                      text: TR(context, '편집 완료'),
+                      text: TR('편집 완료'),
                       color: GRAY_20,
                       textStyle: typo16medium,
                       isSmallButton: true,
@@ -215,7 +215,7 @@ class CoinListScreenState extends ConsumerState<CoinListScreen> {
                 if (!isEditMode)
                   Expanded(
                   child: PrimaryButton(
-                    text: TR(context, '토큰 편집'),
+                    text: TR('토큰 편집'),
                     color: GRAY_20,
                     textStyle: typo16medium,
                     isSmallButton: true,

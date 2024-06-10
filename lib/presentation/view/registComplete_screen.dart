@@ -56,23 +56,23 @@ class _RegistCompleteScreenState extends ConsumerState<RegistCompleteScreen>
   refreshTitle(context) {
     if (widget.join == 'true') {
       isJoin = true;
-      titleStr = TR(context, 'BYFFIN 지갑 을\n만들었습니다');
-      subTitleStr = TR(context, 'BYFFIN의 여러 디앱 서비스를\n사용해 보세요!');
+      titleStr = TR('BYFFIN 지갑 을\n만들었습니다');
+      subTitleStr = TR('BYFFIN의 여러 디앱 서비스를\n사용해 보세요!');
     }
     if (widget.reset == 'true') {
       isReset = true;
-      titleStr = TR(context, '비밀번호 변경이\n완료되었습니다');
-      subTitleStr = TR(context, '새로운 비밀번호로 로그인을 해주세요');
+      titleStr = TR('비밀번호 변경이\n완료되었습니다');
+      subTitleStr = TR('새로운 비밀번호로 로그인을 해주세요');
     }
     if (widget.addAccount == 'true') {
       isAdd = true;
-      titleStr = TR(context, '새 계정을 추가했습니다');
-      subTitleStr = TR(context, '새로운 비밀번호로 로그인을 해주세요');
+      titleStr = TR('새 계정을 추가했습니다');
+      subTitleStr = TR('새로운 비밀번호로 로그인을 해주세요');
     }
     if (widget.loadAccount == 'true') {
       isLoad = true;
-      titleStr = TR(context, '계정을 불러왔습니다');
-      subTitleStr = TR(context, '새로운 비밀번호로 로그인을 해주세요');
+      titleStr = TR('계정을 불러왔습니다');
+      subTitleStr = TR('새로운 비밀번호로 로그인을 해주세요');
     }
   }
 
@@ -102,13 +102,13 @@ class _RegistCompleteScreenState extends ConsumerState<RegistCompleteScreen>
               SizedBox(height: 16.h),
               Text(
                 isReset
-                    ? TR(context, '새로운 비밀번호로 로그인을 해주세요')
-                    : TR(context, 'BYFFIN의 여러 디앱 서비스를\n사용해 보세요!'),
+                    ? TR('새로운 비밀번호로 로그인을 해주세요')
+                    : TR('BYFFIN의 여러 디앱 서비스를\n사용해 보세요!'),
                 style: typo16medium150,
               ),
               Spacer(),
               PrimaryButton(
-                text: TR(context, getButtonText()),
+                text: TR(getButtonText()),
                 onTap: () {
                   if (isReset) {
                     isGlobalLogin = false;

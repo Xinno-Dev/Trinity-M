@@ -50,7 +50,7 @@ class _ScreenState extends State<ExportPassScreen> {
         ),
         centerTitle: true,
         title: Text(
-            TR(context, '개인키 보기'), style: typo18semibold
+            TR('개인키 보기'), style: typo18semibold
         ),
         elevation: 0,
       ),
@@ -60,7 +60,7 @@ class _ScreenState extends State<ExportPassScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(TR(context, 'RWF 파일로 변환되었습니다.'), style: typo14bold),
+              Text(TR('RWF 파일로 변환되었습니다.'), style: typo14bold),
               SizedBox(height: 10.h),
               showTextEdit(
                 jsonFormText,
@@ -70,7 +70,7 @@ class _ScreenState extends State<ExportPassScreen> {
                 child: Container(
                   width: 120,
                   child: PrimaryButton(
-                    text: TR(context, '복사하기'),
+                    text: TR('복사하기'),
                     color: Colors.transparent,
                     textStyle: typo14medium,
                     icon: Icon(Icons.copy),
@@ -85,7 +85,7 @@ class _ScreenState extends State<ExportPassScreen> {
                       );
                       final androidInfo = await DeviceInfoPlugin().androidInfo;
                       if (defaultTargetPlatform == TargetPlatform.iOS ||  androidInfo.version.sdkInt < 32)
-                      _showToast(TR(context, '개인키가 복사되었습니다'));
+                      _showToast(TR('개인키가 복사되었습니다'));
                     }
                   )
                 ),

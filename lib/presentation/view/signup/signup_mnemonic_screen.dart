@@ -62,7 +62,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
     return prov.isScreenLocked ? lockScreen(context) :
       Scaffold(
         backgroundColor: WHITE,
-        appBar: defaultAppBar(TR(context, '계정 복구 단어 백업')),
+        appBar: defaultAppBar(TR('계정 복구 단어 백업')),
         body: LayoutBuilder(builder: (context, constraints) {
           var mnBoxRatio = constraints.maxHeight / constraints.maxWidth;
           if (mnBoxRatio < 2.0) mnBoxRatio = 2.0;
@@ -81,12 +81,12 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                       children: [
                         SizedBox(height: 16.h),
                         Text(
-                          TR(context, '계정 복구를 위한\n복구 단어를 보관하세요.'),
+                          TR('계정 복구를 위한\n복구 단어를 보관하세요.'),
                           style: typo24bold150,
                         ),
                         SizedBox(height: 16.h),
                         Text(
-                          TR(context, '계정 복구 단어를 안전한 곳에 보관해 주세요.\n'
+                          TR('계정 복구 단어를 안전한 곳에 보관해 주세요.\n'
                           '잃어버리실 경우 계정 복구가 불가합니다.'),
                           style: typo16medium150.copyWith(
                               color: GRAY_70),
@@ -152,7 +152,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                               width: 4,
                             ),
                             Text(
-                              TR(context, '복구 단어 복사하기'),
+                              TR('복구 단어 복사하기'),
                               style:
                               typo14bold100.copyWith(color: SECONDARY_90),
                             ),
@@ -164,7 +164,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         final androidInfo = await DeviceInfoPlugin().androidInfo;
                         if (defaultTargetPlatform == TargetPlatform.iOS ||
                           androidInfo.version.sdkInt < 32)
-                          showToast(TR(context, '문구가 복사되었습니다'));
+                          showToast(TR('문구가 복사되었습니다'));
                       },
                     ),
                   ),
@@ -198,7 +198,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(width: 2, color: GRAY_20),
                           ),
-                          child: Text(TR(context, '클라우드 백업'), style: typo16bold),
+                          child: Text(TR('클라우드 백업'), style: typo16bold),
                         ),
                       )
                     ),
@@ -209,13 +209,13 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
           );
         }),
         bottomNavigationBar: widget.isShowNext ? PrimaryButton(
-          text: TR(context, '다음'),
+          text: TR('다음'),
           round: 0,
           onTap: () {
             ref.read(loginProvider).mainPageIndexOrg = 0;
             context.pushReplacementNamed(
                 MainScreen.routeName, queryParams: {'selectedPage': '1'});
-            showToast(TR(context, '회원가입 완료'));
+            showToast(TR('회원가입 완료'));
           },
         ) : null,
     );

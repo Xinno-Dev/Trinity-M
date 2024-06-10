@@ -87,10 +87,10 @@ class _RegistMnemonicCheckScreenState
                           context: context,
                           builder: (BuildContext context) {
                             return SimpleCheckDialog(
-                              titleString: TR(context, '문구가 일치하지 않습니다'),
-                              infoString: TR(context, '문구를 다시 입력해 주세요.'),
+                              titleString: TR('문구가 일치하지 않습니다'),
+                              infoString: TR('문구를 다시 입력해 주세요.'),
                               hasTitle: true,
-                              defaultButtonText: TR(context, '돌아가기'),
+                              defaultButtonText: TR('돌아가기'),
                               defaultTapOption: () {
                                 setState(() {
                                   for (var controller in controllerList) {
@@ -112,7 +112,7 @@ class _RegistMnemonicCheckScreenState
                     }
                   },
                 )
-              : DisabledButton(text: TR(context, '다음')),
+              : DisabledButton(text: TR('다음')),
         ),
       ),
     );
@@ -138,7 +138,7 @@ class _RegistMnemonicCheckScreenState
           ),
           centerTitle: true,
           title: Text(
-            TR(context, '지갑 만들기'),
+            TR('지갑 만들기'),
             style: typo18semibold,
           ),
           elevation: 0,
@@ -165,12 +165,12 @@ class _RegistMnemonicCheckScreenState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              TR(context, '문구 보관을 확인합니다'),
+                              TR('문구 보관을 확인합니다'),
                               style: typo24bold,
                             ),
                             SizedBox(height: 16.h),
                             Text(
-                              TR(context, '빈칸의 번호에 맞는 문구를 입력해주세요'),
+                              TR('빈칸의 번호에 맞는 문구를 입력해주세요'),
                               style: typo16medium150.copyWith(
                                   color: GRAY_70),
                             ),
@@ -215,7 +215,7 @@ class _RegistMnemonicCheckScreenState
                                     child: Focus(
                                       canRequestFocus: false,
                                       child: CustomTextFormField(
-                                        hintText: TR(context, '문구 입력'),
+                                        hintText: TR('문구 입력'),
                                         focusNode: focusNodeList[index],
                                         controller: controllerList[index]),
                                       // onFocusChange: (status) {
