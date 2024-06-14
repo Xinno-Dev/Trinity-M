@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../style/colors.dart';
 import '../widget/image_widget.dart';
 import '../widget/rounded_button.dart';
+import 'convertHelper.dart';
 import 'languageHelper.dart';
 
 const APP_LOGO_XL = 'assets/images/app_icon_1024.png';
@@ -14,7 +15,13 @@ const APP_NOTICE_SIZE = 50;
 
 Future<int> showAppUpdateDialog(
     BuildContext context, String desc, String? msg,
-    {String? title, bool isForceUpdate = false, var isForceCheck = false}) async {
+    {
+      String? title,
+      String? buildNumber,
+      bool isForceUpdate = false,
+      bool isForceCheck = false
+    }
+  ) async {
   // print('--> showAppUpdateDialog : $desc / $msg');
   msg ??= '';
   desc = desc.replaceAll('\\n' , '\n').replaceAll('<br>', '\n');
@@ -73,6 +80,17 @@ Future<int> showAppUpdateDialog(
                     msg,
                     textAlign: TextAlign.center,
                     style: typo16medium.copyWith(color: SECONDARY_90),
+                  ),
+                ),
+              ],
+              if (STR(buildNumber).isNotEmpty)...[
+                Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'build ${STR(buildNumber)}',
+                    textAlign: TextAlign.center,
+                    style: typo12normal.copyWith(color: GRAY_50),
                   ),
                 ),
               ],

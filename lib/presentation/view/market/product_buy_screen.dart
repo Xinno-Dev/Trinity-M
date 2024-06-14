@@ -118,7 +118,13 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
       prov.requestPurchaseWithImageId(onError: (error) {
         showLoginErrorTextDialog(context, TR(error));
       }).then((info) {
-        if (info == true) {
+        if (info != null) {
+          var pgCode = PAYMENT_PG;
+          if (STR(prov.purchaseInfo?.mid).isNotEmpty) {
+            pgCode += '.${STR(prov.purchaseInfo?.mid)}';
+          }
+          LOG('--> pgCode : $pgCode');
+          data.pg = pgCode;
           Navigator.of(context).push(
             createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data))).then((_) {
             loginProv.enableLockScreen();

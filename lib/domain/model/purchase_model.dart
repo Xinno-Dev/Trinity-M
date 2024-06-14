@@ -29,6 +29,7 @@ class PurchaseModel {
   String?   cardType;
   String?   cardNum;
   String?   status;       // 상품 상태 CD_PAY_ST
+  String?   mid;          // Merchant uID
 
   // 판매자 정보..
   SellerModel? seller;
@@ -54,6 +55,7 @@ class PurchaseModel {
     this.cardType,
     this.cardNum,
     this.status,
+    this.mid,
 
     this.seller,
     this.createTime,

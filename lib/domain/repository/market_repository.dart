@@ -175,13 +175,13 @@ class MarketRepository {
                 newItem.externUrl = tmp.externUrl;
                 productList[index] = newItem;
                 isAdd = false;
-                LOG('--> getProductList update : ${newItem
-                    .prodSaleId} / ${newItem.tagId}');
+                // LOG('--> getProductList update : ${newItem
+                //     .prodSaleId} / ${newItem.tagId}');
                 break;
               }
             }
             if (isAdd) {
-              LOG('--> getProductList productList add : ${newItem.prodSaleId}');
+              // LOG('--> getProductList productList add : ${newItem.prodSaleId}');
               productList.add(newItem);
             }
         }
@@ -317,13 +317,13 @@ class MarketRepository {
   }
 
   Future<List<PurchaseModel>> getPurchaseList(address, {String? startDate, String? endDate}) async {
+    LOG('--> getPurchaseList : $startDate ~ $endDate');
     purchaseList.clear();
     var jsonData = await _apiService.getPurchasesList(address, startDate, endDate);
     if (jsonData != null) {
       var data = jsonData['data'];
       for (var item in data) {
         var newItem = PurchaseModel.fromJson(item);
-        LOG('--> newItem : [${newItem.status}] ${newItem.toJson()}');
         var isAdd = true;
         for (var orgItem in purchaseList) {
           if (orgItem.purchaseId == newItem.purchaseId) {

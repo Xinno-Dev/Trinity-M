@@ -11,7 +11,7 @@ const Color THEME_PHONE_ICON_COLOR = Color(0xFF28272B);
 const Color THEME_PHONE_BG_COLOR = Color(0xFF848484);
 
 const Color THEME_PRIMARY_COLOR = Color(0xFF37DBFF);
-const Color THEME_ALERT_COLOR = Color(0xFFFFE812);
+const Color THEME_ALERT_COLOR = Color(0xFFFF3812);
 const Color THEME_ERROR_COLOR = Color(0xFFFF1111);
 const Color THEME_ERROR_BG_COLOR = Color(0x33FF1111);
 

@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <!-- 카카오톡 공유, 카카오톡 메시지 -->
                 <data android:host="kakaolink"
-                    android:scheme="kakao21ee6861e63748b4f8bd01db5a371d8f" />
+                    android:scheme="kakaoc3f93654a2020273492f218aba8f7e69" />
             </intent-filter>
 
             <!-- Firebase Notify -->
@@ -68,7 +68,7 @@
 
                 <!-- 카카오 로그인 Redirect URI -->
                 <data
-                    android:scheme="kakao21ee6861e63748b4f8bd01db5a371d8f"
+                    android:scheme="kakaoc3f93654a2020273492f218aba8f7e69"
                     android:host="oauth"/>
             </intent-filter>
         </activity>

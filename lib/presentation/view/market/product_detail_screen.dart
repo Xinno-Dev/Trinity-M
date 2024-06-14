@@ -48,15 +48,15 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     final prov = ref.watch(marketProvider);
     final loginProv = ref.watch(loginProvider);
     return loginProv.isScreenLocked ? lockScreen(context) :
-    AnnotatedRegion<SystemUiOverlayStyle>(
+    SafeArea(
+        top: false,
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
       value:SystemUiOverlayStyle(
         systemNavigationBarColor: WHITE,
       ),
-      child: SafeArea(
-        top: false,
-        child: Scaffold(
+      child: Scaffold(
           appBar: defaultAppBar(TR('상품 정보')),
-          backgroundColor: Colors.white,
+          backgroundColor: WHITE,
           body: FutureBuilder(
             future: prov.getProductDetail(),
             builder: (context, snapshot) {

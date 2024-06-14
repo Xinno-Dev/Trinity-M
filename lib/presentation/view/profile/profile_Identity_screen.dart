@@ -40,7 +40,7 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
     final prov = ref.watch(loginProvider);
     LOG('--> ProfileIdentityScreen');
     return IamportCertification(
-      appBar: defaultAppBar(TR('본인인증')),
+      appBar: defaultAppBar(TR('본인 인증')),
       /* 웹뷰 로딩 컴포넌트 */
       initialChild: Container(
         child: Center(
@@ -55,12 +55,12 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
         ),
       ),
       /* [필수입력] 가맹점 식별코드 */
-      userCode: 'iamport',
+      userCode: PORTONE_IMP_CODE,
       /* [필수입력] 본인인증 데이터 */
       data: CertificationData(
         pg: IDENTITY_PG, // PG사
-        merchantUid: 'mid_${DateTime.now().millisecondsSinceEpoch}',  // 주문번호
-        mRedirectUrl: 'https://example.com',                          // 본인인증 후 이동할 URL
+        merchantUid: STR(prov.userEmail), // 주문번호
+        mRedirectUrl: '', // 본인인증 후 이동할 URL
         // name: '김주현',
         // phone: '010-2656-2896',
         // carrier: '19740911',
@@ -68,16 +68,15 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
       /* [필수입력] 콜백 함수 */
       callback: (Map<String, String> result) {
         LOG('--> IamportCertification result : $result');
-        if (BOL(result['success'])) {
-          var name  = 'test user 00';
-          var phone = '010-1111-2222';
-          var ci    = 'ci_00000000';
-          var di    = 'di_00000000';
-          ApiService().setCertInfo(name, phone, ci, di).then((result2) {
+        if (BOL(result['success']) && STR(result['imp_uid']).isNotEmpty) {
+          var uid = STR(result['imp_uid']);
+          ApiService().setIdentity(uid, onError: (code) {
+            _identityAlreadyFail();
+          }).then((result2) {
             LOG('--> checkCert result : $result2');
-            if (result2) {
+            if (result2 == true) {
               _identitySuccess();
-            } else {
+            } else if (result2 == false) {
               _identityFail();
             }
           });
@@ -95,6 +94,11 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
 
   _identityFail() {
     showToast(TR('본인인증 실패'));
+    context.pop();
+  }
+
+  _identityAlreadyFail() {
+    showToast(TR('이미 본인인증을 완료했습니다'));
     context.pop();
   }
 }

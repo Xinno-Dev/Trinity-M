@@ -52,24 +52,31 @@ class GoogleService extends GoogleAccount {
   }
 
   static signIn() async {
-    // googleUser = await GoogleSignIn().signIn();
-    googleUser = await GoogleSignIn(scopes: [
-      'email', 'openid', 'profile', 'https://www.googleapis.com/auth/drive',
-    ]).signIn();
+    googleUser = await GoogleSignIn(
+      scopes: [
+        // 'email', 'openid', 'profile', // for Login..
+        'https://www.googleapis.com/auth/drive',
+      ]
+    ).signIn();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    if (googleUser != null) {
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth
+        = await googleUser?.authentication;
 
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
 
-    // Once signed in, return the UserCredential
-    final result = await FirebaseAuth.instance.signInWithCredential(credential);
-    LOG('---> signIn result : $result');
-    return result;
+      // Once signed in, return the UserCredential
+      final result = await FirebaseAuth.instance.signInWithCredential(
+          credential);
+      LOG('---> signIn result : $result');
+      return result;
+    }
+    return null;
   }
 
   static signOut() async {
@@ -119,12 +126,18 @@ class GoogleService extends GoogleAccount {
       }
       return result;
     } else {
-      var user = await signIn();
-      if (user != null) {
-        var result = await _showDriveSelectDialog(context, true, ext: fileName);
-        LOG('---> startGoogleDriveUpload result 2 : $result');
-        if (STR(result).isNotEmpty) {
-          return await _uploadToGoogleDrive(context, desc, fileName, parentId: folderId);
+      var yn = await showConfirmDialog(
+          context, TR('클라우드 백업을 위해\n구글 로그인을 진행합니다.'));
+      if (yn == true) {
+        var user = await signIn();
+        if (user != null) {
+          var result = await _showDriveSelectDialog(
+              context, true, ext: fileName);
+          LOG('---> startGoogleDriveUpload result 2 : $result');
+          if (STR(result).isNotEmpty) {
+            return await _uploadToGoogleDrive(
+                context, desc, fileName, parentId: folderId);
+          }
         }
       }
     }
@@ -140,12 +153,16 @@ class GoogleService extends GoogleAccount {
       }
       return result;
     } else {
-      var user = await signIn();
-      if (user != null) {
-        var result = await _showDriveSelectDialog(context, false, ext: ext);
-        LOG('---> startGoogleDriveDownload result 2 : $result');
-        if (STR(result).isNotEmpty) {
-          return await _downloadFromGoogleDrive(context, result);
+      var yn = await showConfirmDialog(
+          context, TR('클라우드 접근을 위해\n구글 로그인을 진행합니다.'));
+      if (yn == true) {
+        var user = await signIn();
+        if (user != null) {
+          var result = await _showDriveSelectDialog(context, false, ext: ext);
+          LOG('---> startGoogleDriveDownload result 2 : $result');
+          if (STR(result).isNotEmpty) {
+            return await _downloadFromGoogleDrive(context, result);
+          }
         }
       }
     }

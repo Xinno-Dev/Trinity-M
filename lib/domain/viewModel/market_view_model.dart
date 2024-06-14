@@ -712,16 +712,15 @@ class MarketViewModel {
         start: prov.purchaseStartDate,
         end:   prov.purchaseEndDate,
       ),
-      firstDate: DateTime.now().subtract(Duration(days: 365)),
+      firstDate: DateTime(2024),
       lastDate: DateTime.now(),
       saveText: TR('선택완료'),
-    ).then((result) {
-      if (result != null) {
-        var range = result as DateTimeRange;
-        LOG('--> date result : ${range.start} ~ ${range.end}');
+    ).then((range) {
+      if (range != null) {
         prov.purchaseStartDate = range.start;
-        prov.purchaseEndDate   = range.end;
+        prov.purchaseEndDate   = range.end.add(Duration(hours: 23, minutes: 59, seconds: 59));
         prov.refresh();
+        LOG('--> date result : ${prov.purchaseStartDate} ~ ${prov.purchaseEndDate}');
       }
     });
   }

@@ -84,10 +84,11 @@ class ProfileViewModel {
                 onAdd: _accountAdd);
             }
           },
+          borderRadius: BorderRadius.circular(50.r),
           child: Container(
-            height: kToolbarHeight,
+            height: 35.h,
             color: Colors.transparent,
-            margin: EdgeInsets.symmetric(horizontal: 20),
+            margin: EdgeInsets.symmetric(horizontal: 20.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -173,7 +174,7 @@ class ProfileViewModel {
             Spacer(),
             ListTile(
               title: Text(
-                TR('사업자명: Xinno Inc.\n'
+                TR('사업자명: 주식회사 엑시노\n'
                     '대표이사: 이지민\n'
                     '등록번호: 644-86-03081\n'
                     '대표번호: 070-4304-5778\n'
@@ -192,7 +193,8 @@ class ProfileViewModel {
     if (type.title == '-') {
       return Divider();
     }
-    if (type == DrawerActionType.language && !IS_LANGUAGE_ON) {
+    if ((type == DrawerActionType.language && !IS_LANGUAGE_ON) ||
+        (type == DrawerActionType.identity && !IS_IDENTITY_ON)) {
       return Container();
     }
     var showTitle = TR(type.title);
@@ -206,7 +208,7 @@ class ProfileViewModel {
         type == DrawerActionType.language
         ) || loginProv.isLogin;
     return InkWell(
-        onTap: () {
+      onTap: () {
         LOG('--> _mainDrawerItem: $type / $isEnable');
         if (!isEnable) return;
         context.pop();
@@ -215,32 +217,32 @@ class ProfileViewModel {
             case DrawerActionType.my:
               if (loginProv.isLogin) {
                 Navigator.of(context).push(
-                    createAniRoute(ProfileMyInfoScreen()));
+                  createAniRoute(ProfileMyInfoScreen()));
               } else {
                 Navigator.of(context).push(
-                    createAniRoute(LoginScreen(isAppStart: false)));
+                  createAniRoute(LoginScreen(isAppStart: false)));
               }
               break;
             case DrawerActionType.history:
               if (loginProv.isLogin) {
                 Navigator.of(context).push(
-                    createAniRoute(PaymentListScreen()));
+                  createAniRoute(PaymentListScreen()));
               } else {
                 Navigator.of(context).push(
-                    createAniRoute(LoginScreen(isAppStart: false)));
+                  createAniRoute(LoginScreen(isAppStart: false)));
               }
               break;
             case DrawerActionType.terms:
               Navigator.of(context).push(
-                  createAniRoute(WebviewScreen(
-                      title: TR('이용약관'),
-                      url: '$API_HOST/terms/1')));
+                createAniRoute(WebviewScreen(
+                  title: TR('이용약관'),
+                  url: '$API_HOST/terms/1')));
               break;
             case DrawerActionType.privacy:
               Navigator.of(context).push(
-                  createAniRoute(WebviewScreen(
-                      title: TR('개인정보처리 방침'),
-                      url: '$API_HOST/terms/2')));
+                createAniRoute(WebviewScreen(
+                  title: TR('개인정보처리 방침'),
+                  url: '$API_HOST/terms/2')));
               break;
             case DrawerActionType.version:
               isUpdateCheckDone = false;
@@ -248,7 +250,11 @@ class ProfileViewModel {
               break;
             case DrawerActionType.language:
               Navigator.of(context).push(
-                  createAniRoute(SettingsLanguageScreen()));
+                createAniRoute(SettingsLanguageScreen()));
+              break;
+            case DrawerActionType.identity:
+              Navigator.of(context).push(
+                createAniRoute(ProfileIdentityScreen()));
               break;
             case DrawerActionType.logout:
               if (loginProv.isLogin) {
@@ -266,13 +272,6 @@ class ProfileViewModel {
           //       showToast(TR('회원탈퇴 완료'));
           //     });
           //   }
-          //   break;
-          // case DrawerActionType.test_identity:
-          //   // Navigator.of(context).push(
-          //   //   createAniRoute(ProfileIdentityScreen()));
-          //   IamPortApiService().checkCert('imp_809435080073').then((result2) {
-          //     LOG('--> checkCert result : $result2');
-          //   });
           //   break;
           // case DrawerActionType.test_delete:
           //   UserHelper().clearAllUser().then((_) {
@@ -389,14 +388,16 @@ class ProfileViewModel {
   ////////////////////////////////////////////////////////////////////////
 
   myInfoEditItem(String title, List<List> items,
-    {Function()? onEdit, Function(bool)? onToggle}) {
+    {Function(int)? onEdit, Function(bool)? onToggle}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(TR(title), style: typo16bold),
-          ...items.map((e) => _myInfoItem(e, onEdit, onToggle)),
+          ...items.map((e) => _myInfoItem(e, () {
+            if (onEdit != null) onEdit(items.indexOf(e));
+          }, onToggle)),
         ],
       ),
     );
@@ -406,19 +407,32 @@ class ProfileViewModel {
     var _isChecked = STR(item[1]) == 'on';
     return StatefulBuilder(builder: (context, setState) {
       return Container(
+        margin: EdgeInsets.symmetric(vertical: 2),
         child: Row(
           children: [
             Expanded(
-              child: Text(STR(item[0]),
-                style: typo16regular, maxLines: 2),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(STR(item[0]),
+                      style: typo16regular, maxLines: 2),
+                  if (item.length > 2 && STR(item[2]).isNotEmpty)...[
+                    Text(STR(item[2]), style: typo12normal.copyWith(color: SECONDARY_90)),
+                  ],
+                ],
+              )
             ),
             if (STR(item[1]).isNotEmpty)...[
               if (STR(item[1]) != 'on' && STR(item[1]) != 'off')
-                OutlinedButton(
-                  onPressed: onEdit,
-                  style: darkBorderButtonStyle,
-                  child: Text(TR(STR(item[1])),
-                    style: typo14semibold),
+                SizedBox(
+                  height: 40.h,
+                  child: OutlinedButton(
+                    onPressed: onEdit,
+                    style: darkBorderButtonStyle,
+                    child: Text(TR(STR(item[1])),
+                        style: typo14semibold),
+                  ),
                 ),
               if (STR(item[1]) == 'on' || STR(item[1]) == 'off')
                 CupertinoSwitch(
@@ -698,7 +712,8 @@ class ProfileViewModel {
         var org = loginProv.selectAccount!.accountName;
         loginProv.selectAccount!.accountName = text;
         _setAccountName().then((result) {
-          if (!result) {
+          LOG('--> _setAccountName : $result');
+          if (result == false) {
             loginProv.selectAccount!.accountName = org;
           }
         });
@@ -869,22 +884,25 @@ class ProfileViewModel {
   }
 
   _setAccountName() async {
+    // 닉네임 중복 체크..
     var result = await loginProv.checkNickDup(loginProv.selectAccount?.accountName);
     if (!result) {
       showToast(TR('중복된 닉네임입니다'));
       showEditAccountName();
       return false;
     }
+    // 비번 입력 내역이 없을경우 비번체크..
     var passOrg = loginProv.userPass;
     if (passOrg.isEmpty) {
       passOrg = await Navigator.of(context).push(
-          createAniRoute(OpenPassScreen()));
+        createAniRoute(OpenPassScreen()));
     }
     if (STR(passOrg).isNotEmpty) {
       loginProv.setUserPass(passOrg);
       var result = await loginProv.setAccountName(loginProv.selectAccount!);
       showToast(result == true ? "닉네임 변경 성공" : "닉네임 변경 실패");
-      if (result == true) {
+      if (result != true) {
+        // 변경에 실패했을 경우 원복..
         _restoreAccount();
       }
       return result;
@@ -893,6 +911,7 @@ class ProfileViewModel {
   }
 
   _setAccountInfo() async {
+    // 비번 입력 내역이 없을경우 비번체크..
     var passOrg = loginProv.userPass;
     if (passOrg.isEmpty) {
       passOrg = await Navigator.of(context).push(
@@ -902,7 +921,8 @@ class ProfileViewModel {
       loginProv.setUserPass(passOrg);
       var result = await loginProv.setAccountInfo(loginProv.selectAccount!);
       showToast(result == true ? "내 정보 변경 성공" : "내 정보 변경 실패");
-      if (result == true) {
+      if (result != true) {
+        // 변경에 실패했을 경우 원복..
         _restoreAccount();
       }
       return result;

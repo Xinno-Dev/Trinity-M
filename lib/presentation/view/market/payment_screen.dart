@@ -14,8 +14,8 @@ import '../../../common/const/utils/languageHelper.dart';
 
 class PaymentScreen extends ConsumerStatefulWidget {
   PaymentScreen(this.userCode, this.data);
-  String userCode;
   PaymentData data;
+  String userCode;
   static String get routeName => 'paymentScreen';
 
   @override
@@ -55,10 +55,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       userCode: widget.userCode,
       data: widget.data,
       callback: (Map<String, String> result) {
-        LOG('--> show payment result : $result');
+        LOG('--> port_one result : $result');
         if (BOL(result['success'])) {
           if (IS_PAYMENT_ON) {
-            showLoadingDialog(context, TR('결제 검증중입니다.'));
+            showLoadingDialog(context, TR('결제 확인중입니다.'));
             prov.checkCount = 0;
             prov.checkPurchase(result).then((checkResult) {
               LOG('--> checkResult : $checkResult');

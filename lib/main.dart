@@ -92,8 +92,8 @@ Future<void> main() async {
 
   // init kakao..
   KakaoSdk.init(
-    nativeAppKey: '21ee6861e63748b4f8bd01db5a371d8f',
-    javaScriptAppKey: '0001cf7d12d68c30e65a7038e0c1c0f6',
+    nativeAppKey: 'c3f93654a2020273492f218aba8f7e69',
+    javaScriptAppKey: '36d85e37ca3e597f8c6dacd1820bf016',
   );
 
   // init firebase..

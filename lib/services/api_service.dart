@@ -225,6 +225,9 @@ class ApiService {
       String nickId,
       String email,
       String publicKey,
+      {
+        Function(LoginErrorType, String?)? onError,
+      }
     ) async {
     try {
       LOG('--> API getSecretKey : $nickId / $email / $publicKey');
@@ -240,12 +243,16 @@ class ApiService {
         })
       );
       LOG('--> API getSecretKey response : ${response.statusCode} / ${response.body}');
+      var resultJson = jsonDecode(response.body);
       if (isSuccess(response.statusCode)) {
-        var resultJson = jsonDecode(response.body);
         if (resultJson['result'] != null) {
           var serverKey = STR(resultJson['result']['pubKey']);
           return serverKey;
         }
+      } else {
+        var errorCode = STR(resultJson['err' ]?['code']);
+        LOG('--> API loginUser error : $errorCode');
+        if (onError != null) onError(LoginErrorType.code, errorCode);
       }
     } catch (e) {
       LOG('--> API getSecretKey error : $e');
@@ -388,7 +395,7 @@ class ApiService {
         return resultJson['result'];
       } else {
         var errorCode = STR(resultJson['err' ]?['code']);
-        LOG('--> API getUserInfo error : $errorCode');
+        LOG('--> API getUserInfo fail : $errorCode');
         if (onError != null) onError(LoginErrorType.code, errorCode);
       }
     } catch (e) {
@@ -451,18 +458,97 @@ class ApiService {
 
   //////////////////////////////////////////////////////////////////////////
   //
-  //  본인인증 저장
+  //  유저 탈퇴 신청 (JWT)
+  //  POST: /auth/withdraw
+  //
+
+  Future<String?> setWithdrawUser(
+    {
+      Function(LoginErrorType, String?)? onError,
+    }) async {
+    try {
+      var jwt = await AesManager().localJwt;
+      if (jwt == null) {
+        return null;
+      }
+      final response = await http.post(
+          Uri.parse(httpUrl + '/auth/withdraw'),
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwt',
+          },
+      );
+      LOG('--> API setWithdrawUser response : ${response.statusCode} '
+          '/ ${response.body}');
+      var resultJson = jsonDecode(response.body);
+      if (isSuccess(response.statusCode)) {
+        return resultJson['result'];
+      } else {
+        var errorCode = STR(resultJson['err' ]?['code']);
+        LOG('--> API setWithdrawUser server error : $errorCode');
+        if (onError != null) onError(LoginErrorType.code, errorCode);
+      }
+    } catch (e) {
+      LOG('--> API setWithdrawUser error : $e');
+    }
+    return null;
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  유저 탈퇴 취소 (JWT)
+  //  PUT: /auth/withdraw
+  //
+
+  Future<bool?> cancelWithdrawUser(
+    {
+      Function(LoginErrorType, String?)? onError,
+    }) async {
+    try {
+      var jwt = await AesManager().localJwt;
+      if (jwt == null) {
+        return null;
+      }
+      final response = await http.put(
+        Uri.parse(httpUrl + '/auth/withdraw'),
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwt',
+        },
+      );
+      LOG('--> API cancelWithdrawUser response : ${response.statusCode} / ${response.body}');
+      var resultJson = jsonDecode(response.body);
+      if (isSuccess(response.statusCode)) {
+        return true;
+      } else {
+        var errorCode = STR(resultJson['err' ]?['code']);
+        LOG('--> API cancelWithdrawUser server error : $errorCode');
+        if (onError != null) onError(LoginErrorType.code, errorCode);
+      }
+      return false;
+    } catch (e) {
+      LOG('--> API cancelWithdrawUser error : $e');
+    }
+    return null;
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //  본인 인증 저장
   //  POST: /auth/cert
   //
 
-  Future<bool> setCertInfo(
-    String name, String phone, String ci, String di) async {
+  Future<bool?> setIdentity(
+    String impUID, {Function(String)? onError}) async {
+    LOG('--> API setIdentity : $impUID');
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
         return false;
       }
-      final response = await http.post(
+      final response = await http.put(
           Uri.parse(httpUrl + '/auth/cert'),
           headers: {
             'accept': 'application/json',
@@ -470,19 +556,22 @@ class ApiService {
             'Authorization': 'Bearer $jwt',
           },
           body: jsonEncode({
-            'name'  : name,
-            'phone' : phone,
-            'ci'    : ci,
-            'di'    : di,
+            'imp_uid'  : impUID,
           })
       );
-      LOG('--> API setCertInfo response : ${response.statusCode} / ${response.body}');
+      LOG('--> API setIdentity response : ${response.statusCode} / ${response.body}');
+      var resultJson = jsonDecode(response.body);
       if (isSuccess(response.statusCode)) {
-        var resultJson = jsonDecode(response.body);
         return BOL(resultJson['result']);
+      } else {
+        var err = resultJson['err'];
+        if (err != null && onError != null) {
+          onError(STR(err['code']));
+          return null;
+        }
       }
     } catch (e) {
-      LOG('--> API setCertInfo error : $e');
+      LOG('--> API setIdentity error : $e');
     }
     return false;
   }
@@ -753,13 +842,13 @@ class ApiService {
   }
 
   Future<JSON?> checkPurchase(String impUid, String merchantId, String status) async {
+    LOG('--> API checkPurchase : $impUid / $merchantId / $status');
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
         return null;
       }
       var urlStr = '/purchases/vf';
-      LOG('--> API checkPurchase : $impUid / $merchantId / $status');
       final response = await http.put(
           Uri.parse(httpUrl + urlStr),
           headers: {

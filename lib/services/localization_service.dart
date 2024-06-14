@@ -543,7 +543,7 @@ class AppLocalization {
       '비밀번호 입력': 'Enter password',
       '현재 버전': 'Current version',
       '앱 버전정보': 'App version information',
-      '현재 최신 버전입니다.': 'This is currently the latest version.',
+      '현재 최신 버전 사용 중입니다.': 'This is currently the latest version.',
       '사용자 이름 변경': 'Change username',
       '변경할 이름을 입력해 주세요.': 'Please enter the name you want to change.',
       'ID(닉네임) 변경': 'Change ID(nickname)',

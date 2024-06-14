@@ -226,10 +226,10 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
     hideLoadingDialog();
     final loginProv = ref.read(loginProvider);
     if (!loginProv.isLogin) {
-      showToast(TR('로그인 실패'));
+      // showToast(TR('로그인 실패'));
       return;
     }
-    showToast(TR('로그인 성공'));
+    // showToast(TR('로그인 성공'));
     ref.read(loginProvider).mainPageIndexOrg = 0;
     context.pushReplacementNamed(
         MainScreen.routeName, queryParams: {'selectedPage': '1'});

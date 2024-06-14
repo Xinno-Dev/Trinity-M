@@ -42,7 +42,8 @@ Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) as
         final dlgMessage = STR(versionServer.message?.text_us);
         var dlgResult = await showAppUpdateDialog(context,
           dlgMessage.isNotEmpty ? dlgMessage : '새버전이 마켓에 출시되었습니다.',
-          '${TR('현재 버전')} $versionApp\n${TR('새 버전')} ${versionServer.version}',
+            '${TR('현재 버전')} $versionApp\n'
+            '${TR('새 버전')} ${versionServer.version}',
           isForceUpdate: isForceUpdate,
         );
         LOG('----> showAppUpdateDialog result : $dlgResult');
@@ -100,9 +101,10 @@ Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) as
         }
       } else if (isForceCheck) {
         showAppUpdateDialog(context,
-          TR('현재 최신 버전입니다.'),
+          TR('현재 최신 버전 사용 중입니다.'),
           '${TR('현재 버전')} $versionApp',
           title: TR('앱 버전정보'),
+          buildNumber: '${packageInfo.buildNumber}',
           isForceCheck: true).then((result) {
             if (result == 1) {
               // move to market..

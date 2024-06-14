@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trinity_m_00/common/const/widget/rounded_button.dart';
 import '../../../domain/model/coin_model.dart';
 import '../../../domain/model/network_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -296,19 +297,43 @@ Future<void> showSimpleDialog(
   );
 }
 
-showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
+showConfirmDialog(context, desc,
+  {
+    String? title,
+    String? alertText,
+    String? cancelText,
+    String? okText}) async {
   return await showDialog<void>(
     context: context,
     builder: (BuildContext context) =>
       AlertDialog(
-        content: Text(
-          title,
-          style: typo16dialog, textAlign: TextAlign.center),
-        contentPadding: EdgeInsets.only(top: 40.h, bottom: 10.h),
-        actionsPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+        title: title != null ?
+          Text(STR(title), style: typo16bold, textAlign: TextAlign.center) : null,
+        content: Container(
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width - 60.w,
+            maxHeight: alertText != null ? 120.h : 60.h,
+          ),
+          alignment: Alignment.center,
+          color: WHITE,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(desc,
+              style: typo16medium, textAlign: TextAlign.center),
+            if (alertText != null)
+              Text(STR(alertText),
+                style: typo14medium.copyWith(color: THEME_ALERT_COLOR),
+                  textAlign: TextAlign.center)
+          ],
+          )
+        ),
+        contentPadding: EdgeInsets.only(
+            top: title != null ? 15.h : 40.h, bottom: 10.h),
+        actionsPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
         actionsAlignment: MainAxisAlignment.center,
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.transparent,
+        backgroundColor: WHITE,
+        surfaceTintColor: WHITE,
         actions: <Widget>[
           Container(
             child: Row(
@@ -318,7 +343,7 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
                   onPressed: context.pop,
                   child: Text(
                     cancelText ?? TR('취소'),
-                    style: typo12semibold100,
+                    style: typo14semibold,
                   ),
                   style: grayBorderButtonStyle,
                 )),
@@ -330,9 +355,9 @@ showConfirmDialog(context, title, {String? cancelText, String? okText}) async {
                   },
                   child: Text(
                     okText ?? TR('확인'),
-                    style: typo12semibold100,
+                    style: typo14semibold,
                   ),
-                  style: primaryBorderButtonStyle,
+                  style: darkBorderButtonStyle,
                 ))
               ],
             ),
@@ -632,11 +657,13 @@ showCheckBoxImg(bool isSelect) {
 getLoginErrorCodeText(String codeText) {
   switch(codeText) {
     case '__invalid_signature__':
-      return ['잘못된 서명입니다.', '복구한 계정일 경우,\n복구 파일 or 단어를 확인해 주세요.'];
+      return ['잘못된 서명입니다.', '복구한 계정일 경우,\n복구 파일이나 단어를 확인해 주세요.'];
     case '__invalid_token__':
-      return ['잘못된 토큰입니다.', '로그아웃후 다시 로그인 해 주세요.'];
+      return ['잘못된 토큰입니다.', '다시 로그인 해 주세요.'];
     case '__not_found__':
-      return ['대상을 찾을 수 없습니다.', '다시 로그인 해 주세요.'];
+      return ['대상을 찾을 수 없거나,\n탈퇴 처리된 회원입니다.', '다시 로그인 해 주세요.'];
+    case '__unauthorized__':
+      return ['계정을 찾을 수 없습니다.', '다시 로그인 해 주세요.'];
   }
   return codeText;
 }

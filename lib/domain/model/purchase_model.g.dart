@@ -24,6 +24,7 @@ PurchaseModel _$PurchaseModelFromJson(Map<String, dynamic> json) =>
       cardType: json['cardType'] as String?,
       cardNum: json['cardNum'] as String?,
       status: json['status'] as String?,
+      mid: json['mid'] as String?,
       seller: json['seller'] == null
           ? null
           : SellerModel.fromJson(json['seller'] as Map<String, dynamic>),
@@ -52,14 +53,15 @@ Map<String, dynamic> _$PurchaseModelToJson(PurchaseModel instance) {
   writeNotNull('itemId', instance.itemId);
   writeNotNull('itemImg', instance.itemImg);
   writeNotNull('price', instance.price);
-  writeNotNull('buyPrice', instance.buyPrice);
   writeNotNull('payPrice', instance.payPrice);
+  writeNotNull('buyPrice', instance.buyPrice);
   writeNotNull('priceUnit', instance.priceUnit);
   writeNotNull('txDateTime', instance.txDateTime);
   writeNotNull('payType', instance.payType);
   writeNotNull('cardType', instance.cardType);
   writeNotNull('cardNum', instance.cardNum);
   writeNotNull('status', instance.status);
+  writeNotNull('mid', instance.mid);
   writeNotNull('seller', instance.seller?.toJson());
   writeNotNull('createTime', instance.createTime?.toIso8601String());
   writeNotNull('updateTime', instance.updateTime?.toIso8601String());

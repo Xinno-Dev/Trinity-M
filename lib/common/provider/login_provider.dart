@@ -10,6 +10,7 @@ import 'package:elliptic/elliptic.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:trinity_m_00/presentation/view/signup/login_screen.dart';
 
 import '../../data/repository/ecc_repository_impl.dart';
 import '../../domain/model/address_model.dart';
@@ -125,7 +126,7 @@ enum LoginErrorType {
 final drawerTitleN = [
   '내 정보', '구매 내역', '-',
   '이용약관', '개인정보처리 방침', '버전 정보',
-  '언어 설정',
+  '언어 설정', '본인 인증',
   '로그아웃',
 ];
 
@@ -137,6 +138,7 @@ enum DrawerActionType {
   privacy,
   version,
   language,
+  identity,
   logout;
 
   String get title {
@@ -192,6 +194,7 @@ class LoginProvider extends ChangeNotifier {
   String? socialId;
   String? emailVfCode;
   String  appVersion = '';
+  String  appBuild = '';
   String? userInputPass;
 
   get userPass {
@@ -235,6 +238,25 @@ class LoginProvider extends ChangeNotifier {
     return userPass.length > 4;
   }
 
+  get isWithdrawUser {
+    var tmp = STR(userInfo?.withdrawDt);
+    LOG('--> isWithdrawUser : [$tmp]');
+    return tmp.isNotEmpty;
+  }
+
+  get withdrawRemainTime {
+    if (isWithdrawUser) {
+      var targetTime = DateTime.parse(
+        SERVER_TIME_STR(userInfo?.withdrawDt)).toLocal();
+      var rt = targetTime.difference(DateTime.now());
+      LOG('--> withdrawRemainTime : $targetTime / $rt');
+      var result =
+        '${rt.inHours ~/ 24}일 ${rt.inHours % 24}시간 ${rt.inMinutes % 60}분';
+      return result;
+    }
+    return '';
+  }
+
   refresh() {
     notifyListeners();
   }
@@ -246,8 +268,9 @@ class LoginProvider extends ChangeNotifier {
     socialId      = null;
     emailStep     = IS_DEV_MODE ? EmailSignUpStep.ready : EmailSignUpStep.none;
     PackageInfo.fromPlatform().then((info) {
-      appVersion = info.version;
-      LOG('--> appVersion: $appVersion');
+      appVersion  = info.version;
+      appBuild    = info.buildNumber;
+      LOG('--> appVersion: $appVersion / $appBuild');
     });
   }
 
@@ -440,7 +463,6 @@ class LoginProvider extends ChangeNotifier {
       loginType:  LoginType.email,
       userName:   inputNick,
       email:      inputEmail,
-      createTime: DateTime.now(),
     );
   }
 
@@ -674,7 +696,8 @@ class LoginProvider extends ChangeNotifier {
     return userInfo;
   }
 
-  Future<bool?> startLoginWithKey({Function(LoginErrorType, String?)? onError}) async {
+  Future<bool?> startLoginWithKey(
+    {Function(LoginErrorType, String?)? onError}) async {
     var key = await getAccountKey();
     if (key != null) {
       return await startLogin(key, onError: onError);
@@ -685,14 +708,13 @@ class LoginProvider extends ChangeNotifier {
 
   Future<bool?> startLogin(EccKeyPair? key,
     {Function(LoginErrorType, String?)? onError}) async {
-    LOG('========> startLogin : $userEmail / ${userInfo?.loginType} / $key');
     if (STR(userEmail).isNotEmpty) {
       var nickStr = STR(account?.accountName);
       var nickId  = Uri.encodeFull(nickStr);
       var type    = STR(userInfo?.loginType?.name);
       var email   = STR(userInfo?.email);
       var token   = STR(userInfo?.socialToken);
-      LOG('--> startLogin info : $type / $email / $nickId / $userPass / $token');
+      LOG('=======> startLogin [$nickId] $type / $email / $userPass / $token');
       // 토큰이 없을 경우엔 이메일 로그인으로 변경..
       if (token.isEmpty) {
         type = 'email';
@@ -700,7 +722,7 @@ class LoginProvider extends ChangeNotifier {
           var pubKey = await getPublicKey(key.d);
           var shareKey = formatBytesAsHexString(pubKey.Q!.getEncoded());
           var secretKey = await _api.getSecretKey(
-              nickStr, email, shareKey);
+              nickStr, email, shareKey, onError: onError);
           if (secretKey != null) {
             var curve = getS256();
             var pKey = PublicKey.fromHex(curve, secretKey);
@@ -708,17 +730,12 @@ class LoginProvider extends ChangeNotifier {
                 PrivateKey.fromHex(curve, key.d), pKey);
             var message = email + nickId + signKey;
             token = await createSign(message);
-          } else {
-            if (onError != null) onError(LoginErrorType.loginFail, null);
           }
         } else {
           if (onError != null) onError(LoginErrorType.loginFail, null);
         }
-      // } else if (type == 'kakaotalk' && token.isEmpty) {
-      //   final user = await startKakaoLogin();
-      //   token = STR(user.properties?['token']);
-      //   userInfo?.socialToken = token;
       }
+      LOG('--> startLogin token : $token');
       if (token.isNotEmpty) {
         var result = await _api.loginUser(
           nickStr, type, email, token, onError: (code, text) {
@@ -726,15 +743,12 @@ class LoginProvider extends ChangeNotifier {
           }
         );
         if (result) {
-          // // get all account info when nickId empty..
-          // if (STR(userNickId).isEmpty) {
-            userInfo = await updateUserInfo();
-          // }
+          userInfo = await updateUserInfo();
           userInfo!.uid = await UserHelper().get_uid();
           userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
           var userEnc = await userInfo?.encryptAes;
           await UserHelper().setUser(loginInfo: userEnc);
-          LOG('-----------> loginUser success : [${userInfo!.uid}] '
+          LOG('----> startLogin success : [${userInfo!.uid}] '
               '${userInfo!.bioIdentityYN} / ${userInfo?.toJson()}');
         }
         return result;
@@ -744,17 +758,19 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<UserModel?> getUserInfo() async {
-    var result = await _api.getUserInfo();
+    var result = await _api.getUserInfo(onError: _apiError);
     if (result != null) {
       UserModel user = UserModel.createFromInfo(result);
-      LOG('---> user.certUpdt : ${user.certUpdt}');
+      LOG('---> user ex info : ${user.certUpdt} / '
+        '${user.withdrawDt}');
       return user;
     }
     return null;
   }
 
   // add new wallet & account..
-  Future<bool> createNewAccount(String passOrg, {String? mnemonic, String? privateKey}) async {
+  Future<bool> createNewAccount(String passOrg,
+    {String? mnemonic, String? privateKey}) async {
     LOG('--> createNewAccount : $passOrg');
     var result  = false;
     if (STR(privateKey).isNotEmpty) {
@@ -768,7 +784,8 @@ class LoginProvider extends ChangeNotifier {
     if (result) {
       await _refreshAccountList();
     }
-    LOG('--> createNewAccount result : $result <= $inputNick / ${account?.toJson()}');
+    LOG('--> createNewAccount result : $result <= $inputNick / '
+      '${account?.toJson()}');
     return result;
   }
 
@@ -786,7 +803,8 @@ class LoginProvider extends ChangeNotifier {
       LOG('--> addNewAccount message : $uid + $nickId + $walletAddress');
       var sig = await createSign(message);
       if (sig != null) {
-        var addResult = await _api.addAccount(nickId, walletAddress, sig);
+        var addResult = await _api.addAccount(nickId, walletAddress, sig,
+            onError: _apiError);
         if (addResult) {
           var result = await startLoginWithKey();
           LOG('--> addNewAccount result : $result');
@@ -805,18 +823,15 @@ class LoginProvider extends ChangeNotifier {
   }
 
   // change user nickId..
-  Future<bool> setUserNickId(String newNickId) async {
+  Future<bool?> setUserNickId(String newNickId) async {
     var uid     = STR(userInfo?.uid);
     var nickId  = Uri.encodeFull(STR(newNickId));
     var message = uid + nickId + walletAddress;
     LOG('--> setUserNickId : [$newNickId] / $message');
     var sig = await createSign(message);
     if (sig != null) {
-      var addResult = await _api.addAccount(nickId, walletAddress, sig, onError: _apiError);
-      if (addResult == true) {
-        LOG('--> setUserNickId success !!');
-        return true;
-      }
+      return await _api.addAccount(nickId, walletAddress, sig,
+          onError: _apiError);
     }
     return false;
   }
@@ -835,6 +850,7 @@ class LoginProvider extends ChangeNotifier {
         subTitle: info.subTitle,
         imageUrl: info.image,
         desc:     info.description,
+        onError: _apiError
       );
       if (addResult == true) {
         LOG('--> setUserInfo success !!');
@@ -855,8 +871,7 @@ class LoginProvider extends ChangeNotifier {
     selectAccount = select;
     await UserHelper().setUser(address: select.address);
     LOG('--> changeAccount : ${selectAccount?.toJson()}');
-    var result = await startLoginWithKey();
-    LOG('--> loginAuto result : $result');
+    var result = await startLoginWithKey(onError: _apiError);
     if (result != true) {
       return false;
     }
@@ -866,19 +881,19 @@ class LoginProvider extends ChangeNotifier {
 
   setAccountName(AddressModel account) async {
     if (isLogin) {
-      if (await setUserNickId(STR(account.accountName))) {
+      var setResult = await setUserNickId(STR(account.accountName));
+      if (setResult == true) {
         // nickId 가 변경될경우 jwt 값이 바뀌는 이유로 재로그인 필요..
         disableLockScreen();
-        var result = await startLoginWithKey();
-        LOG('--> loginAuto result : $result');
+        var result = await startLoginWithKey(onError: _apiError);
         enableLockScreen();
         if (result == true) {
-          await setLocalAccountInfo(account);
-          await _refreshAccountList();
+          await _refreshSelectAccount();
           notifyListeners();
         }
         return result;
       }
+      return setResult;
     }
     return false;
   }
@@ -886,8 +901,7 @@ class LoginProvider extends ChangeNotifier {
   setAccountInfo(AddressModel account) async {
     if (isLogin) {
       if (await setUserInfo(account)) {
-        await setLocalAccountInfo(account);
-        await _refreshAccountList();
+        await _refreshSelectAccount();
         notifyListeners();
         return true;
       }
@@ -900,11 +914,11 @@ class LoginProvider extends ChangeNotifier {
     if (addrListStr != 'NOT_ADDRESSLIST') {
       List<dynamic> accountList = json.decode(addrListStr);
       List<AddressModel> addrList = [];
-      // LOG('--> setLocalAccountName : ${account.toJson()} / ${accountList.length}');
       for (var item in accountList) {
         var itemModel = AddressModel.fromJson(item);
         if (account.address == itemModel.address) {
-          LOG('--> setLocalAccountName : ${account.toJson()} / ${accountList.length}');
+          LOG('--> setLocalAccountInfo change [${account.address}] : '
+            '${itemModel.accountName} <= ${account.accountName}');
           itemModel = itemModel.copyWithInfo(account);
         }
         addrList.add(itemModel);
@@ -921,14 +935,14 @@ class LoginProvider extends ChangeNotifier {
     return keyEnc != null;
   }
 
-  Future<EccKeyPair?> getAccountKey({String? passOrg, String? tmpKeyStr}) async {
+  Future<EccKeyPair?> getAccountKey(
+    {String? passOrg, String? tmpKeyStr}) async {
     try {
       passOrg ??= userPass;
       var keyData = tmpKeyStr ?? selectAccount?.keyPair;
       LOG('--> getAccountKey : [$passOrg] / $keyData');
       if (passOrg != null && STR(keyData).isNotEmpty) {
         var keyStr = await decryptData(passOrg, keyData!);
-        LOG('--> getAccountKey : $keyStr');
         if (keyStr != 'fail') {
           var keyPair = EccKeyPair.fromJson(jsonDecode(keyStr));
           return keyPair;
@@ -995,6 +1009,10 @@ class LoginProvider extends ChangeNotifier {
     showLoginErrorDialog(context, type, text: error).then((_) async {
       if (error == '__not_found__' || error == '__unauthorized__') {
         await logoutWithRemoveNickId();
+        mainPageIndex = 0;
+        mainPageIndexOrg = -1;
+        if (context.canPop()) context.pop();
+        notifyListeners();
       }
     });
   }
@@ -1127,7 +1145,15 @@ class LoginProvider extends ChangeNotifier {
   }
 
   logoutWithRemoveNickId() async {
-    LOG('--> logoutWithRemoveNickId : ${userInfo?.addressList?.length}');
+    await removeNickId();
+    if (isLogin) {
+      await logout();
+    }
+  }
+
+  removeNickId() async {
+    await _refreshAccountList();
+    LOG('--> removeNickId : ${userInfo?.addressList?.length}');
     if (userInfo?.addressList != null) {
       var addrListJson = [];
       for (AddressModel item in userInfo!.addressList!) {
@@ -1136,28 +1162,30 @@ class LoginProvider extends ChangeNotifier {
       }
       await UserHelper().setUser(addressList: jsonEncode(addrListJson));
     }
-    if (isLogin) {
-      await logout();
-    }
   }
 
   logout([var isRefresh = true]) async {
+    LOG('--> logout : $loginType');
     switch(loginType) {
       case LoginType.kakaotalk:
         await startKakaoLogout();
         break;
-      case LoginType.google:
-        await startGoogleLogout();
-        break;
       default:
     }
-    LOG('--> logout : $loginType');
+    await startGoogleLogout(); // logout for google drive..
     userInfo = null;
     await UserHelper().logoutUser();
     if (isRefresh) {
       notifyListeners();
     }
     return true;
+  }
+
+  withdraw([var isCancel = false]) async {
+    if (isCancel) {
+      return await _api.cancelWithdrawUser();
+    }
+    return await _api.setWithdrawUser();
   }
 
   Future<UserModel?> updateUserInfo() async {
@@ -1186,7 +1214,8 @@ class LoginProvider extends ChangeNotifier {
         }
       }
       LOG('--> addrListJson : $addrListJson');
-      userInfo!.certUpdt = tmpUserInfo.certUpdt;
+      userInfo!.certUpdt    = tmpUserInfo.certUpdt;
+      userInfo!.withdrawDt  = tmpUserInfo.withdrawDt;
       await UserHelper().setUser(addressList: jsonEncode(addrListJson));
       // LOG('--> _setAccountListFromServer result : ${userInfo?.toJson()}');
       return userInfo;

@@ -88,7 +88,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   pull_to_refresh: ^2.0.0
   webview_flutter: ^4.8.0
-
+#
   # image..
   image_picker: ^1.1.2
   image_cropper: ^5.0.0
@@ -128,6 +128,9 @@ dependencies:
   google_sign_in: ^6.2.1
   googleapis: ^12.0.0
   googleapis_auth: ^1.5.1
+
+#  # apple..
+#  icloud_storage: ^2.2.0
 
   # kakao..image_picker:
   kakao_flutter_sdk_user: ^1.9.0 # 카카오 로그인 API 패키지

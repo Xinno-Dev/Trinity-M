@@ -27,15 +27,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
           ?.map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       certUpdt: json['certUpdt'] as String?,
-      createTime: json['createTime'] == null
-          ? null
-          : DateTime.parse(json['createTime'] as String),
-      loginTime: json['loginTime'] == null
-          ? null
-          : DateTime.parse(json['loginTime'] as String),
-      logoutTime: json['logoutTime'] == null
-          ? null
-          : DateTime.parse(json['logoutTime'] as String),
+      withdrawDt: json['estimatedWithdrawDt'] as String?,
     );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) {
@@ -64,9 +56,7 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) {
   writeNotNull('deviceId', instance.deviceId);
   writeNotNull('deviceType', instance.deviceType);
   writeNotNull('certUpdt', instance.certUpdt);
-  writeNotNull('createTime', instance.createTime?.toIso8601String());
-  writeNotNull('loginTime', instance.loginTime?.toIso8601String());
-  writeNotNull('logoutTime', instance.logoutTime?.toIso8601String());
+  writeNotNull('estimatedWithdrawDt', instance.withdrawDt);
   writeNotNull(
       'addressList', instance.addressList?.map((e) => e.toJson()).toList());
   return val;

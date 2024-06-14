@@ -40,11 +40,9 @@ class UserModel {
   String? picThumb;         // thumbnail image
   String? deviceId;         // device uuid
   String? deviceType;       // device type ['android', 'ios'...]
-  String? certUpdt;         // 본인인증 여부
 
-  DateTime? createTime;
-  DateTime? loginTime;
-  DateTime? logoutTime;
+  String? certUpdt;         // 본인인증 시간
+  String? withdrawDt;       // 회원탈퇴 시간
 
   List<AddressModel>? addressList; // Map<address, model> address list..
 
@@ -69,10 +67,7 @@ class UserModel {
     this.deviceType,
     this.addressList,
     this.certUpdt,
-
-    this.createTime,
-    this.loginTime,
-    this.logoutTime,
+    this.withdrawDt,
   });
 
   static createFromKakao(kakao.User user) {
@@ -110,11 +105,11 @@ class UserModel {
   }
 
   static createFromInfo(JSON info) {
+    LOG('--> createFromInfo : ${info.toString()}');
     List<AddressModel> addr = [];
     var accounts = info['accounts'];
     if (accounts != null) {
       for (var item in accounts) {
-        LOG('--> createFromInfo addr item : $item');
         addr.add(AddressModel(
           accountName:  STR(item['nickId']),
           address:      STR(item['address']),
@@ -125,11 +120,12 @@ class UserModel {
       }
     }
     return UserModel(
-      status:     1,
-      uid:        STR(info['uid']),
-      email:      STR(info['email']),
-      certUpdt:   STR(info['certUpdt']),
-      addressList: addr
+      status:       1,
+      uid:          STR(info['uid']),
+      email:        STR(info['email']),
+      certUpdt:     STR(info['certUpdt']),
+      withdrawDt:   STR(info['estimatedWithdrawDt']),
+      addressList: addr,
     );
   }
 
@@ -141,7 +137,6 @@ class UserModel {
       status:    this.status,
       email:     this.email,
       loginType: this.loginType,
-      loginTime: this.loginTime,
     );
     return await AesManager().encrypt(pass, Uri.encodeFull(jsonEncode(loginInfo.toJson())));
   }

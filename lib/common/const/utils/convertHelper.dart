@@ -218,7 +218,7 @@ String ADDR(dynamic value, {String defaultValue = ''}) {
 String SERVER_TIME_STR(String? value, {String defaultValue = ''}) {
   try {
     if (STR(value).isNotEmpty) {
-      var dateTime = DateTime.parse(value!);
+      var dateTime = DateTime.parse(value!).toLocal();
       var format   = DateFormat('yyyy-MM-dd HH:mm:ss');
       return format.format(dateTime).toString();
     }

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:trinity_m_00/domain/model/user_model.dart';
 import 'package:trinity_m_00/presentation/view/signup/signup_email_screen.dart';
 
 import '../../../../common/const/utils/uihelper.dart';
@@ -44,6 +45,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
   var isNextReady = false;
   var isEmailReady = false;
   var passErrorText = '';
+  var reLogin = false;
 
   _checkNextReady() {
       isNextReady =
@@ -238,6 +240,24 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
     );
   }
 
+  _loginError(LoginErrorType type, String? error) {
+    LOG('--> _loginError : $type, $error');
+    showLoginErrorDialog(context, type, text: error).then((_) async {
+      if (error == '__not_found__') {
+        if (!reLogin) {
+          reLogin = true;
+          var prov = ref.read(loginProvider);
+          prov.userInfo = UserModel();
+          prov.mainPageIndex = 0;
+          prov.mainPageIndexOrg = -1;
+          await UserHelper().setUserKey(prov.inputEmail);
+          await prov.removeNickId();
+          prov.refresh();
+        }
+      }
+    });
+  }
+
   _startEmailLogin() async {
     var prov = ref.read(loginProvider);
     prov.inputEmail = emailInputController.text;
@@ -247,8 +267,11 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
     showLoadingDialog(context, '로그인중입니다...');
     await Future.delayed(Duration(milliseconds: 100));
     var result = await prov.loginEmail(onError: (code, text) {
+      LOG('--> loginEmail error : $code / $text');
       if (prov.inputEmail != EX_TEST_MAIL_EX) {
-        showToast(code.errorText);
+        // showToast(code.errorText);
+        hideLoadingDialog();
+        _loginError(code, text);
       }
     });
     LOG('----> loginProv.loginEmail result : $result');

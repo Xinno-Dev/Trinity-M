@@ -229,8 +229,8 @@ class MarketProvider extends ChangeNotifier {
   getPurchaseList() async {
     var address   = await UserHelper().get_address();
     var format    = DateFormat('yyyy-MM-dd');
-    var startStr  = format.format(purchaseStartDate).toString();
-    var endStr    = format.format(purchaseEndDate).toString();
+    var startStr  = format.format(purchaseStartDate.toUtc()).toString();
+    var endStr    = format.format(purchaseEndDate.toUtc()).toString();
     return await _repo.getPurchaseList(address, startDate: startStr, endDate: endStr);
   }
 
@@ -305,12 +305,10 @@ class MarketProvider extends ChangeNotifier {
     if (purchaseInfo != null) {
       var name    = P_STR(purchaseInfo?.name);
       var amount  = num.parse(STR(purchaseInfo?.buyPrice));
-      LOG('--> createPurchaseData : $name / $amount');
       payData = PaymentData(
         pg: PAYMENT_PG,
-        merchantUid: MERCHANT_UID,
+        merchantUid: '', // 추후 기입..
         payMethod: payMethod,
-        escrow: false,
         name: name,
         amount: amount,
         buyerName:  userInfo.userName,
@@ -318,6 +316,7 @@ class MarketProvider extends ChangeNotifier {
         buyerTel:   STR(userInfo.mobile),
         appScheme: 'iamport_payment',
         niceMobileV2: true,
+        escrow: false,
         popup: false,
         // period: {
         //   'from': '20240101',
@@ -325,6 +324,7 @@ class MarketProvider extends ChangeNotifier {
         // }
       );
       // 할부개월 설정..
+      LOG('--> createPurchaseData : $name / $amount');
       if (payMethod == 'card' && cardQuota != '0') {
         payData.cardQuota = [];
         if (cardQuota != '1') {
@@ -338,7 +338,8 @@ class MarketProvider extends ChangeNotifier {
 
 
   requestPurchaseWithImageId({Function(String)? onError}) async {
-    LOG('--> requestPurchaseWithImageId : ${purchaseInfo?.prodSaleId} / ${optionId} / $isBuying');
+    LOG('--> requestPurchaseWithImageId : ${purchaseInfo?.prodSaleId} '
+        '/ ${optionId} / $isBuying');
     if (optionId != null) {
       if (isBuying) {
         return false;
@@ -347,20 +348,21 @@ class MarketProvider extends ChangeNotifier {
       var result = await _repo.requestPurchase(
           STR(purchaseInfo?.prodSaleId), imgId: optionId, onError: (error) {
         if (error == '__not_found__' && onError != null) {
-          onError('이미 판매완료된 옵션 상품입니다.');
+          onError(TR('이미 판매완료된 옵션 상품입니다.'));
         }
       });
+      isBuying = false;
       if (result != null) {
-        purchaseInfo!.itemId = result.itemId;
+        purchaseInfo!.itemId      = result.itemId;
         purchaseInfo!.merchantUid = result.merchantUid;
         purchaseInfo!.buyPrice    = result.price; // price -> payPrice 로 변환
         purchaseInfo!.priceUnit   = result.priceUnit;
-        payData.merchantUid = STR(result.merchantUid);
+        purchaseInfo!.mid         = result.mid;
+        payData.merchantUid       = STR(result.merchantUid);
+        LOG('--> requestPurchaseWithImageId result : ${payData.merchantUid} '
+            '<= ${purchaseInfo?.toJson()}');
+        return purchaseInfo;
       }
-      LOG('--> requestPurchaseWithImageId result : ${payData
-          .merchantUid} <= ${result?.toJson()}');
-      isBuying = false;
-      return result != null;
     }
     return null;
   }

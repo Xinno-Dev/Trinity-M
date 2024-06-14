@@ -57,18 +57,18 @@ class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
                 [[prov.userEmail,'']]),
               grayDivider(),
               _viewModel.myInfoEditItem('ID(닉네임)',
-                [[prov.userId,'변경']], onEdit: () {
+                [[prov.userId,'변경']], onEdit: (_) {
                   _viewModel.showEditAccountName();
                 }),
               grayDivider(),
               _viewModel.myInfoEditItem('사용자 이름',
-                [[prov.userName,'변경']], onEdit: () {
+                [[prov.userName,'변경']], onEdit: (_) {
                   _viewModel.showEditSubTitle();
                 }),
               grayDivider(),
               _viewModel.myInfoEditItem('본인인증',
                 [[TR(prov.userIdentityYN ? '인증 완료' : '인증 미완료'),
-                  prov.userIdentityYN ? '' : '인증']], onEdit: () {
+                  prov.userIdentityYN ? '' : '인증']], onEdit: (_) {
                     Navigator.of(context).push(
                       createAniRoute(ProfileIdentityScreen())).then((result) {
                       prov.userInfo!.certUpdt = DateTime.now().toString();
@@ -77,25 +77,27 @@ class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
                 }),
               grayDivider(),
               _viewModel.myInfoEditItem('계정',
-                [[TR('계정 복구 단어 보기'),'보기']], onEdit: _showMnemonic),
+                [
+                  [TR('계정 복구 단어 보기'), '보기'],
+                  !prov.isWithdrawUser ?
+                    [TR('회원 탈퇴 신청'), '신청'] :
+                    [TR('회원 탈퇴 신청중'), '취소', '${TR('탈퇴 완료까지 남은시간')}: '
+                      '${prov.withdrawRemainTime}'],
+                ], onEdit: (index) {
+                  if (index == 0) {
+                    _showMnemonic();
+                  } else {
+                    _showWithdraw();
+                  }
+                }),
               grayDivider(),
               _viewModel.myInfoEditItem('인증',
-                [[TR('생체 인증 사용'), prov.userBioYN ? 'on' : 'off']], onToggle: _showBioIdentity),
-              if (IS_WITHDRAWAL_ON)...[
-                grayDivider(),
-                _viewModel.myInfoEditItem('회원 탈퇴', [[TR('회원 탈퇴 신청'), '신청']], onEdit: () {
-                  if (prov.isLogin) {
-                    prov.logout().then((_) {
-                      context.pop();
-                      prov.setMainPageIndex(0);
-                      showToast(TR('회원 탈퇴 신청 완료'));
-                    });
-                  }
-                })
-              ],
+                [[TR('생체 인증 사용'), prov.userBioYN ? 'on' : 'off']],
+                onToggle: _showBioIdentity),
               if (IS_APP_RESET_ON)...[
                 grayDivider(),
-                _viewModel.myInfoEditItem('앱 초기화', [[TR('로그아웃 & 앱 초기화'), '초기화']], onEdit: () {
+                _viewModel.myInfoEditItem('앱 초기화',
+                  [[TR('로그아웃 & 앱 초기화'), '초기화']], onEdit: (_) {
                   if (prov.isLogin) {
                     _clearLocalData();
                   }
@@ -121,6 +123,49 @@ class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
           });
       }
     });
+  }
+
+  _showWithdraw() {
+    final prov = ref.read(loginProvider);
+    if (prov.isWithdrawUser) {
+      showConfirmDialog(context,
+        TR('탈퇴 신청을 취소하시겠습니까?'),
+        title: TR('회원 탈퇴 취소'),
+      ).then((yn) {
+        if (yn == true) {
+          prov.withdraw(true).then((result) {
+            if (result) {
+              prov.userInfo!.withdrawDt = null;
+              prov.refresh();
+              showToast(TR('회원 탈퇴 취소 완료'));
+            } else {
+              showToast(TR('회원 탈퇴 취소 실패'));
+            }
+          });
+        }
+      });
+    } else {
+      showConfirmDialog(context,
+        TR('신청후 일정시간후에\n탈퇴 처리가 완료됩니다.'),
+        title: TR('회원 탈퇴 신청'),
+        alertText: TR('*주의: 탈퇴 처리가 완료된 후에는\n'
+          '본 계정으로 접속이 불가능하며,\n'
+          '보유한 자산이 있으면 잃어버리게 됩니다.'),
+        okText: TR('탈퇴 신청'),
+      ).then((yn) {
+        if (yn == true) {
+          prov.withdraw().then((result) {
+            if (result != null) {
+              prov.userInfo!.withdrawDt = result;
+              prov.refresh();
+              showToast(TR('회원 탈퇴 신청 완료'));
+            } else {
+              showToast(TR('회원 탈퇴 신청 실패'));
+            }
+          });
+        }
+      });
+    }
   }
 
   _showBioIdentity(value) {
