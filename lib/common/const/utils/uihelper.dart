@@ -380,6 +380,16 @@ defaultAppBar(String title, {Widget? leading, var isCanBack = true}) {
   );
 }
 
+closeAppBar(String title,
+  {Widget? leading, var isCanBack = true, Function()? onBack}) {
+  return defaultAppBar(title,
+    leading: CustomBackButton(
+      icon: Icon(Icons.close),
+      onPressed: onBack,
+    )
+  );
+}
+
 logoWidget({EdgeInsets? padding}) {
   return Container(
     padding: padding ?? EdgeInsets.symmetric(horizontal: 40),
@@ -572,7 +582,7 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type,
         content: Container(
           height: 150,
           constraints: BoxConstraints(
-            minWidth: 400.w,
+            minWidth: 400,
           ),
           alignment: Alignment.center,
           child: Column(
@@ -595,13 +605,13 @@ showLoginErrorDialog(BuildContext context, LoginErrorType type,
               ],
               if (type != LoginErrorType.code)...[
                 SizedBox(height: 10),
-                Text(type.errorText,
+                Text(TR(type.errorText),
                   style: typo16bold,
                   textAlign: TextAlign.center),
                 if (STR(text).isNotEmpty)...[
                   if (type.errorText.isNotEmpty)
                     SizedBox(height: 10.h),
-                  Text(STR(text),
+                  Text(TR(STR(text)),
                     style: type.errorText.isEmpty ? typo14bold : typo14normal,
                     textAlign: TextAlign.center),
                 ],

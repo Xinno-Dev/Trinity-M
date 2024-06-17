@@ -3,16 +3,17 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:trinity_m_00/common/const/constants.dart';
 import '../../../common/common_package.dart';
 import '../../../common/const/utils/uihelper.dart';
 
 import '../utils/convertHelper.dart';
 
-showImage(String imagePath, Size size, {BoxFit? fit}) {
-  if (imagePath.isEmpty) return Container();
-  if (imagePath.contains('http')) {
+showImage(String url, Size size, {BoxFit? fit}) {
+  if (url.isEmpty) return Container();
+  if (url.contains('http')) {
     return CachedNetworkImage(
-      imageUrl: imagePath,
+      imageUrl: url,
       width:  size.width  > 0 ? size.width  : null,
       height: size.height > 0 ? size.height : null,
       placeholder: (context, _) => Container(
@@ -25,7 +26,18 @@ showImage(String imagePath, Size size, {BoxFit? fit}) {
         alignment: Alignment.center,
         child: showLoadingFull(min(size.height, size.width) * 0.25),
       ),
-      fit: BoxFit.cover
+      errorListener: (listener) {
+        LOG('--> errorListener [$url] : $listener');
+      },
+      errorWidget: (context, error, object) {
+        return Container(
+          color: GRAY_20,
+          alignment: Alignment.center,
+          child: Text('no image..',
+            style: typo14normal, textAlign: TextAlign.center),
+        );
+      },
+      fit: fit ?? BoxFit.cover
     );
     // return FutureBuilder(future: getNetworkImageInfo(
     //   imagePath, showSize: size, fit: fit),
@@ -48,7 +60,7 @@ showImage(String imagePath, Size size, {BoxFit? fit}) {
     // });
   }
   return Image.asset(
-    imagePath,
+    url,
     width:  size.width  > 0 ? size.width  : null,
     height: size.height > 0 ? size.height : null,
     fit: fit);

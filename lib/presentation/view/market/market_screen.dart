@@ -35,17 +35,24 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(marketProvider);
+    final scrRatio = MediaQuery.of(context).size.width /
+                     MediaQuery.of(context).size.height;
+    isPadMode = scrRatio > 0.6;
+    LOG('---> scrRatio : [$isPadMode] $scrRatio - '
+      '${MediaQuery.of(context).size.width} / '
+      '${MediaQuery.of(context).size.height}');
+
     return Container(
       child: Stack(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 40.h),
+            margin: EdgeInsets.only(top: 40),
+            padding: EdgeInsets.symmetric(horizontal: 15),
             child: _viewModel.showProductList(),
           ),
           _viewModel.showCategoryBar(),
         ]
       )
     );
-
   }
 }

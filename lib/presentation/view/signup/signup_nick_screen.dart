@@ -148,7 +148,7 @@ class _InputNickScreenState extends ConsumerState<SignUpNickScreen> {
                       round: 0,
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode()); //remove focus
-                        showLoadingDialog(context, '회원 가입중입니다...');
+                        showLoadingDialog(context, TR('회원 가입중입니다...'));
                         Future.delayed(Duration(milliseconds: 200)).then((_) {
                           loginProv.signUpUser().then((result) {
                             hideLoadingDialog();

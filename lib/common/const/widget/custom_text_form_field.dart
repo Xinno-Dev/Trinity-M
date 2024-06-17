@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:trinity_m_00/common/const/constants.dart';
+import 'package:trinity_m_00/common/provider/language_provider.dart';
+import 'package:provider/provider.dart' as provider;
 
 import '../../common_package.dart';
 import '../utils/convertHelper.dart';
@@ -122,11 +124,14 @@ class CustomTextFormField extends StatelessWidget {
 
   _checkError(context) {
     var text = controller.text;
+    var isKor = provider.Provider.of<LanguageProvider>(context, listen: false)
+        .isKor;
     return (minLength != null && text.length < minLength!)
-        ? '${minLength!}${TR('자 이상 입력해 주세요.')}'
+        ? isKor ? '${minLength!} 자 이상 입력해 주세요.'
+        : 'Please enter at least ${minLength!} characters.'
         : (textInputType == TextInputType.emailAddress &&
           !EmailValidator.validate(text)) ?
-        TR('이메일 형식을 확인해 주세요') : null;
+        TR('이메일 형식을 확인해 주세요.') : null;
   }
 
   @override

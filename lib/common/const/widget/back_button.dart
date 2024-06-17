@@ -3,9 +3,11 @@ import '../../../common/common_package.dart';
 class CustomBackButton extends StatelessWidget {
   CustomBackButton({
     super.key,
+    this.icon,
     this.onPressed,
   });
 
+  final Widget? icon;
   final Function()? onPressed;
 
   @override
@@ -16,7 +18,7 @@ class CustomBackButton extends StatelessWidget {
         height: 40.r,
         color: Colors.transparent,
         child: Center(
-          child: Icon(Icons.arrow_back),
+          child: icon ?? Icon(Icons.arrow_back),
         ),
       ),
       onPressed: onPressed

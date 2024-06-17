@@ -52,29 +52,31 @@ class GoogleService extends GoogleAccount {
   }
 
   static signIn() async {
-    googleUser = await GoogleSignIn(
-      scopes: [
-        // 'email', 'openid', 'profile', // for Login..
-        'https://www.googleapis.com/auth/drive',
-      ]
-    ).signIn();
-
-    if (googleUser != null) {
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth
+    try {
+      googleUser = await GoogleSignIn(
+          scopes: [
+            // 'email', 'openid', 'profile', // for Login..
+            'https://www.googleapis.com/auth/drive',
+          ]
+      ).signIn();
+      if (googleUser != null) {
+        // Obtain the auth details from the request
+        final GoogleSignInAuthentication? googleAuth
         = await googleUser?.authentication;
 
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
-
-      // Once signed in, return the UserCredential
-      final result = await FirebaseAuth.instance.signInWithCredential(
-          credential);
-      LOG('---> signIn result : $result');
-      return result;
+        // Create a new credential
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken,
+          idToken: googleAuth?.idToken,
+        );
+        // Once signed in, return the UserCredential
+        final result = await FirebaseAuth.instance.signInWithCredential(
+            credential);
+        LOG('---> signIn result : $result');
+        return result;
+      }
+    } catch (e) {
+      LOG('---> signIn error : $e');
     }
     return null;
   }
@@ -201,70 +203,75 @@ class GoogleService extends GoogleAccount {
             insetPadding: EdgeInsets.zero,
             actionsPadding: EdgeInsets.fromLTRB(0, 0, 20, 5),
             contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isUpload)
-                  Container(
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(TR('파일명'), style: typo12bold),
-                        SizedBox(height: 5),
-                        Text(STR(ext), style: typo14normal),
-                      ],
+            content: Container(
+              constraints: BoxConstraints(
+                minWidth: 400
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isUpload)
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(TR('파일명'), style: typo12bold),
+                          SizedBox(height: 5),
+                          Text(STR(ext), style: typo14normal),
+                        ],
+                      ),
                     ),
-                  ),
-                Text(TR('저장폴더'), style: typo12bold),
-                SizedBox(height: 5),
-                FutureBuilder(
-                  future: _getDriveFileList(isFolderOnly: isUpload, ext: ext),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      List<DropdownMenuItem> dirList = snapshot.data!.map((e) =>
-                          dirItem(e.title, '${e.title}&/${e.id}', isDir: isUpload)).toList();
-                      dirListData[folderId] = snapshot.data as List<dv.File>;
-                      if (isUpload) {
-                        dirList.insert(0, dirItem(folderTitle, '[top]', isTop: true));
-                        if (selectDir.isNotEmpty) {
-                          dirList.insert(1, dirItem('..', '[back]'));
+                  Text(TR('저장 폴더'), style: typo12bold),
+                  SizedBox(height: 5),
+                  FutureBuilder(
+                      future: _getDriveFileList(isFolderOnly: isUpload, ext: ext),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<DropdownMenuItem> dirList = snapshot.data!.map((e) =>
+                              dirItem(e.title, '${e.title}&/${e.id}', isDir: isUpload)).toList();
+                          dirListData[folderId] = snapshot.data as List<dv.File>;
+                          if (isUpload) {
+                            dirList.insert(0, dirItem(folderTitle, '[top]', isTop: true));
+                            if (selectDir.isNotEmpty) {
+                              dirList.insert(1, dirItem('..', '[back]'));
+                            }
+                          } else if (selectDir.isEmpty && dirList.isNotEmpty) {
+                            selectDir.add(dirList.first.value);
+                          }
+                          return _driveSelectWidget(dirList,
+                              selectValue: !isUpload ? selectDir.last : null,
+                              onSelected: (select) {
+                                setState(() {
+                                  if (select == '[back]') {
+                                    selectDir.removeLast();
+                                    LOG('---> back dir : ${selectDir.length}');
+                                  }
+                                  else if (select != '[top]' && (selectDir.isEmpty || selectDir.last != select)) {
+                                    LOG('---> selectDir add : $select / ${selectDir.length}');
+                                    selectDir.add(select);
+                                  }
+                                });
+                              });
+                        } else {
+                          return CircularProgressIndicator();
                         }
-                      } else if (selectDir.isEmpty && dirList.isNotEmpty) {
-                        selectDir.add(dirList.first.value);
-                      }
-                      return _driveSelectWidget(dirList,
-                        selectValue: !isUpload ? selectDir.last : null,
-                        onSelected: (select) {
-                          setState(() {
-                            if (select == '[back]') {
-                              selectDir.removeLast();
-                              LOG('---> back dir : ${selectDir.length}');
-                            }
-                            else if (select != '[top]' && (selectDir.isEmpty || selectDir.last != select)) {
-                              LOG('---> selectDir add : $select / ${selectDir.length}');
-                              selectDir.add(select);
-                            }
-                          });
-                      });
-                    } else {
-                      return CircularProgressIndicator();
-                    }
-                  })
-              ],
+                      })
+                ],
+              ),
             ),
             actions: [
               TextButton(
                 onPressed: context.pop,
-                child: Text('Cancel'),
+                child: Text(TR('취소')),
               ),
               TextButton(
                 onPressed: () {
                   LOG('---> select : $folderId');
                   context.pop(folderId);
                 },
-                child: Text(isUpload ? 'Upload' : 'Download'),
+                child: Text(TR(isUpload ? '업로드' : '다운로드')),
               ),
             ],
           );
@@ -370,7 +377,7 @@ class GoogleService extends GoogleAccount {
   static Future<bool> _uploadToGoogleDrive(context, desc, fileName, {var parentId = ''}) async {
     LOG('--> _uploadToGoogleDrive : $desc / $parentId');
     var result = false;
-    showLoadingDialog(context, '복구키를 백업중 입니다..');
+    showLoadingDialog(context, TR('복구키를 백업중 입니다..'));
     try {
       var client = GoogleHttpClient(await googleUser!.authHeaders);
       var drive = dv.DriveApi(client);
@@ -398,13 +405,13 @@ class GoogleService extends GoogleAccount {
       LOG('--> _uploadToGoogleDrive error : $e');
     }
     hideLoadingDialog();
-    showToast(result ? "복구키 백업 완료" : "복구키 백업 실패");
+    showToast(TR(result ? '복구키 백업 완료' : '복구키 백업 실패'));
     return result;
   }
 
   static Future<String?> _downloadFromGoogleDrive(context, fileId) async {
     LOG('--> _downloadFromGoogleDrive : $fileId');
-    showLoadingDialog(context, '복구키를 내려받는 중 입니다..');
+    showLoadingDialog(context, TR('복구키를 내려받는 중 입니다..'));
     String? rwfText;
     try {
       var client  = GoogleHttpClient(await googleUser!.authHeaders);
@@ -423,7 +430,7 @@ class GoogleService extends GoogleAccount {
       LOG('--> _downloadFromGoogleDrive error : $e');
     }
     hideLoadingDialog();
-    showToast(rwfText != null ? "복구키 받기 완료" : "복구키 받기 실패");
+    showToast(TR(rwfText != null ? '복구키 받기 완료' : '복구키 받기 실패'));
     return rwfText;
   }
 

@@ -192,7 +192,7 @@ class _RegistLocalAuthScreenState extends State<RegistLocalAuthScreen> {
                     Padding(
                       padding: EdgeInsets.only(left: 20.r, right: 20.r),
                       child: Text(
-                        TR('빠른 이용을 위해\n생체인증을 설정하세요'),
+                        TR('빠른 이용을 위해\n생체인증을 설정하세요.'),
                         style: typo24bold150,
                       ),
                     ),

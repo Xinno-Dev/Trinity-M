@@ -150,20 +150,23 @@ class AppLocalization {
       'BYFFIN 지갑 사용을 위한 비밀번호\n숫자 6자리를 등록합니다.':
       'Register a 6-digit password\nto use BYFFIN wallet.',
       // RegistCompleteScreen..............
-      '로그인하기': 'Log in',
+      '로그인하기': 'Login',
       '자산으로 가기': 'Go to asset',
       'BYFFIN 지갑 을\n만들었습니다': 'BYFFIN wallet\ncreated',
       '비밀번호 변경이\n완료되었습니다': 'Password change\ncompleted',
-      '새로운 비밀번호로 로그인을 해주세요': 'Please log in with a new password',
+      '새로운 비밀번호로 로그인을 해주세요': 'Please Login with a new password',
       '새 계정을 추가했습니다': 'A new account has been added',
       '계정을 불러왔습니다': 'Your account has been loaded',
       // RegistLocalAuthScreen.............
       '권한이 허용되지 않았습니다.': 'Permission not granted.',
       '생체인증 사용동의': 'Consent to use biometric authentication',
-      '빠른 이용을 위해\n생체인증을 설정하세요': 'For quick use\nSet up biometric authentication',
-      '본인확인 목적으로 기기에 등록된 모든 생체정보를\n이용하여 BYFFIN 지갑의 로그인 및 인증작업을 진행하며\n서버로 전송/저장되지 않습니다.':
-      'For identity verification purposes,\nall biometric information registered\n'
-      'on the device is used to log in and\nauthenticate the BYFFIN Wallet.\nIt is not transmitted/saved to the server.',
+      '빠른 이용을 위해\n생체인증을 설정하세요.': 'For quick use\nSet up biometric authentication.',
+      '본인 확인 목적으로 기기에 등록된 생체정보를\n'
+          '이용하여 로그인 및 인증작업을 진행하며,\n'
+          '서버로 전송/저장되지 않습니다.':
+      'Biometric information registered on the device\nfor identity verification purposes\n'
+          'Proceed with login and authentication using,\n'
+          'It will not be sent/saved to the server.',
       '생체인증 사용 동의': 'Consent to use biometric authentication',
       '다음에 하기': 'Do it next time',
       '생체인증 사용': 'Use biometric authentication',
@@ -506,7 +509,6 @@ class AppLocalization {
       '계정 복구 단어 보기': 'View account recovery words',
       '회원 탈퇴 신청': 'Apply for membership withdrawal',
       '신청': 'Application',
-      '회원 탈퇴 신청 완료': 'Withdrawal application completed',
       '로그아웃 & 앱 초기화': 'Log out & reset app',
       '구매 내역': 'Purchase history',
       '이용약관': 'Terms of use',
@@ -548,7 +550,7 @@ class AppLocalization {
       '변경할 이름을 입력해 주세요.': 'Please enter the name you want to change.',
       'ID(닉네임) 변경': 'Change ID(nickname)',
       '프로필 정보가 없습니다.': 'There is no profile information.',
-      '사업자명: Xinno Inc.\n'
+      '사업자명: 주식회사 엑시노\n'
           '대표이사: 이지민\n'
           '등록번호: 644-86-03081\n'
           '대표번호: 070-4304-5778\n'
@@ -558,8 +560,127 @@ class AppLocalization {
           'Registration number: 644-86-03081\n'
           'Phone number: 070-4304-5778\n'
           '#126-Na94, 13 Seoun-ro, Seocho-gu, Seoul',
+      '(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다.\n'
+          '이에 따라, 당사는 상품, 거래정보 및 거래에 대하여 책임을 지지 않습니다.':
+      'Exino Co., Ltd. is a mail order intermediary\nand is not a party to the mail order.\n'
+          'Accordingly, we are not responsible for products,\ntransaction information, or transactions.',
+
       '새 버전': 'New version',
-      '': '',
+      '비밀번호를\n입력해 주세요.': 'Please enter\nyour password.',
+      '복구 비밀번호를\n등록해 주세요.': 'Please register\nyour recovery password.',
+      '복구 비밀번호를\n입력해 주세요.': 'Please enter\nthe recovery password.',
+      '새 비밀번호를\n입력해 주세요.': 'Please enter\nthe new password.',
+      '비밀번호를\n등록해 주세요.': 'Please register\nyour password.',
+      '회원가입시 생성한\n비밀번호를 입력해 주세요.': 'Please enter the password\nyou created when signing up.',
+      '클라우드에 복구 단어를 백업합니다.\n'
+          '앱 재설치시 복구 비밀번호를 사용하여\n지갑복구가 가능합니다.':
+      'Backup your recovery words to the cloud.\n'
+          'When reinstalling the app, you can recover\nyour wallet using the recovery password.',
+      '클라우드에 백업시 생성한\n비밀번호를 입력해 주세요.':
+          'Please enter the password you\ncreated when backing up to the cloud.',
+      '비밀번호 등록을 진행합니다.': 'Proceed with password registration.',
+      '상품 목록 마지막입니다.': 'This is the last product list.',
+      '계정 복구 단어 백업': 'Recovery Word Backup',
+      '계정 복구를 위한\n복구 단어를 보관하세요.': 'Please save the Recovery word\nfor account recovery.',
+      '계정 복구 단어를 안전한 곳에 보관해 주세요.\n잃어버리실 경우 계정 복구가 불가합니다.':
+          'Please keep your account recovery words in a safe place.\n'
+              'If you lose your account, recovery is not possible.',
+      '클라우드 백업': 'Cloud backup',
+      '복구 단어 복사하기': 'Copy recovery word',
+      '문구가 복사되었습니다.': 'The text has been copied.',
+      '회원가입 완료.': 'Membership registration completed.',
+      '보유중인 상품이 없슴니다.': 'There are no products in stock.',
+      '비밀번호 재입력': 'Re-enter password',
+      '클라우드 백업을 위해\n구글 로그인을 진행합니다.':
+        'For cloud backup\nProceed to Google login.',
+      '클라우드 접근을 위해\n구글 로그인을 진행합니다.':
+        'To access the cloud\nProceed to login to Google.',
+      '전체': 'All',
+      '골프': 'Golf',
+      'F&B': 'F&B',
+      '숙박': 'Hotel',
+      '여행': 'Tour',
+      '공연': 'Show',
+      '레저': 'Leisure',
+      '영화': 'Movie',
+      '게임': 'Game',
+      '저장 위치 선택': 'Select storage location',
+      '파일명': 'Filename',
+      '저장 폴더': 'Save folder',
+      '복구 파일 선택': 'Select recovery file',
+      '업로드': 'Upload',
+      '다운로드': 'Download',
+      '복구키를 백업중 입니다..': 'Backing up the recovery key..',
+      '복구키를 내려받는 중 입니다..': 'Downloading recovery key..',
+      '복구키 백업 완료': 'Recovery key backup completed',
+      '복구키 백업 실패': 'Recovery key backup failed',
+      '복구키 받기 완료': 'Completed receiving recovery key',
+      '복구키 받기 실패': 'Failed to receive recovery key',
+      '로그아웃 완료': 'Logout complete',
+      '로그인이 필요한 서비스입니다.': 'This service requires login.',
+      '로그인': 'Login',
+      '이메일로 로그인': 'Login with Email',
+      '카카오로 로그인': 'Login with Kakao',
+      '이메일로 회원가입': 'Sign up by Email',
+      '카카오로 회원가입': 'Sign up by Kakao',
+      '이메일 로그인': 'Login with Email',
+      '이메일 형식을 확인해 주세요.': 'Please check your email format.',
+      '로그인중입니다...': 'Logging in...',
+      '로그인 성공': 'log-in succeed',
+      '이메일 인증을 진행합니다.': 'Proceed with email verification.',
+      '이메일을\n등록해 주세요.': 'Please register\nyour email address.',
+      '이메일 주소 입력': 'Input email address',
+      '인증 링크 받기': 'Get verification link',
+      '발송 완료 / 재발송': 'Sent completed / Resend',
+      '이메일 인증 완료': 'Email verification completed',
+      '이메일 등록': 'Email registration',
+      '인증 링크가 발송 되었습니다.': 'A verification link has been sent.',
+
+      '서버에 접속할 수 없습니다.': 'Unable to connect to server.',
+      '이미 사용중인 이메일주소입니다.': 'This email address is already in use.',
+      '메일전송에 실패했습니다.': 'Email sending failed.',
+      '메일확인에 실패했습니다.': 'Email verification failed.',
+      '인증이 완료되지않았습니다.\n(받은 이메일을 확인해 주세요)':
+        'Authentication has not been completed.\n(Please check the email you received)',
+      '이미 사용중인 닉네임입니다.': 'this nickname is already using.',
+      '잘못된 계정이나 패스워드 입니다.': 'Invalid account or password.',
+      '잘못된 패스워드 입니다.': 'This is an incorrect password.',
+      '카카오 로그인에 실패했습니다.': 'Kakao login failed.',
+      '로그인에 실패했습니다.': 'Login failed.',
+      '복구가 필요한 이메일입니다.': 'This email needs recovery.',
+      '복구에 실패했습니다.': 'Recovery failed.',
+      '회원가입이 필요한 메일입니다.': 'This email requires membership registration.',
+      '회원가입에 실패했습니다.': 'Membership registration failed.',
+      '트리니티M 을 이용해주셔서 감사합니다.\n서비스 이용을 위해 약관 동의가 필요합니다.':
+        'Thank you for using Trinity M.\n'
+        'Agreement to the terms and conditions\nis required to use the service.',
+      '사용자 이름을\n등록해 주세요.': 'Please register\nyour user name.',
+      '서비스에서 사용 될 ID(닉네임)입니다.\n가입 후 변경 가능합니다.':
+        'This is the ID (nickname) that will be used in the service.\nYou can change it after signing up.',
+      '사용자 이름 입력': 'Enter your username',
+      '중복 확인': 'Double check',
+      '중복 확인 완료': 'Duplicate check completed',
+      '회원 가입중입니다...': 'Signing up as a member...',
+      '회원가입 성공': 'Membership registration successful',
+      '회원가입 실패': 'Membership registration failed',
+      '생체인증 등록': 'Biometric authentication registration',
+      '건너뛰기': 'Skip',
+      '본인 인증': 'Identity verification',
+      '잠시만 기다려주세요...': 'please wait for a moment...',
+      '본인인증 성공': 'Identity verification successful',
+      '본인인증 실패': 'Identity verification failed',
+      '이미 본인인증을 완료했습니다.': 'Already completed your identity verification.',
+      '인증 미완료': 'Authentication incomplete',
+      '신청후 일정시간후에\n탈퇴 처리가 완료됩니다.': 'The withdrawal process will be completed\na certain period of time after application.',
+      '*주의: 탈퇴 처리가 완료된 후에는\n'
+        '본 계정으로 접속이 불가능하며,\n'
+        '보유한 자산이 있으면 잃어버리게 됩니다.': '*Caution: After withdrawal processing is completed\n'
+        'Connection is not possible with this account,\n'
+        'If you have any assets, you will lose them.',
+      '탈퇴 신청': 'Application for withdrawal',
+      '회원 탈퇴 신청 완료': 'Membership withdrawal application completed',
+      '회원 탈퇴 신청 실패': 'Membership withdrawal application failed',
+      '앱 초기화 완료': 'App initialization complete',
       '': '',
     },
     'ko': {

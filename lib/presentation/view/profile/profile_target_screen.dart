@@ -42,18 +42,8 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
     final loginProv = ref.watch(loginProvider);
     return loginProv.isScreenLocked ? lockScreen(context) :
       Scaffold(
-        appBar: AppBar(
-          title: Text(TR(STR(widget.seller.nickId))),
-          centerTitle: true,
-          titleTextStyle: typo16bold,
-          backgroundColor: Colors.white,
-          // automaticallyImplyLeading: false,
-          // leading: IconButton(
-          //   onPressed: context.pop,
-          //   icon: Icon(Icons.close),
-          // ),
-        ),
-        backgroundColor: Colors.white,
+        appBar: closeAppBar(STR(widget.seller.nickId), onBack: context.pop),
+        backgroundColor: WHITE,
         body: ListView(
           shrinkWrap: true,
           padding: EdgeInsets.symmetric(horizontal: 20),

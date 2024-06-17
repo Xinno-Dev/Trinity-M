@@ -173,12 +173,12 @@ class _SignUpEmailScreenState extends ConsumerState<SignUpEmailScreen> {
                                 }
                               }
                             },
-                            text: '인증 링크 받기',
+                            text: TR('인증 링크 받기'),
                             height: 45,
                           ) : DisabledButton(
-                            text: TR(prov.isEmailSendDone
-                              ? '발송 완료 / 재발송 ${EMAIL_SEND_TIME_MAX - _seconds}'
-                              : '인증 링크 받기'),
+                            text: prov.isEmailSendDone
+                              ? '${TR('발송 완료 / 재발송')} ${EMAIL_SEND_TIME_MAX - _seconds}'
+                              : TR('인증 링크 받기'),
                             height: 45,
                           ),
                             // InkWell(

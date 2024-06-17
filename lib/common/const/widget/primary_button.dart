@@ -47,7 +47,7 @@ class PrimaryButton extends StatelessWidget {
         focusColor: hoverColor ?? Colors.white,
         child: Container(
           width: width,
-          height: height ?? (isSmallButton ? 40.h : 56.h),
+          height: height ?? (isSmallButton ? 40 : 56),
           padding: padding,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(round ?? 8),

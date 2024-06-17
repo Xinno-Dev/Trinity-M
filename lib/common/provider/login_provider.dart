@@ -11,6 +11,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:trinity_m_00/presentation/view/signup/login_screen.dart';
+import 'package:provider/provider.dart' as provider;
 
 import '../../data/repository/ecc_repository_impl.dart';
 import '../../domain/model/address_model.dart';
@@ -29,6 +30,7 @@ import '../const/utils/languageHelper.dart';
 import '../const/utils/uihelper.dart';
 import '../const/utils/userHelper.dart';
 import '../const/utils/walletHelper.dart';
+import 'language_provider.dart';
 
 enum LoginType {
   kakaotalk,
@@ -110,9 +112,9 @@ enum LoginErrorType {
       case loginFail:
         return '로그인에 실패했습니다.';
       case recoverRequire:
-        return '지갑 복구가 필요한 이메일입니다.';
+        return '복구가 필요한 이메일입니다.';
       case recoverFail:
-        return '지갑 복구에 실패했습니다.';
+        return '복구에 실패했습니다.';
       case signupRequire:
         return '회원가입이 필요한 메일입니다.';
       case signupFail:
@@ -393,7 +395,7 @@ class LoginProvider extends ChangeNotifier {
       if (STR(user).isNotEmpty) {
         loginAuto(user!).then((result) {
           if (isLogin) {
-            showToast('${account?.accountName} 로그인 완료');
+            showToast('${account?.accountName} ${TR('로그인 완료')}');
             notifyListeners();
           }
         });
@@ -1038,7 +1040,10 @@ class LoginProvider extends ChangeNotifier {
   nickInput(String nickId) {
     nickStep = NickCheckStep.none;
     if (nickId.length < NICK_LENGTH_MIN) {
-      return '$NICK_LENGTH_MIN 자 이상 입력해 주세요.';
+      var isKor = provider.Provider.of<LanguageProvider>(context, listen: false)
+          .isKor;
+      return isKor ? '$NICK_LENGTH_MIN 자 이상 입력해 주세요.' :
+        'Please enter at least $NICK_LENGTH_MIN characters.';
     }
     inputNick = nickId;
     nickStep = NickCheckStep.ready;

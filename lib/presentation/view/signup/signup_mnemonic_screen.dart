@@ -103,7 +103,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           crossAxisSpacing: 4,
-                          mainAxisSpacing: 6.r,
+                          mainAxisSpacing: 5,
                           childAspectRatio: mnBoxRatio,
                         ),
                         physics: NeverScrollableScrollPhysics(),
@@ -161,10 +161,13 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                       ),
                       onTap: () async {
                         await Clipboard.setData(ClipboardData(text: mnemonic));
-                        final androidInfo = await DeviceInfoPlugin().androidInfo;
-                        if (defaultTargetPlatform == TargetPlatform.iOS ||
-                          androidInfo.version.sdkInt < 32)
-                          showToast(TR('문구가 복사되었습니다'));
+                        if (defaultTargetPlatform == TargetPlatform.iOS) {
+                          showToast(TR('문구가 복사되었습니다.'));
+                        } else {
+                          var androidInfo = await DeviceInfoPlugin().androidInfo;
+                          if (androidInfo.version.sdkInt < 32)
+                            showToast(TR('문구가 복사되었습니다.'));
+                        }
                       },
                     ),
                   ),
@@ -215,7 +218,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
             ref.read(loginProvider).mainPageIndexOrg = 0;
             context.pushReplacementNamed(
                 MainScreen.routeName, queryParams: {'selectedPage': '1'});
-            showToast(TR('회원가입 완료'));
+            showToast(TR('회원가입 완료.'));
           },
         ) : null,
     );

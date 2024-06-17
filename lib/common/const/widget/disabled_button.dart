@@ -21,7 +21,7 @@ class DisabledButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: height ?? (isSmallButton ? 40.h : 56.h),
+        height: height ?? (isSmallButton ? 40 : 56),
         decoration: BoxDecoration(
           color: GRAY_10,
           borderRadius: BorderRadius.circular(round ?? 8),

@@ -85,7 +85,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     Align(
                       alignment: Alignment.topCenter,
                       child: Container(
-                        height: 400 - (!widget.isAppStart ? kToolbarHeight : 0),
+                        height: MediaQuery.of(context).size.height * 0.6,
+                        alignment: Alignment.center,
                         child: logoWidget(),
                       ),
                     ),
@@ -310,18 +311,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             onTap: () {
               ref.read(loginProvider).toggleLogin();
             },
-            child: Column(
-              children: [
-                Text(
-                  TR(isSignUp ? '로그인' : '회원가입'),
-                  style: typo14semibold.copyWith(color: GRAY_50),
-                ),
-                Container(
-                  width: 60.w,
-                  height: 1,
-                  color: GRAY_50,
-                )
-              ],
+            child: Text(
+              TR(isSignUp ? '로그인' : '회원가입'),
+              style: typo16under.copyWith(color: GRAY_50),
             )
           ),
         ],

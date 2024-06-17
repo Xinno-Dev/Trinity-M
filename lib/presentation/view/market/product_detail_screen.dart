@@ -55,56 +55,56 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         systemNavigationBarColor: WHITE,
       ),
       child: Scaffold(
-          appBar: defaultAppBar(TR('상품 정보')),
-          backgroundColor: WHITE,
-          body: FutureBuilder(
-            future: prov.getProductDetail(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return ListView(
-                  shrinkWrap: true,
-                  children: [
-                    _viewModel.showProductDetail(widget.isShowSeller),
-                    if (prov.isShowDetailTab)
-                      _viewModel.showProductInfoTab(ref),
-                  ]
-                );
-              } else {
-                return showLoadingFull();
-              }
+        appBar: closeAppBar(TR('상품 정보'), onBack: context.pop),
+        backgroundColor: WHITE,
+        body: FutureBuilder(
+          future: prov.getProductDetail(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView(
+                shrinkWrap: true,
+                children: [
+                  _viewModel.showProductDetail(widget.isShowSeller),
+                  if (prov.isShowDetailTab)
+                    _viewModel.showProductInfoTab(ref),
+                ]
+              );
+            } else {
+              return showLoadingFull();
             }
-          ),
-          bottomNavigationBar:
-            widget.isCanBuy ? loginProv.isLogin ?
-            OpenContainer(
-              transitionType: ContainerTransitionType.fadeThrough,
-              closedBuilder: (context, builder) {
-                return PrimaryButton(
-                  text: TR('구매하기'),
-                  round: 0,
-                );
-              },
-              openBuilder: (context, builder) {
-                return ProductBuyScreen();
-              },
-            ) : PrimaryButton(
-              onTap: () {
-                Navigator.of(context).push(
-                  createAniRoute(LoginScreen(
-                  isAppStart: false, isWillReturn: true)))
-                  .then((result) {
-                    if (BOL(result)) {
-                      prov.refresh();
-                      Navigator.of(context).push(
-                        createAniRoute(ProductBuyScreen()));
-                    }
-                });
-              },
-              text: TR('구매하기'),
-              round: 0,
-            ) : null
-          )
+          }
+        ),
+        bottomNavigationBar:
+          widget.isCanBuy ? loginProv.isLogin ?
+          OpenContainer(
+            transitionType: ContainerTransitionType.fadeThrough,
+            closedBuilder: (context, builder) {
+              return PrimaryButton(
+                text: TR('구매하기'),
+                round: 0,
+              );
+            },
+            openBuilder: (context, builder) {
+              return ProductBuyScreen();
+            },
+          ) : PrimaryButton(
+            onTap: () {
+              Navigator.of(context).push(
+                createAniRoute(LoginScreen(
+                isAppStart: false, isWillReturn: true)))
+                .then((result) {
+                  if (BOL(result)) {
+                    prov.refresh();
+                    Navigator.of(context).push(
+                      createAniRoute(ProductBuyScreen()));
+                  }
+              });
+            },
+            text: TR('구매하기'),
+            round: 0,
+          ) : null
         )
-      );
+      )
+    );
   }
 }

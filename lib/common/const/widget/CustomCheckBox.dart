@@ -41,8 +41,8 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
       child: Row(
         children: [
           Container(
-              width: 24.r,
-              height: 24.r,
+              width: 24,
+              height: 24,
               decoration: BoxDecoration(
                 color: isChecked ? PRIMARY_90 : GRAY_20,
                 borderRadius: BorderRadius.circular(12.0),
@@ -72,7 +72,7 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
           ),
           if (widget.pushed)...[
             // Spacer(),
-            SizedBox(width: 5.w),
+            SizedBox(width: 5),
             TextButton(
               onPressed: widget.onPushnamed,
               child: Icon(Icons.navigate_next)),

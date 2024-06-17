@@ -49,7 +49,7 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
             children: [
               // Image.asset('assets/images/iamport-logo.png'),
               // Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-              Text('잠시만 기다려주세요...', style: TextStyle(fontSize: 20)),
+              Text(TR('잠시만 기다려주세요...'), style: TextStyle(fontSize: 20)),
             ],
           ),
         ),
@@ -98,7 +98,7 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
   }
 
   _identityAlreadyFail() {
-    showToast(TR('이미 본인인증을 완료했습니다'));
+    showToast(TR('이미 본인인증을 완료했습니다.'));
     context.pop();
   }
 }

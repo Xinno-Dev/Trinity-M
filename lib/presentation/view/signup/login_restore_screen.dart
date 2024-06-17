@@ -76,7 +76,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
                     TR('지갑 복구 수단을\n선택해 주세요.'),
                     style: typo24bold150,
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 15.h),
                   Text(
                     TR('서비스 이용을 위해 지갑 복구가 필요합니다.\n'
                        '지갑 복구방식을 선택해 주세요.'),

@@ -114,61 +114,63 @@ class ProfileViewModel {
       backgroundColor: WHITE,
       surfaceTintColor: WHITE,
       child: Container(
-        padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+        padding: EdgeInsets.fromLTRB(5.w, 20.h, 5.w, 10.h),
         child: Column(
           children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              child: SizedBox.expand(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        InkWell(
-                          onTap: context.pop,
-                          child: Icon(Icons.close, size: 30,
-                            color: GRAY_30, weight: 1),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 15),
-                    if (loginProv.isLogin)...[
-                      Text(loginProv.accountName, style: typo18bold),
-                      if (loginProv.accountSubtitle.isNotEmpty)
-                        Text(loginProv.accountSubtitle,
-                          style: typo14normal, maxLines: 1,
-                          overflow: TextOverflow.fade),
-                      SizedBox(height: 10),
-                      Text(loginProv.accountMail, style: typo14semibold),
-                    ],
-                    if (!loginProv.isLogin)...[
-                      InkWell(
-                        onTap: () {
-                          context.pop();
-                          Navigator.of(context).push(
-                            createAniRoute(LoginScreen(isAppStart: false)));
-                        },
-                        child: Container(
-                          height: 35,
-                          margin: EdgeInsets.only(top: 40),
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(width: 1, color: GRAY_50),
-                          ),
-                          child: Text(TR('로그인하기'), style: typo12bold),
-                        ),
-                      )
-                    ]
-                  ],
-                ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: context.pop,
+                    child: Icon(Icons.close, size: 30,
+                        color: GRAY_30, weight: 1),
+                  )
+                ],
               ),
             ),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.fromLTRB(10.r, 30.r, 0, 10.r),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (loginProv.isLogin)...[
+                    Text(loginProv.accountName, style: typo18bold),
+                    if (loginProv.accountSubtitle.isNotEmpty)...[
+                      SizedBox(height: 5.h),
+                      Text(loginProv.accountSubtitle,
+                          style: typo14normal, maxLines: 1,
+                          overflow: TextOverflow.fade),
+                    ],
+                    SizedBox(height: 5.h),
+                    Text(loginProv.accountMail, style: typo14semibold),
+                  ],
+                  if (!loginProv.isLogin)...[
+                    InkWell(
+                      onTap: () {
+                        context.pop();
+                        Navigator.of(context).push(
+                            createAniRoute(LoginScreen(isAppStart: false)));
+                      },
+                      child: Container(
+                        height: 35,
+                        margin: EdgeInsets.only(top: 40),
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(width: 1, color: GRAY_50),
+                        ),
+                        child: Text(TR('로그인하기'), style: typo12bold),
+                      ),
+                    )
+                  ]
+                ],
+              ),
+            ),
+            Divider(),
             ...DrawerActionType.values.map((e) =>
               _mainDrawerItem(context, e)).toList(),
             Spacer(),
@@ -287,7 +289,7 @@ class ProfileViewModel {
         });
       },
       child: Container(
-        height: 50,
+        height: 40.h,
         color: WHITE,
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.only(left: 15),
@@ -426,7 +428,7 @@ class ProfileViewModel {
             if (STR(item[1]).isNotEmpty)...[
               if (STR(item[1]) != 'on' && STR(item[1]) != 'off')
                 SizedBox(
-                  height: 40.h,
+                  height: 40,
                   child: OutlinedButton(
                     onPressed: onEdit,
                     style: darkBorderButtonStyle,
@@ -671,7 +673,7 @@ class ProfileViewModel {
       if (STR(newNickId).isNotEmpty) {
         // nickId duplicate check..
         loginProv.checkNickId(nickId: newNickId!,
-          onError: (type) => showToast(type.errorText)).
+          onError: (type) => showToast(TR(type.errorText))).
           then((check) {
             if (check == true) {
               // pass check..

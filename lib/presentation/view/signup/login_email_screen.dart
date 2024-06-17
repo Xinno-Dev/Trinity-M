@@ -101,6 +101,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
               Container(
                 padding: EdgeInsets.only(bottom: 20),
                 height: constraints.maxHeight / 2.5,
+                alignment: Alignment.center,
                 child: logoWidget(),
               ),
               Center(
@@ -264,7 +265,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
     prov.setUserPass(passInputController.text);
     LOG('=================> _startEmailLogin : ${prov.inputEmail}');
     FocusScope.of(context).requestFocus(FocusNode()); //remove focus
-    showLoadingDialog(context, '로그인중입니다...');
+    showLoadingDialog(context, TR('로그인중입니다...'));
     await Future.delayed(Duration(milliseconds: 100));
     var result = await prov.loginEmail(onError: (code, text) {
       LOG('--> loginEmail error : $code / $text');
@@ -278,7 +279,7 @@ class _LoginEmailScreenState extends ConsumerState<LoginEmailScreen> {
     hideLoadingDialog();
     if (result == true) {
       // 로그인 완료..
-      showToast('로그인 성공');
+      showToast(TR('로그인 성공'));
       Navigator.of(context).pop(true);
     } else if (result == null) {
       // tester00 계정용 자동 니모닉 복구..

@@ -29,8 +29,8 @@ class SignUpTermsScreen extends ConsumerStatefulWidget {
 class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
   //
   List<String> title = [
-    '이용 약관',
-    '개인정보처리방침',
+    '이용약관',
+    '개인정보처리 방침',
   ];
   // '마케팅 활용 및 광고성 정보 수신 동의'];
 
@@ -85,7 +85,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      TR('Trinity M 을 이용해주셔서 감사합니다.\n'
+                      TR('트리니티M 을 이용해주셔서 감사합니다.\n'
                         '서비스 이용을 위해 약관 동의가 필요합니다.'),
                       style: typo16medium150.copyWith(
                         color: GRAY_70,
@@ -128,8 +128,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                             ),
                             SizedBox(height: 16.h),
                             CustomCheckbox(
-                              title: TR(title[0]) +
-                                  ' ${TR('(필수)')}',
+                              title: '${TR(title[0])} ${TR('(필수)')}',
                               checked: agree_1,
                               onChanged: (agree) {
                                 setState(() {
@@ -148,8 +147,7 @@ class _SignUpTermsScreenState extends ConsumerState<SignUpTermsScreen> {
                             ),
                             SizedBox(height: 4.h),
                             CustomCheckbox(
-                              title: TR(title[1]) +
-                                  ' ${TR('(필수)')}',
+                              title:'${TR(title[1])} ${TR('(필수)')}',
                               checked: agree_2,
                               onChanged: (agree) {
                                 setState(() {
