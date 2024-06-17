@@ -48,15 +48,7 @@ class _WebviewScreenState extends ConsumerState<WebviewScreen> {
     final prov = ref.watch(loginProvider);
     return prov.isScreenLocked ? lockScreen(context) :
       Scaffold(
-      appBar: AppBar(
-        title: widget.title != null ? Text(
-          widget.title!,
-          style: typo18bold,
-        ) : null,
-        titleSpacing: 0,
-        backgroundColor: WHITE,
-        surfaceTintColor: WHITE,
-      ),
+      appBar: defaultAppBar(STR(widget.title)),
       backgroundColor: WHITE,
       body: Container(
         padding: EdgeInsets.all(15),

@@ -9,6 +9,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../common_package.dart';
 import '../../provider/login_provider.dart';
+import '../../provider/market_provider.dart';
 import '../../style/buttonStyle.dart';
 import '../../style/colors.dart';
 import '../../style/textStyle.dart';
@@ -370,7 +371,7 @@ showConfirmDialog(context, desc,
 defaultAppBar(String title, {Widget? leading, var isCanBack = true}) {
   return AppBar(
     title: Text(title),
-    titleTextStyle: title.length > 16 ? typo14semibold : typo18semibold,
+    titleTextStyle: (!isPadMode && title.length > 16) ? typo14semibold : typo18semibold,
     titleSpacing: 0,
     centerTitle: true,
     leading: leading,
