@@ -59,6 +59,9 @@ class _MainScreenState extends ConsumerState<MainScreen>
     prov.enableLockScreen();
     _viewModel = ProfileViewModel(context);
     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAppUpdate(context);
+    });
     _pageController = PageController(initialPage: prov.mainPageIndex);
     super.initState();
   }
@@ -68,10 +71,12 @@ class _MainScreenState extends ConsumerState<MainScreen>
     final prov = ref.read(loginProvider);
     switch (state) {
       case AppLifecycleState.resumed:
+        checkAppUpdate(context);
         prov.setLockScreen(false);
         _pageController = PageController(initialPage: prov.mainPageIndex);
         break;
       case AppLifecycleState.inactive:
+        // isUpdateCheckDone = false;
         prov.setLockScreen(true);
         break;
     }

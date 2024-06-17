@@ -21,27 +21,30 @@ import 'localStorageHelper.dart';
 
 bool isUpdateCheckDone = false;
 
-Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) async {
+Future<bool> checkAppUpdate(BuildContext context,
+  {var isForceCheck = false}) async {
+  LOG('--> checkAppUpdate start : $isUpdateCheckDone');
   if (isUpdateCheckDone) return true;
   isUpdateCheckDone = true;
-  LOG('--> checkAppUpdate start');
   var startInfo = await provider.Provider.of<FirebaseProvider>(context,
       listen: false).getAppStartInfo();
   if (startInfo == null) return false;
   // check version from server..
-  final versionLocal  = await LocalStorageManager.readData(APP_VERSION_KEY);
-  AppVersionData? versionServer = startInfo.versionInfo[Platform.isAndroid ? 'android' : 'ios'];
-  final packageInfo   = await PackageInfo.fromPlatform();
-  final versionApp    = packageInfo.version;
+  var versionLocal  = await LocalStorageManager.readData(APP_VERSION_KEY);
+  var versionServer = startInfo.versionInfo[Platform.isAndroid ? 'android' : 'ios'];
+  var packageInfo   = await PackageInfo.fromPlatform();
+  var versionApp    = packageInfo.version;
   if (versionServer != null) {
     final isForceUpdate = versionServer.force_update;
     // final version = ''; // for Dev..
-    LOG('--> checkAppUpdate : $versionApp / $versionLocal / ${versionServer.version} [$isForceUpdate]');
-    if (checkVersionString(versionApp, versionServer.version, versionLocal ?? '')) {
+    LOG('--> checkAppUpdate : $versionApp / $versionLocal / '
+        '${versionServer.version} [$isForceUpdate]');
+    if (checkVersionString(versionApp,
+      versionServer.version, versionLocal ?? '')) {
       if (versionServer.message != null) {
-        final dlgMessage = STR(versionServer.message?.text_us);
-        var dlgResult = await showAppUpdateDialog(context,
-          dlgMessage.isNotEmpty ? dlgMessage : '새버전이 마켓에 출시되었습니다.',
+        var dlgMessage = STR(versionServer.message?.text_us);
+        var dlgResult  = await showAppUpdateDialog(context,
+          dlgMessage.isNotEmpty ? dlgMessage : TR('새버전이 마켓에 출시되었습니다.'),
             '${TR('현재 버전')} $versionApp\n'
             '${TR('새 버전')} ${versionServer.version}',
           isForceUpdate: isForceUpdate,
@@ -55,6 +58,7 @@ Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) as
                   androidAppId: "com.xinno.trinity_m_00",
                   iOSAppId: "6503721909"
                 );
+                isUpdateCheckDone = false;
               });
             }
             return !isForceUpdate;
@@ -62,15 +66,17 @@ Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) as
             LocalStorageManager.saveData(APP_VERSION_KEY, versionServer.version);
             break;
         }
+        return true;
       }
     } else {
       if (startInfo.notice_message != null) {
-        final noticeMessage = startInfo.notice_message!.message.getText(context);
-        final isImageReady = startInfo.notice_message?.image != null &&
-            startInfo.notice_message!.image!.url.isNotEmpty;
-        if (startInfo.notice_message!.show && (noticeMessage.isNotEmpty || isImageReady)) {
-          final infoLocal = await LocalStorageManager.readData(APP_NOTICE_KEY);
-          LOG('----> notice check : $infoLocal / ${startInfo.notice_message!.id}');
+        var noticeMessage = startInfo.notice_message!.message.getText(context);
+        var isImageReady = startInfo.notice_message?.image != null &&
+          startInfo.notice_message!.image!.url.isNotEmpty;
+        if (startInfo.notice_message!.show &&
+           (noticeMessage.isNotEmpty || isImageReady)) {
+          var infoLocal = await LocalStorageManager.readData(APP_NOTICE_KEY);
+          LOG('--> notice check : $infoLocal / ${startInfo.notice_message!.id}');
           if (infoLocal != startInfo.notice_message!.id) {
             Widget? imageWidget;
             if (isImageReady) {
@@ -88,15 +94,16 @@ Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) as
               );
             }
             showAppNoticeDialog(context,
-                noticeMessage, imageWidget: imageWidget).then((dlgResult) {
+              noticeMessage, imageWidget: imageWidget).then((dlgResult) {
+              isUpdateCheckDone = false;
               switch (dlgResult) {
                 case 2: // never show again..
                   LocalStorageManager.saveData(
-                      APP_NOTICE_KEY,
-                      startInfo.notice_message!.id);
+                    APP_NOTICE_KEY, startInfo.notice_message!.id);
                   break;
               }
             });
+            return true;
           }
         }
       } else if (isForceCheck) {
@@ -124,9 +131,11 @@ Future<bool> checkAppUpdate(BuildContext context, {var isForceCheck = false}) as
               }
             }
         });
+        return true;
       }
     }
   }
+  isUpdateCheckDone = false;
   return true;
 }
 

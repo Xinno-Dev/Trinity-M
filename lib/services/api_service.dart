@@ -17,7 +17,8 @@ import '../common/const/utils/convertHelper.dart';
 //
 
 
-final LARBA_RESPONSE_SUCCESS = 200;
+final RESPONSE_SUCCESS = 200;
+final RESPONSE_SUCCESS_EX = 201;
 
 class ApiService {
   static final ApiService _singleton = ApiService._internal();
@@ -29,7 +30,8 @@ class ApiService {
   var httpUrl = IS_DEV_MODE ? API_HOST_DEV : API_HOST;
 
   isSuccess(statusCode) {
-    return INT(statusCode) == 200 || INT(statusCode) == 201;
+    return INT(statusCode) == RESPONSE_SUCCESS ||
+           INT(statusCode) == RESPONSE_SUCCESS_EX;
   }
 
   //////////////////////////////////////////////////////////////////////////
@@ -48,7 +50,6 @@ class ApiService {
       if (isSuccess(response.statusCode)) {
         return BOL(jsonDecode(response.body)['result']);
       }
-      return true;
     } catch (e) {
       LOG('--> API checkEmail error : $e');
     }

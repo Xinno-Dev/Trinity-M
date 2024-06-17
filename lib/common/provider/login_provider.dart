@@ -329,7 +329,7 @@ class LoginProvider extends ChangeNotifier {
     return false;
   }
 
-  showUserBioIdentityCheck() async {
+  Future<bool?> showUserBioIdentityCheck() async {
     return await getBioIdentity(
       TR('본인확인'),
       onError: (err) {

@@ -81,16 +81,19 @@ class _LoginPassScreenState extends ConsumerState {
     isBioCheckDone = true;
     var prov = ref.read(loginProvider);
     prov.bioIdentityCheck().then((isShow) {
-      setState(() {
-        if (isShow) {
+      if (isShow) {
+        setState(() {
           isBioCheckShow = true;
-          Future.delayed(Duration(milliseconds: 200)).then((_) {
-            prov.showUserBioIdentityCheck().then((result) {
+        });
+        Future.delayed(Duration(milliseconds: 200)).then((_) {
+          prov.showUserBioIdentityCheck().then((result) {
+            LOG('--> showUserBioIdentityCheck result : $result');
+            if (result != null) {
               _processResult(result);
-            });
+            }
           });
-        }
-      });
+        });
+      }
     });
   }
 
