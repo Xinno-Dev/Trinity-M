@@ -1,28 +1,31 @@
 class RWF {
   String? version;
   String? address;
+  String? email;
   String? origin;
   String? algo;
   Cp? cp;
   Dkp? dkp;
 
-  RWF({this.version, this.address, this.origin, this.algo, this.cp, this.dkp});
+  RWF({this.version, this.address, this.email, this.origin, this.algo, this.cp, this.dkp});
 
   RWF.fromJson(Map<String, dynamic> json) {
     version = json['version'];
     address = json['address'];
-    origin = json['origin'];
-    algo = json['algo'];
-    cp = json['cp'] != null ? new Cp.fromJson(json['cp']) : null;
-    dkp = json['dkp'] != null ? new Dkp.fromJson(json['dkp']) : null;
+    email   = json['email'];
+    origin  = json['origin'];
+    algo    = json['algo'];
+    cp      = json['cp'] != null ? new Cp.fromJson(json['cp']) : null;
+    dkp     = json['dkp'] != null ? new Dkp.fromJson(json['dkp']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['version'] = this.version;
     data['address'] = this.address;
-    data['origin'] = this.origin;
-    data['algo'] = this.algo;
+    data['email']   = this.email;
+    data['origin']  = this.origin;
+    data['algo']    = this.algo;
     if (this.cp != null) {
       data['cp'] = this.cp!.toJson();
     }

@@ -139,53 +139,53 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final loginProv = ref.read(loginProvider);
     final isSignUp  = loginProv.isSignUpMode;
     return Container(
-        width: 320,
-        margin: EdgeInsets.only(bottom: 10),
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () {
-                // clean user info..
-                loginProv.init();
-                if (isSignUp) {
-                  Navigator.of(context)
-                      .push(createAniRoute(SignUpEmailScreen()));
-                } else {
-                  Navigator.of(context)
-                      .push(createAniRoute(LoginEmailScreen()))
-                      .then((result) {
-                    if (BOL(result)) {
-                      _startWallet();
-                    }
-                  });
-                }
-              },
-              child: Container(
-                height: 50,
-                margin: EdgeInsets.symmetric(vertical: 5),
-                padding: EdgeInsets.symmetric(horizontal: 13),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(width: 1, color: GRAY_50)
-                ),
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: SvgPicture.asset('assets/svg/icon_mail.svg'),
+      width: 320,
+      margin: EdgeInsets.only(bottom: 10),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              // clean user info..
+              loginProv.init();
+              if (isSignUp) {
+                Navigator.of(context)
+                    .push(createAniRoute(SignUpEmailScreen()));
+              } else {
+                Navigator.of(context)
+                    .push(createAniRoute(LoginEmailScreen()))
+                    .then((result) {
+                  if (BOL(result)) {
+                    _startWallet();
+                  }
+                });
+              }
+            },
+            child: Container(
+              height: 50,
+              margin: EdgeInsets.symmetric(vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 13),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(width: 1, color: GRAY_50)
+              ),
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: SvgPicture.asset('assets/svg/icon_mail.svg'),
+                  ),
+                  Center(
+                    child: Text(
+                      TR('이메일로 ${isSignUp ? '회원가입' : '로그인'}'),
+                      style: typo14bold,
                     ),
-                    Center(
-                      child: Text(
-                        TR('이메일로 ${isSignUp ? '회원가입' : '로그인'}'),
-                        style: typo14bold,
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
-          ],
-        )
+          ),
+        ],
+      )
     );
   }
 

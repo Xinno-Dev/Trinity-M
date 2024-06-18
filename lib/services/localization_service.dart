@@ -607,6 +607,7 @@ class AppLocalization {
       '저장 위치 선택': 'Select storage location',
       '파일명': 'Filename',
       '저장 폴더': 'Save folder',
+      '선택 파일': 'Select file',
       '복구 파일 선택': 'Select recovery file',
       '업로드': 'Upload',
       '다운로드': 'Download',
@@ -616,6 +617,7 @@ class AppLocalization {
       '복구키 백업 실패': 'Recovery key backup failed',
       '복구키 받기 완료': 'Completed receiving recovery key',
       '복구키 받기 실패': 'Failed to receive recovery key',
+      '계정 복구중입니다...': 'Account is being restored...',
       '로그아웃 완료': 'Logout complete',
       '로그인이 필요한 서비스입니다.': 'This service requires login.',
       '로그인': 'Login',
@@ -681,6 +683,18 @@ class AppLocalization {
       '회원 탈퇴 신청 완료': 'Membership withdrawal application completed',
       '회원 탈퇴 신청 실패': 'Membership withdrawal application failed',
       '앱 초기화 완료': 'App initialization complete',
+      '복구단어로 복구': 'Recover with recovery word',
+      '클라우드로 복구': 'Recovery with Cloud',
+      '지갑 복구 수단을\n선택해 주세요.': 'Please select\nyour wallet recovery method.',
+      '서비스 이용을 위해 지갑 복구가 필요합니다.\n'
+          '지갑 복구방식을 선택해 주세요.':
+      'Wallet recovery is required to use the service.\n'
+          'Please select a wallet recovery method.',
+      '계정 복구 실패': 'Account recovery failed',
+      '잘못된 계정입니다.\n복구한 계정일 경우,\n복구 파일이나 단어를 확인해 주세요.':
+          'This is the wrong account.\nIf the account has been recovered,\n'
+          'Please check the recovered file or word.',
+      '': '',
       '': '',
     },
     'ko': {

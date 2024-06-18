@@ -181,10 +181,11 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                             if (STR(pass).isNotEmpty) {
                               prov.disableLockScreen();
                               var address = prov.accountAddress;
+                              var email   = prov.userEmail;
                               var keyPair = await prov.getAccountKey();
                               if (address != null && keyPair != null) {
                                 var rwfStr = await RWFExportHelper.encrypt(
-                                    pass, address, keyPair.d, mnemonic);
+                                    pass, address, email, keyPair.d, mnemonic);
                                 GoogleService.uploadKeyToGoogleDrive(
                                     context, prov.userEmail, rwfStr).then((_) {
                                   prov.enableLockScreen();

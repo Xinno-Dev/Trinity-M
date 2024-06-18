@@ -67,6 +67,7 @@ class UserHelper {
       rwf: '',
       address: '',
       addressList: '',
+      mnemonic: '',
     );
     await logoutUser();
   }
@@ -81,6 +82,7 @@ class UserHelper {
     String? address,
     String? uid,
     String? bioIdentity,
+    String? mnemonic,
 
     String userID = '',
     String publickey = '',
@@ -94,7 +96,6 @@ class UserHelper {
     String trash = '',
     String registDate = '',
     String rootKey = '',
-    String mnemonic = '',
     String checkMnemonic = '',
     String networkList = '',
     String addressList = '',
@@ -182,6 +183,15 @@ class UserHelper {
       }
     };
 
+    if (mnemonic != null) {
+      if (mnemonic.isNotEmpty) {
+        await storage.write(key: MNEMONIC_KEY + userKey, value: mnemonic);
+      } else {
+        await storage.delete(key: MNEMONIC_KEY + userKey);
+      }
+    };
+
+
     ////////////////////////////////////////////////////////////////////////////
     //
     // deprecated for new wallet....
@@ -213,8 +223,6 @@ class UserHelper {
       await storage.write(key: LOGINDATE_KEY + userKey, value: loginDate);
 
     if (rootKey != '') await storage.write(key: ROOT_KEY + userKey, value: rootKey);
-
-    if (mnemonic != '') await storage.write(key: MNEMONIC_KEY + userKey, value: mnemonic);
 
     if (checkMnemonic != '')
       await storage.write(key: CHECK_MNEMONIC_KEY + userKey, value: checkMnemonic);

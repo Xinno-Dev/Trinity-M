@@ -10,7 +10,8 @@ import 'package:pointycastle/export.dart';
 import 'convertHelper.dart';
 
 class RWFExportHelper {
-  static Future<String> encrypt(String pin, String address, String privateKey,
+  static Future<String> encrypt(
+    String pin, String address, String email, String privateKey,
     [String? mnemonic]) async {
     int SALT_SIZE = 20;
     int AES_IV_SIZE = 16;
@@ -60,6 +61,7 @@ class RWFExportHelper {
     RWF rwf = RWF(
       version: '1',
       address: address,
+      email: email,
       algo: 'secp256k1',
       cp: cp,
       dkp: dkp,

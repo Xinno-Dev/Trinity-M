@@ -217,47 +217,46 @@ class GoogleService extends GoogleAccount {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(TR('파일명'), style: typo12bold),
+                          Text(TR('파일명'), style: typo14bold),
                           SizedBox(height: 5),
                           Text(STR(ext), style: typo14normal),
                         ],
                       ),
                     ),
-                  Text(TR('저장 폴더'), style: typo12bold),
-                  SizedBox(height: 5),
+                  Text(TR(isUpload ? '저장 폴더' : '선택 파일'), style: typo14bold),
                   FutureBuilder(
-                      future: _getDriveFileList(isFolderOnly: isUpload, ext: ext),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          List<DropdownMenuItem> dirList = snapshot.data!.map((e) =>
-                              dirItem(e.title, '${e.title}&/${e.id}', isDir: isUpload)).toList();
-                          dirListData[folderId] = snapshot.data as List<dv.File>;
-                          if (isUpload) {
-                            dirList.insert(0, dirItem(folderTitle, '[top]', isTop: true));
-                            if (selectDir.isNotEmpty) {
-                              dirList.insert(1, dirItem('..', '[back]'));
-                            }
-                          } else if (selectDir.isEmpty && dirList.isNotEmpty) {
-                            selectDir.add(dirList.first.value);
+                    future: _getDriveFileList(isFolderOnly: isUpload, ext: ext),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<DropdownMenuItem> dirList = snapshot.data!.map((e) =>
+                            dirItem(e.title, '${e.title}&/${e.id}', isDir: isUpload)).toList();
+                        dirListData[folderId] = snapshot.data as List<dv.File>;
+                        if (isUpload) {
+                          dirList.insert(0, dirItem(folderTitle, '[top]', isTop: true));
+                          if (selectDir.isNotEmpty) {
+                            dirList.insert(1, dirItem('..', '[back]'));
                           }
-                          return _driveSelectWidget(dirList,
-                              selectValue: !isUpload ? selectDir.last : null,
-                              onSelected: (select) {
-                                setState(() {
-                                  if (select == '[back]') {
-                                    selectDir.removeLast();
-                                    LOG('---> back dir : ${selectDir.length}');
-                                  }
-                                  else if (select != '[top]' && (selectDir.isEmpty || selectDir.last != select)) {
-                                    LOG('---> selectDir add : $select / ${selectDir.length}');
-                                    selectDir.add(select);
-                                  }
-                                });
-                              });
-                        } else {
-                          return CircularProgressIndicator();
+                        } else if (selectDir.isEmpty && dirList.isNotEmpty) {
+                          selectDir.add(dirList.first.value);
                         }
-                      })
+                        return _driveSelectWidget(dirList,
+                            selectValue: !isUpload ? selectDir.last : null,
+                            onSelected: (select) {
+                              setState(() {
+                                if (select == '[back]') {
+                                  selectDir.removeLast();
+                                  LOG('---> back dir : ${selectDir.length}');
+                                }
+                                else if (select != '[top]' && (selectDir.isEmpty || selectDir.last != select)) {
+                                  LOG('---> selectDir add : $select / ${selectDir.length}');
+                                  selectDir.add(select);
+                                }
+                              });
+                            });
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    })
                 ],
               ),
             ),

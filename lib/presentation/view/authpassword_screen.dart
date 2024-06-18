@@ -238,8 +238,12 @@ class _AuthPasswordScreenState extends State<AuthPasswordScreen> {
           // final wallet = Wallet.createNew(
           //     EthPrivateKey.fromHex(privateKey), inputPin, Random());
           // LOG('--> hasExportRwf_PrivateKey json : ${wallet.toJson()}');
+          final address = await UserHelper().get_address();
+          final email = await UserHelper().userKeyMail;
           context.pushNamed(ExportRWFPassScreen.routeName,
-              queryParams: {'privateKey': privateKey});
+            queryParams: {
+              'privateKey': privateKey, 'address': address, 'email': email
+          });
         }
         if (hasAddKeyPair) {
           final EccRepository _repository = EccRepositoryImpl();

@@ -107,24 +107,14 @@ startKakaoLogin({Function(String)? onError}) async {
         == AuthErrorCause.accessDenied) {
         return null;
       }
-      try {
-        token = await kakao.UserApi.instance.loginWithKakaoAccount();
-        LOG('--> 카카오계정으로 로그인 성공 2 ${token.accessToken}');
-      } catch (error) {
-        LOG('--> 카카오계정으로 로그인 실패 2 $error');
-        if (error is KakaoAuthException && error.error
-          == AuthErrorCause.accessDenied) {
-          return null;
-        }
-      }
     }
   }
   if (token == null) {
     try {
       token = await kakao.UserApi.instance.loginWithKakaoAccount();
-      LOG('--> 카카오계정으로 로그인 성공 3 ${token.accessToken}');
+      LOG('--> 카카오계정으로 로그인 성공 2 ${token.accessToken}');
     } catch (error) {
-      LOG('--> 카카오계정으로 로그인 실패 3 $error');
+      LOG('--> 카카오계정으로 로그인 실패 2 $error');
       if (error is KakaoAuthException && error.error
         == AuthErrorCause.accessDenied) {
         return null;

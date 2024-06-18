@@ -1,39 +1,18 @@
-import 'dart:convert';
-import 'dart:math';
 
-import 'package:convert/convert.dart';
-import 'package:elliptic/ecdh.dart';
-import 'package:elliptic/elliptic.dart';
-import 'package:eth_sig_util/util/utils.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import '../../../../common/const/constants.dart';
 import '../../../../common/const/utils/uihelper.dart';
 import '../../../../common/const/utils/userHelper.dart';
 import '../../../../common/const/widget/dialog_utils.dart';
 import '../../../../common/provider/login_provider.dart';
-import '../../../../domain/model/ecckeypair.dart';
 import '../../../../presentation/view/signup/signup_pass_screen.dart';
-import '../../../../services/api_service.dart';
 import 'package:pointycastle/digests/ripemd160.dart';
 import 'package:pointycastle/digests/sha256.dart';
-import 'package:pointycastle/ecc/curves/secp256k1.dart';
-import 'package:pointycastle/pointycastle.dart' as po;
-import 'package:provider/provider.dart';
-import 'package:secp256k1cipher/secp256k1cipher.dart';
-import 'package:web3dart/credentials.dart';
-import 'package:crypto/crypto.dart' as crypto;
 
 import '../../../common/common_package.dart';
-import '../../../common/const/utils/aesManager.dart';
 import '../../../common/const/utils/convertHelper.dart';
-import '../../../common/const/utils/eccManager.dart';
 import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/rwfExportHelper.dart';
-import '../../../common/const/utils/walletHelper.dart';
-import '../../../common/const/widget/disabled_button.dart';
 import '../../../common/const/widget/primary_button.dart';
-import '../../../common/rlp/hash.dart';
 import '../../../services/google_service.dart';
 import '../main_screen.dart';
 import '../recover_wallet_input_screen.dart';
@@ -124,7 +103,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
                 showLoginErrorDialog(context, type, text: code);
                 UserHelper().clearUser();
               }).then((result) {
-            LOG('--> recoverUser mn result : $result');
+            LOG('--> startRecoverMnemonic mn result : $result');
             hideLoadingDialog();
             _recoverResult(result);
           });
@@ -164,12 +143,12 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
                       showLoginErrorDialog(context, type, text: code);
                       UserHelper().clearUser();
                     }).then((result) {
-                      LOG('--> recoverUser mn result : $result');
+                      LOG('--> startRecoverCloud mn result : $result');
                       hideLoadingDialog();
                       _recoverResult(result);
                     });
                 } else {
-                  LOG('--> recoverUser mn cancel');
+                  LOG('--> startRecoverCloud mn cancel');
                 }
               });
             } else {
@@ -185,7 +164,7 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
     if (result != null) {
       _moveToMainProfile();
     } else {
-      showToast('계정 복구 실패');
+      showToast(TR('계정 복구 실패'));
     }
   }
 

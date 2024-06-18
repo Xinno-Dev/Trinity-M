@@ -46,7 +46,7 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
       child: Stack(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 40),
+            margin: EdgeInsets.only(top: 40, bottom: kToolbarHeight),
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: _viewModel.showProductList(),
           ),

@@ -86,6 +86,7 @@ enum LoginErrorType {
   recoverFail,
   signupRequire,
   signupFail,
+  addressFail,
 
   none;
 
@@ -119,6 +120,8 @@ enum LoginErrorType {
         return '회원가입이 필요한 메일입니다.';
       case signupFail:
         return '회원가입에 실패했습니다.';
+      case addressFail:
+        return '잘못된 계정입니다.\n복구한 계정일 경우,\n복구 파일이나 단어를 확인해 주세요.';
       default:
         return '';
     }
@@ -412,15 +415,16 @@ class LoginProvider extends ChangeNotifier {
   }
 
   AddressModel? get account {
-    selectAccount ??= userInfo?.addressList?.first;
+    selectAccount ??= accountFirst;
     return selectAccount;
   }
 
   get accountAddress {
-    return account?.address;
+    return account?.address ?? '';
   }
 
   AddressModel? get accountFirst {
+    if (INT(userInfo?.addressList?.length) <= 0) return null;
     return userInfo?.addressList?.first;
   }
 
@@ -477,8 +481,8 @@ class LoginProvider extends ChangeNotifier {
       if (STR(userNickId).isEmpty) {
         await UserHelper().setUserKey(STR(userInfo?.email));
         await _refreshAccountList();
-        userInfo = await updateUserInfo();
-        if (userInfo != null) {
+        var result = await updateUserInfo();
+        if (result != null) {
           userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
           return true;
         }
@@ -694,13 +698,13 @@ class LoginProvider extends ChangeNotifier {
         return userInfo;
       }
     }
-    userInfo = null;
-    return userInfo;
+    return null;
   }
 
   Future<bool?> startLoginWithKey(
     {Function(LoginErrorType, String?)? onError}) async {
     var key = await getAccountKey();
+    LOG('--> startLoginWithKey : $key');
     if (key != null) {
       return await startLogin(key, onError: onError);
     }
@@ -745,15 +749,19 @@ class LoginProvider extends ChangeNotifier {
           }
         );
         if (result) {
-          userInfo = await updateUserInfo();
-          userInfo!.uid = await UserHelper().get_uid();
-          userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
-          var userEnc = await userInfo?.encryptAes;
-          await UserHelper().setUser(loginInfo: userEnc);
-          LOG('----> startLogin success : [${userInfo!.uid}] '
-              '${userInfo!.bioIdentityYN} / ${userInfo?.toJson()}');
+          var result2 = await updateUserInfo();
+          if (result2 == true) {
+            userInfo!.uid = await UserHelper().get_uid();
+            userInfo!.bioIdentityYN = await UserHelper().get_bioIdentityYN();
+            var userEnc = await userInfo?.encryptAes;
+            await UserHelper().setUser(loginInfo: userEnc);
+            return true;
+          } else if (result2 == null) {
+            if (onError != null) onError(LoginErrorType.addressFail, null);
+            await UserHelper().removeUser();
+            return false;
+          }
         }
-        return result;
       }
     }
     return null;
@@ -942,9 +950,9 @@ class LoginProvider extends ChangeNotifier {
     try {
       passOrg ??= userPass;
       var keyData = tmpKeyStr ?? selectAccount?.keyPair;
-      LOG('--> getAccountKey : [$passOrg] / $keyData');
       if (passOrg != null && STR(keyData).isNotEmpty) {
         var keyStr = await decryptData(passOrg, keyData!);
+        LOG('--> getAccountKey : [$passOrg] / $keyStr');
         if (keyStr != 'fail') {
           var keyPair = EccKeyPair.fromJson(jsonDecode(keyStr));
           return keyPair;
@@ -1193,7 +1201,7 @@ class LoginProvider extends ChangeNotifier {
     return await _api.setWithdrawUser();
   }
 
-  Future<UserModel?> updateUserInfo() async {
+  Future<bool?> updateUserInfo() async {
     LOG('-------> _updateUserInfo()');
     var tmpUserInfo = await getUserInfo();
     if (tmpUserInfo?.addressList != null) {
@@ -1201,31 +1209,47 @@ class LoginProvider extends ChangeNotifier {
       var pass = crypto.sha256.convert(utf8.encode(userPass)).toString();
       var eccImpl = EccUseCaseImpl(EccRepositoryImpl());
       // crate empty keypair..
-      for (var i = 0; i < tmpUserInfo!.addressList!.length; i++) {
-        var item = tmpUserInfo.addressList![i];
-        if (i >= accountCount) {
-          LOG('--> addKeyPair [$i] : ${item.accountName}');
-          await eccImpl.addKeyPair(pass, nickId: item.accountName);
+      var addressCheck = _checkAddress(tmpUserInfo!.addressList!);
+      if (addressCheck) {
+        for (var i = 0; i < tmpUserInfo.addressList!.length; i++) {
+          var item = tmpUserInfo.addressList![i];
+          if (i >= accountCount) {
+            LOG('--> addKeyPair [$i] : ${item.accountName}');
+            await eccImpl.addKeyPair(pass, nickId: item.accountName);
+          }
         }
-      }
-      // refresh account..
-      await _refreshAccountList();
-      // update account list..
-      var addrListJson = [];
-      for (var item in tmpUserInfo.addressList!) {
-        var newItem = _computeAccount(item);
-        if (newItem != null) {
-          addrListJson.add(newItem.toJson());
+        // refresh account..
+        await _refreshAccountList();
+        // update account list..
+        var addrListJson = [];
+        for (var item in tmpUserInfo.addressList!) {
+          var newItem = _computeAccount(item);
+          if (newItem != null) {
+            addrListJson.add(newItem.toJson());
+          }
         }
+        LOG('--> addrListJson : $addrListJson');
+        userInfo!.certUpdt = tmpUserInfo.certUpdt;
+        userInfo!.withdrawDt = tmpUserInfo.withdrawDt;
+        await UserHelper().setUser(addressList: jsonEncode(addrListJson));
+        // LOG('--> _setAccountListFromServer result : ${userInfo?.toJson()}');
+        return true;
+      } else {
+        return null;
       }
-      LOG('--> addrListJson : $addrListJson');
-      userInfo!.certUpdt    = tmpUserInfo.certUpdt;
-      userInfo!.withdrawDt  = tmpUserInfo.withdrawDt;
-      await UserHelper().setUser(addressList: jsonEncode(addrListJson));
-      // LOG('--> _setAccountListFromServer result : ${userInfo?.toJson()}');
-      return userInfo;
     }
-    return null;
+    return false;
+  }
+
+  _checkAddress(List<AddressModel> targetList) {
+    if (INT(userInfo?.addressList?.length) > 0) {
+      for (var item in userInfo!.addressList!) {
+        for (var item2 in targetList) {
+          if (item.address == item2.address) return true;
+        }
+      }
+    }
+    return false;
   }
 
   AddressModel? _computeAccount(AddressModel newItem) {

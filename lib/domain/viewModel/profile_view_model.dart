@@ -114,10 +114,11 @@ class ProfileViewModel {
       backgroundColor: WHITE,
       surfaceTintColor: WHITE,
       child: Container(
-        padding: EdgeInsets.fromLTRB(5.w, 20.h, 5.w, 10.h),
+        padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
         child: Column(
           children: [
             Container(
+              margin: EdgeInsets.only(top: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

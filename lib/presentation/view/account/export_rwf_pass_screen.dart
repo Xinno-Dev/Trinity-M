@@ -21,8 +21,14 @@ import '../../../domain/model/ecckeypair.dart';
 import 'export_rwf_screen.dart';
 
 class ExportRWFPassScreen extends StatefulWidget {
-  ExportRWFPassScreen({this.privateKey});
-  String? privateKey;
+  ExportRWFPassScreen({
+    required this.privateKey,
+    required this.address,
+    required this.email,
+  });
+  String privateKey;
+  String address;
+  String email;
 
   static String get routeName => 'export_rwf_pass';
 
@@ -109,16 +115,11 @@ class _ScreenState extends State<ExportRWFPassScreen> {
                     text: TR('다음'),
                     onTap: () async {
                       if (inputPass.length >= 6 && inputPass == inputPassRe) {
-                        // var rwfText = await _createWallet(inputPass);
-                        // var rwfText = await UserHelper().get_rwf();
                         showLoadingDialog(context, 'RWF 변환중 입니다.', isShowIcon: false);
                         Future.delayed(Duration(milliseconds: 200)).then((_) async {
-                          var walletAddress = await UserHelper().get_address();
-                          var rwfText = await RWFExportHelper.encrypt(inputPass, walletAddress, widget.privateKey!);
+                          var rwfText = await RWFExportHelper.encrypt(
+                              inputPass, widget.address, widget.email, widget.privateKey);
                           LOG('---> rwfText : $rwfText');
-                          // var rwfTextDec = await RWFExportHelper().decrypt(inputPass, rwfText);
-                          // LOG('---> rwfTextDec : $rwfTextDec');
-                          // var rwfText = '';
                           hideLoadingDialog();
                           Navigator.of(context).push(
                               createAniRoute(ExportPassScreen(rwfText))

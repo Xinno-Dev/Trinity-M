@@ -500,13 +500,12 @@ class MarketViewModel {
               return GridView.builder(
                 shrinkWrap: true,
                 itemCount: userItemList.length,
-                padding: EdgeInsets.symmetric(vertical: 5),
+                padding: EdgeInsets.symmetric(vertical: 15),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  crossAxisSpacing: 2,
-                  mainAxisSpacing: 2
+                  crossAxisCount: isPadMode ? 4 : 3,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5
                 ),
-                physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   final image = getUserItemImage(userItemList[index]);
                   return _userOptionListItem(
@@ -527,7 +526,7 @@ class MarketViewModel {
             return Container(
               height: 140.h,
               alignment: Alignment.center,
-              child: Text('보유중인 상품이 없슴니다.'),
+              child: Text(TR('보유중인 상품이 없슴니다.')),
             );
           }
         } else {
@@ -548,7 +547,7 @@ class MarketViewModel {
       builder: (context) {
         return Container(
           height: height,
-          padding: EdgeInsets.symmetric(horizontal: 15),
+          padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(16.0.sp),

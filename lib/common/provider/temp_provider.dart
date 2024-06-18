@@ -325,7 +325,9 @@ class TempProvider extends ChangeNotifier {
           path: '/${ExportRWFPassScreen.routeName}',
           name: ExportRWFPassScreen.routeName,
           builder: (context, state) => ExportRWFPassScreen(
-            privateKey: state.queryParams['privateKey'],
+            address:    state.queryParams['address'] ?? '',
+            email:      state.queryParams['email'] ?? '',
+            privateKey: state.queryParams['privateKey'] ?? '',
           ),
         ),
         GoRoute(
