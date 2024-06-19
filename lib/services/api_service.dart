@@ -611,6 +611,29 @@ class ApiService {
 
   //////////////////////////////////////////////////////////////////////////
   //
+  //  Seller 정보 조회
+  //  /users/seller
+  //
+
+  Future<JSON?> getSellerInfo(String address) async {
+    try {
+      LOG('--> API getSellerInfo : $address');
+      final response = await http.get(
+        Uri.parse(httpUrl + '/users/seller?address=$address'),
+      );
+      LOG('--> API getSellerInfo response : ${response.statusCode} / ${response.body}');
+      var resultJson = jsonDecode(response.body);
+      if (isSuccess(response.statusCode)) {
+        return resultJson['result'];
+      }
+    } catch (e) {
+      LOG('--> API getSellerInfo error : $e');
+    }
+    return null;
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  //
   //  상품 카테고리 리스트
   //  /tags
   //

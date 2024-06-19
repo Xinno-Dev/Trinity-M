@@ -16,11 +16,10 @@ class SellerModel {
   String? pfImg;
   String? description;
 
-  int?  follower;
-  int?  following;
+  int?    follower;
+  int?    following;
 
-  DateTime?   createTime;
-  DateTime?   updateTime;
+  DateTime? updateTime;
 
   SellerModel({
     this.address,
@@ -32,7 +31,6 @@ class SellerModel {
     this.follower,
     this.following,
 
-    this.createTime,
     this.updateTime,
   });
 

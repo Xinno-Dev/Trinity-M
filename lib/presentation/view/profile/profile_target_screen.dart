@@ -24,7 +24,7 @@ class ProfileTargetScreen extends ConsumerStatefulWidget {
   final SellerModel seller;
 
   @override
-  ConsumerState<ProfileTargetScreen> createState() => _ProfileTargetScreenState();
+  ConsumerState createState() => _ProfileTargetScreenState();
 }
 
 class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
@@ -42,17 +42,19 @@ class _ProfileTargetScreenState extends ConsumerState<ProfileTargetScreen> {
     final loginProv = ref.watch(loginProvider);
     return loginProv.isScreenLocked ? lockScreen(context) :
       Scaffold(
-        appBar: closeAppBar(STR(widget.seller.nickId), onBack: context.pop),
+        appBar: closeAppBar(STR(widget.seller.nickId),
+          subTitle: widget.seller.subTitle,
+          onBack: context.pop),
         backgroundColor: WHITE,
         body: ListView(
           shrinkWrap: true,
           padding: EdgeInsets.symmetric(horizontal: 20),
           children: [
-            _viewModel.showStoreDetail(widget.seller),
+            _viewModel.showSellerDetail(widget.seller),
             _viewModel.showUserProductList(
-                TR('Market'),
-                STR(widget.seller.address),
-                isShowSeller: false, isCanBuy: true),
+              TR('Market'),
+              STR(widget.seller.address),
+              isShowSeller: false, isCanBuy: true),
           ]
         )
     );

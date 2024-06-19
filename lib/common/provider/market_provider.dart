@@ -10,6 +10,7 @@ import '../../../../common/const/utils/convertHelper.dart';
 import '../../../../common/const/widget/primary_button.dart';
 import '../../../../domain/model/product_model.dart';
 import '../../../../domain/repository/market_repository.dart';
+import '../../domain/model/seller_model.dart';
 import '../../presentation/view/profile/profile_target_screen.dart';
 import '../../../../services/api_service.dart';
 
@@ -391,6 +392,14 @@ class MarketProvider extends ChangeNotifier {
       }
     }
     return false;
+  }
+
+  Future<SellerModel> getSellerInfo(SellerModel seller) async {
+    if (seller.address != null) {
+      var result = await _repo.getSellerInfo(seller.address!);
+      if (result != null) return result;
+    }
+    return seller;
   }
 
   updatePurchaseInfo(JSON info) {

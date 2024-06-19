@@ -18,6 +18,7 @@ import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/viewModel/market_view_model.dart';
 import '../../../domain/viewModel/profile_view_model.dart';
 import '../profile/profile_Identity_screen.dart';
+import 'payment_danal_screen.dart';
 import 'payment_screen.dart';
 import 'pg/payment_test.dart';
 
@@ -160,7 +161,7 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
     LOG('--> pgCode : $pgCode');
     data.pg = pgCode;
     Navigator.of(context).push(
-      createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data))).then((_) {
+      createAniRoute(PaymentDanalScreen(prov.purchaseInfo!))).then((_) {
       ref.read(loginProvider).enableLockScreen();
     });
   }

@@ -19,6 +19,7 @@ class MarketRepository {
 
   Map<String, ProductModel> productData = {};
   Map<String, ProductItemModel> optionData = {};
+  Map<String, SellerModel> sellerData = {};
   List<ProductModel>  productList = [];
   List<ProductModel>  userProductList = [];
   List<CategoryModel> categoryList = [];
@@ -377,7 +378,8 @@ class MarketRepository {
   }
 
   Future<PurchaseModel?> requestPurchase(
-    String prodSaleId, {String? itemId, String? imgId, Function(String)? onError}) async {
+    String prodSaleId,
+    {String? itemId, String? imgId, Function(String)? onError}) async {
     if (STR(prodSaleId).isNotEmpty) {
       var result = await _apiService.requestPurchase(
           prodSaleId, itemId: itemId, imgId: imgId);
@@ -392,7 +394,36 @@ class MarketRepository {
     return null;
   }
 
-  Future<JSON?> checkPurchase(String impUid, String merchantId, String status) async {
+  Future<JSON?> checkPurchase(
+    String impUid, String merchantId, String status) async {
     return await _apiService.checkPurchase(impUid, merchantId, status);
+  }
+
+  Future<SellerModel?> getSellerInfo(String address) async {
+    if (sellerData.containsKey(address)) {
+      return sellerData[address];
+    }
+    var result = await _apiService.getSellerInfo(address);
+    if (result != null) {
+      var seller = SellerModel.fromJson(result);
+      seller.updateTime = DateTime.now();
+      sellerData[address] = seller;
+      return seller;
+    }
+    return null;
+  }
+
+  setSellerInfo(String address, {
+    String? nickId,
+    String? subTitle,
+    String? pfImg,
+  }) {
+    if (sellerData.containsKey(address)) {
+      if (nickId   != null) sellerData[address]!.nickId   = nickId;
+      if (subTitle != null) sellerData[address]!.subTitle = subTitle;
+      if (pfImg    != null) sellerData[address]!.pfImg    = pfImg;
+      return sellerData[address];
+    }
+    return null;
   }
 }

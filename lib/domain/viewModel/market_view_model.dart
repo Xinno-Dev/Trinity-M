@@ -374,24 +374,32 @@ class MarketViewModel {
     );
   }
 
-  showStoreDetail(SellerModel seller) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(
-            vertical: 20,
-            horizontal: 30
-          ),
-          child: Column(
+  showSellerDetail(SellerModel seller) {
+    return FutureBuilder(
+      future: prov.getSellerInfo(seller),
+      builder: (context, snapShot) {
+        if (snapShot.hasData) {
+          seller = snapShot.data as SellerModel;
+          return Column(
             children: [
-              _contentSellerTopBar(seller),
-              _contentSellerDescBox(seller,
-                  padding: EdgeInsets.symmetric(vertical: 20)),
+              Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _contentSellerTopBar(seller),
+                    _contentSellerDescBox(seller,
+                      padding: EdgeInsets.only(top: 20)),
+                  ],
+                ),
+              ),
+              // _contentFollowButton(),
             ],
-          ),
-        ),
-        // _contentFollowButton(),
-      ],
+          );
+        } else {
+          return showLoadingFull(30);
+        }
+      }
     );
   }
 
@@ -1203,8 +1211,8 @@ class MarketViewModel {
               width:  PROFILE_RADIUS,
               height: PROFILE_RADIUS,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(width: 2, color: GRAY_70)
+                borderRadius: BorderRadius.circular(100),
+                border: Border.all(width: 2, color: GRAY_70)
               ),
               child: Center(
                 child: ClipRRect(
@@ -1213,10 +1221,6 @@ class MarketViewModel {
                     Size.square(PROFILE_RADIUS), fit: BoxFit.fill),
                 ),
               ),
-            //   borderRadius: BorderRadius.circular(PROFILE_RADIUS.r),
-            //   child: showImage(STR(seller.pfImg),
-            //     Size.square(PROFILE_RADIUS.r),
-            //     fit: BoxFit.fill),
             ),
             SizedBox(width: 10),
           ],

@@ -438,10 +438,19 @@ showSelectDialog(context, desc, List<String> list,
   );
 }
 
-defaultAppBar(String title, {Widget? leading, var isCanBack = true}) {
+defaultAppBar(String title,
+  {Widget? leading, String? subTitle, var isCanBack = true}) {
   return AppBar(
-    title: Text(title),
-    titleTextStyle: (!isPadMode && title.length > 24) ? typo16semibold : typo18semibold,
+    title: Column(
+      children: [
+        Text(title, style: (!isPadMode && title.length > 24) ?
+        typo16semibold : typo18semibold),
+        if (STR(subTitle).isNotEmpty)...[
+          Text(subTitle!, style: typo14normal),
+        ]
+      ],
+    ),
+    toolbarHeight: STR(subTitle).isNotEmpty ? 60 : null,
     titleSpacing: 0,
     centerTitle: true,
     leading: leading,
@@ -452,8 +461,10 @@ defaultAppBar(String title, {Widget? leading, var isCanBack = true}) {
 }
 
 closeAppBar(String title,
-  {Widget? leading, var isCanBack = true, Function()? onBack}) {
+  {Widget? leading, String? subTitle,
+  var isCanBack = true, Function()? onBack}) {
   return defaultAppBar(title,
+    subTitle: subTitle,
     leading: CustomBackButton(
       icon: Icon(Icons.close),
       onPressed: onBack,

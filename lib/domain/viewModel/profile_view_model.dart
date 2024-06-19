@@ -141,12 +141,12 @@ class ProfileViewModel {
                   if (loginProv.isLogin)...[
                     Text(loginProv.accountName, style: typo18bold),
                     if (loginProv.accountSubtitle.isNotEmpty)...[
-                      SizedBox(height: 5.h),
+                      SizedBox(height: 2),
                       Text(loginProv.accountSubtitle,
                           style: typo14normal, maxLines: 1,
                           overflow: TextOverflow.fade),
                     ],
-                    SizedBox(height: 5.h),
+                    SizedBox(height: 10),
                     Text(loginProv.accountMail, style: typo14semibold),
                   ],
                   if (!loginProv.isLogin)...[
@@ -179,10 +179,10 @@ class ProfileViewModel {
             ListTile(
               title: Text(
                 TR('사업자명: 주식회사 엑시노\n'
-                    '대표이사: 이지민\n'
-                    '등록번호: 644-86-03081\n'
-                    '대표번호: 070-4304-5778\n'
-                    '서울시 서초구 서운로 13 126-나94호'),
+                  '대표이사: 이지민\n'
+                  '등록번호: 644-86-03081\n'
+                  '대표번호: 070-4304-5778\n'
+                  '서울시 서초구 서운로 13 126-나94호'),
                 style: typo12semibold100.copyWith(color: GRAY_40),
               ),
               onTap: context.pop,
@@ -325,7 +325,7 @@ class ProfileViewModel {
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.only(left: 15),
         child: Text(showTitle,
-          style: typo16bold.copyWith(
+          style: typo14semibold.copyWith(
             color: isTest ? Colors.blueAccent : isEnable ? GRAY_80 : GRAY_20)),
       )
     );
