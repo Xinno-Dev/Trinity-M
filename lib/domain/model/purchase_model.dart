@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import '../../../../domain/model/product_item_model.dart';
 import '../../../../domain/model/seller_model.dart';
 import '../../common/const/utils/convertHelper.dart';
+import '../../main.dart';
 
 part 'purchase_model.g.dart';
 
@@ -31,6 +32,10 @@ class PurchaseModel {
   String?   status;       // 상품 상태 CD_PAY_ST
   String?   mid;          // Merchant uID
 
+  // 결제 정보..
+  List<String>? availablePayType; // 1:신용카드 2:계좌이체
+  JSON?         transferAccount;
+
   // 판매자 정보..
   SellerModel? seller;
 
@@ -57,17 +62,29 @@ class PurchaseModel {
     this.status,
     this.mid,
 
+    this.availablePayType,
+    this.transferAccount,
+
     this.seller,
     this.createTime,
     this.updateTime,
   });
 
+  get priceUnitText {
+    final lang = appLocaleDelegate.appLocale.locale.languageCode;
+    var priceUnitStr = priceUnit ?? 'KRW';
+    if (priceUnitStr.toLowerCase() == 'krw' && lang == 'ko') {
+      priceUnitStr = '원';
+    }
+    return priceUnitStr;
+  }
+
   get priceText {
-    return '${CommaIntText(buyPrice)} $priceUnit';
+    return '${CommaIntText(buyPrice)} $priceUnitText';
   }
 
   get payText {
-    return '${CommaIntText(payPrice)} $priceUnit';
+    return '${CommaIntText(payPrice)} $priceUnitText';
   }
 
   get sellerImage {
@@ -91,7 +108,23 @@ class PurchaseModel {
   }
 
   get sellerDesc {
-    return STR(seller?.desc);
+    return STR(seller?.description);
+  }
+
+  get bankName {
+    return transferAccount?['bank'];
+  }
+
+  get bankNumber {
+    return transferAccount?['number'];
+  }
+
+  get isCardPayOn {
+    return availablePayType?.contains('1') ?? false;
+  }
+
+  get isBankPayOn {
+    return availablePayType?.contains('2') ?? false;
   }
 
   factory PurchaseModel.fromJson(JSON json) => _$PurchaseModelFromJson(json);

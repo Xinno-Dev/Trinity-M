@@ -315,8 +315,8 @@ showConfirmDialog(context, desc,
           Text(STR(title), style: typo16bold, textAlign: TextAlign.center) : null,
         content: Container(
           constraints: BoxConstraints(
-            minWidth: MediaQuery.of(context).size.width - 60.w,
-            maxHeight: alertText != null ? 120.h : 60.h,
+            minWidth: MediaQuery.of(context).size.width - 60,
+            maxHeight: alertText != null ? 150 : 60,
           ),
           alignment: Alignment.center,
           color: WHITE,
@@ -333,8 +333,8 @@ showConfirmDialog(context, desc,
           )
         ),
         contentPadding: EdgeInsets.only(
-            top: title != null ? 15.h : 40.h, bottom: 10.h),
-        actionsPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+            top: title != null ? 15 : 40, bottom: 10),
+        actionsPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         actionsAlignment: MainAxisAlignment.center,
         backgroundColor: WHITE,
         surfaceTintColor: WHITE,
@@ -370,7 +370,6 @@ showConfirmDialog(context, desc,
       ),
   );
 }
-
 
 showSelectDialog(context, desc, List<String> list,
   {
@@ -442,7 +441,7 @@ showSelectDialog(context, desc, List<String> list,
 defaultAppBar(String title, {Widget? leading, var isCanBack = true}) {
   return AppBar(
     title: Text(title),
-    titleTextStyle: (!isPadMode && title.length > 16) ? typo14semibold : typo18semibold,
+    titleTextStyle: (!isPadMode && title.length > 24) ? typo16semibold : typo18semibold,
     titleSpacing: 0,
     centerTitle: true,
     leading: leading,

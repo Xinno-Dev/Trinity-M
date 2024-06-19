@@ -37,7 +37,7 @@ class AppLocalization {
       '계정 정보': 'Account Information',
       '주소 복사': 'Copy address',
       // AuthCompletedScreen.......
-      '로그인 완료': 'Login complete',
+      '로그인 완료': 'Log in complete',
       // AuthLocalScreen...........
       '본인 확인을 위해 생체인증을 사용합니다.':
       'We use biometric authentication to verify your identity.',
@@ -150,7 +150,7 @@ class AppLocalization {
       'BYFFIN 지갑 사용을 위한 비밀번호\n숫자 6자리를 등록합니다.':
       'Register a 6-digit password\nto use BYFFIN wallet.',
       // RegistCompleteScreen..............
-      '로그인하기': 'Login',
+      '로그인하기': 'Log in',
       '자산으로 가기': 'Go to asset',
       'BYFFIN 지갑 을\n만들었습니다': 'BYFFIN wallet\ncreated',
       '비밀번호 변경이\n완료되었습니다': 'Password change\ncompleted',
@@ -529,10 +529,6 @@ class AppLocalization {
       '결제 예정 금액을 확인해 주세요.': 'Please check the amount to be paid.',
       '상품 금액': 'Product amount',
       '결제 예정 금액': 'Payment amount',
-      '(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다. '
-          '이에 따라, 당사는 상품, 거래정보 및 거래에 대하여 책임을 지지 않습니다.':
-      'Exino Inc. is a mail order intermediary and is not a party to the mail order. '
-          'Accordingly, we are not responsible for products, transaction information, or transactions.',
       '결제하기': 'Make payment',
       '프로필 편집': 'Edit profile',
       '보유 상품': 'Products you own',
@@ -560,8 +556,8 @@ class AppLocalization {
           'Registration number: 644-86-03081\n'
           'Phone number: 070-4304-5778\n'
           '#126-Na94, 13 Seoun-ro, Seocho-gu, Seoul',
-      '(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다.\n'
-          '이에 따라, 당사는 상품, 거래정보 및 거래에 대하여 책임을 지지 않습니다.':
+      '(주)엑시노는 통신판매 중개자이며,\n통신판매의 당사자가 아닙니다.\n'
+          '이에 따라, 당사는 상품, 거래정보 및\n거래에 대하여 책임을 지지 않습니다.':
       'Exino Co., Ltd. is a mail order intermediary\nand is not a party to the mail order.\n'
           'Accordingly, we are not responsible for products,\ntransaction information, or transactions.',
 
@@ -620,12 +616,12 @@ class AppLocalization {
       '계정 복구중입니다...': 'Account is being restored...',
       '로그아웃 완료': 'Logout complete',
       '로그인이 필요한 서비스입니다.': 'This service requires login.',
-      '로그인': 'Login',
-      '이메일로 로그인': 'Login with Email',
-      '카카오로 로그인': 'Login with Kakao',
-      '이메일로 회원가입': 'Sign up by Email',
-      '카카오로 회원가입': 'Sign up by Kakao',
-      '이메일 로그인': 'Login with Email',
+      '로그인': 'Log in',
+      '이메일로 로그인': 'Log in with Email',
+      '카카오로 로그인': 'Log in with Kakao',
+      '이메일로 회원가입': 'Signup by Email',
+      '카카오로 회원가입': 'Signup by Kakao',
+      '이메일 로그인': 'Log in with Email',
       '이메일 형식을 확인해 주세요.': 'Please check your email format.',
       '로그인중입니다...': 'Logging in...',
       '로그인 성공': 'log-in succeed',
@@ -648,7 +644,7 @@ class AppLocalization {
       '잘못된 계정이나 패스워드 입니다.': 'Invalid account or password.',
       '잘못된 패스워드 입니다.': 'This is an incorrect password.',
       '카카오 로그인에 실패했습니다.': 'Kakao login failed.',
-      '로그인에 실패했습니다.': 'Login failed.',
+      '로그인에 실패했습니다.': 'Log in failed.',
       '복구가 필요한 이메일입니다.': 'This email needs recovery.',
       '복구에 실패했습니다.': 'Recovery failed.',
       '회원가입이 필요한 메일입니다.': 'This email requires membership registration.',
@@ -673,15 +669,16 @@ class AppLocalization {
       '본인인증 실패': 'Identity verification failed',
       '이미 본인인증을 완료했습니다.': 'Already completed your identity verification.',
       '인증 미완료': 'Authentication incomplete',
-      '신청후 일정시간후에\n탈퇴 처리가 완료됩니다.': 'The withdrawal process will be completed\na certain period of time after application.',
+      '신청후 일주일후에\n탈퇴 처리가 완료됩니다.':
+        'Withdrawal processing will be\ncompleted one week after application.',
       '*주의: 탈퇴 처리가 완료된 후에는\n'
         '본 계정으로 접속이 불가능하며,\n'
-        '보유한 자산이 있으면 잃어버리게 됩니다.': '*Caution: After withdrawal processing is completed\n'
+        '보유한 자산이 있으면 잃어버리게 됩니다.': '*Caution: After withdrawal processing\nis completed\n'
         'Connection is not possible with this account,\n'
         'If you have any assets, you will lose them.',
-      '탈퇴 신청': 'Application for withdrawal',
-      '회원 탈퇴 신청 완료': 'Membership withdrawal application completed',
-      '회원 탈퇴 신청 실패': 'Membership withdrawal application failed',
+      '탈퇴 신청': 'Withdrawal',
+      '회원 탈퇴 신청 완료': 'Withdrawal application completed',
+      '회원 탈퇴 신청 실패': 'Withdrawal application failed',
       '앱 초기화 완료': 'App initialization complete',
       '복구단어로 복구': 'Recover with recovery word',
       '클라우드로 복구': 'Recovery with Cloud',
@@ -705,6 +702,24 @@ class AppLocalization {
         'iCloud activation is required.\nSettings > Apple ID, iCloud',
       '백업이 완료됬습니다.': 'Backup has been completed.',
       '복구에 성공했습니다.': 'Recovery was successful.',
+      '결제방식을 선택해주세요.': 'Please select a payment method.',
+      '신용카드': 'Credit card',
+      '계좌이체': 'Account transfer',
+      '이체금액': 'Transfer amount',
+      '은행명': 'Name of bank',
+      '계좌번호': 'Account number',
+      '생체인증 설정 완료': 'Biometric authentication setup complete',
+      '변경할 닉네임 입력해 주세요.': 'Please enter the nickname you want to change.',
+      '구매한 상품이 없습니다.': 'No products have been purchased.',
+      '계정 변경 성공': 'Account change successful',
+      '계정 변경 실패': 'Account change failed',
+      '잘못된 비밀번호입니다.': 'Invalid password.',
+      '회원 탈퇴 신청중': 'Applying for membership withdrawal',
+      '탈퇴 완료까지 남은시간': 'Time remaining until withdrawal is completed',
+      '시간': 'ours',
+      '탈퇴 신청을 취소하시겠습니까?': 'Would you like to cancel\nyour withdrawal request?',
+      '회원 탈퇴 취소': 'Cancel membership withdrawal',
+      '회원 탈퇴 취소 완료': 'Cancellation completed',
       '': '',
       '': '',
     },

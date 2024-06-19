@@ -78,7 +78,7 @@ class _SignUpPassScreenState extends ConsumerState {
       top: false,
       child: Scaffold(
         backgroundColor: WHITE,
-        appBar: defaultAppBar(viewModel.title),
+        appBar: defaultAppBar(TR(viewModel.title)),
           body: LayoutBuilder(
             builder: (context, constraints) {
             return ConstrainedBox(

@@ -101,7 +101,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 240,
+                height: 280,
                 margin: EdgeInsets.symmetric(horizontal: 20.w),
                 padding: EdgeInsets.only(top: 30.h),
                 child: Column(
@@ -112,7 +112,7 @@ class _SignUpBioScreenState extends ConsumerState<SignUpBioScreen> {
                       TR('빠른 이용을 위해\n생체인증을 설정하세요.'),
                       style: typo24bold150,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     Text(
                       TR('본인 확인 목적으로 기기에 등록된 생체정보를\n'
                         '이용하여 로그인 및 인증작업을 진행하며,\n'

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:trinity_m_00/common/provider/login_provider.dart';
+import 'package:trinity_m_00/domain/model/purchase_model.dart';
 import 'package:trinity_m_00/presentation/view/market/payment_done_screen.dart';
 import '../../../../common/common_package.dart';
 import '../../../../common/const/utils/uihelper.dart';
@@ -65,14 +66,14 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
             backgroundColor: Colors.white,
             body: Column(
               children: [
-                Expanded(
-                  child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        _viewModel.showBuyBox(),
-                      ]
+                _viewModel.showBuyBox(),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.only(top: 50),
+                  child: Text(TR('(주)엑시노는 통신판매 중개자이며,\n통신판매의 당사자가 아닙니다.\n'
+                      '이에 따라, 당사는 상품, 거래정보 및\n거래에 대하여 책임을 지지 않습니다.'),
+                      style: typo14normal, textAlign: TextAlign.center),
                   ),
-                ),
                 if (!prov.purchaseReady)
                   Padding(padding: EdgeInsets.all(10),
                     child: Text(TR('* 옵션을 선택해 주세요.'),
@@ -118,17 +119,25 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
       prov.requestPurchaseWithImageId(onError: (error) {
         showLoginErrorTextDialog(context, TR(error));
       }).then((info) {
-        if (info != null) {
-          var pgCode = PAYMENT_PG;
-          if (STR(prov.purchaseInfo?.mid).isNotEmpty) {
-            pgCode += '.${STR(prov.purchaseInfo?.mid)}';
+        if (info != null && info != false) {
+          if (INT(prov.purchaseInfo?.availablePayType?.length) > 1) {
+            showSelectDialog(context, TR('결제방식을 선택해주세요.'), [
+              TR('신용카드'), TR('계좌이체')
+            ]).then((result) {
+              switch (result) {
+                case 0:
+                  _showCardPay(data);
+                  break;
+                case 1:
+                  _showBankPay();
+                  break;
+              }
+            });
+          } else if (prov.purchaseInfo?.isBankPayOn) {
+            _showBankPay();
+          } else {
+            _showCardPay(data);
           }
-          LOG('--> pgCode : $pgCode');
-          data.pg = pgCode;
-          Navigator.of(context).push(
-            createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data))).then((_) {
-            loginProv.enableLockScreen();
-          });
           return;
         } else if (info == null) {
           _showFailMessage(context);
@@ -139,6 +148,28 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
       });
     } else {
       loginProv.enableLockScreen();
+    }
+  }
+
+  _showCardPay(data) {
+    var pgCode = PAYMENT_PG;
+    final prov = ref.read(marketProvider);
+    if (STR(prov.purchaseInfo?.mid).isNotEmpty) {
+      pgCode += '.${STR(prov.purchaseInfo?.mid)}';
+    }
+    LOG('--> pgCode : $pgCode');
+    data.pg = pgCode;
+    Navigator.of(context).push(
+      createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data))).then((_) {
+      ref.read(loginProvider).enableLockScreen();
+    });
+  }
+
+  _showBankPay() {
+    final prov = ref.read(marketProvider);
+    var info = prov.purchaseInfo;
+    if (info != null) {
+      _viewModel.popBankPayDetail(info);
     }
   }
 }

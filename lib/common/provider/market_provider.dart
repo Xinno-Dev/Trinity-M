@@ -338,8 +338,8 @@ class MarketProvider extends ChangeNotifier {
     return null;
   }
 
-
-  requestPurchaseWithImageId({Function(String)? onError}) async {
+  requestPurchaseWithImageId(
+    {Function(String)? onError}) async {
     LOG('--> requestPurchaseWithImageId : ${purchaseInfo?.prodSaleId} '
         '/ ${optionId} / $isBuying');
     if (optionId != null) {
@@ -355,12 +355,14 @@ class MarketProvider extends ChangeNotifier {
       });
       isBuying = false;
       if (result != null) {
-        purchaseInfo!.itemId      = result.itemId;
-        purchaseInfo!.merchantUid = result.merchantUid;
-        purchaseInfo!.buyPrice    = result.price; // price -> payPrice 로 변환
-        purchaseInfo!.priceUnit   = result.priceUnit;
-        purchaseInfo!.mid         = result.mid;
-        payData.merchantUid       = STR(result.merchantUid);
+        purchaseInfo!.itemId            = result.itemId;
+        purchaseInfo!.merchantUid       = result.merchantUid;
+        purchaseInfo!.buyPrice          = result.price; // price -> buyPrice 로 변환
+        purchaseInfo!.priceUnit         = result.priceUnit;
+        purchaseInfo!.mid               = result.mid;
+        purchaseInfo!.availablePayType  = result.availablePayType;
+        purchaseInfo!.transferAccount   = result.transferAccount;
+        payData.merchantUid             = STR(result.merchantUid);
         LOG('--> requestPurchaseWithImageId result : ${payData.merchantUid} '
             '<= ${purchaseInfo?.toJson()}');
         return purchaseInfo;

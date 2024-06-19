@@ -14,7 +14,7 @@ class SellerModel {
   String? nickId;
   String? subTitle;
   String? pfImg;
-  String? desc;
+  String? description;
 
   int?  follower;
   int?  following;
@@ -27,7 +27,7 @@ class SellerModel {
     this.nickId,
     this.subTitle,
     this.pfImg,
-    this.desc,
+    this.description,
 
     this.follower,
     this.following,

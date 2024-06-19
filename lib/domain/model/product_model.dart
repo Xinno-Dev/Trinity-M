@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import '../../../../domain/model/product_item_model.dart';
 import '../../../../domain/model/seller_model.dart';
 import '../../common/const/utils/convertHelper.dart';
+import '../../main.dart';
 
 part 'product_model.g.dart';
 
@@ -86,12 +87,21 @@ class ProductModel {
            STR(desc2).isNotEmpty || STR(externUrl).isNotEmpty;
   }
 
+  get priceUnitText {
+    final lang = appLocaleDelegate.appLocale.locale.languageCode;
+    var priceUnitStr = priceUnit ?? 'KRW';
+    if (priceUnitStr.toLowerCase() == 'krw' && lang == 'ko') {
+      priceUnitStr = '원';
+    }
+    return priceUnitStr;
+  }
+
   get amountText {
     return '${CommaIntText(remainAmount)}${INT(totalAmount) > 0 ? ' / ${CommaIntText(totalAmount)}' : ''}';
   }
 
   get priceText {
-    return '${CommaIntText(itemPrice)} $priceUnit';
+    return '${CommaIntText(itemPrice)} $priceUnitText';
   }
 
   get description {
@@ -123,7 +133,7 @@ class ProductModel {
   }
 
   get sellerDesc {
-    return STR(seller?.desc);
+    return STR(seller?.description);
   }
 
   updateItem(ProductItemModel newItem) {

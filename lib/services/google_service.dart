@@ -207,12 +207,12 @@ class GoogleService extends GoogleAccount {
             title: Text(TR(isUpload ? '저장 위치 선택' : '복구 파일 선택'),
               style: typo16semibold),
             titlePadding: EdgeInsets.fromLTRB(20, 20, 10, 0),
-            insetPadding: EdgeInsets.zero,
+            insetPadding: EdgeInsets.symmetric(horizontal: 20),
             actionsPadding: EdgeInsets.fromLTRB(0, 0, 20, 5),
             contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
             content: Container(
               constraints: BoxConstraints(
-                minWidth: 400
+                minWidth: 400,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -37,7 +37,7 @@ class MarketViewModel {
   }
 
   get descStyle {
-    return typo14normal;
+    return typo16medium;
   }
 
   get descSmallStyle {
@@ -45,7 +45,7 @@ class MarketViewModel {
   }
 
   get priceStyle {
-    return typo14semibold;
+    return typo18bold;
   }
 
   showCategoryBar() {
@@ -142,10 +142,13 @@ class MarketViewModel {
                       crossAxisSpacing: 5,
                       mainAxisSpacing: 5,
                     ),
+                    physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return productListItem(
                         prov.marketRepo.userProductList[index],
                         height: isPadMode ? 220 : 230,
+                        isShowSeller: isShowSeller,
+                        isCanBuy: isCanBuy,
                       );
                     }
                 ),
@@ -366,13 +369,6 @@ class MarketViewModel {
               ],
             ),
           ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.only(top: 30),
-            child: Text(TR('(주)엑시노는 통신판매 중개자이며, 통신판매의 당사자가 아닙니다.\n'
-              '이에 따라, 당사는 상품, 거래정보 및 거래에 대하여 책임을 지지 않습니다.'),
-              style: typo14normal, textAlign: TextAlign.center),
-          )
         ],
       ),
     );
@@ -398,21 +394,6 @@ class MarketViewModel {
       ],
     );
   }
-
-  // showStoreProductList(String title,
-  //   {var isShowSeller = true, var isCanBuy = true}) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Padding(
-  //           padding: EdgeInsets.only(top: 20, bottom: 10),
-  //           child: Text(title, style: typo16bold)
-  //       ),
-  //       ...List<Widget>.from(prov.marketRepo.productList.map((e) =>
-  //           productListItem(context, e, isShowSeller: isShowSeller, isCanBuy: isCanBuy)).toList())
-  //     ],
-  //   );
-  // }
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -446,7 +427,7 @@ class MarketViewModel {
               return Container(
                 height: 140.h,
                 alignment: Alignment.center,
-                child: Text('구매한 상품이 없습니다.'),
+                child: Text(TR('구매한 상품이 없습니다.')),
               );
             }
           } else {
@@ -471,7 +452,8 @@ class MarketViewModel {
             child: Container(
               padding: EdgeInsets.all(5),
               color: Colors.transparent,
-              child: Icon(Icons.view_agenda_outlined, color: !prov.userItemShowGrid ? GRAY_80 : GRAY_20),
+              child: Icon(Icons.view_agenda_outlined,
+                color: !prov.userItemShowGrid ? GRAY_80 : GRAY_20),
             )),
           InkWell(
             onTap: () {
@@ -481,7 +463,8 @@ class MarketViewModel {
             child: Container(
               padding: EdgeInsets.all(5),
               color: Colors.transparent,
-              child: Icon(Icons.grid_view, color: prov.userItemShowGrid ? GRAY_80 : GRAY_20),
+              child: Icon(Icons.grid_view,
+                color: prov.userItemShowGrid ? GRAY_80 : GRAY_20),
             )),
         ],
       ),
@@ -495,7 +478,6 @@ class MarketViewModel {
         if (snapShot.hasData) {
           var userItemList = prov.userItemList(ownerAddr);
           if (userItemList.isNotEmpty) {
-            LOG('--> prov.userItemList : ${prov.userItemList}');
             if (prov.userItemShowGrid) {
               return GridView.builder(
                 shrinkWrap: true,
@@ -581,14 +563,14 @@ class MarketViewModel {
                     SizedBox(height: 10),
                     if (image.isNotEmpty)...[
                       Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: showImage(image, Size.square(width))
+                        padding: EdgeInsets.only(bottom: 10),
+                        child: showImage(image, Size.square(width))
                       ),
                     ],
                     _barcodeSelectButtonBox(item),
                     _contentTitleBarFromItem(item,
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        isShowAmount: false),
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      isShowAmount: false),
                     _contentDescriptionFromItem(item),
                     if (STR(item.externalUrl).isNotEmpty)
                       _contextExternalImage(STR(item.externalUrl),
@@ -596,6 +578,39 @@ class MarketViewModel {
                   ],
                 ),
               )
+            ]
+          )
+        );
+      },
+    );
+  }
+
+  popBankPayDetail(PurchaseModel item) {
+    var priceStr = CommaIntText(INT(item.buyPrice).toString());
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: WHITE,
+      builder: (context) {
+        return Container(
+          height: 150,
+          padding: EdgeInsets.all(25),
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width - 40,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.0.sp),
+              topRight: Radius.circular(16.0.sp),
+            ),
+            color: WHITE,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text('${TR('이체금액')}: ${item.priceText}', style: typo18bold),
+              Text('${TR('은행명')}: ${item.bankName}', style: typo18bold),
+              Text('${TR('계좌번호')}: ${item.bankNumber}', style: typo18bold),
             ]
           )
         );
@@ -773,28 +788,6 @@ class MarketViewModel {
         LOG('--> date result : ${prov.purchaseStartDate} ~ ${prov.purchaseEndDate}');
       }
     });
-  }
-
-
-  _purchaseTitleBar(PurchaseModel item, {EdgeInsets? padding}) {
-    return Container(
-      padding: padding,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 10),
-          Text(STR(item.name), style: typo16bold),
-          Row(
-            children: [
-              Text(prov.selectPurchaseItem!.priceText, style: typo14bold),
-              SizedBox(width: 10),
-              Text('[수량 1]', style: typo14medium),
-            ],
-          )
-        ],
-      ),
-    );
   }
 
   _purchaseItem(PurchaseModel item,
@@ -1252,10 +1245,10 @@ class MarketViewModel {
   }
 
   _contentSellerDescBox(SellerModel seller, {EdgeInsets? padding}) {
-    if (STR(seller.desc).isNotEmpty) {
+    if (STR(seller.description).isNotEmpty) {
       return Container(
         padding: padding,
-        child: Text(STR(seller.desc), style: typo14normal,
+        child: Text(STR(seller.description), style: typo14normal,
             textAlign: TextAlign.center),
       );
     }
@@ -1274,8 +1267,8 @@ class MarketViewModel {
 
   _contentTitleBar(ProductModel item, {EdgeInsets? padding, var isShowAmount = true}) {
     var priceStr = CommaIntText(INT(item.itemPrice).toString());
-    var unitStr = ' ${item.priceUnit}';
-    var amountStr = '[수량 ${item.amountText}]';
+    var unitStr = ' ${item.priceUnitText}';
+    var amountStr = '[${TR('수량')} ${item.amountText}]';
     return _contentTitleTextBar(
       STR(item.name),
       price: priceStr,
@@ -1309,7 +1302,7 @@ class MarketViewModel {
               if (price != null)...[
                 Text(price, style: priceStyle),
                 if (unit != null)
-                  Text(unit, style: descStyle),
+                  Text(unit, style: priceStyle),
               ],
               if (isShowAmount && amount != null)...[
                 SizedBox(width: 10),
@@ -1356,20 +1349,20 @@ class MarketViewModel {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(desc, style: typo14medium),
+            Text(desc, style: descStyle),
             if (STR(desc2).isNotEmpty)...[
               SizedBox(height: 10),
-              Text(STR(desc2), style: typo14medium),
+              Text(STR(desc2), style: descStyle),
             ],
             if (STR(prov.optionDesc).isNotEmpty || STR(prov.optionDesc2).isNotEmpty)...[
               Divider(height: 50),
             ],
             if (STR(prov.optionDesc).isNotEmpty)...[
-              Text(STR(prov.optionDesc), style: typo14medium),
+              Text(STR(prov.optionDesc), style: descStyle),
               SizedBox(height: 10),
             ],
             if (STR(prov.optionDesc2).isNotEmpty)...[
-              Text(STR(prov.optionDesc2), style: typo14medium),
+              Text(STR(prov.optionDesc2), style: descStyle),
             ],
           ],
         )

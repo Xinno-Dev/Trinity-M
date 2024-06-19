@@ -27,7 +27,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
           ?.map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       certUpdt: json['certUpdt'] as String?,
-      withdrawDt: json['estimatedWithdrawDt'] as String?,
+      withdrawDt: json['withdrawDt'] as String?,
     );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) {
@@ -56,7 +56,7 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) {
   writeNotNull('deviceId', instance.deviceId);
   writeNotNull('deviceType', instance.deviceType);
   writeNotNull('certUpdt', instance.certUpdt);
-  writeNotNull('estimatedWithdrawDt', instance.withdrawDt);
+  writeNotNull('withdrawDt', instance.withdrawDt);
   writeNotNull(
       'addressList', instance.addressList?.map((e) => e.toJson()).toList());
   return val;

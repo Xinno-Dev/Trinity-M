@@ -146,7 +146,7 @@ class _MyInfoScreenState extends ConsumerState<ProfileMyInfoScreen> {
       });
     } else {
       showConfirmDialog(context,
-        TR('신청후 일정시간후에\n탈퇴 처리가 완료됩니다.'),
+        TR('신청후 일주일후에\n탈퇴 처리가 완료됩니다.'),
         title: TR('회원 탈퇴 신청'),
         alertText: TR('*주의: 탈퇴 처리가 완료된 후에는\n'
           '본 계정으로 접속이 불가능하며,\n'
