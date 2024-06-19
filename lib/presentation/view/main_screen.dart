@@ -92,6 +92,9 @@ class _MainScreenState extends ConsumerState<MainScreen>
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     _movePage();
+    final scrRatio = MediaQuery.of(context).size.width /
+        MediaQuery.of(context).size.height;
+    isPadMode = scrRatio > 0.6;
     return prov.isScreenLocked ? lockScreen(context) :
       AnnotatedRegion<SystemUiOverlayStyle>(
         value:SystemUiOverlayStyle(

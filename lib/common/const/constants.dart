@@ -52,10 +52,10 @@ const String APP_VERSION_KEY = 'APP_VERSION_KEY';
 const String APP_NOTICE_KEY = 'APP_NOTICE_KEY';
 
 
-// 출시시 필수 체크..
+// 출시시 필수 OFF 체크..
 const bool IS_DEV_MODE = kDebugMode && false; // 개발자 버전 켜기 / false
 
-// TrinityM 출시시 필수 체크..
+// TrinityM 출시시 필수 ON 체크..
 const bool IS_EMAIL_CHECK = true;       // 이메일 링크 전송 켜기 / true
 const bool IS_AUTO_LOCK_MODE = true;    // 자동 잠금 켜기 / true
 const bool IS_AUTO_LOGIN_MODE = true;   // 자동 로그인 켜기 / true
@@ -64,6 +64,7 @@ const bool IS_PAYMENT_READY = true;     // 결제 버튼 켜기 / true
 const bool IS_CLOUD_BACKUP_ON = true;   // 클라우드 백업 켜기 / true
 const bool IS_CLOUD_BACKUP_MN = true;   // 클라우드 백업 시 니모닉 or Key / true
 
+// TrinityM 출시시 필수 OFF 체크..
 const bool IS_APP_RESET_ON = false;     // 앱 초기화 메뉴 켜기 / false
 const bool IS_LANGUAGE_ON = false;      // 언어변경 메뉴 켜기 / false
 const bool IS_IDENTITY_ON = false;       // 본인인증 메뉴 켜기 / false
@@ -77,6 +78,8 @@ String CURRENT_CHAIN_ID = TEST_NET_CHAIN_ID;
 const String IDENTITY_PG = 'danal.B010072188'; // 본인인증
 const String PAYMENT_PG = 'danal_tpay'; // PG사
 const String PORTONE_IMP_CODE = 'imp08730114'; // PortOne 가맹점 코드 // dev@xinno.io
+
+const String ICLOUD_CONTAINER_ID = 'iCloud.com.xinno.trinity-m-00';
 
 // const String EX_TEST_MAIL_00 = 'test00@exsino.com';
 // const String EX_TEST_PASS_00 = 'testpass00';

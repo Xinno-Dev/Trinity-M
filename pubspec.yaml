@@ -130,7 +130,8 @@ dependencies:
   googleapis_auth: ^1.5.1
 
 #  # apple..
-#  icloud_storage: ^2.2.0
+  icloud_storage: ^2.2.0
+  cloud_kit: ^1.2.0
 
   # kakao..image_picker:
   kakao_flutter_sdk_user: ^1.9.0 # 카카오 로그인 API 패키지

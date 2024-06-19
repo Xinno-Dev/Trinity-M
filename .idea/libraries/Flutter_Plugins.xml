@@ -82,6 +82,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/local_auth_android-1.0.38" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_storage_web-3.9.5" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image_picker-1.1.2" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/cloud_kit-1.2.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/icloud_storage-2.2.0" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

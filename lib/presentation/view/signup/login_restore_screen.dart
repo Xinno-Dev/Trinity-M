@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../../../../common/const/utils/uihelper.dart';
 import '../../../../common/const/utils/userHelper.dart';
@@ -14,6 +15,7 @@ import '../../../common/const/utils/languageHelper.dart';
 import '../../../common/const/utils/rwfExportHelper.dart';
 import '../../../common/const/widget/primary_button.dart';
 import '../../../services/google_service.dart';
+import '../../../services/icloud_service.dart';
 import '../main_screen.dart';
 import '../recover_wallet_input_screen.dart';
 import 'login_pass_screen.dart';
@@ -115,47 +117,76 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
   // 클라우드로 계정 복구..
   startRecoverCloud() {
     final prov = ref.read(loginProvider);
-    // downlaod from google drive..
-    GoogleService.downloadKeyFromGoogleDrive(context).then((rwfStr) {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      _startGoogleCloud();
+      return;
+    }
+    showSelectDialog(context, TR('대상을 선택해 주세요.'),
+        ['Apple iCloud', 'Google Drive']).then((result) {
+      switch (result) {
+        case 0:
+          _startAppleCloud();
+          break;
+        case 1:
+          _startGoogleCloud();
+          break;
+      }
+    });
+  }
+
+  _startGoogleCloud() async {
+    GoogleService.downloadKeyFromDrive(context).then((rwfStr) {
       if (STR(rwfStr).isNotEmpty) {
-        // cloud pass check..
-        Navigator.of(context).push(
-          createAniRoute(CloudPassScreen())).then((pass) async {
-          if (STR(pass).isNotEmpty) {
-            // recover mnemonic..
-            var result = await RWFExportHelper.decrypt(pass, rwfStr);
-            if (result != null && result.length > 1) {
-              LOG('--> RWFExportHelper.decrypt result : $pass / ${result.length}');
-              // new pass create..
-              var mnemonic = result.length > 1 ? result[1] : result[0];
-              Navigator.of(context)
-                  .push(createAniRoute(RecoverPassScreen()))
-                  .then((newPass) async {
-                if (STR(newPass).isNotEmpty) {
-                  prov.setUserPass(newPass!);
-                  showLoadingDialog(context, TR('계정 복구중입니다...'));
-                  // start recover user..
-                  prov.recoverUser(
-                    newPass,
-                    mnemonic: mnemonic,
-                    onError: (type, code) {
-                      hideLoadingDialog();
-                      showLoginErrorDialog(context, type, text: code);
-                      UserHelper().clearUser();
-                    }).then((result) {
-                      LOG('--> startRecoverCloud mn result : $result');
-                      hideLoadingDialog();
-                      _recoverResult(result);
-                    });
-                } else {
-                  LOG('--> startRecoverCloud mn cancel');
-                }
+        _startRecover(rwfStr);
+      }
+    });
+  }
+
+  _startAppleCloud() async {
+    final prov = ref.read(loginProvider);
+    ICloudService.downloadKeyFromDrive(context, prov.userEmail,
+      (rwfStr) => _startRecover(rwfStr),
+      (err) => showToast('${TR('복구에 실패했습니다.')}\n$err'));
+  }
+
+  _startRecover(rwfStr) {
+    Navigator.of(context).push(
+        createAniRoute(CloudPassScreen())).then((pass) async {
+      // cloud pass check..
+      if (STR(pass).isNotEmpty) {
+        // recover mnemonic..
+        var result = await RWFExportHelper.decrypt(pass, rwfStr);
+        if (result != null && result.length > 1) {
+          LOG('--> RWFExportHelper.decrypt result : $pass / ${result.length}');
+          // new pass create..
+          var mnemonic = result.length > 1 ? result[1] : result[0];
+          Navigator.of(context)
+              .push(createAniRoute(RecoverPassScreen()))
+              .then((newPass) async {
+            if (STR(newPass).isNotEmpty) {
+              final prov = ref.read(loginProvider);
+              prov.setUserPass(newPass!);
+              showLoadingDialog(context, TR('계정 복구중입니다...'));
+              // start recover user..
+              prov.recoverUser(
+                newPass,
+                mnemonic: mnemonic,
+                onError: (type, code) {
+                  hideLoadingDialog();
+                  showLoginErrorDialog(context, type, text: code);
+                  UserHelper().clearUser();
+                }).then((result) {
+                LOG('--> startRecoverCloud mn result : $result');
+                hideLoadingDialog();
+                _recoverResult(result);
               });
             } else {
-              showLoginErrorTextDialog(context, TR('잘못된 복구 비밀번호입니다.'));
+              LOG('--> startRecoverCloud mn cancel');
             }
-          }
-        });
+          });
+        } else {
+          showLoginErrorTextDialog(context, TR('잘못된 복구 비밀번호입니다.'));
+        }
       }
     });
   }
@@ -163,8 +194,9 @@ class _LoginRestoreScreenState extends ConsumerState<LoginRestoreScreen> {
   _recoverResult(result) {
     if (result != null) {
       _moveToMainProfile();
+      showToast(TR('복구에 성공했습니다.'));
     } else {
-      showToast(TR('계정 복구 실패'));
+      showToast(TR('복구에 실패했습니다.'));
     }
   }
 

@@ -26,6 +26,7 @@ import '../../../common/const/utils/uihelper.dart';
 import '../../../common/const/widget/warning_icon.dart';
 import '../../../domain/viewModel/profile_view_model.dart';
 import '../../../services/google_service.dart';
+import '../../../services/icloud_service.dart';
 import 'signup_pass_screen.dart';
 
 class SignUpMnemonicScreen extends ConsumerStatefulWidget {
@@ -175,25 +176,7 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            createAniRoute(CloudPassCreateScreen())).then((pass) async {
-                            if (STR(pass).isNotEmpty) {
-                              prov.disableLockScreen();
-                              var address = prov.accountAddress;
-                              var email   = prov.userEmail;
-                              var keyPair = await prov.getAccountKey();
-                              if (address != null && keyPair != null) {
-                                var rwfStr = await RWFExportHelper.encrypt(
-                                    pass, address, email, keyPair.d, mnemonic);
-                                GoogleService.uploadKeyToGoogleDrive(
-                                    context, prov.userEmail, rwfStr).then((_) {
-                                  prov.enableLockScreen();
-                                });
-                              }
-                            }
-                          });
-                        },
+                        onTap: _startCloudBackup,
                         child: Container(
                           width: double.infinity,
                           padding: EdgeInsets.symmetric(vertical: 10.h),
@@ -222,6 +205,60 @@ class _SignUpMnemonicScreenState extends ConsumerState<SignUpMnemonicScreen> {
             showToast(TR('회원가입 완료.'));
           },
         ) : null,
+    );
+  }
+
+  _startCloudBackup() {
+    final prov = ref.read(loginProvider);
+    Navigator.of(context).push(
+        createAniRoute(CloudPassCreateScreen())).then((pass) async {
+      if (STR(pass).isNotEmpty) {
+        prov.disableLockScreen();
+        var address = prov.accountAddress;
+        var email   = prov.userEmail;
+        var keyPair = await prov.getAccountKey();
+        if (address != null && keyPair != null) {
+          var rwfStr = await RWFExportHelper.encrypt(
+              pass, address, email, keyPair.d, mnemonic);
+          if (defaultTargetPlatform == TargetPlatform.android) {
+            _startGoogleCloud(rwfStr);
+            return;
+          }
+          showSelectDialog(context, TR('백업 대상을 선택해 주세요.'),
+            [TR('Apple iCloud'), TR('Google Drive')]).then((result) {
+            switch (result) {
+              case 0:
+                _startAppleCloud(rwfStr);
+                break;
+              case 1:
+                _startGoogleCloud(rwfStr);
+                break;
+            }
+          });
+        }
+      }
+    });
+  }
+
+  _startGoogleCloud(rwfStr) {
+    final prov = ref.read(loginProvider);
+    GoogleService.uploadKeyToDrive(
+        context, prov.userEmail, rwfStr).then((_) {
+      prov.enableLockScreen();
+    });
+  }
+
+  _startAppleCloud(rwfStr) {
+    final prov = ref.read(loginProvider);
+    ICloudService.uploadKeyToDrive(
+      context, prov.userEmail, rwfStr,
+      (){
+        showToast(TR('백업이 완료됬습니다.'));
+        prov.enableLockScreen();
+      },
+      (err) {
+        showToast('${TR('백업에 실패했습니다.')}\n$err');
+      }
     );
   }
 }

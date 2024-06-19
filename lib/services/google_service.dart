@@ -36,7 +36,6 @@ class GoogleHttpClient extends IOClient {
 }
 
 class GoogleService extends GoogleAccount {
-
   static List<String> selectDir = [];
   static String? selectFile;
   static Map<String, List<dv.File>> dirListData = {};
@@ -108,23 +107,26 @@ class GoogleService extends GoogleAccount {
   // Google Drive Utils..
   //
 
-  static uploadKeyToGoogleDrive(context, String title, String exportText) async {
+  static uploadKeyToDrive(
+    BuildContext context, String title, String exportText) async {
     var formatter = DateFormat('yyyyMMdd');
     var fileName = '${title}_${formatter.format(DateTime.now())}.rwf';
     return await _startGoogleDriveUpload(context, exportText, fileName);
   }
 
-  static downloadKeyFromGoogleDrive(context) async {
+  static downloadKeyFromDrive(BuildContext context) async {
     return await _startGoogleDriveDownload(context, 'rwf');
   }
 
-  static _startGoogleDriveUpload(context, desc, fileName) async {
+  static _startGoogleDriveUpload(
+    BuildContext context, String desc, String fileName) async {
     LOG('---> startGoogleDriveUpload RWF : $desc');
     if (googleUser != null) {
       var result = await _showDriveSelectDialog(context, true, ext: fileName);
       LOG('---> startGoogleDriveUpload result 1 : $result');
       if (STR(result).isNotEmpty) {
-        return await _uploadToGoogleDrive(context, desc, fileName, parentId: folderId);
+        return await _uploadToGoogleDrive(
+          context, desc, fileName, parentId: folderId);
       }
       return result;
     } else {
@@ -146,7 +148,8 @@ class GoogleService extends GoogleAccount {
   }
 
   // return Rwf text..
-  static Future<String?> _startGoogleDriveDownload(context, ext) async {
+  static Future<String?> _startGoogleDriveDownload(
+    BuildContext context, String ext) async {
     if (googleUser != null) {
       var result = await _showDriveSelectDialog(context, false, ext: ext);
       LOG('---> startGoogleDriveDownload result 1 : $result');
@@ -179,8 +182,10 @@ class GoogleService extends GoogleAccount {
     return selectDir.isNotEmpty ? selectDir.last.split('&/').last : 'root';
   }
 
-  static Future<List<dv.File>> _getDriveFileList({bool isFolderOnly = false, String? ext}) async {
-    LOG("--> _getDriveFileList : $folderId / ${dirListData.keys} / $isFolderOnly");
+  static Future<List<dv.File>> _getDriveFileList(
+    {bool isFolderOnly = false, String? ext}) async {
+    LOG("--> _getDriveFileList : "
+      "$folderId / ${dirListData.keys} / $isFolderOnly");
     if (dirListData.containsKey(folderId)) {
       return dirListData[folderId] as List<dv.File>;
     }
@@ -190,7 +195,8 @@ class GoogleService extends GoogleAccount {
     return await GoogleService.getDriveFilesFromExt(ext);
   }
 
-  static _showDriveSelectDialog(context, isUpload, {String? ext}) {
+  static _showDriveSelectDialog(
+    BuildContext context, bool isUpload, {String? ext}) {
     selectDir.clear();
     dirListData.clear();
     return showDialog(
@@ -198,7 +204,8 @@ class GoogleService extends GoogleAccount {
       builder: (context) {
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
-            title: Text(TR(isUpload ? '저장 위치 선택' : '복구 파일 선택'), style: typo16semibold),
+            title: Text(TR(isUpload ? '저장 위치 선택' : '복구 파일 선택'),
+              style: typo16semibold),
             titlePadding: EdgeInsets.fromLTRB(20, 20, 10, 0),
             insetPadding: EdgeInsets.zero,
             actionsPadding: EdgeInsets.fromLTRB(0, 0, 20, 5),
@@ -229,10 +236,12 @@ class GoogleService extends GoogleAccount {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         List<DropdownMenuItem> dirList = snapshot.data!.map((e) =>
-                            dirItem(e.title, '${e.title}&/${e.id}', isDir: isUpload)).toList();
+                            dirItem(e.title, '${e.title}&/${e.id}',
+                            isDir: isUpload)).toList();
                         dirListData[folderId] = snapshot.data as List<dv.File>;
                         if (isUpload) {
-                          dirList.insert(0, dirItem(folderTitle, '[top]', isTop: true));
+                          dirList.insert(0,
+                            dirItem(folderTitle, '[top]', isTop: true));
                           if (selectDir.isNotEmpty) {
                             dirList.insert(1, dirItem('..', '[back]'));
                           }
@@ -247,7 +256,8 @@ class GoogleService extends GoogleAccount {
                                   selectDir.removeLast();
                                   LOG('---> back dir : ${selectDir.length}');
                                 }
-                                else if (select != '[top]' && (selectDir.isEmpty || selectDir.last != select)) {
+                                else if (select != '[top]' &&
+                                  (selectDir.isEmpty || selectDir.last != select)) {
                                   LOG('---> selectDir add : $select / ${selectDir.length}');
                                   selectDir.add(select);
                                 }
@@ -351,28 +361,6 @@ class GoogleService extends GoogleAccount {
     return [];
   }
 
-  // static _startUploadDrive(context, desc, fileName) async {
-  //   LOG('---> _startUploadDrive : $folderId / $fileName / $desc');
-  //   if (STR(folderId).isNotEmpty) {
-  //     showLoadingDialog(context, '복구키를 백업중 입니다..');
-  //     var parentId = folderId != 'root' ? folderId : null;
-  //     var result = await uploadToGoogleDrive(
-  //         desc, fileName: fileName, parentId: parentId);
-  //     hideLoadingDialog();
-  //     Fluttertoast.showToast(
-  //         msg: result != null ? "복구키 백업 완료" : "복구키 백업 실패",
-  //         toastLength: Toast.LENGTH_SHORT,
-  //         gravity: ToastGravity.BOTTOM,
-  //         timeInSecForIosWeb: 1,
-  //         backgroundColor: Colors.black,
-  //         textColor: result != null ? Colors.white : Colors.orange,
-  //         fontSize: 16.0
-  //     );
-  //     return result != null;
-  //   }
-  //   return false;
-  // }
-
   static Future<bool> _uploadToGoogleDrive(context, desc, fileName, {var parentId = ''}) async {
     LOG('--> _uploadToGoogleDrive : $desc / $parentId');
     var result = false;
@@ -415,7 +403,8 @@ class GoogleService extends GoogleAccount {
     try {
       var client  = GoogleHttpClient(await googleUser!.authHeaders);
       var drive   = dv.DriveApi(client);
-      var response = await drive.files.get(fileId, downloadOptions: dv.DownloadOptions.fullMedia);
+      var response = await drive.files.get(fileId,
+          downloadOptions: dv.DownloadOptions.fullMedia);
       if (response is dv.Media) {
         var bytesArray = await response.stream.toList();
         List<int> bytes = [];

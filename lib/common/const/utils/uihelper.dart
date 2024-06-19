@@ -1,7 +1,10 @@
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trinity_m_00/common/const/widget/primary_button.dart';
 import 'package:trinity_m_00/common/const/widget/rounded_button.dart';
 import '../../../domain/model/coin_model.dart';
 import '../../../domain/model/network_model.dart';
@@ -363,6 +366,74 @@ showConfirmDialog(context, desc,
               ],
             ),
           )
+        ],
+      ),
+  );
+}
+
+
+showSelectDialog(context, desc, List<String> list,
+  {
+    String? title,
+    String? alertText,
+    String? cancelText}) async {
+  return await showDialog<void>(
+    context: context,
+    builder: (BuildContext context) =>
+      AlertDialog(
+        title: title != null ?
+        Text(STR(title), style: typo16bold, textAlign: TextAlign.center) : null,
+        titlePadding: EdgeInsets.zero,
+        content: Container(
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width - 60,
+            maxHeight: (alertText != null ? 120 : 60) + list.length * 50,
+          ),
+          alignment: Alignment.center,
+          color: WHITE,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(desc,
+                  style: typo16medium, textAlign: TextAlign.center),
+              if (alertText != null)
+                Text(STR(alertText),
+                    style: typo14medium.copyWith(color: THEME_ALERT_COLOR),
+                    textAlign: TextAlign.center),
+              SizedBox(height: 10),
+              ...list.map((e) => Container(
+                  height: 50,
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      context.pop(list.indexOf(e));
+                    },
+                    child: Text(e, style: typo14semibold),
+                  ),
+              ))
+            ],
+          )
+        ),
+        contentPadding: EdgeInsets.only(
+            top: title != null ? 5 : 30, bottom: 0),
+        actionsPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        actionsAlignment: MainAxisAlignment.center,
+        backgroundColor: WHITE,
+        surfaceTintColor: WHITE,
+        actions: <Widget>[
+          Container(
+            constraints: BoxConstraints(
+              minWidth: 140,
+            ),
+            child: OutlinedButton(
+              onPressed: context.pop,
+              child: Text(
+                cancelText ?? TR('취소'),
+                style: typo14semibold,
+              ),
+              style: grayBorderButtonStyle,
+            )),
         ],
       ),
   );

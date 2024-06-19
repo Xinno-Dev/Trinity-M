@@ -694,6 +694,17 @@ class AppLocalization {
       '잘못된 계정입니다.\n복구한 계정일 경우,\n복구 파일이나 단어를 확인해 주세요.':
           'This is the wrong account.\nIf the account has been recovered,\n'
           'Please check the recovered file or word.',
+      '백업에 실패했습니다.': 'Backup failed.',
+      '백업 대상을 선택해 주세요.': 'Please select a backup destination.',
+      '애플 iCloud': 'Apple iCloud',
+      '구글 드라이브': 'Google Drive',
+      '다운로드에 실패했습니다.': 'Download failed.',
+      'iCloud에 로그인 되어있지 않습니다.': 'You are not logged in to iCloud.',
+      '대상을 찾을 수 없습니다.': 'Target not found.',
+      'iCloud 활성화가 필요합니다.\n설정 > Apple ID, iCloud':
+        'iCloud activation is required.\nSettings > Apple ID, iCloud',
+      '백업이 완료됬습니다.': 'Backup has been completed.',
+      '복구에 성공했습니다.': 'Recovery was successful.',
       '': '',
       '': '',
     },

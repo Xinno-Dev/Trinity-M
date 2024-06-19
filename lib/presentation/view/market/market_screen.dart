@@ -34,14 +34,7 @@ class _MarketScreenState extends ConsumerState<MarketScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final prov = ref.watch(marketProvider);
-    final scrRatio = MediaQuery.of(context).size.width /
-                     MediaQuery.of(context).size.height;
-    isPadMode = scrRatio > 0.6;
-    LOG('---> scrRatio : [$isPadMode] $scrRatio - '
-      '${MediaQuery.of(context).size.width} / '
-      '${MediaQuery.of(context).size.height}');
-
+    ref.watch(marketProvider);
     return Container(
       child: Stack(
         children: [

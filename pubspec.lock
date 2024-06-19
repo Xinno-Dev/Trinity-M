@@ -345,6 +345,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.9.4"
+  cloud_kit:
+    dependency: "direct main"
+    description:
+      name: cloud_kit
+      sha256: "05786cd41cfee2e82246801b3cd2bde94894ae6b1326159c2c300ad8c570a609"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   code_builder:
     dependency: transitive
     description:
@@ -1141,6 +1149,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.6"
+  icloud_storage:
+    dependency: "direct main"
+    description:
+      name: icloud_storage
+      sha256: fa91d9c3b4264651f01a4f5b99cffa354ffe455623b13ecf92be86d88b1e26ea
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   image:
     dependency: transitive
     description:

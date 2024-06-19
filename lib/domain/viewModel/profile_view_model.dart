@@ -40,6 +40,7 @@ import '../../presentation/view/signup/login_pass_screen.dart';
 import '../../presentation/view/signup/login_screen.dart';
 import '../../services/google_service.dart';
 import '../../services/iamport_service.dart';
+import '../../services/icloud_service.dart';
 import '../model/address_model.dart';
 
 class ProfileViewModel {
@@ -268,6 +269,35 @@ class ProfileViewModel {
                 });
               }
               break;
+            // case DrawerActionType.iCloudUp:
+            //   showSelectDialog(context, TR('Cloud를 선택해 주세요.'),
+            //       ['Google Drive','Apple iCloud']).then((result) {
+            //     switch (result) {
+            //       case 0:
+            //         GoogleService.uploadKeyToDrive(
+            //           context, loginProv.userEmail, 'exportText test').then((_) {
+            //           loginProv.enableLockScreen();
+            //         });
+            //         break;
+            //       case 1:
+            //         ICloudService.uploadKeyToDrive(
+            //           context, loginProv.userEmail, 'exportText test', () {
+            //           LOG('----> up complete');
+            //         }, (err) {
+            //           LOG('----> up error : $err');
+            //         });
+            //         break;
+            //     }
+            //   });
+            //   break;
+            // case DrawerActionType.iCloudDown:
+            //   ICloudService.downloadKeyFromDrive(
+            //     context, loginProv.userEmail, (result) {
+            //     LOG('----> down complete : $result');
+            //   }, (err) {
+            //     LOG('----> down error : $err');
+            //   });
+            //   break;
           // case DrawerActionType.withdrawal:
           //   if (loginProv.isLogin) {
           //     loginProv.logout().then((_) {

@@ -132,6 +132,7 @@ final drawerTitleN = [
   '내 정보', '구매 내역', '-',
   '이용약관', '개인정보처리 방침', '버전 정보',
   '언어 설정', '본인 인증',
+  'iCloud 업로드', 'iCloud 다운로드',
   '로그아웃',
 ];
 
@@ -144,6 +145,8 @@ enum DrawerActionType {
   version,
   language,
   identity,
+  // iCloudUp,
+  // iCloudDown,
   logout;
 
   String get title {
