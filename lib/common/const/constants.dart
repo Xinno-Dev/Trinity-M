@@ -66,8 +66,8 @@ const bool IS_CLOUD_BACKUP_MN = true;   // 클라우드 백업 시 니모닉 or 
 
 // TrinityM 출시시 필수 OFF 체크..
 const bool IS_APP_RESET_ON = false;     // 앱 초기화 메뉴 켜기 / false
-const bool IS_LANGUAGE_ON = true;      // 언어변경 메뉴 켜기 / false
-const bool IS_IDENTITY_ON = true;       // 본인인증 메뉴 켜기 / false
+const bool IS_LANGUAGE_ON = true;       // 언어변경 메뉴 켜기 / false
+const bool IS_IDENTITY_ON = false;      // 본인인증 메뉴 켜기 / false
 
 // byffin.. 출시시 필수 체크..
 const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc API 이용

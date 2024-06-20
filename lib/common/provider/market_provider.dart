@@ -24,6 +24,7 @@ import '../const/utils/languageHelper.dart';
 import '../const/utils/uihelper.dart';
 
 var isPadMode = false;
+var isWearMode = false;
 
 final marketProvider = ChangeNotifierProvider<MarketProvider>((_) {
   return MarketProvider();

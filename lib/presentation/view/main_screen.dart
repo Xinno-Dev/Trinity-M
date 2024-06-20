@@ -1,32 +1,17 @@
-import 'dart:async';
-import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:trinity_m_00/common/const/constants.dart';
-import 'package:trinity_m_00/services/api_service.dart';
-import '../../../common/provider/coin_provider.dart';
 import '../../../common/provider/login_provider.dart';
-import '../../../common/provider/temp_provider.dart';
-import '../../../domain/model/coin_model.dart';
-import '../../../domain/viewModel/market_view_model.dart';
 import '../../../domain/viewModel/profile_view_model.dart';
-import '../../../presentation/view/settings/settings_screen.dart';
-import '../../../presentation/view/signup/login_pass_screen.dart';
-import '../../../presentation/view/staking/staking_main_screen.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:provider/provider.dart' as provider;
 
 import '../../common/common_package.dart';
 import '../../common/const/utils/appVersionHelper.dart';
 import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
-import '../../common/const/utils/rwfExportHelper.dart';
 import '../../common/const/utils/uihelper.dart';
 import '../../common/provider/market_provider.dart';
-import '../../services/google_service.dart';
-import 'asset/asset_screen.dart';
 import 'market/market_screen.dart';
 import 'profile/profile_screen.dart';
 import 'signup/login_screen.dart';
@@ -92,9 +77,11 @@ class _MainScreenState extends ConsumerState<MainScreen>
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     _movePage();
-    final scrRatio = MediaQuery.of(context).size.width /
-        MediaQuery.of(context).size.height;
+    final scrSize = MediaQuery.of(context).size;
+    final scrRatio = scrSize.width / scrSize.height;
     isPadMode = scrRatio > 0.6;
+    LOG('--> MediaQuery.of(context).size.width : [$defaultTargetPlatform] ${scrSize.width} / ${scrSize.height}');
+
     return prov.isScreenLocked ? lockScreen(context) :
       AnnotatedRegion<SystemUiOverlayStyle>(
         value:SystemUiOverlayStyle(
@@ -152,7 +139,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
                       topRight: Radius.circular(20),
                       topLeft:  Radius.circular(20),
                     ),
-                    color: Colors.white,
+                    color: WHITE,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,

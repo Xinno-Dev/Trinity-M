@@ -187,6 +187,7 @@ class ProfileViewModel {
               ),
               onTap: context.pop,
             ),
+            SizedBox(height: 5),
           ],
         ),
       )

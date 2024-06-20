@@ -52,7 +52,6 @@ class MarketViewModel {
     // LOG('--> prov.categoryList : ${prov.categoryList}');
     return Container(
       height: 40,
-      color: WHITE,
       child: StatefulBuilder(
         builder: (context, setState) {
           return SingleChildScrollView(

@@ -28,7 +28,6 @@ import 'package:logger/logger.dart';
 import '../../../common/const/utils/userHelper.dart';
 import '../../../common/provider/temp_provider.dart';
 import '../../../firebase_options.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +43,7 @@ import 'common/provider/go_router.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'common/provider/language_provider.dart';
+import 'common/style/themes.dart';
 import 'domain/viewModel/profile_view_model.dart';
 
 /////////////////////////////
@@ -145,27 +145,27 @@ Future<void> main() async {
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
-  // Check if you received the link via `getInitialLink` first
-  final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
-
-  if (initialLink != null) {
-    final Uri deepLink = initialLink.link;
-    LOG('---> initialLink : $deepLink');
-    // Example of using the dynamic link to push the user to a different screen
-    // Navigator.pushNamed(context, deepLink.path);
-  }
-
-  FirebaseDynamicLinks.instance.onLink.listen(
-        (dynamicLink) {
-      // Set up the `onLink` event listener next as it may be received here
-      // if (pendingDynamicLinkData.link.isAbsolute) {
-        final Uri deepLink = dynamicLink.link;
-        LOG('---> dynamicLink : $deepLink');
-        // Example of using the dynamic link to push the user to a different screen
-        // Navigator.pushNamed(context, deepLink.path);
-      // }
-    },
-  );
+  // // Check if you received the link via `getInitialLink` first
+  // final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
+  //
+  // if (initialLink != null) {
+  //   final Uri deepLink = initialLink.link;
+  //   LOG('---> initialLink : $deepLink');
+  //   // Example of using the dynamic link to push the user to a different screen
+  //   // Navigator.pushNamed(context, deepLink.path);
+  // }
+  //
+  // FirebaseDynamicLinks.instance.onLink.listen(
+  //       (dynamicLink) {
+  //     // Set up the `onLink` event listener next as it may be received here
+  //     // if (pendingDynamicLinkData.link.isAbsolute) {
+  //       final Uri deepLink = dynamicLink.link;
+  //       LOG('---> dynamicLink : $deepLink');
+  //       // Example of using the dynamic link to push the user to a different screen
+  //       // Navigator.pushNamed(context, deepLink.path);
+  //     // }
+  //   },
+  // );
 
   // await FirebaseMessaging.instance.getToken().then((value) {
   //   print('Token value : $value');
@@ -259,7 +259,6 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     final lang = ref.watch(languageProvider);
-
     var pushToken = provider.Provider.of<FirebaseProvider>(context,
         listen: false).pushToken;
     print('---> main locale : ${lang.getLocale} / ${pushToken}');
@@ -268,7 +267,7 @@ class MyApp extends ConsumerWidget {
       designSize: const Size(375, 812),
       builder: (BuildContext context, child) => MaterialApp.router(
         key: navigatorKey,
-        theme: ThemeData(fontFamily: 'Pretendard'),
+        // theme: lightTheme,
         debugShowCheckedModeBanner: false,
         routerDelegate: router.routerDelegate,
         routeInformationParser: router.routeInformationParser,
