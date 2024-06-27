@@ -39,6 +39,11 @@ class PurchaseModel {
   // 판매자 정보..
   SellerModel? seller;
 
+  // 구매자 정보..
+  String? buyerId;
+  String? buyerName;
+  String? buyerEmail;
+
   DateTime?   createTime;
   DateTime?   updateTime;
 
@@ -66,6 +71,11 @@ class PurchaseModel {
     this.transferAccount,
 
     this.seller,
+
+    this.buyerId,
+    this.buyerName,
+    this.buyerEmail,
+
     this.createTime,
     this.updateTime,
   });

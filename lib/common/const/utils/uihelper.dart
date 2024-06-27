@@ -301,6 +301,47 @@ Future<void> showSimpleDialog(
   );
 }
 
+Future<void> showDetailDialog(
+    BuildContext context,
+    String text) async {
+  await showDialog<void>(
+    context: context,
+    builder: (BuildContext context) =>
+        AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(text,
+                style: typo14normal,
+                textAlign: TextAlign.center)
+            ]
+          ),
+          backgroundColor: WHITE,
+          surfaceTintColor: WHITE,
+          contentPadding: EdgeInsets.only(top: 20.h),
+          actionsPadding: EdgeInsets.fromLTRB(30.w, 10.h, 20.w, 20.h),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: <Widget>[
+            Container(
+              width: 127.w,
+              height: 40.h,
+              child: OutlinedButton(
+                onPressed: context.pop,
+                child: Text(
+                  TR('확인'),
+                  style: typo12semibold100,
+                ),
+                style: darkBorderBoldButtonStyle,
+              )
+              ,
+            )
+          ],
+        ),
+  );
+}
+
 showConfirmDialog(context, desc,
   {
     String? title,
@@ -760,9 +801,9 @@ getLoginErrorCodeText(String codeText) {
   return codeText;
 }
 
-showToast(String text) {
+showToast(String? text, [String? tag]) {
   Fluttertoast.showToast(
-    msg: text,
+    msg: (text ?? '???') + (tag != null ? '\n$tag' : ''),
     toastLength: Toast.LENGTH_SHORT,
     gravity: ToastGravity.CENTER,
     backgroundColor: Colors.black.withOpacity(0.7),

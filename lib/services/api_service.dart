@@ -17,9 +17,6 @@ import '../common/const/utils/convertHelper.dart';
 //
 
 
-final RESPONSE_SUCCESS = 200;
-final RESPONSE_SUCCESS_EX = 201;
-
 class ApiService {
   static final ApiService _singleton = ApiService._internal();
   factory ApiService() {
@@ -28,6 +25,9 @@ class ApiService {
   ApiService._internal();
 
   var httpUrl = IS_DEV_MODE ? API_HOST_DEV : API_HOST;
+
+  final RESPONSE_SUCCESS = 200;
+  final RESPONSE_SUCCESS_EX = 201;
 
   isSuccess(statusCode) {
     return INT(statusCode) == RESPONSE_SUCCESS ||

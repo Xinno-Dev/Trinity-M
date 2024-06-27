@@ -52,3 +52,19 @@ const MaterialColor PRIMARY = MaterialColor(
     900: Color(0xFF262f7c),
   },
 );
+
+const MaterialColor GRAY = MaterialColor(
+  0xFF262f7c,
+  <int, Color>{
+    50: Color(0xFFF9FAFE),
+    100: Color(0xFFE0E2E9),
+    200: Color(0xFFE0E2E9),
+    300: Color(0xFFB3B5BD),
+    400: Color(0xFF9496A1),
+    500: Color(0xFF777986),
+    600: Color(0xFF5B5D6B),
+    700: Color(0xFF404252),
+    800: Color(0xFF282A3A),
+    900: Color(0xFF101223),
+  },
+);

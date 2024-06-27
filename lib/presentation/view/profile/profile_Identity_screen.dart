@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:iamport_flutter/iamport_certification.dart';
-import 'package:iamport_flutter/model/certification_data.dart';
 import 'package:trinity_m_00/common/const/utils/uihelper.dart';
 import 'package:trinity_m_00/common/const/utils/userHelper.dart';
 import 'package:trinity_m_00/services/api_service.dart';
@@ -39,52 +37,53 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     LOG('--> ProfileIdentityScreen');
-    return IamportCertification(
-      appBar: defaultAppBar(TR('본인 인증')),
-      /* 웹뷰 로딩 컴포넌트 */
-      initialChild: Container(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Image.asset('assets/images/iamport-logo.png'),
-              // Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-              Text(TR('잠시만 기다려주세요...'), style: TextStyle(fontSize: 20)),
-            ],
-          ),
-        ),
-      ),
-      /* [필수입력] 가맹점 식별코드 */
-      userCode: PORTONE_IMP_CODE,
-      /* [필수입력] 본인인증 데이터 */
-      data: CertificationData(
-        pg: IDENTITY_PG, // PG사
-        merchantUid: STR(prov.userEmail), // 주문번호
-        mRedirectUrl: '', // 본인인증 후 이동할 URL
-        // name: '김주현',
-        // phone: '010-2656-2896',
-        // carrier: '19740911',
-      ),
-      /* [필수입력] 콜백 함수 */
-      callback: (Map<String, String> result) {
-        LOG('--> IamportCertification result : $result');
-        if (BOL(result['success']) && STR(result['imp_uid']).isNotEmpty) {
-          var uid = STR(result['imp_uid']);
-          ApiService().setIdentity(uid, onError: (code) {
-            _identityAlreadyFail();
-          }).then((result2) {
-            LOG('--> checkCert result : $result2');
-            if (result2 == true) {
-              _identitySuccess();
-            } else if (result2 == false) {
-              _identityFail();
-            }
-          });
-        } else {
-          _identityFail();
-        }
-      },
-    );
+    return Container();
+    // return IamportCertification(
+    //   appBar: defaultAppBar(TR('본인 인증')),
+    //   /* 웹뷰 로딩 컴포넌트 */
+    //   initialChild: Container(
+    //     child: Center(
+    //       child: Column(
+    //         mainAxisAlignment: MainAxisAlignment.center,
+    //         children: [
+    //           // Image.asset('assets/images/iamport-logo.png'),
+    //           // Padding(padding: EdgeInsets.symmetric(vertical: 15)),
+    //           Text(TR('잠시만 기다려주세요...'), style: TextStyle(fontSize: 20)),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    //   /* [필수입력] 가맹점 식별코드 */
+    //   userCode: PORTONE_IMP_CODE,
+    //   /* [필수입력] 본인인증 데이터 */
+    //   data: CertificationData(
+    //     pg: IDENTITY_PG, // PG사
+    //     merchantUid: STR(prov.userEmail), // 주문번호
+    //     mRedirectUrl: '', // 본인인증 후 이동할 URL
+    //     // name: '김주현',
+    //     // phone: '010-2656-2896',
+    //     // carrier: '19740911',
+    //   ),
+    //   /* [필수입력] 콜백 함수 */
+    //   callback: (Map<String, String> result) {
+    //     LOG('--> IamportCertification result : $result');
+    //     if (BOL(result['success']) && STR(result['imp_uid']).isNotEmpty) {
+    //       var uid = STR(result['imp_uid']);
+    //       ApiService().setIdentity(uid, onError: (code) {
+    //         _identityAlreadyFail();
+    //       }).then((result2) {
+    //         LOG('--> checkCert result : $result2');
+    //         if (result2 == true) {
+    //           _identitySuccess();
+    //         } else if (result2 == false) {
+    //           _identityFail();
+    //         }
+    //       });
+    //     } else {
+    //       _identityFail();
+    //     }
+    //   },
+    // );
   }
 
   _identitySuccess() {

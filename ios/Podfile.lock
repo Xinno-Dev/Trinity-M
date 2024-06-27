@@ -984,9 +984,6 @@ PODS:
     - FirebaseAuth (~> 10.25.0)
   - Firebase/CoreOnly (10.25.0):
     - FirebaseCore (= 10.25.0)
-  - Firebase/DynamicLinks (10.25.0):
-    - Firebase/CoreOnly
-    - FirebaseDynamicLinks (~> 10.25.0)
   - Firebase/Firestore (10.25.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 10.25.0)
@@ -1010,10 +1007,6 @@ PODS:
     - Flutter
   - firebase_core (2.31.0):
     - Firebase/CoreOnly (= 10.25.0)
-    - Flutter
-  - firebase_dynamic_links (5.5.5):
-    - Firebase/DynamicLinks (= 10.25.0)
-    - firebase_core
     - Flutter
   - firebase_messaging (14.9.2):
     - Firebase/Messaging (= 10.25.0)
@@ -1047,8 +1040,6 @@ PODS:
     - FirebaseCore (~> 10.0)
   - FirebaseCoreInternal (10.27.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseDynamicLinks (10.25.0):
-    - FirebaseCore (~> 10.0)
   - FirebaseFirestore (10.25.0):
     - FirebaseCore (~> 10.0)
     - FirebaseCoreExtension (~> 10.0)
@@ -1103,6 +1094,13 @@ PODS:
   - Flutter (1.0.0)
   - flutter_email_sender (0.0.1):
     - Flutter
+  - flutter_inappwebview (0.0.1):
+    - Flutter
+    - flutter_inappwebview/Core (= 0.0.1)
+    - OrderedSet (~> 5.0)
+  - flutter_inappwebview/Core (0.0.1):
+    - Flutter
+    - OrderedSet (~> 5.0)
   - flutter_keyboard_visibility (0.0.1):
     - Flutter
   - flutter_local_notifications (0.0.1):
@@ -1241,10 +1239,6 @@ PODS:
   - GTMSessionFetcher/Core (3.4.1)
   - GTMSessionFetcher/Full (3.4.1):
     - GTMSessionFetcher/Core
-  - iamport_flutter (0.0.1):
-    - Flutter
-  - iamport_webview_flutter (0.0.1):
-    - Flutter
   - icloud_storage (0.0.1):
     - Flutter
   - image_cropper (0.0.4):
@@ -1263,6 +1257,7 @@ PODS:
     - nanopb/encode (= 2.30910.0)
   - nanopb/decode (2.30910.0)
   - nanopb/encode (2.30910.0)
+  - OrderedSet (5.0.0)
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -1286,8 +1281,6 @@ PODS:
     - Flutter
   - Toast (4.1.1)
   - TOCropViewController (2.6.1)
-  - uni_links (0.0.1):
-    - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
   - webview_flutter_wkwebview (0.0.1):
@@ -1303,11 +1296,11 @@ DEPENDENCIES:
   - firebase_app_check (from `.symlinks/plugins/firebase_app_check/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
-  - firebase_dynamic_links (from `.symlinks/plugins/firebase_dynamic_links/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
   - flutter_email_sender (from `.symlinks/plugins/flutter_email_sender/ios`)
+  - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_mailer (from `.symlinks/plugins/flutter_mailer/ios`)
@@ -1315,8 +1308,6 @@ DEPENDENCIES:
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
-  - iamport_flutter (from `.symlinks/plugins/iamport_flutter/ios`)
-  - iamport_webview_flutter (from `.symlinks/plugins/iamport_webview_flutter/ios`)
   - icloud_storage (from `.symlinks/plugins/icloud_storage/ios`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -1329,7 +1320,6 @@ DEPENDENCIES:
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
   - store_redirect (from `.symlinks/plugins/store_redirect/ios`)
-  - uni_links (from `.symlinks/plugins/uni_links/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
@@ -1347,7 +1337,6 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseCoreExtension
     - FirebaseCoreInternal
-    - FirebaseDynamicLinks
     - FirebaseFirestore
     - FirebaseFirestoreInternal
     - FirebaseFunctions
@@ -1366,6 +1355,7 @@ SPEC REPOS:
     - leveldb-library
     - MTBBarcodeScanner
     - nanopb
+    - OrderedSet
     - PromisesObjC
     - RecaptchaInterop
     - SAMKeychain
@@ -1391,8 +1381,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
-  firebase_dynamic_links:
-    :path: ".symlinks/plugins/firebase_dynamic_links/ios"
   firebase_messaging:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   firebase_storage:
@@ -1401,6 +1389,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_email_sender:
     :path: ".symlinks/plugins/flutter_email_sender/ios"
+  flutter_inappwebview:
+    :path: ".symlinks/plugins/flutter_inappwebview/ios"
   flutter_keyboard_visibility:
     :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_local_notifications:
@@ -1415,10 +1405,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/fluttertoast/ios"
   google_sign_in_ios:
     :path: ".symlinks/plugins/google_sign_in_ios/darwin"
-  iamport_flutter:
-    :path: ".symlinks/plugins/iamport_flutter/ios"
-  iamport_webview_flutter:
-    :path: ".symlinks/plugins/iamport_webview_flutter/ios"
   icloud_storage:
     :path: ".symlinks/plugins/icloud_storage/ios"
   image_cropper:
@@ -1443,8 +1429,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/darwin"
   store_redirect:
     :path: ".symlinks/plugins/store_redirect/ios"
-  uni_links:
-    :path: ".symlinks/plugins/uni_links/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   webview_flutter_wkwebview:
@@ -1465,7 +1449,6 @@ SPEC CHECKSUMS:
   firebase_app_check: 975aa5c1747d11da0fe3320087d871fdeebc4e91
   firebase_auth: 76ea642e91a9e914b3af751a416046ce1a965cf4
   firebase_core: 0b39f4f424e02eecabb2356ddf331fa07b772af8
-  firebase_dynamic_links: c4713196b078b72fe8ca825433eb7fbebc009dd9
   firebase_messaging: 8999827b6efc9c3ab4b1f9dc246deaa7f13dbf88
   firebase_storage: e8b44d3f47e35f60dde2a119da11dc6e8962bef3
   FirebaseAppCheck: 148fa858b8070710c8f83d3f545b5f1e85d104a4
@@ -1475,7 +1458,6 @@ SPEC CHECKSUMS:
   FirebaseCore: 7ec4d0484817f12c3373955bc87762d96842d483
   FirebaseCoreExtension: 4ec89dd0c6de93d6becde32122d68b7c35f6bf5d
   FirebaseCoreInternal: 4b297a2d56063dbea2c1d0d04222d44a8d058862
-  FirebaseDynamicLinks: 12c9f5b643943e0565ed28080373f89cbcb914a3
   FirebaseFirestore: 977ccc27a3caa5d68279f209c3b0450f85b9dc5f
   FirebaseFirestoreInternal: 04b8afa77b4e5b84e86ab5ad985193e9573239fa
   FirebaseFunctions: 93b1c7f352aec3922925a0e856cb1d6a09197083
@@ -1486,6 +1468,7 @@ SPEC CHECKSUMS:
   FirebaseStorage: 44f4e25073f6fa0d4d8c09f5bec299ee9e4eb985
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_email_sender: 10a22605f92809a11ef52b2f412db806c6082d40
+  flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_mailer: 2ef5a67087bc8c6c4cefd04a178bf1ae2c94cd83
@@ -1500,8 +1483,6 @@ SPEC CHECKSUMS:
   gRPC-Core: eee4be35df218649fe66d721a05a7f27a28f069b
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
   GTMSessionFetcher: 8000756fc1c19d2e5697b90311f7832d2e33f6cd
-  iamport_flutter: f698983444b7c0f83e356407631cfeec77a776bf
-  iamport_webview_flutter: 70dbc31045e4cf7a0c829b76c6f8319dc94b299e
   icloud_storage: d9ac7a33ced81df08ba7ea1bf3099cc0ee58f60a
   image_cropper: a3291c624a953049bc6a02e1f8c8ceb162a24b25
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
@@ -1510,6 +1491,7 @@ SPEC CHECKSUMS:
   local_auth_darwin: 4d56c90c2683319835a61274b57620df9c4520ab
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
+  OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
@@ -1522,7 +1504,6 @@ SPEC CHECKSUMS:
   store_redirect: 2977747cf81689a39bd62c248c2deacb7a0d131e
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
-  uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
   webview_flutter_wkwebview: be0f0d33777f1bfd0c9fdcb594786704dbf65f36
 

@@ -6,7 +6,7 @@
         android:usesCleartextTraffic="true"
         >
         <activity
-            android:name="io.flutter.embedding.android.FlutterFragmentActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

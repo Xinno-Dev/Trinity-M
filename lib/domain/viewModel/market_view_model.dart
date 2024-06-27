@@ -33,25 +33,26 @@ class MarketViewModel {
   final prov = MarketProvider();
 
   get titleStyle {
-    return typo16bold;
+    return Theme.of(context).textTheme.titleMedium;
   }
 
   get descStyle {
-    return typo16medium;
+    return Theme.of(context).textTheme.bodyLarge;
   }
 
   get descSmallStyle {
-    return typo12normal;
+    return Theme.of(context).textTheme.bodySmall;
   }
 
   get priceStyle {
-    return typo18bold;
+    return Theme.of(context).textTheme.titleLarge;
   }
 
   showCategoryBar() {
     // LOG('--> prov.categoryList : ${prov.categoryList}');
     return Container(
       height: 40,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: StatefulBuilder(
         builder: (context, setState) {
           return SingleChildScrollView(
@@ -938,11 +939,15 @@ class MarketViewModel {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
-          color: isSelected ? GRAY_80 : GRAY_10,
+          color: isSelected ? Theme.of(context).disabledColor :
+                              Theme.of(context).cardColor,
         ),
         child: Text(TR(title),
           style: typo12semibold100.copyWith(
-            color: isSelected ? WHITE : GRAY_80)),
+            color: isSelected ?
+              Theme.of(context).highlightColor :
+              Theme.of(context).disabledColor
+          )),
       )
     );
   }
@@ -951,6 +956,8 @@ class MarketViewModel {
     {var isShowSeller = true, var isCanBuy = true, double? height}) {
     return OpenContainer(
       transitionType: ContainerTransitionType.fadeThrough,
+      openColor:   Theme.of(context).scaffoldBackgroundColor,
+      closedColor: Theme.of(context).scaffoldBackgroundColor,
       closedElevation: 0,
       closedBuilder: (context, builder) {
         return VisibilityDetector(
@@ -960,20 +967,19 @@ class MarketViewModel {
               prov.refreshProductList(context, item.prodSaleId);
             }
           },
-          child: Container(
-            margin: EdgeInsets.only(bottom: 25),
-            height: 300,
-            color: WHITE,
+          child: Card.filled(
+            margin: EdgeInsets.symmetric(vertical: 5),
             child: Column(
               children: [
                 if (isShowSeller && item.seller != null)
                   _contentSellerBar(item.seller!,
-                    padding: EdgeInsets.only(bottom: 10)),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5)),
                 Expanded(
                   child: showImage(STR(item.repImg),
                   Size(double.infinity, height ?? 230)),
                 ),
-                _contentTitleBar(item),
+                _contentTitleBar(item,
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5)),
               ],
             ),
           )
@@ -1152,11 +1158,12 @@ class MarketViewModel {
 
   _contentSellerBar(SellerModel info, {EdgeInsets? padding}) {
     return OpenContainer(
+      openColor: Colors.transparent,
+      closedColor: Colors.transparent,
       transitionType: ContainerTransitionType.fadeThrough,
       closedElevation: 0,
       closedBuilder: (context, builder) {
         return Container(
-          color: WHITE,
           padding: padding,
           child: Row(
             children: [
@@ -1182,9 +1189,9 @@ class MarketViewModel {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(STR(info.nickId), style: typo16bold),
+                    Text(STR(info.nickId), style: descStyle),
                     if (STR(info.subTitle).isNotEmpty)...[
-                      Text(info.subTitle!, style: typo14normal),
+                      Text(info.subTitle!, style: descSmallStyle),
                     ]
                   ],
                 ),
@@ -1298,7 +1305,6 @@ class MarketViewModel {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10),
           Text(title, style: titleStyle),
           Row(
             children: [

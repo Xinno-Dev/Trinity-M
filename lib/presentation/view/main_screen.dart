@@ -7,13 +7,18 @@ import '../../../domain/viewModel/profile_view_model.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../../common/common_package.dart';
+import '../../common/const/constants.dart';
 import '../../common/const/utils/appVersionHelper.dart';
 import '../../common/const/utils/convertHelper.dart';
 import '../../common/const/utils/languageHelper.dart';
 import '../../common/const/utils/uihelper.dart';
 import '../../common/provider/market_provider.dart';
+import '../../domain/model/purchase_model.dart';
+import '../../services/pg_service.dart';
 import 'market/market_screen.dart';
+import 'market/payment_screen.dart';
 import 'profile/profile_screen.dart';
+import 'profile/webview_screen.dart';
 import 'signup/login_screen.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
@@ -86,20 +91,16 @@ class _MainScreenState extends ConsumerState<MainScreen>
       AnnotatedRegion<SystemUiOverlayStyle>(
         value:SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        systemNavigationBarColor: WHITE,
+        systemNavigationBarColor: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarIconBrightness:Brightness.dark,
       ),
       child: Scaffold(
         key: _mainScaffoldKey,
         drawerEnableOpenDragGesture: false,
-        backgroundColor: WHITE,
         appBar: AppBar(
           title: _viewModel.getPageTitle(),
           titleSpacing: 0,
-          titleTextStyle: typo16bold,
-          backgroundColor: WHITE,
-          surfaceTintColor: WHITE,
           centerTitle: true,
           automaticallyImplyLeading: false,
           leadingWidth: 50,
@@ -113,7 +114,9 @@ class _MainScreenState extends ConsumerState<MainScreen>
               borderRadius: BorderRadius.circular(100),
               child: Container(
                 padding: EdgeInsets.all(10),
-                child: SvgPicture.asset('assets/svg/icon_ham.svg'),
+                child: SvgPicture.asset('assets/svg/icon_ham.svg',
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).dividerColor, BlendMode.srcIn))
               ),
             )
           ),
@@ -139,7 +142,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
                       topRight: Radius.circular(20),
                       topLeft:  Radius.circular(20),
                     ),
-                    color: WHITE,
+                    color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
@@ -152,9 +155,11 @@ class _MainScreenState extends ConsumerState<MainScreen>
                           },
                           child: Center(
                             child: Text(TR('Market'),
-                              style: prov.mainPageIndex == 0 ?
-                              typo16bold.copyWith(color: PRIMARY_100) :
-                              typo16regular),
+                              style: typo16bold.copyWith(
+                                color: prov.mainPageIndex == 0 ? PRIMARY_100 :
+                                    Theme.of(context).disabledColor
+                              )
+                            )
                           ),
                         )
                       ),
@@ -177,26 +182,44 @@ class _MainScreenState extends ConsumerState<MainScreen>
           ),
         ),
         drawer: _viewModel.mainDrawer(context),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () async {
-        //     // ApiService().testCheck();
-        //     // showSimpleDialog(context, 'test test');
-        //     // var mnemonic = EX_TEST_MN_02;
-        //     // var address = prov.accountAddress;
-        //     // var keyPair = await prov.getAccountKey(passOrg: '11111');
-        //     // if (address != null && keyPair != null) {
-        //     //   var rwfStr = await RWFExportHelper.encrypt(
-        //     //       '22222', address, keyPair.d, mnemonic);
-        //     //   LOG('------> rwfStr : $rwfStr');
-        //     // }
-        //     var str = '{"version":"1","address":"746cd77220f91a9c42264bad889751cf3c104f99","origin":"IaErnUvlKy3+RSHSxF4kvm1OgdS4QEe3FKMLsMFr8FGoKJsHpRaDArDKwv2STNkbaJ2+oG9zrD87wTpfpyH/E/pGH4eANkhintLLPAxeH38=","algo":"secp256k1","cp":{"ca":"aes-256-cbc","ct":"PdBIzuoJWr5ySsoBW8npDr6f899VJeY4HeEa9AWGcah2reLCwjBagUCeW5F5nSLP0ZhApf7KL4WqOEIgB6hj0+UGS/UJO1L9himEMBT4wXU=","ci":"qyctDNj+11JXkL6Gf8nfrA=="},"dkp":{"ka":"pbkdf2","kh":"sha256","kc":"4336","ks":"VSFRT6gU2QGnImbZtOrRjOYaR3g=","kl":"32"}}';
-        //     var result = await RWFExportHelper.decrypt('22222', str);
-        //     LOG('------> rwfStr : $result');
-        //   },
-        //   child: Text('+'),
-        // ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            _showCardPay();
+            // ApiService().testCheck();
+            // showSimpleDialog(context, 'test test');
+            // var mnemonic = EX_TEST_MN_02;
+            // var address = prov.accountAddress;
+            // var keyPair = await prov.getAccountKey(passOrg: '11111');
+            // if (address != null && keyPair != null) {
+            //   var rwfStr = await RWFExportHelper.encrypt(
+            //       '22222', address, keyPair.d, mnemonic);
+            //   LOG('------> rwfStr : $rwfStr');
+            // }
+            // var str = '{"version":"1","address":"746cd77220f91a9c42264bad889751cf3c104f99","origin":"IaErnUvlKy3+RSHSxF4kvm1OgdS4QEe3FKMLsMFr8FGoKJsHpRaDArDKwv2STNkbaJ2+oG9zrD87wTpfpyH/E/pGH4eANkhintLLPAxeH38=","algo":"secp256k1","cp":{"ca":"aes-256-cbc","ct":"PdBIzuoJWr5ySsoBW8npDr6f899VJeY4HeEa9AWGcah2reLCwjBagUCeW5F5nSLP0ZhApf7KL4WqOEIgB6hj0+UGS/UJO1L9himEMBT4wXU=","ci":"qyctDNj+11JXkL6Gf8nfrA=="},"dkp":{"ka":"pbkdf2","kh":"sha256","kc":"4336","ks":"VSFRT6gU2QGnImbZtOrRjOYaR3g=","kl":"32"}}';
+            // var result = await RWFExportHelper.decrypt('22222', str);
+            // LOG('------> rwfStr : $result');
+          },
+          child: Text('+'),
+        ),
       )
     );
+  }
+
+  _showCardPay() {
+    var purchaseInfo = PurchaseModel(
+      name:         '다날 결제 테스트 상품',
+      merchantUid:  'mid_000000',
+      buyPrice:     '100',
+      buyerId:      'user_000000',
+      buyerName:    'Xinno Tester',
+      buyerEmail:   'dev@xinno.io',
+      priceUnit:    'KRW',
+    );
+    ref.read(loginProvider).disableLockScreen();
+    Navigator.of(context).push(
+        createAniRoute(PaymentScreen(purchaseInfo))).then((_) {
+      ref.read(loginProvider).enableLockScreen();
+    });
   }
 
   _selectPage(index) {

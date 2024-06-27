@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:trinity_m_00/domain/viewModel/market_view_model.dart';
 
 import '../../../common/const/constants.dart';
@@ -84,6 +85,10 @@ Future<void> main() async {
   // demo();
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  if (Platform.isAndroid) {
+    // await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
+  }
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -267,7 +272,7 @@ class MyApp extends ConsumerWidget {
       designSize: const Size(375, 812),
       builder: (BuildContext context, child) => MaterialApp.router(
         key: navigatorKey,
-        // theme: lightTheme,
+        theme: lightTheme,
         debugShowCheckedModeBanner: false,
         routerDelegate: router.routerDelegate,
         routeInformationParser: router.routeInformationParser,

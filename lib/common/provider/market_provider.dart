@@ -1,7 +1,7 @@
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:iamport_flutter/model/payment_data.dart';
 import 'package:intl/intl.dart';
 import 'package:trinity_m_00/common/const/utils/userHelper.dart';
+import 'package:trinity_m_00/common/provider/login_provider.dart';
 import 'package:trinity_m_00/domain/model/user_model.dart';
 import 'package:trinity_m_00/domain/viewModel/market_view_model.dart';
 import 'package:uuid/uuid.dart';
@@ -50,7 +50,7 @@ class MarketProvider extends ChangeNotifier {
 
   late DateTime purchaseStartDate;
   late DateTime purchaseEndDate;
-  late PaymentData payData;
+  // late PaymentData payData;
 
   var checkCount = 0;
   var selectCategory = 0;
@@ -276,7 +276,9 @@ class MarketProvider extends ChangeNotifier {
     return false;
   }
 
-  createPurchaseInfo() {
+  createPurchaseInfo({
+    required UserModel userInfo,
+  }) {
     if (selectProduct != null) {
       purchaseInfo = PurchaseModel(
         purchaseId: Uuid().v4(),
@@ -295,50 +297,53 @@ class MarketProvider extends ChangeNotifier {
         cardType:   'TEST CARD',
         cardNum:    '1234-****-****-5678',
         seller:     selectProduct!.seller,
+        buyerId:    STR(userInfo.uid),
+        buyerName:  STR(userInfo.userName),
+        buyerEmail: STR(userInfo.email),
       );
     }
   }
 
-  createPurchaseData(
-    {
-      required UserModel userInfo,
-      String payMethod = 'card', // 결제수단
-      String cardQuota = '0', // 할부개월수
-    } // 구매자 이메일
-  ) {
-    if (purchaseInfo != null) {
-      var name    = P_STR(purchaseInfo?.name);
-      var amount  = num.parse(STR(purchaseInfo?.buyPrice));
-      payData = PaymentData(
-        pg: PAYMENT_PG,
-        merchantUid: '', // 추후 기입..
-        payMethod: payMethod,
-        name: name,
-        amount: amount,
-        buyerName:  userInfo.userName,
-        buyerEmail: userInfo.email,
-        buyerTel:   STR(userInfo.mobile),
-        appScheme: 'iamport_payment',
-        niceMobileV2: true,
-        escrow: false,
-        popup: false,
-        // period: {
-        //   'from': '20240101',
-        //   'to': '20241231',
-        // }
-      );
-      // 할부개월 설정..
-      LOG('--> createPurchaseData : $name / $amount');
-      if (payMethod == 'card' && cardQuota != '0') {
-        payData.cardQuota = [];
-        if (cardQuota != '1') {
-          payData.cardQuota!.add(int.parse(cardQuota));
-        }
-      }
-      return payData;
-    }
-    return null;
-  }
+  // createPurchaseData(
+  //   {
+  //     required UserModel userInfo,
+  //     String payMethod = 'card', // 결제수단
+  //     String cardQuota = '0', // 할부개월수
+  //   } // 구매자 이메일
+  // ) {
+  //   if (purchaseInfo != null) {
+  //     var name    = P_STR(purchaseInfo?.name);
+  //     var amount  = num.parse(STR(purchaseInfo?.buyPrice));
+  //     payData = PaymentData(
+  //       pg: PAYMENT_PG,
+  //       merchantUid: '', // 추후 기입..
+  //       payMethod: payMethod,
+  //       name: name,
+  //       amount: amount,
+  //       buyerName:  userInfo.userName,
+  //       buyerEmail: userInfo.email,
+  //       buyerTel:   STR(userInfo.mobile),
+  //       appScheme: 'iamport_payment',
+  //       niceMobileV2: true,
+  //       escrow: false,
+  //       popup: false,
+  //       // period: {
+  //       //   'from': '20240101',
+  //       //   'to': '20241231',
+  //       // }
+  //     );
+  //     // 할부개월 설정..
+  //     LOG('--> createPurchaseData : $name / $amount');
+  //     if (payMethod == 'card' && cardQuota != '0') {
+  //       payData.cardQuota = [];
+  //       if (cardQuota != '1') {
+  //         payData.cardQuota!.add(int.parse(cardQuota));
+  //       }
+  //     }
+  //     return payData;
+  //   }
+  //   return null;
+  // }
 
   requestPurchaseWithImageId(
     {Function(String)? onError}) async {
@@ -364,9 +369,9 @@ class MarketProvider extends ChangeNotifier {
         purchaseInfo!.mid               = result.mid;
         purchaseInfo!.availablePayType  = result.availablePayType;
         purchaseInfo!.transferAccount   = result.transferAccount;
-        payData.merchantUid             = STR(result.merchantUid);
-        LOG('--> requestPurchaseWithImageId result : ${payData.merchantUid} '
-            '<= ${purchaseInfo?.toJson()}');
+        // payData.merchantUid             = STR(result.merchantUid);
+        // LOG('--> requestPurchaseWithImageId result : ${payData.merchantUid} '
+        //     '<= ${purchaseInfo?.toJson()}');
         return purchaseInfo;
       }
     }

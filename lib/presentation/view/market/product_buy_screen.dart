@@ -18,9 +18,9 @@ import '../../../common/const/widget/primary_button.dart';
 import '../../../domain/viewModel/market_view_model.dart';
 import '../../../domain/viewModel/profile_view_model.dart';
 import '../profile/profile_Identity_screen.dart';
-import 'payment_danal_screen.dart';
 import 'payment_screen.dart';
-import 'pg/payment_test.dart';
+import 'payment_screen_org.dart';
+import 'payment_screen.dart';
 
 class ProductBuyScreen extends ConsumerStatefulWidget {
   ProductBuyScreen({super.key});
@@ -114,54 +114,78 @@ class _ProductBuyScreenState extends ConsumerState<ProductBuyScreen> {
   _startPurchase() {
     final prov = ref.read(marketProvider);
     final loginProv = ref.read(loginProvider);
-    prov.createPurchaseInfo();
-    var data = prov.createPurchaseData(userInfo: loginProv.userInfo!);
-    if (data != null) {
-      prov.requestPurchaseWithImageId(onError: (error) {
-        showLoginErrorTextDialog(context, TR(error));
-      }).then((info) {
-        if (info != null && info != false) {
-          if (INT(prov.purchaseInfo?.availablePayType?.length) > 1) {
-            showSelectDialog(context, TR('결제방식을 선택해주세요.'), [
-              TR('신용카드'), TR('계좌이체')
-            ]).then((result) {
-              switch (result) {
-                case 0:
-                  _showCardPay(data);
-                  break;
-                case 1:
-                  _showBankPay();
-                  break;
-              }
-            });
-          } else if (prov.purchaseInfo?.isBankPayOn) {
-            _showBankPay();
-          } else {
-            _showCardPay(data);
-          }
-          return;
-        } else if (info == null) {
-          _showFailMessage(context);
+    prov.createPurchaseInfo(
+      userInfo: loginProv.userInfo!
+    );
+    prov.requestPurchaseWithImageId(onError: (error) {
+      showLoginErrorTextDialog(context, TR(error));
+    }).then((info) {
+      if (info != null && info != false) {
+        if (INT(prov.purchaseInfo?.availablePayType?.length) > 1) {
+          showSelectDialog(context, TR('결제방식을 선택해주세요.'), [
+            TR('신용카드'), TR('계좌이체')
+          ]).then((result) {
+            switch (result) {
+              case 0:
+                _showCardPay();
+                break;
+              case 1:
+                _showBankPay();
+                break;
+            }
+          });
+        } else if (prov.purchaseInfo?.isBankPayOn) {
+          _showBankPay();
         } else {
-          LOG('--> purchase skip');
+          _showCardPay();
         }
-        loginProv.enableLockScreen();
-      });
-    } else {
+        return;
+      } else if (info == null) {
+        _showFailMessage(context);
+      } else {
+        LOG('--> purchase skip');
+      }
       loginProv.enableLockScreen();
-    }
+    });
   }
 
-  _showCardPay(data) {
-    var pgCode = PAYMENT_PG;
+  // _startPurchase() {
+  //   final prov = ref.read(marketProvider);
+  //   final loginProv = ref.read(loginProvider);
+  //   prov.createPurchaseInfo(userInfo: loginProv.userInfo!);
+  //   var data = prov.createPurchaseData(userInfo: loginProv.userInfo!);
+  //   if (data != null) {
+  //     prov.requestPurchaseWithImageId(onError: (error) {
+  //       showLoginErrorTextDialog(context, TR(error));
+  //     }).then((info) {
+  //       if (info != null) {
+  //         var pgCode = PAYMENT_PG;
+  //         if (STR(prov.purchaseInfo?.mid).isNotEmpty) {
+  //           pgCode += '.${STR(prov.purchaseInfo?.mid)}';
+  //         }
+  //         LOG('--> pgCode : $pgCode');
+  //         data.pg = pgCode;
+  //         Navigator.of(context).push(
+  //           createAniRoute(PaymentScreen(PORTONE_IMP_CODE, data))).then((_) {
+  //           loginProv.enableLockScreen();
+  //         });
+  //         return;
+  //       } else if (info == null) {
+  //         _showFailMessage(context);
+  //       } else {
+  //         LOG('--> purchase skip');
+  //       }
+  //       loginProv.enableLockScreen();
+  //     });
+  //   } else {
+  //     loginProv.enableLockScreen();
+  //   }
+  // }
+
+  _showCardPay() {
     final prov = ref.read(marketProvider);
-    if (STR(prov.purchaseInfo?.mid).isNotEmpty) {
-      pgCode += '.${STR(prov.purchaseInfo?.mid)}';
-    }
-    LOG('--> pgCode : $pgCode');
-    data.pg = pgCode;
     Navigator.of(context).push(
-      createAniRoute(PaymentDanalScreen(prov.purchaseInfo!))).then((_) {
+      createAniRoute(PaymentScreen(prov.purchaseInfo!))).then((_) {
       ref.read(loginProvider).enableLockScreen();
     });
   }

@@ -12,6 +12,7 @@ import '../../../common/const/utils/convertHelper.dart';
 import '../../../common/provider/login_provider.dart';
 import '../../../common/const/utils/uihelper.dart';
 
+
 class WebviewScreen extends ConsumerStatefulWidget {
   const WebviewScreen({super.key,
     required this.url,
@@ -27,17 +28,48 @@ class WebviewScreen extends ConsumerStatefulWidget {
 
 class _WebviewScreenState extends ConsumerState<WebviewScreen> {
   final _controller = WebViewController();
+  final _channel = MethodChannel('com.xinno.trinity_m_00.android');
 
   @override
   void initState() {
     super.initState();
     // if (Platform.isAndroid) WebView.platform = AndroidWebView();
+    _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     _controller.setBackgroundColor(WHITE);
+    _controller.addJavaScriptChannel(
+      "callApp",
+      onMessageReceived: (message) {
+        LOG('--> onMessageReceived : ${message.message}');
+      }
+    );
+    _controller.setOnConsoleMessage((message) {
+      LOG('--> setOnConsoleMessage : ${message.message}');
+      showDetailDialog(context, message.message);
+    });
     _controller.setNavigationDelegate(
       NavigationDelegate(
-        onUrlChange: (info) {
-          LOG('--> onUrlChange : ${info.url}');
-        }
+        onPageStarted: (url) {
+          LOG('--> onUrlChange : ${url}');
+        },
+        onNavigationRequest: (request) async {
+          LOG('--> onNavigationRequest : ${request.url}');
+          Uri uri = Uri.parse(request.url);
+          String finalUrl = request.url;
+          if (uri.scheme.startsWith('intent')) {
+            if (Platform.isAndroid) {
+              finalUrl = await _convertIntentToAppUrl(finalUrl);
+              try {
+                await launchUrl(Uri.parse(finalUrl));
+              } catch (e) {
+                finalUrl = await _convertIntentToMarketUrl(request.url);
+                await launchUrl(Uri.parse(finalUrl));
+              }
+            } else if (Platform.isIOS) {
+              launchUrl(Uri.parse(finalUrl));
+            }
+          }
+          return NavigationDecision.prevent;
+        },
       )
     );
     _controller.loadRequest(Uri.parse(widget.url));
@@ -85,5 +117,19 @@ class _WebviewScreenState extends ConsumerState<WebviewScreen> {
         ),
       )
     );
+  }
+
+  Future<String> _convertIntentToAppUrl(String text) async {
+    try {
+      final result = await await _channel.invokeMethod('getAppUrl',  <String, Object>{'url': text});
+      return result;
+    } on PlatformException catch (e) {
+      LOG('--> _convertIntentToAppUrl error : $e');
+    }
+    return '';
+  }
+
+  Future<String> _convertIntentToMarketUrl(String text) async {
+    return await _channel.invokeMethod('getMarketUrl',  <String, Object>{'url': text});
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../common/style/colors.dart';
 
 var typo28bold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -11,7 +10,6 @@ var typo28bold = TextStyle(
 );
 
 var typo24bold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -19,7 +17,6 @@ var typo24bold = TextStyle(
 );
 
 var typo22bold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -27,7 +24,6 @@ var typo22bold = TextStyle(
 );
 
 var typo24bold150 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -36,7 +32,6 @@ var typo24bold150 = TextStyle(
 );
 
 var typo20bold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -44,7 +39,6 @@ var typo20bold = TextStyle(
 );
 
 var typo20bold150 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -53,7 +47,6 @@ var typo20bold150 = TextStyle(
 );
 
 var typo18regular = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w400,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -61,7 +54,6 @@ var typo18regular = TextStyle(
 );
 
 var typo18bold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w800,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -69,7 +61,6 @@ var typo18bold = TextStyle(
 );
 
 var typo18semibold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w600,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -77,7 +68,6 @@ var typo18semibold = TextStyle(
 );
 
 var typo16regular = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w400,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -85,7 +75,6 @@ var typo16regular = TextStyle(
 );
 
 var typo16regular150 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w400,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -94,7 +83,6 @@ var typo16regular150 = TextStyle(
 );
 
 var typo16medium = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w500,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -102,7 +90,6 @@ var typo16medium = TextStyle(
 );
 
 var typo16dialog = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w500,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -111,7 +98,6 @@ var typo16dialog = TextStyle(
 );
 
 var typo16medium150 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w500,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -120,7 +106,6 @@ var typo16medium150 = TextStyle(
 );
 
 var typo16semibold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w600,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -128,7 +113,6 @@ var typo16semibold = TextStyle(
 );
 
 var typo16semibold150 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w600,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -137,7 +121,6 @@ var typo16semibold150 = TextStyle(
 );
 
 var typo16bold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -145,7 +128,6 @@ var typo16bold = TextStyle(
 );
 
 var typo16under = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -155,7 +137,6 @@ var typo16under = TextStyle(
 );
 
 var typo14regular = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w400,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -163,7 +144,6 @@ var typo14regular = TextStyle(
 );
 
 var typo14regular150 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w400,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -172,7 +152,6 @@ var typo14regular150 = TextStyle(
 );
 
 var typo14medium = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w500,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -180,7 +159,6 @@ var typo14medium = TextStyle(
 );
 
 var typo14under = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w500,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -192,7 +170,6 @@ var typo14under = TextStyle(
 );
 
 var typo14medium150 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w500,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -201,7 +178,6 @@ var typo14medium150 = TextStyle(
 );
 
 var typo14disable = TextStyle(
-  color: GRAY_50,
   fontWeight: FontWeight.w500,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -210,7 +186,6 @@ var typo14disable = TextStyle(
 );
 
 var typo14semibold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w600,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -218,7 +193,6 @@ var typo14semibold = TextStyle(
 );
 
 var typo14bold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -227,7 +201,6 @@ var typo14bold = TextStyle(
 );
 
 var typo14normal = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w400,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -236,7 +209,6 @@ var typo14normal = TextStyle(
 );
 
 var typo14bold100 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -252,7 +224,6 @@ var typo12regular100 = TextStyle(
 );
 
 var typo12bold = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -261,7 +232,6 @@ var typo12bold = TextStyle(
 );
 
 var typo12normal = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w400,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -270,7 +240,6 @@ var typo12normal = TextStyle(
 );
 
 var typo12semibold100 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w600,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -278,7 +247,6 @@ var typo12semibold100 = TextStyle(
 );
 
 var typo12medium100 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w500,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -286,7 +254,6 @@ var typo12medium100 = TextStyle(
 );
 
 var typo12medium150 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w500,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -295,7 +262,6 @@ var typo12medium150 = TextStyle(
 );
 
 var typo12regular = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w400,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -303,7 +269,6 @@ var typo12regular = TextStyle(
 );
 
 var typo12dialog = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w400,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -312,7 +277,6 @@ var typo12dialog = TextStyle(
 );
 
 var typo12shadow = TextStyle(
-    color: GRAY_90,
     fontWeight: FontWeight.w700,
     fontFamily: 'Pretendard',
     fontStyle: FontStyle.normal,
@@ -327,7 +291,6 @@ var typo12shadow = TextStyle(
 );
 
 var typo12shadowR = TextStyle(
-    color: GRAY_90,
     fontWeight: FontWeight.w700,
     fontFamily: 'Pretendard',
     fontStyle: FontStyle.normal,
@@ -342,7 +305,6 @@ var typo12shadowR = TextStyle(
 );
 
 var typo12outline = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w700,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -369,7 +331,6 @@ var typo12outline = TextStyle(
 );
 
 var typo11normal = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w300,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -377,7 +338,6 @@ var typo11normal = TextStyle(
 );
 
 var typo10normal = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w300,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -385,7 +345,6 @@ var typo10normal = TextStyle(
 );
 
 var typo10medium100 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w500,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,
@@ -393,7 +352,6 @@ var typo10medium100 = TextStyle(
 );
 
 var typo10regular100 = TextStyle(
-  color: GRAY_90,
   fontWeight: FontWeight.w400,
   fontFamily: 'Pretendard',
   fontStyle: FontStyle.normal,

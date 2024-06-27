@@ -5,6 +5,11 @@ enum CD_PROD_TYPE {
   option,   // 부가(옵션) 상품
 }
 
+enum CD_ITEM_TYPE {
+  ticket,
+  art,
+}
+
 enum CD_SALE_ST {
   sale,     // 판매중
   close,    // 판매완료
@@ -15,11 +20,6 @@ enum CD_SALE_ST {
 enum CD_ITEM_ST {
   live,
   deleted,
-}
-
-enum CD_ITEM_TYPE {
-  ticket,
-  art,
 }
 
 enum CD_PAY_ST {
@@ -74,4 +74,45 @@ enum CD_PAY_ST {
     }
   }
 }
+
+enum CD_CURRENCY {
+  krw,
+  usd,
+  eur;
+
+  get title {
+    switch (this) {
+      case CD_CURRENCY.krw:
+        return '원';
+      case CD_CURRENCY.usd:
+        return 'USD';
+      case CD_CURRENCY.eur:
+        return 'EUR';
+    }
+  }
+
+  get code {
+    switch (this) {
+      case CD_CURRENCY.krw:
+        return '410';
+      case CD_CURRENCY.usd:
+        return '840';
+      case CD_CURRENCY.eur:
+        return '978';
+    }
+  }
+}
+
+CD_CURRENCY getCurrencyType(String? str) {
+  if (str != null) {
+    if (str.toLowerCase() == CD_CURRENCY.krw.name)
+      return CD_CURRENCY.krw;
+    if (str.toLowerCase() == CD_CURRENCY.usd.name)
+      return CD_CURRENCY.usd;
+    if (str.toLowerCase() == CD_CURRENCY.eur.name)
+      return CD_CURRENCY.eur;
+  }
+  return CD_CURRENCY.krw;
+}
+
 

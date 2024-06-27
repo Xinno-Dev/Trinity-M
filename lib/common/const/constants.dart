@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart';
 const String API_HOST = 'http://13.209.81.51';
 const String API_HOST_DEV = 'http://13.209.81.51';
 
+const String PG_HOST = 'http://danal.xinno.io:3003';
+const String PG_HOST_DEV = 'http://192.168.10.19:3003';
+
 const String MAIN_NET_URI = 'wss://mainnet.rigochain.io/websocket';
 const String MAIN_HTTP_URL = 'https://mainnet.rigochain.io';
 const String MAIN_NET_CHAIN_ID = "mainnet";
@@ -53,7 +56,7 @@ const String APP_NOTICE_KEY = 'APP_NOTICE_KEY';
 
 
 // 출시시 필수 OFF 체크..
-const bool IS_DEV_MODE = kDebugMode && false; // 개발자 버전 켜기 / false
+const bool IS_DEV_MODE = kDebugMode && true; // 개발자 버전 켜기 / false
 
 // TrinityM 출시시 필수 ON 체크..
 const bool IS_EMAIL_CHECK = true;       // 이메일 링크 전송 켜기 / true

@@ -43,7 +43,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     GestureDetector(
       onTap: _viewModel.hideProfileSelectBox,
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: Stack(
           children: [
             ListView(

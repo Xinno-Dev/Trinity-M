@@ -70,7 +70,6 @@ dependencies:
   bip39: ^1.0.6
   quiver: ^3.2.1
   decimal: ^2.3.0
-  url_launcher: ^6.2.1
   store_redirect: ^2.0.2
   path_provider: ^2.1.2
   visibility_detector: ^0.3.3
@@ -87,8 +86,12 @@ dependencies:
   dropdown_button2: ^2.3.9
   cupertino_icons: ^1.0.2
   pull_to_refresh: ^2.0.0
+
+  # web..
   webview_flutter: ^4.8.0
-#
+  flutter_inappwebview: ^5.8.0
+  url_launcher: ^6.3.0
+
   # image..
   image_picker: ^1.1.2
   image_cropper: ^5.0.0
@@ -123,6 +126,7 @@ dependencies:
 
   # data..
   elliptic: ^0.3.10
+  cp949_codec: ^1.0.2
 
   # google..
   google_sign_in: ^6.2.1
@@ -132,13 +136,11 @@ dependencies:
 #  # apple..
   icloud_storage: ^2.2.0
   cloud_kit: ^1.2.0
+  open_store: ^0.5.0
 
-  # kakao..image_picker:
+  # kakao..
   kakao_flutter_sdk_user: ^1.9.0 # 카카오 로그인 API 패키지
   kakao_flutter_sdk_share: ^1.9.0 # 카카오톡 공유 API 패키지
-
-  # PG service..
-  iamport_flutter: ^0.10.18
 
 dev_dependencies:
   flutter_test:
