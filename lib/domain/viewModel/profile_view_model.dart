@@ -699,7 +699,7 @@ class ProfileViewModel {
     hideProfileSelectBox();
     showInputDialog(context,
       TR('계정 추가'),
-      defaultText: IS_DEV_MODE ? EX_TEST_ACCCOUNT_00_1 : '',
+      defaultText: IS_DEV_MODE ? EX_TEST_ACCOUNT_00_1 : '',
       hintText: TR('계정명을 입력해 주세요.')).then((newNickId) {
       LOG('---> account add name : $newNickId');
       if (STR(newNickId).isNotEmpty) {

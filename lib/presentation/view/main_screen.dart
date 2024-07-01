@@ -17,6 +17,7 @@ import '../../domain/model/purchase_model.dart';
 import '../../services/pg_service.dart';
 import 'market/market_screen.dart';
 import 'market/payment_screen.dart';
+import 'profile/profile_Identity_screen.dart';
 import 'profile/profile_screen.dart';
 import 'profile/webview_screen.dart';
 import 'signup/login_screen.dart';
@@ -184,7 +185,8 @@ class _MainScreenState extends ConsumerState<MainScreen>
         drawer: _viewModel.mainDrawer(context),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            _showCardPay();
+            // _showCardPay();
+            _showIdentity();
             // ApiService().testCheck();
             // showSimpleDialog(context, 'test test');
             // var mnemonic = EX_TEST_MN_02;
@@ -218,6 +220,14 @@ class _MainScreenState extends ConsumerState<MainScreen>
     ref.read(loginProvider).disableLockScreen();
     Navigator.of(context).push(
         createAniRoute(PaymentScreen(purchaseInfo))).then((_) {
+      ref.read(loginProvider).enableLockScreen();
+    });
+  }
+
+  _showIdentity() {
+    ref.read(loginProvider).disableLockScreen();
+    Navigator.of(context).push(
+        createAniRoute(ProfileIdentityScreen())).then((_) {
       ref.read(loginProvider).enableLockScreen();
     });
   }

@@ -76,25 +76,26 @@ const bool IS_IDENTITY_ON = false;      // 본인인증 메뉴 켜기 / false
 const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc API 이용
 const bool IS_SWAP_ON = false;
 
-String CURRENT_CHAIN_ID = TEST_NET_CHAIN_ID;
+const String CURRENT_CHAIN_ID = TEST_NET_CHAIN_ID;
 
 const String IDENTITY_PG = 'danal.B010072188'; // 본인인증
 const String PAYMENT_PG = 'danal_tpay'; // PG사
-const String PORTONE_IMP_CODE = 'imp08730114'; // PortOne 가맹점 코드 // dev@xinno.io
+// const String PORTONE_IMP_CODE = 'imp08730114'; // PortOne 가맹점 코드 // dev@xinno.io
 
 const String ICLOUD_CONTAINER_ID = 'iCloud.com.xinno.trinity-m-00';
 
 // const String EX_TEST_MAIL_00 = 'test00@exsino.com';
 // const String EX_TEST_PASS_00 = 'testpass00';
 const String EX_TEST_MAIL_00 = 'jubal2000@gmail.com';
-const String EX_TEST_PASS_00 = 'jubalpass00';
+const String EX_TEST_PASS_00 = '11111';
 const String EX_TEST_REC_PASS_00 = '11111';
 
-const String EX_TEST_MAIL_EX = 'test00@xinno.io';
-const String EX_TEST_PASS_EX = 'testpass00';
+const String EX_TEST_MAIL_EX = 'test00@xinno.io'; // 앱스토어 테스터 계정
+const String EX_TEST_PASS_EX = 'testpass00'; // 앱스토어 테스터 비번
 
-const String EX_TEST_ACCCOUNT_00 = 'jubal0000';
-const String EX_TEST_ACCCOUNT_00_1 = 'jubal0000_1';
+const String EX_TEST_ACCOUNT_00 = 'jubal0000';  // 계정
+const String EX_TEST_ACCOUNT_00_1 = 'jubal0000_1'; // 계정 추가
+
 const String EX_TEST_NAME_00 = 'jubal0000 입니다!';
 const String EX_TEST_MN_EX = 'yard embrace develop ramp nothing member audit toilet vendor pool friend describe'; // email: tester00
 const String EX_TEST_MN_00 = 'weekend minimum ribbon sing destroy vacuum cherry cement sock shell wear result'; // email: tester00

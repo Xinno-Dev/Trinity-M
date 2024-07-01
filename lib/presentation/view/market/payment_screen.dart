@@ -33,7 +33,6 @@ class PaymentScreen extends ConsumerStatefulWidget {
 class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   final _channel = MethodChannel('com.xinno.trinity_m_00.android');
   final _host = IS_DEV_MODE ? PG_HOST_DEV : PG_HOST;
-
   late final _url = '${_host}/card/ready';
   late OpenUrl _openUrl;
 

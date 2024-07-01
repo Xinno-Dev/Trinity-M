@@ -192,7 +192,7 @@ class LoginProvider extends ChangeNotifier {
   var nickStep    = NickCheckStep.none;
   var recoverStep = RecoverPassStep.none;
 
-  var inputNick   = IS_DEV_MODE ? EX_TEST_ACCCOUNT_00 : '';
+  var inputNick   = IS_DEV_MODE ? EX_TEST_ACCOUNT_00 : '';
   var inputEmail  = IS_DEV_MODE ? EX_TEST_MAIL_00 : '';
   var inputPass   = List.generate(2, (index) => IS_DEV_MODE ? EX_TEST_PASS_00 : '');
   var cloudPass   = List.generate(2, (index) => IS_DEV_MODE ? EX_TEST_PASS_00 : '');
