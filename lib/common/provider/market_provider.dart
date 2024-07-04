@@ -131,8 +131,12 @@ class MarketProvider extends ChangeNotifier {
     return selectProduct?.itemList?[optionIndex];
   }
 
-  get optionId {
+  get optionItemId {
     return optionItem?.itemId;
+  }
+
+  get optionImgId {
+    return optionItem?.imgId;
   }
 
   get optionPic {
@@ -285,7 +289,8 @@ class MarketProvider extends ChangeNotifier {
         prodSaleId: selectProduct!.prodSaleId,
         itemType:   selectProduct!.itemType,
         name:       selectProduct!.name,
-        itemId:     optionId,
+        itemId:     optionItemId,
+        imgId:      optionImgId,
         itemImg:    optionPic,
         buyPrice:   '100',
         // buyPrice:   selectProduct!.itemPrice,
@@ -348,53 +353,49 @@ class MarketProvider extends ChangeNotifier {
   requestPurchaseWithImageId(
     {Function(String)? onError}) async {
     LOG('--> requestPurchaseWithImageId : ${purchaseInfo?.prodSaleId} '
-        '/ ${optionId} / $isBuying');
-    if (optionId != null) {
+        '/ $optionItemId / $optionImgId / $isBuying');
+    if (optionItemId != null || optionImgId != null) {
       if (isBuying) {
         return false;
       }
       isBuying = true;
       var result = await _repo.requestPurchase(
-          STR(purchaseInfo?.prodSaleId), imgId: optionId, onError: (error) {
-        if (error == '__not_found__' && onError != null) {
-          onError(TR('이미 판매완료된 옵션 상품입니다.'));
-        }
+          STR(purchaseInfo?.prodSaleId), optionItemId, optionImgId,
+        onError: (error) {
+          if (error == '__not_found__' && onError != null) {
+            onError(TR('이미 판매완료된 옵션 상품입니다.'));
+          }
       });
       isBuying = false;
       if (result != null) {
+        purchaseInfo!.purchaseId        = result.purchaseId;
         purchaseInfo!.itemId            = result.itemId;
         purchaseInfo!.merchantUid       = result.merchantUid;
-        purchaseInfo!.buyPrice          = result.price; // price -> buyPrice 로 변환
+        purchaseInfo!.buyPrice          = result.price;
         purchaseInfo!.priceUnit         = result.priceUnit;
         purchaseInfo!.mid               = result.mid;
         purchaseInfo!.availablePayType  = result.availablePayType;
         purchaseInfo!.transferAccount   = result.transferAccount;
-        // payData.merchantUid             = STR(result.merchantUid);
-        // LOG('--> requestPurchaseWithImageId result : ${payData.merchantUid} '
-        //     '<= ${purchaseInfo?.toJson()}');
         return purchaseInfo;
       }
     }
     return null;
   }
 
-  Future<bool> checkPurchase(JSON info) async {
-    LOG('--> checkPurchase : $info / $checkCount');
-    if (checkCount++ > 5) return false;
-    var impUid      = STR(info['imp_uid'      ]);
-    var status      = STR(info['status'       ]);
-    var merchantId  = STR(info['merchant_uid' ]);
+  Future<bool> checkPurchase(String purchaseId) async {
+    LOG('--> checkPurchase : $purchaseId / $checkCount');
+    if (checkCount++ > CHECK_PURCHASE_MAX) return false;
     await Future.delayed(Duration(seconds: CHECK_PURCHASE_DELAY)); // 딜레이.. 1초..
-    var result = await _repo.checkPurchase(impUid, merchantId, status);
+    var result = await _repo.checkPurchase(purchaseId);
     LOG('--> checkPurchase result : ${STR(result?['status'])}');
     if (result != null) {
       var status = STR(result['status']);
       // 결제 완료..
       if (status == '4') {
-        return updatePurchaseInfo(info);
+        return updatePurchaseInfo(result);
         // 결제 검증중..
-      } else if (status == '3' || status == '2') {
-        return await checkPurchase(info);
+      } else if (status == '1' || status == '2' || status == '3') {
+        return await checkPurchase(purchaseId);
       }
     }
     return false;
@@ -410,10 +411,9 @@ class MarketProvider extends ChangeNotifier {
 
   updatePurchaseInfo(JSON info) {
     if (purchaseInfo != null) {
-      purchaseInfo!.cardType  = STR(info['card_name'  ]);
-      purchaseInfo!.cardNum   = STR(info['card_number']);
-      purchaseInfo!.payPrice  = STR(info['paid_amount']);
-      purchaseInfo!.priceUnit = STR(info['currency'   ]);
+      purchaseInfo!.cardType  = STR(info['cardType']);
+      purchaseInfo!.cardNum   = STR(info['cardNum' ]);
+      purchaseInfo!.payPrice  = STR(info['payPrice']); // 최종 결제 금액
       return true;
     }
     return false;

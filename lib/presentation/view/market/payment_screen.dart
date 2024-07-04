@@ -32,22 +32,25 @@ class PaymentScreen extends ConsumerStatefulWidget {
 
 class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   final _channel = MethodChannel('com.xinno.trinity_m_00.android');
-  final _host = IS_DEV_MODE ? PG_HOST_DEV : PG_HOST;
+  final _host = IS_DEV_MODE ? CP_HOST_DEV : CP_HOST;
   late final _url = '${_host}/card/ready';
   late OpenUrl _openUrl;
 
   get _bodyData {
+    LOG('--> widget.data : ${widget.data.itemType} / ${widget.data.itemId}');
     var cur = getCurrencyType(widget.data.priceUnit);
     return Uint8List.fromList(utf8.encode(
-      // 'amount=${widget.data.buyPrice}&'
-      'amount=100&'
-      'orderid=${widget.data.merchantUid}&'
-      'itemname=${P_STR(widget.data.name)}&'
-      'username=${P_STR(widget.data.buyerName)}&'
-      'useremail=${widget.data.buyerEmail}&'
-      'userid=${P_STR(widget.data.buyerId)}&'
+      'purchaseId=${widget.data.purchaseId}&'
+      'type=${IS_PAYMENT_ON ? widget.data.itemType : '99'}&'
+      'imgId=${widget.data.itemId}&'
+      'itemName=${P_STR(widget.data.name)}&'
+      'orderId=${widget.data.merchantUid}&'
+      'userName=${P_STR(widget.data.buyerName)}&'
+      'userId=${P_STR(widget.data.buyerId)}&'
+      'userEmail=${widget.data.buyerEmail}&'
       'currency=${cur.code}&'
-      'useragent=WM'
+      'amount=100&'
+      'userAgent=WM'
     ));
   }
 
@@ -114,18 +117,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               if (msg.isNotEmpty) {
                 var result = msg.first;
                 if (result == 'success') {
-                  if (msg.length > 4) {
-                    var result = {
-                      'status': 'paid',
-                      'imp_uid': msg[2],
-                      'merchant_uid': msg[3],
-                      'amount': msg[4],
-                    };
-                    LOG('--> _paymentSuccess : ${result.toString()}');
-                    _paymentSuccess(result);
-                  } else {
-                    _showDoneMessage(false);
-                  }
+                  _paymentSuccess(widget.data.purchaseId);
                 } else if (result == 'error') {
                   var error = msg.length > 1 ? msg[1] : null;
                   _showFailMessage(error);
@@ -243,12 +235,12 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   //   }
   // }
 
-  _paymentSuccess(result) {
+  _paymentSuccess(purchaseId) {
     showLoadingDialog(context, TR('결제 확인중입니다.'));
     final prov = ref.read(marketProvider);
     prov.checkCount = 0;
-    prov.checkPurchase(result).then((checkResult) {
-      LOG('--> checkResult : $checkResult');
+    prov.checkPurchase(purchaseId).then((checkResult) {
+      LOG('--> _paymentSuccess result : $checkResult');
       hideLoadingDialog();
       if (checkResult) {
         _showDoneMessage();

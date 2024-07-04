@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
@@ -12,7 +13,7 @@ class DanalApiService {
   }
   DanalApiService._internal();
 
-  var httpUrl = PG_HOST;
+  final _host = IS_DEV_MODE ? CP_HOST_DEV : CP_HOST;
 
   final RESPONSE_SUCCESS = 200;
   final RESPONSE_SUCCESS_EX = 201;
@@ -24,24 +25,22 @@ class DanalApiService {
 
   //////////////////////////////////////////////////////////////////////////
   //
-  //  Email 중복 체크
-  //  /users/email/{email}/dup
+  //  구매 취소
   //
 
-  Future<bool> orderTest() async {
+  Future<JSON?> cancelPurchase(String tid) async {
+    LOG('--> API cancelPurchase : $tid');
     try {
-      LOG('--> API orderTest');
       final response = await http.get(
-        Uri.parse(httpUrl + '/Order.php'),
+        Uri.parse(_host + '/cancel?tid=$tid&amount=100'),
       );
-      LOG('--> API orderTest response : ${response.statusCode} / ${response
-          .body}');
-      if (isSuccess(response.statusCode)) {
-        return BOL(jsonDecode(response.body)['result']);
-      }
+      LOG('--> API cancelPurchase response : ${response.statusCode} / ${response.body}');
+      return {
+        'result': '0000'
+      };
     } catch (e) {
-      LOG('--> API orderTest error : $e');
+      LOG('--> API cancelPurchase error : $e');
     }
-    return false;
+    return null;
   }
 }

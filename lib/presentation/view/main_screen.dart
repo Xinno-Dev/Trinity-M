@@ -1,4 +1,7 @@
 
+import 'dart:convert';
+
+import 'package:cp949_codec/cp949_codec.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -86,8 +89,8 @@ class _MainScreenState extends ConsumerState<MainScreen>
     final scrSize = MediaQuery.of(context).size;
     final scrRatio = scrSize.width / scrSize.height;
     isPadMode = scrRatio > 0.6;
-    LOG('--> MediaQuery.of(context).size.width : [$defaultTargetPlatform] ${scrSize.width} / ${scrSize.height}');
-
+    // LOG('--> MediaQuery.of(context).size.width : '
+    //     '[$defaultTargetPlatform] ${scrSize.width} / ${scrSize.height}');
     return prov.isScreenLocked ? lockScreen(context) :
       AnnotatedRegion<SystemUiOverlayStyle>(
         value:SystemUiOverlayStyle(
@@ -115,9 +118,7 @@ class _MainScreenState extends ConsumerState<MainScreen>
               borderRadius: BorderRadius.circular(100),
               child: Container(
                 padding: EdgeInsets.all(10),
-                child: SvgPicture.asset('assets/svg/icon_ham.svg',
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).dividerColor, BlendMode.srcIn))
+                child: SvgPicture.asset('assets/svg/icon_ham.svg')
               ),
             )
           ),
@@ -186,7 +187,10 @@ class _MainScreenState extends ConsumerState<MainScreen>
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             // _showCardPay();
-            _showIdentity();
+            // _showIdentity();
+            // _showError();
+            _cancelPayment();
+
             // ApiService().testCheck();
             // showSimpleDialog(context, 'test test');
             // var mnemonic = EX_TEST_MN_02;
@@ -224,12 +228,25 @@ class _MainScreenState extends ConsumerState<MainScreen>
     });
   }
 
+  _showError() {
+    var text = cp949.encode('�ʼ� ������ ���� ���� �Դϴ�').toString();
+    showToast(text);
+  }
+
   _showIdentity() {
     ref.read(loginProvider).disableLockScreen();
     Navigator.of(context).push(
         createAniRoute(ProfileIdentityScreen())).then((_) {
       ref.read(loginProvider).enableLockScreen();
     });
+  }
+
+  _cancelPayment() async {
+    var result = await DanalApiService().
+      cancelPurchase('202407031744137404713400');
+    if (result != null) {
+      LOG('--> cancel payment result : $result');
+    };
   }
 
   _selectPage(index) {

@@ -13,7 +13,7 @@ final ThemeData lightTheme = ThemeData(
     scaffoldBackgroundColor: WHITE,
     appBarTheme: AppBarTheme(
       systemOverlayStyle: SystemUiOverlayStyle.dark,
-      iconTheme: IconThemeData(color: Colors.black),
+      iconTheme: IconThemeData(color: Colors.black54),
       backgroundColor: WHITE,
       surfaceTintColor: WHITE,
       centerTitle: true,

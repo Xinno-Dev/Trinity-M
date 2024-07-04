@@ -30,8 +30,8 @@ class ProfileIdentityScreen extends ConsumerStatefulWidget {
 
 class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
   late ProfileViewModel _viewModel;
-  final _host = IS_DEV_MODE ? PG_HOST_DEV : PG_HOST;
-  late final _url = '${_host}/ready';
+  final _host = IS_DEV_MODE ? CP_HOST_DEV : CP_HOST;
+  late final _url = '${_host}/cert/ready';
 
   @override
   void initState() {
@@ -44,11 +44,12 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
     final prov = ref.watch(loginProvider);
     LOG('--> ProfileIdentityScreen');
     return Scaffold(
-      appBar: defaultAppBar('결제하기'),
+      appBar: defaultAppBar('본인인증'),
       backgroundColor: WHITE,
       body: InAppWebView(
         initialUrlRequest: URLRequest(
           url: Uri.parse(_url),
+          method: 'POST'
         ),
         initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
@@ -89,7 +90,7 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
           controller.addJavaScriptHandler(
             handlerName: 'iden_message', callback: (msg) {
             LOG('--> iden_message : $msg');
-            msg.forEach((e) => LOG('-- $e'));
+            msg.forEach((e) => LOG('--> iden_message value: $e'));
             if (msg.isNotEmpty) {
               var result = msg.first;
               if (result == 'success') {
@@ -201,22 +202,21 @@ class _ProfileIdentityScreenState extends ConsumerState<ProfileIdentityScreen> {
   //   },
   // );
 
-  _identitySuccess(String? uid) {
-    if (STR(uid).isNotEmpty) {
-      ApiService().setIdentity(uid!, onError: (code) {
-        _identityAlreadyFail();
-      }).then((result2) {
-        LOG('--> checkCert result : $result2');
-        if (result2 == true) {
+  _identitySuccess(String? tId) {
+    if (STR(tId).isNotEmpty) {
+      // ApiService().setIdentity(tId!, onError: (code) {
+      //   _identityAlreadyFail();
+      // }).then((result2) {
+      //   LOG('--> checkCert result : $result2');
+      //   if (result2 == true) {
           showToast(TR('본인인증 성공'));
           context.pop(true);
-        } else if (result2 == false) {
-          _identityFail();
-        }
-      });
+      //   } else if (result2 == false) {
+      //     _identityFail();
+      //   }
+      // });
     } else {
-      showToast(TR('본인인증 성공'));
-      context.pop(true);
+      _identityFail();
     }
   }
 

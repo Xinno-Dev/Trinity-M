@@ -10,6 +10,7 @@ part 'product_item_model.g.dart';
 )
 class ProductItemModel {
   String?   itemId;
+  String?   imgId;
   String?   itemType;     // CD_ITEM_TYPE
   String?   address;
   String?   img;          // 부가상품 이미지
@@ -30,6 +31,7 @@ class ProductItemModel {
 
   ProductItemModel({
     this.itemId,
+    this.imgId,
     this.itemType,
     this.address,
     this.img,

@@ -783,7 +783,6 @@ class ApiService {
         return null;
       }
       var urlStr = '/purchases/${buyerAddr}?pageCnt=$pageCnt';
-
       if (STR(endDate).isNotEmpty) {
         if (STR(startDate).isEmpty) {
           startDate = endDate;
@@ -820,7 +819,7 @@ class ApiService {
   //
 
   Future<JSON?> requestPurchase(
-    String prodSaleId, {String? itemId, String? imgId}) async {
+    String prodSaleId, String? itemId, String? imgId) async {
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
@@ -858,33 +857,28 @@ class ApiService {
   //////////////////////////////////////////////////////////////////////////
   //
   //  구매 확인 (JWT)
-  //  PUT: /purchases/vf
+  //  PUT: /purchases/payment/info
   //
 
   testCheck() async {
-    return await checkPurchase('imp_547454147757', 'dev-prod-156-14', 'paid');
+    return await checkPurchase('imp_547454147757');
   }
 
-  Future<JSON?> checkPurchase(String impUid, String merchantId, String status) async {
-    LOG('--> API checkPurchase : $impUid / $merchantId / $status');
+  Future<JSON?> checkPurchase(String purchaseId) async {
+    LOG('--> API checkPurchase : $purchaseId');
     try {
       var jwt = await AesManager().localJwt;
       if (jwt == null) {
         return null;
       }
-      var urlStr = '/purchases/vf';
-      final response = await http.put(
-          Uri.parse(httpUrl + urlStr),
-          headers: {
-            'accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwt',
-          },
-          body: jsonEncode({
-            'imp_uid'       : impUid,
-            'merchant_uid'  : merchantId,
-            'status'        : status,
-          })
+      var urlStr = '/purchases/payment/info?purchaseId=$purchaseId';
+      final response = await http.get(
+        Uri.parse(httpUrl + urlStr),
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwt',
+        },
       );
       LOG('--> API checkPurchase response : ${response.statusCode} / ${response.body}');
       if (isSuccess(response.statusCode)) {

@@ -9,6 +9,7 @@ part of 'product_item_model.dart';
 ProductItemModel _$ProductItemModelFromJson(Map<String, dynamic> json) =>
     ProductItemModel(
       itemId: json['itemId'] as String?,
+      imgId: json['imgId'] as String?,
       itemType: json['itemType'] as String?,
       address: json['address'] as String?,
       img: json['img'] as String?,
@@ -42,6 +43,7 @@ Map<String, dynamic> _$ProductItemModelToJson(ProductItemModel instance) {
   }
 
   writeNotNull('itemId', instance.itemId);
+  writeNotNull('imgId', instance.imgId);
   writeNotNull('itemType', instance.itemType);
   writeNotNull('address', instance.address);
   writeNotNull('img', instance.img);

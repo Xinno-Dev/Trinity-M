@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 const String API_HOST = 'http://13.209.81.51';
 const String API_HOST_DEV = 'http://13.209.81.51';
 
-const String PG_HOST = 'http://danal.xinno.io:3003';
-const String PG_HOST_DEV = 'http://192.168.10.19:3003';
+const String CP_HOST = 'http://danal.xinno.io';
+const String CP_HOST_DEV = 'http://192.168.10.19:3003';
 
 const String MAIN_NET_URI = 'wss://mainnet.rigochain.io/websocket';
 const String MAIN_HTTP_URL = 'https://mainnet.rigochain.io';
@@ -62,7 +62,7 @@ const bool IS_DEV_MODE = kDebugMode && true; // 개발자 버전 켜기 / false
 const bool IS_EMAIL_CHECK = true;       // 이메일 링크 전송 켜기 / true
 const bool IS_AUTO_LOCK_MODE = true;    // 자동 잠금 켜기 / true
 const bool IS_AUTO_LOGIN_MODE = true;   // 자동 로그인 켜기 / true
-const bool IS_PAYMENT_ON = true;        // 결제 켜기 / true
+const bool IS_PAYMENT_ON = true;        // 실결제 켜기 / true
 const bool IS_PAYMENT_READY = true;     // 결제 버튼 켜기 / true
 const bool IS_CLOUD_BACKUP_ON = true;   // 클라우드 백업 켜기 / true
 const bool IS_CLOUD_BACKUP_MN = true;   // 클라우드 백업 시 니모닉 or Key / true
@@ -70,7 +70,7 @@ const bool IS_CLOUD_BACKUP_MN = true;   // 클라우드 백업 시 니모닉 or 
 // TrinityM 출시시 필수 OFF 체크..
 const bool IS_APP_RESET_ON = false;     // 앱 초기화 메뉴 켜기 / false
 const bool IS_LANGUAGE_ON = true;       // 언어변경 메뉴 켜기 / false
-const bool IS_IDENTITY_ON = false;      // 본인인증 메뉴 켜기 / false
+const bool IS_IDENTITY_ON = true;      // 본인인증 메뉴 켜기 / false
 
 // byffin.. 출시시 필수 체크..
 const bool IS_ACCOUNT_NAME_SETDOC = false; // Account 이름 변경시 SetDoc API 이용
@@ -78,8 +78,8 @@ const bool IS_SWAP_ON = false;
 
 const String CURRENT_CHAIN_ID = TEST_NET_CHAIN_ID;
 
-const String IDENTITY_PG = 'danal.B010072188'; // 본인인증
-const String PAYMENT_PG = 'danal_tpay'; // PG사
+// const String IDENTITY_PG = 'danal.B010072188'; // 본인인증
+// const String PAYMENT_PG = 'danal_tpay'; // PG사
 // const String PORTONE_IMP_CODE = 'imp08730114'; // PortOne 가맹점 코드 // dev@xinno.io
 
 const String ICLOUD_CONTAINER_ID = 'iCloud.com.xinno.trinity-m-00';
@@ -110,7 +110,7 @@ const int PAGE_COUNT_MAX = 3;
 const int MARKET_PAGE_COUNT_MAX = 3;
 const int PAGE_COUNT_FULL_MAX = 9999;
 const int EMAIL_SEND_TIME_MAX = 30;
-const int LOCK_SCREEN_DELAY = 10;
+const int LOCK_SCREEN_DELAY = 5;
 
 const int NICK_LENGTH_MIN = 5;
 const int NICK_LENGTH_MAX = 40;
@@ -121,6 +121,7 @@ const int PASS_LENGTH_MAX = 12;
 const int SUBTITLE_LENGTH_MAX = 40;
 const int PROFILE_LENGTH_MAX = 300;
 const int CHECK_PURCHASE_DELAY = 2; // 구매 체크 delay..
+const int CHECK_PURCHASE_MAX = 10;  // 구매 체크 count max..
 
 const int DECIMAL_PLACES = 8;
 const double PROFILE_RADIUS = 80.0;

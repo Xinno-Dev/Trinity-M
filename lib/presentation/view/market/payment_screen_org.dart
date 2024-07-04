@@ -31,7 +31,7 @@ class PaymentScreenOrg extends ConsumerStatefulWidget {
 class _PaymentScreenState extends ConsumerState<PaymentScreenOrg> {
   final _controller = WebViewController();
   final _channel = MethodChannel('com.xinno.trinity_m_00.android');
-  final _host = IS_DEV_MODE ? PG_HOST_DEV : PG_HOST;
+  final _host = IS_DEV_MODE ? CP_HOST_DEV : CP_HOST;
   final _appUrl = [
     'vbv.shinhancard.com',
     'vbv.samsungcard.co.kr',

@@ -18,6 +18,7 @@ class PurchaseModel {
   String?   itemType;     // 아이템 종류. mk_item.CD_ITEM_TYPE 값
   String?   name;         // 상품이름
   String?   itemId;       // 상품 옵션 id
+  String?   imgId;        // 상품 이미지 옵션 id
   String?   itemImg;      // 상품에 이미지 Url
 
   // 구매 정보..
@@ -54,6 +55,7 @@ class PurchaseModel {
     this.itemType,
     this.name,
     this.itemId,
+    this.imgId,
     this.itemImg,
 
     this.price,

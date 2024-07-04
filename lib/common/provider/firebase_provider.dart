@@ -28,8 +28,8 @@ class FirebaseProvider extends ChangeNotifier {
     var result = await api.getAppStartInfo();
     if (result != null) {
       startInfo = AppStartModel.fromJson(result);
-      print('---> getAppStartInfo result : '
-        '${getServerVersion('android')} / ${getServerVersion('ios')}');
+      // print('---> getAppStartInfo result : '
+      //   '${getServerVersion('android')} / ${getServerVersion('ios')}');
       return startInfo;
     }
     return null;
